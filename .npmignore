@@ -1,0 +1,8 @@
+.git
+.npmignore
+.jshintrc
+*.tgz
+*.zip
+src
+test
+node_modules

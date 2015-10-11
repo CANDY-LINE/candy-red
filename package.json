@@ -1,0 +1,46 @@
+{
+  "name": "edison-gw",
+  "version": "1.0.0",
+  "description": "Gateway app for Intel Edison",
+  "main": "./dist/index.js",
+  "scripts": {
+    "build": "npm run lint_src",
+    "transpile": "babel src -d dist",
+    "prelint_src": "npm run transpile",
+    "lint_src": "jshint -c .jshintrc src",
+    "prelint_test": "npm run lint_src",
+    "lint_test": "jshint -c .jshintrc test",
+    "pretest": "npm run lint_test",
+    "test": "mocha --recursive test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://dbaba@github.com/dbaba/edison-gw.git"
+  },
+  "keywords": [
+    "edison",
+    "bluetooth",
+    "BLE",
+    "bluetooth low energy",
+    "bluetooth smart",
+    "central"
+  ],
+  "author": "Daisuke Baba",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/dbaba/edison-gw/issues"
+  },
+  "homepage": "https://github.com/dbaba/edison-gw#readme",
+  "devDependencies": {
+    "babel": "^5.8.23",
+    "chai": "^3.3.0",
+    "jshint": "^2.8.0",
+    "mocha": "^2.3.3",
+    "sinon": "^1.17.1"
+  },
+  "dependencies": {
+    "debug": "^2.2.0",
+    "noble": "^1.1.0",
+    "ws": "^0.8.0"
+  }
+}
