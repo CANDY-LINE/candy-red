@@ -13,6 +13,7 @@
     "lint_test": "jshint -c .jshintrc test",
     "pretest": "npm run lint_test",
     "test": "mocha --recursive test",
+    "setup": "GWD_INSTALLER=running npm install",
     "preinstall": "if [ -z ${GWD_INSTALLER} ]; then echo -e \"run install.sh instead of npm install\"; exit 1; fi",
     "preuninstall": "if [ -z ${GWD_INSTALLER} ]; then echo -e \"run unnstall.sh instead of npm uninstall\";exit 1; fi"
   },

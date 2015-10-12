@@ -31,10 +31,12 @@ $ /usr/lib/node_modules/edison-gw/services/ssytemd/preuninstall.sh
 $ npm uninstall -g edison-gw
 ```
 
-## Setup
+## Setup for Building
+
+In order to install dependencies for development use.
 
 ```
-$ npm install
+$ npm run setup
 ```
 
 ## Build
