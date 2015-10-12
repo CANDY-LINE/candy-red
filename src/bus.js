@@ -4,12 +4,19 @@ import WebSocket from 'ws';
 
 let ws = null;
 
-export function start(url) {
+export function start(url, user, password) {
   if (!url) {
     throw new Error('Missing URL!');
   }
   return new Promise((resolve, reject) => {
-    ws = new WebSocket(url);
+    let headers = {};
+    if (user && password) {
+      let auth = new Buffer(`${user}:${password}`).toString('base64');
+      headers.Authorization = `Basic ${auth}`;
+    }
+    ws = new WebSocket(url, {
+      headers: headers
+    });
     ws.on('open', () => {
       console.log('WebSocket opened.');
       resolve();
@@ -22,8 +29,10 @@ export function start(url) {
       console.log('WebSocket closed.');
       reject('closed');
     });
-    ws.on('message', (data, flags) => {
-      console.log('Data:' + data, flags);
+    ws.on('message', data => {
+      if (process.env.WS_DEBUG) {
+        console.log('Data:', data);
+      }
     });
     console.log('ready');
   });

@@ -5,21 +5,39 @@ import * as bus from './bus';
 import * as ble from './ble';
 
 let url;
-if (process.argv.length > 1) {
-  url = process.argv[process.argv.length - 1];
-  console.log(`connecting to ${url}`);
+let user;
+let password;
+
+if (process.env.WS_URL) {
+  url = process.env.WS_URL;
 }
-if (!url || url.indexOf('ws') !== 0 || url.indexOf(':') < 0) {
-  console.error('Invalid url');
+if (!url) {
+  console.error('WS_URL is missing');
   process.exit(1);
 }
+if (url.indexOf('ws') !== 0 || url.indexOf(':') < 0) {
+  console.error('Invalid WS_URL');
+  process.exit(2);
+}
 
-bus.start(url).then(() => {
+if (process.env.WS_USER) {
+  user = process.env.WS_USER;
+}
+if (process.env.WS_PASSWORD) {
+  password = process.env.WS_USER;
+}
+
+console.log(`connecting to ${url}`);
+if (user || password) {
+  console.log(`The given credentials will be used for authentication: user=${user}`);
+}
+
+bus.start(url, user, password).then(() => {
   return ble.start(bus);
 }).catch(e => {
   console.error('[ERROR]:', e);
   if (e instanceof Error) {
     console.error(e.stack);
   }
-  process.exit(2);
+  process.exit(3);
 });

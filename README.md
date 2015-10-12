@@ -45,6 +45,30 @@ $ npm run build
 
 Please remember to insert `run` between `npm` and `build`.
 
+## Run on localhost
+
+Try the following commands after `npm run build`:
+### without auth
+```
+$ WS_DEBUG=true WS_URL=ws://your-ws-host ./dist/index.js
+```
+
+e.g. `WS_DEBUG=true WS_URL=ws://echo.websocket.org ./dist/index.js`
+
+And you'll see the sensor info like this:
+```
+connecting to ws://echo.websocket.org
+ready
+WebSocket opened.
+Starting Scanning...
+Data:{"type":"te","unit":"C","val":23.5,"ts":1444616815322,"rssi":-52,"deviceUuid":"9999999990a93489c9678a35043759999"}
+```
+
+### with basic auth
+```
+$ WS_DEBUG=true WS_URL=ws://your-ws-host WS_USER=foo WS_PASSWORD=bas ./dist/index.js
+```
+
 ## Test
 
 ```
