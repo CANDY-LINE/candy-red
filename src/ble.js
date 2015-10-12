@@ -2,6 +2,7 @@
 
 import noble from 'noble';
 import peripherals from './peripherals';
+import Promise from 'es6-promises';
 
 export function start(bus) {
   if (!bus) {

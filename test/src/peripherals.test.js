@@ -1,4 +1,5 @@
 import { assert } from 'chai';
+import Promise from 'es6-promises';
 import peripherals from '../../src/peripherals';
 
 describe('Peripherals', () => {

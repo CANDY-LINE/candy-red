@@ -1,5 +1,8 @@
 'use strict';
 /*jshint bitwise: false*/
+
+import Promise from 'es6-promises';
+
 class BleCastBl {
   parse(manufacturerData) {
     let lx = 256 * manufacturerData[5] + manufacturerData[4];

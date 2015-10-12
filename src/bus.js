@@ -1,6 +1,7 @@
 'use strict';
 
 import WebSocket from 'ws';
+import Promise from 'es6-promises';
 
 let ws = null;
 
