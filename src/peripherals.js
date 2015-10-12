@@ -34,11 +34,12 @@ const PERIPHERALS = {
 };
 
 class Peripherals {
-  lookup(identifier) {
+  lookup(rawid) {
+    let identifier = rawid.replace(/\0/g, ''); // in case of a NULL terminator is included
     return new Promise((resolve, reject) => {
       let p = PERIPHERALS[identifier];
       if (!p) {
-        reject(`Unknown peripheral: ${identifier}`);
+        reject(`Unknown peripheral: [${identifier}]`);
       } else {
         resolve(p);
       }

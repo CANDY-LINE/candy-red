@@ -9,11 +9,26 @@ describe('Peripherals', () => {
       assert.isTrue(peripherals.lookup('BLECAST_TM') instanceof Promise);
       assert.isTrue(peripherals.lookup('no-such-id') instanceof Promise);
     });
+    it('should return a rejected Promise object', done => {
+      peripherals.lookup('BLECAST_BL\u0000').catch(e => {
+        done(e);
+      }).then(() => {
+        peripherals.lookup('BLECAST_BL\u0000\u0000').catch(e => {
+          done(e);
+        }).then(() => {
+          peripherals.lookup('\u0000\u0000BLECAST_BL\u0000\u0000').catch(e => {
+            done(e);
+          }).then(() => {
+            done();
+          });
+        });
+      });
+    });
     it('should return a Promise object with reject state when peripherals fails to look up an object', done => {
       peripherals.lookup('no-such-id').then(() => {
         assert.fail('Should not reach here!');
       }).catch(e => {
-        assert.equal('Unknown peripheral: no-such-id', e);
+        assert.equal('Unknown peripheral: [no-such-id]', e);
         done();
       }).catch(e => {
         done(e); // for showing assertion errors
