@@ -8,7 +8,7 @@ Restart=always
 ExecStart=/usr/lib/node_modules/edison-gw/services/start.sh
 Environment="HOME=/usr/lib/node_modules/edison-gw/"
 WorkingDirectory=/usr/lib/node_modules/edison-gw/
-Environment=NODE_ENV=production
+EnvironmentFile=/usr/lib/node_modules/edison-gw/services/environment
 
 [Install]
 WantedBy=multi-user.target
