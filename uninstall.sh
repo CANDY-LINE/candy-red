@@ -13,8 +13,8 @@ systemctl stop gwd
 systemctl disable gwd
 rm -f /lib/systemd/system/gwd.service
 
-RET=`GWD_INSTALLER=running npm uinstall -g edison-gw`
-if [ ${RET} != 0 ]; then
+RET=`GWD_INSTALLER=running npm uninstall -g edison-gw`
+if [ "${RET}" != 0 ]; then
   logger -s "npm uninstall failed"
   exit ${RET}
 fi
