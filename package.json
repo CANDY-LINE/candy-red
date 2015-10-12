@@ -40,6 +40,7 @@
     "sinon": "^1.17.1"
   },
   "dependencies": {
+    "es6-promises": "^1.0.10",
     "noble": "^1.1.0",
     "ws": "^0.8.0"
   }
