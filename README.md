@@ -3,14 +3,19 @@ edison-gw
 
 ## Install on Edison
 
-`npm install -g` is performed by the user `nobody`(https://github.com/npm/npm/issues/5596), which makes any provileged operations fail.
+`npm install -g` is NOT available for installation/uninstalltion since `npm` runs scripts in package.json as a `nobody` user (https://github.com/npm/npm/issues/5596), which makes any provileged operations fail.
 
-Please run the `postinstall.sh` manually AFTER `npm install`.
+Instead, please run the `install.sh`.
+Make sure to add `WS_URL` environment variable in order to tell the installer your favorite WebSocket server URL.
 
 ```
-$ npm install -g edison-gw-[version].tgz --production
-$ /usr/lib/node_modules/edison-gw/services/ssytemd/postinstall.sh
+$ cd package/root # where package.json exists
+$ WS_URL=ws://your-websocket-address/and/path ./install.sh
 ```
+
+This will take a couple of minutes.
+
+You can ignore `npm WARN`s, `gyp WARN`s, `gyp ERR!`s and `node-pre-gyp ERR!`s unless the installation terminates normally. You can check if the installation is successful by `systemctl status gwd` command.
 
 ## Stop/Start/Status Service
 
@@ -47,7 +52,7 @@ $ npm run build
 
 Please remember to insert `run` between `npm` and `build`.
 
-## Run on localhost
+## Run on localhost for development use
 
 Try the following commands after `npm run build`:
 ### without auth
