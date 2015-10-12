@@ -23,6 +23,16 @@ describe('Peripherals', () => {
 
 describe('BleCastBl', () => {
   describe('#parse()', () => {
+    it('should have illuminance type and unit', done => {
+      peripherals.lookup('BLECAST_BL').then(p => {
+        let obj = p.parse(new Buffer([0x99, 0x99, 0x00, 0x00, 0x00, 0x00]));
+        assert.equal('lx', obj.type);
+        assert.equal('lx', obj.unit);
+        done();
+      }).catch(e => {
+        done(e); // for showing assertion errors
+      });
+    });
     it('should parse illuminance values', done => {
       peripherals.lookup('BLECAST_BL').then(p => {
         assert.equal(0, p.parse(new Buffer([0x99, 0x99, 0x00, 0x00, 0x00, 0x00])).val);
@@ -40,6 +50,16 @@ describe('BleCastBl', () => {
 
 describe('BleCastTm', () => {
   describe('#parse()', () => {
+    it('should have temperature type and unit', done => {
+      peripherals.lookup('BLECAST_TM').then(p => {
+        let obj = p.parse(new Buffer([0x99, 0x99, 0x00, 0x00, 0x00, 0x00]));
+        assert.equal('te', obj.type);
+        assert.equal('C', obj.unit);
+        done();
+      }).catch(e => {
+        done(e); // for showing assertion errors
+      });
+    });
     it('should parse temperature values', done => {
       peripherals.lookup('BLECAST_TM').then(p => {
         assert.equal(0, p.parse(new Buffer([0x99, 0x99, 0x00, 0x00, 0x00, 0x00])).val);

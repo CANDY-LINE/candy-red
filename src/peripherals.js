@@ -4,8 +4,8 @@ class BleCastBl {
   parse(manufacturerData) {
     let lx = 256 * manufacturerData[5] + manufacturerData[4];
     return {
-      type: 'temp',
-      unit: 'lux',
+      type: 'lx',
+      unit: 'lx',
       val: lx,
       ts: Date.now()
     };  
@@ -17,7 +17,7 @@ class BleCastTm {
     let tempC = manufacturerData[4] - ((manufacturerData[4] & 0x80) << 1);
     tempC += ((manufacturerData[5] & 0x80) >> 7) * 0.5;
     return {
-      type: 'temp',
+      type: 'te',
       unit: 'C',
       val: tempC,
       ts: Date.now()
