@@ -20,7 +20,7 @@ if [ ${RET} != 0 ]; then
   exit ${RET}
 fi
 
-SERVICES="/usr/lib/node_modules/edison-gw/services"
+SERVICES="/usr/lib/node_modules/candyred/services"
 SYSTEMD="${SERVICES}/systemd"
 
 cp -f ${SERVICES}/base_environment.txt ${SERVICES}/environment
@@ -28,13 +28,13 @@ sed -i -e "s/%WS_URL%/${WS_URL//\//\\/}/g" ${SERVICES}/environment
 sed -i -e "s/%WS_USER%/${WS_USER//\//\\/}/g" ${SERVICES}/environment
 sed -i -e "s/%WS_PASSWORD%/${WS_PASSWORD//\//\\/}/g" ${SERVICES}/environment
 
-cp -f ${SYSTEMD}/gwd.service /lib/systemd/system/
-systemctl enable gwd
-systemctl start gwd
-logger -s "gwd service has been installed."
+cp -f ${SYSTEMD}/candyred.service /lib/systemd/system/
+systemctl enable candyred
+systemctl start candyred
+logger -s "candyred service has been installed."
 
 if [ -z "${WS_URL}" ] || [ -z "${WS_USER}" ] || [ -z "${WS_PASSWORD}" ]; then
   logger -s "[WARNING] Please manually modify [${SERVICES}/environment] in order to populate valid WebSocket server address."
-  logger -s "[WARNING] Then run 'systemctl start gwd' again."
-  systemctl stop gwd
+  logger -s "[WARNING] Then run 'systemctl start candyred' again."
+  systemctl stop candyred
 fi

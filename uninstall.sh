@@ -9,14 +9,14 @@ if [ "$?" != 0 ]; then
   fi
 fi
 
-systemctl stop gwd
-systemctl disable gwd
-rm -f /lib/systemd/system/gwd.service
+systemctl stop candyred
+systemctl disable candyred
+rm -f /lib/systemd/system/candyred.service
 
-RET=`GWD_INSTALLER=running npm uninstall -g edison-gw`
+RET=`GWD_INSTALLER=running npm uninstall -g candyred`
 if [ "${RET}" != 0 ]; then
   logger -s "npm uninstall failed"
   exit ${RET}
 fi
 
-logger -s "gwd service has been uninstalled."
+logger -s "candyred service has been uninstalled."

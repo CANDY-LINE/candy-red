@@ -1,5 +1,7 @@
-edison-gw
+candyred
 ===
+
+Candyred is a gateway service working between local area wiress network devices and internet servers.
 
 ## Install on Edison
 
@@ -15,16 +17,16 @@ $ WS_URL=ws://your-websocket-address/and/path ./install.sh
 
 This will take a couple of minutes.
 
-You can ignore `npm WARN`s, `gyp WARN`s, `gyp ERR!`s and `node-pre-gyp ERR!`s unless the installation terminates normally. You can check if the installation is successful by `systemctl status gwd` command.
+You can ignore `npm WARN`s, `gyp WARN`s, `gyp ERR!`s and `node-pre-gyp ERR!`s unless the installation terminates normally. You can check if the installation is successful by `systemctl status candyred` command.
 
 ## Stop/Start/Status Service
 
-The edison-gw service name is `gwd`.
+The service name is `candyred`.
 
 ```
-$ systemctl stop gwd
-$ systemctl start gwd
-$ systemctl status gwd
+$ systemctl stop candyred
+$ systemctl start candyred
+$ systemctl status candyred
 ```
 
 ## Uninstall from Edison
