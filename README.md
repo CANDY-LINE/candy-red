@@ -3,7 +3,7 @@ edison-gw
 
 ## Install on Edison
 
-`npm install -g` is NOT available for installation/uninstalltion since `npm` runs scripts in package.json as a `nobody` user (https://github.com/npm/npm/issues/5596), which makes any provileged operations fail.
+`npm install -g` is NOT available for this package's systemd service installation (uninstalltion as well) since `npm` runs scripts in package.json as a `nobody` user (https://github.com/npm/npm/issues/5596), which makes any privileged operations fail.
 
 Instead, please run the `install.sh`.
 Make sure to add `WS_URL` environment variable in order to tell the installer your favorite WebSocket server URL.
@@ -29,11 +29,11 @@ $ systemctl status gwd
 
 ## Uninstall from Edison
 
-Please run the `preuninstall.sh` manually BEFORE `npm uninstall`.
+Run `uninstall.sh` for the same reason described above.
 
 ```
-$ /usr/lib/node_modules/edison-gw/services/ssytemd/preuninstall.sh
-$ npm uninstall -g edison-gw
+$ cd package/root # where package.json exists
+$ ./uninstall.sh
 ```
 
 ## Setup for Building
