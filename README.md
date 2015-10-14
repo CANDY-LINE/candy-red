@@ -3,7 +3,11 @@ candyred
 
 Candyred is a gateway service working between local area wiress network devices and internet servers.
 
-## Install on Edison
+In this version, Candyred acts like a transceiver, which receives BLE advertisement packets and transmits them over WebSocket session.
+
+You can add an advertisement packet parser for your own BLE module by editing `src/peripherals.js`. Note that `Local Name` AD Data Type is required in order for peripheral.js to identify a type of BLE data.
+
+## Install on Intel Edison
 
 `npm install -g` is NOT available for this package's systemd service installation (uninstalltion as well) since `npm` runs scripts in package.json as a `nobody` user (https://github.com/npm/npm/issues/5596), which makes any privileged operations fail.
 
@@ -29,7 +33,7 @@ $ systemctl start candyred
 $ systemctl status candyred
 ```
 
-## Uninstall from Edison
+## Uninstall from Intel Edison
 
 Run `uninstall.sh` for the same reason described above.
 
@@ -75,7 +79,7 @@ Data:{"type":"te","unit":"C","val":23.5,"ts":1444616815322,"rssi":-52,"deviceUui
 
 ### with basic auth
 ```
-$ WS_DEBUG=true WS_URL=ws://your-ws-host WS_USER=foo WS_PASSWORD=bas ./dist/index.js
+$ WS_DEBUG=true WS_URL=ws://your-ws-host WS_USER=foo WS_PASSWORD=bar ./dist/index.js
 ```
 
 ## Test
