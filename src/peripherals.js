@@ -35,8 +35,11 @@ const PERIPHERALS = {
 
 class Peripherals {
   lookup(rawid) {
-    let identifier = rawid.replace(/\0/g, ''); // in case of a NULL terminator is included
     return new Promise((resolve, reject) => {
+      if (!rawid) {
+        reject('Unknown peripheral: local name is empty');
+      }
+      let identifier = rawid.replace(/\0/g, ''); // in case of a NULL terminator is included
       let p = PERIPHERALS[identifier];
       if (!p) {
         reject(`Unknown peripheral: [${identifier}]`);

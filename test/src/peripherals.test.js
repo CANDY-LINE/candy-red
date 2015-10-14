@@ -33,6 +33,14 @@ describe('Peripherals', () => {
       }).catch(e => {
         done(e); // for showing assertion errors
       });
+      peripherals.lookup(undefined).then(() => {
+        assert.fail('Should not reach here!');
+      }).catch(e => {
+        assert.equal('Unknown peripheral: local name is empty', e);
+        done();
+      }).catch(e => {
+        done(e); // for showing assertion errors
+      });
     });
   });
 });
