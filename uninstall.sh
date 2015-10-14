@@ -13,9 +13,10 @@ systemctl stop candyred
 systemctl disable candyred
 rm -f /lib/systemd/system/candyred.service
 
-RET=`GWD_INSTALLER=running npm uninstall -g candyred`
+uninstall=`GWD_INSTALLER=running npm uninstall -g candyred`
+RET=$?
 if [ "${RET}" != 0 ]; then
-  logger -s "npm uninstall failed"
+  logger -s "npm uninstall failed: code [${RET}]"
   exit ${RET}
 fi
 

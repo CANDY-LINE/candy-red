@@ -14,9 +14,10 @@ if [ ! -f "./package.json" ]; then
   exit 2
 fi
 
-RET=`GWD_INSTALLER=running npm install -g . --production`
+install=`GWD_INSTALLER=running npm install -g . --production`
+RET=$?
 if [ ${RET} != 0 ]; then
-  logger -s "npm install failed"
+  logger -s "npm uninstall failed: code [${RET}]"
   exit ${RET}
 fi
 
