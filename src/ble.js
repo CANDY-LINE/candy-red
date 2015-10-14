@@ -33,11 +33,12 @@ export function start(bus) {
         data.deviceUuid = peripheral.uuid;
         return bus.send(data);
       }).catch(e => {
-        console.log('[ERROR]', e);
         if (e instanceof Error) {
+          console.log('[ERROR]', e);
           console.log(e.stack);
+        } else {
+          console.log(e, peripheral);
         }
-        console.log(peripheral);
       });
     });
   });
