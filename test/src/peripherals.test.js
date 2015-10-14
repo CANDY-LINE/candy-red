@@ -33,6 +33,8 @@ describe('Peripherals', () => {
       }).catch(e => {
         done(e); // for showing assertion errors
       });
+    });
+    it('should return a Promise object with reject state when undefined reference is passed to peripherals', done => {
       peripherals.lookup(undefined).then(() => {
         assert.fail('Should not reach here!');
       }).catch(e => {
