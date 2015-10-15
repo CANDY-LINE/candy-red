@@ -15,7 +15,7 @@
     "test": "mocha --recursive test",
     "setup": "GWD_INSTALLER=running npm install",
     "preinstall": "if [ -z ${GWD_INSTALLER} ]; then echo -e \"run install.sh instead of npm install\"; exit 1; fi",
-    "preuninstall": "if [ -z ${GWD_INSTALLER} ]; then echo -e \"run unnstall.sh instead of npm uninstall\";exit 1; fi"
+    "postuninstall": "if [ -z ${GWD_INSTALLER} ]; then echo -e \"Run the following commands after uninstall to compete the uninstallation;\n-----\nsystemctl stop candyred\nsystemctl disable candyred\nrm -f /lib/systemd/system/candyred.service\n-----\n\"; fi"
   },
   "repository": {
     "type": "git",
