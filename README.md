@@ -74,7 +74,7 @@ connecting to ws://echo.websocket.org
 ready
 WebSocket opened.
 Starting Scanning...
-Data:{"type":"te","unit":"C","val":23.5,"ts":1444616815322,"rssi":-52,"deviceUuid":"9999999990a93489c9678a35043759999"}
+Data:{"data":{"type":"lx","unit":"lx","val":11},"tstamp":1444892603243,"rssi":-34,"id":"20:73:7a:10:ad:bd"}
 ```
 
 ### with basic auth
