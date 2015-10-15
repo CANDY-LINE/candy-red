@@ -3,33 +3,49 @@
 import WebSocket from 'ws';
 import Promise from 'es6-promises';
 
+let options = {
+  url: '',
+  headers: {}
+};
 let ws = null;
+
+function prepareWebSocket(resolve=null, reject=null) {
+  ws = new WebSocket(options.url, {
+    headers: options.headers
+  });
+  ws.on('open', () => {
+    console.log('WebSocket opened.');
+    ws.on('error', e => {
+      console.log('WebSocket error.', e);
+      prepareWebSocket();
+      if (resolve) {
+        resolve(e);
+      }
+    });
+    ws.on('close', () => {
+      console.log('WebSocket closed.');
+      prepareWebSocket();
+      if (reject) {
+        reject('closed');
+      }
+    });
+    if (resolve) {
+      resolve();
+    }
+  });
+}
 
 export function start(url, user, password) {
   if (!url) {
     throw new Error('Missing URL!');
   }
+  options.url = url;
   return new Promise((resolve, reject) => {
-    let headers = {};
     if (user && password) {
       let auth = new Buffer(`${user}:${password}`).toString('base64');
-      headers.Authorization = `Basic ${auth}`;
+      options.headers.Authorization = `Basic ${auth}`;
     }
-    ws = new WebSocket(url, {
-      headers: headers
-    });
-    ws.on('open', () => {
-      console.log('WebSocket opened.');
-      resolve();
-    });
-    ws.on('error', e => {
-      console.log('WebSocket error.');
-      reject(e);
-    });
-    ws.on('close', () => {
-      console.log('WebSocket closed.');
-      reject('closed');
-    });
+    prepareWebSocket(resolve, reject);
     ws.on('message', data => {
       if (process.env.WS_DEBUG) {
         console.log('Data:', data);
