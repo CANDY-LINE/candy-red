@@ -34,7 +34,7 @@ systemctl enable candyred
 systemctl start candyred
 logger -s "candyred service has been installed."
 
-if [ -z "${WS_URL}" ] || [ -z "${WS_USER}" ] || [ -z "${WS_PASSWORD}" ]; then
+if [ -z "${WS_URL}" ]; then
   logger -s "[WARNING] Please manually modify [${SERVICES}/environment] in order to populate valid WebSocket server address."
   logger -s "[WARNING] Then run 'systemctl start candyred' again."
   systemctl stop candyred
