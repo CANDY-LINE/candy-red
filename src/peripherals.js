@@ -9,8 +9,7 @@ class BleCastBl {
     return {
       type: 'lx',
       unit: 'lx',
-      val: lx,
-      ts: Date.now()
+      val: lx
     };  
   }
 }
@@ -22,8 +21,7 @@ class BleCastTm {
     return {
       type: 'te',
       unit: 'C',
-      val: tempC,
-      ts: Date.now()
+      val: tempC
     };
   }
 }

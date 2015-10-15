@@ -25,20 +25,30 @@ export function start(bus) {
       resolve();
     }
   }).then(() => {
-    noble.on('discover', peripheral => {
-      let adv = peripheral.advertisement;
-      peripherals.lookup(adv.localName).then(p => {
-        let data = p.parse(adv.manufacturerData);
-        data.rssi = peripheral.rssi;
-        data.deviceUuid = peripheral.uuid;
-        return bus.send(data);
-      }).catch(e => {
-        if (e instanceof Error) {
-          console.log('[ERROR]', e);
-          console.log(e.stack);
-        } else {
-          console.log(e, peripheral);
-        }
+    return new Promise((resolve, reject) => {
+      resolve = undefined; // won't exit normally
+      noble.on('discover', peripheral => {
+        let adv = peripheral.advertisement;
+        peripherals.lookup(adv.localName).then(p => {
+          let data = p.parse(adv.manufacturerData);
+          let payload = {
+            data: data,
+            tstamp: Date.now(),
+            rssi: peripheral.rssi,
+            id: peripheral.address
+          };
+          if (payload.id === 'unknown') {
+            // OSX workaround
+            payload.id = peripheral.id;
+          }
+          return bus.send(payload);
+        }).catch(e => {
+          if (e instanceof Error) {
+            reject(e);
+          } else {
+            console.log(e, peripheral);
+          }
+        });
       });
     });
   });
