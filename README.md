@@ -1,6 +1,8 @@
 candyred
 ===
 
+[![master Build Status](https://travis-ci.org/dbaba/candyred.svg?branch=master)](https://travis-ci.org/dbaba/candyred/)
+
 Candyred is a gateway service working between local area wiress network devices and internet servers.
 
 In this version, Candyred acts like a transceiver, which receives BLE advertisement packets and transmits them over WebSocket session.
@@ -97,3 +99,8 @@ $ npm run test
 ```
 $ npm pack
 ```
+
+## Revison History
+
+* 1.0.0
+  - Initial Release
