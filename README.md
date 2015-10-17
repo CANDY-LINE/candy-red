@@ -97,3 +97,8 @@ $ npm run test
 ```
 $ npm pack
 ```
+
+## Revison History
+
+* 1.0.0
+  - Initial Release
