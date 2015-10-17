@@ -1,21 +1,26 @@
 {
-  "name": "edison-gw",
+  "name": "candyred",
   "version": "1.0.0",
-  "description": "Gateway app for Intel Edison",
+  "description": "Gateway Service",
   "main": "./dist/index.js",
   "scripts": {
     "build": "npm run lint_src",
     "transpile": "babel src -d dist",
+    "posttranspile": "chmod 755 dist/index.js",
     "prelint_src": "npm run transpile",
     "lint_src": "jshint -c .jshintrc src",
     "prelint_test": "npm run lint_src",
     "lint_test": "jshint -c .jshintrc test",
     "pretest": "npm run lint_test",
-    "test": "mocha --recursive test"
+    "test": "mocha --recursive test",
+    "setup": "GWD_INSTALLER=running npm install",
+    "clean": "rm -fr dist; rm -f *.tgz",
+    "preinstall": "if [ -z ${GWD_INSTALLER} ]; then echo -e \"run install.sh instead of npm install\"; exit 1; fi",
+    "postuninstall": "if [ -z ${GWD_INSTALLER} ]; then echo -e \"Run the following commands after uninstall to compete the uninstallation;\n-----\nsystemctl stop candyred\nsystemctl disable candyred\nrm -f /lib/systemd/system/candyred.service\n-----\n\"; fi"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://dbaba@github.com/dbaba/edison-gw.git"
+    "url": "git+https://dbaba@github.com/dbaba/candyred.git"
   },
   "keywords": [
     "edison",
@@ -28,9 +33,9 @@
   "author": "Daisuke Baba",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/dbaba/edison-gw/issues"
+    "url": "https://github.com/dbaba/candyred/issues"
   },
-  "homepage": "https://github.com/dbaba/edison-gw#readme",
+  "homepage": "https://github.com/dbaba/candyred#readme",
   "devDependencies": {
     "babel": "^5.8.23",
     "chai": "^3.3.0",
@@ -39,7 +44,7 @@
     "sinon": "^1.17.1"
   },
   "dependencies": {
-    "debug": "^2.2.0",
+    "es6-promises": "^1.0.10",
     "noble": "^1.1.0",
     "ws": "^0.8.0"
   }

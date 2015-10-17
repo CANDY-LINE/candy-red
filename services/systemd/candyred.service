@@ -1,0 +1,14 @@
+[Unit]
+Description=Intel Edison Gateway Service
+After=bluetooth.target
+Before=systemd-user-sessions.service
+
+[Service]
+Restart=always
+ExecStart=/usr/lib/node_modules/candyred/services/start.sh
+Environment="HOME=/usr/lib/node_modules/candyred/"
+WorkingDirectory=/usr/lib/node_modules/candyred/
+EnvironmentFile=/usr/lib/node_modules/candyred/services/environment
+
+[Install]
+WantedBy=multi-user.target
