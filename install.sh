@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+SERVICE_NAME="candyred"
+
 edison=`uname -r | grep "\-edison+"`
 if [ "$?" != 0 ]; then
   edison=`uname -r | grep "\-yocto-"`
@@ -21,7 +23,7 @@ if [ ${RET} != 0 ]; then
   exit ${RET}
 fi
 
-SERVICES="/usr/lib/node_modules/candyred/services"
+SERVICES="/usr/lib/node_modules/${SERVICE_NAME}/services"
 SYSTEMD="${SERVICES}/systemd"
 
 cp -f ${SERVICES}/base_environment.txt ${SERVICES}/environment
@@ -29,13 +31,13 @@ sed -i -e "s/%WS_URL%/${WS_URL//\//\\/}/g" ${SERVICES}/environment
 sed -i -e "s/%WS_USER%/${WS_USER//\//\\/}/g" ${SERVICES}/environment
 sed -i -e "s/%WS_PASSWORD%/${WS_PASSWORD//\//\\/}/g" ${SERVICES}/environment
 
-cp -f ${SYSTEMD}/candyred.service /lib/systemd/system/
-systemctl enable candyred
-systemctl start candyred
-logger -s "candyred service has been installed."
+cp -f ${SYSTEMD}/${SERVICE_NAME}.service /lib/systemd/system/
+systemctl enable ${SERVICE_NAME}
+systemctl start ${SERVICE_NAME}
+logger -s "${SERVICE_NAME} service has been installed."
 
 if [ -z "${WS_URL}" ]; then
   logger -s "[WARNING] Please manually modify [${SERVICES}/environment] in order to populate valid WebSocket server address."
-  logger -s "[WARNING] Then run 'systemctl start candyred' again."
-  systemctl stop candyred
+  logger -s "[WARNING] Then run 'systemctl start ${SERVICE_NAME}' again."
+  systemctl stop ${SERVICE_NAME}
 fi
