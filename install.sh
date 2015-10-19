@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 edison=`uname -r | grep "\-edison+"`
 if [ "$?" != 0 ]; then
