@@ -11,14 +11,9 @@ You can add an advertisement packet parser for your own BLE module by editing `s
 
 ## Install on Intel Edison
 
-`npm install -g` is NOT available for this package's systemd service installation (uninstalltion as well) since `npm` runs scripts in package.json as a `nobody` user (https://github.com/npm/npm/issues/5596), which makes any privileged operations fail.
-
-Instead, please run the `install.sh`.
-Make sure to add `WS_URL` environment variable in order to tell the installer your favorite WebSocket server URL.
-
 ```
-$ cd package/root # where package.json exists
-$ WS_URL=ws://your-websocket-address/and/path ./install.sh
+$ npm install -g dbaba/candyred
+$ WS_URL=ws://your-websocket-address/and/path $(npm root -g)/candyred/install.sh
 ```
 
 This will take a couple of minutes.
@@ -40,8 +35,15 @@ $ systemctl status candyred
 Run `uninstall.sh` for the same reason described above.
 
 ```
-$ cd package/root # where package.json exists
-$ ./uninstall.sh
+$ $(npm root -g)/candyred/uninstall.sh
+```
+
+If you run `npm uninstall candyred -g` prior to run the `uninstall.sh`, please run the following commands in order to reset systemd configurations.
+
+```
+$ systemctl stop candyred
+$ systemctl disable candyred
+$ rm -f "$(dirname $(dirname $(which systemctl)))/lib/systemd/system/candyred.service"
 ```
 
 ## Setup for Building
@@ -104,3 +106,5 @@ $ npm pack
 
 * 1.0.0
   - Initial Release
+* 1.1.0
+  - Modifies the installation process, running `npm install` then `install.sh`
