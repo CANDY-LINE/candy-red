@@ -108,3 +108,4 @@ $ npm pack
   - Initial Release
 * 1.1.0
   - Modifies the installation process, running `npm install` then `install.sh`
+  - Renames the module name
