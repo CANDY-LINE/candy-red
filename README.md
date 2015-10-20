@@ -12,7 +12,7 @@ You can add an advertisement packet parser for your own BLE module by editing `s
 ## Install on Intel Edison
 
 ```
-$ npm install -g dbaba/candy-red
+$ npm install -g --production dbaba/candy-red
 $ WS_URL=ws://your-websocket-address/and/path $(npm root -g)/candy-red/install.sh
 ```
 
@@ -51,7 +51,10 @@ $ rm -f "$(dirname $(dirname $(which systemctl)))/lib/systemd/system/candy-red.s
 In order to install dependencies for development use.
 
 ```
-$ npm run setup
+$ npm install -g babel
+$ npm install -g mocha
+$ npm install -g jshint
+$ npm install
 ```
 
 ## Build

@@ -33,6 +33,7 @@
     "url": "https://github.com/dbaba/candy-red/issues"
   },
   "homepage": "https://github.com/dbaba/candy-red#readme",
+  "preferGlobal": true,
   "devDependencies": {
     "babel": "^5.8.23",
     "chai": "^3.3.0",
