@@ -9,36 +9,52 @@ function assert_root {
   fi
 }
 
-function assert_edison_yocto {
-  edison=`uname -r | grep "\-edison+"`
-  if [ "$?" != 0 ]; then
-    edison=`uname -r | grep "\-yocto-"`
-    if [ "$?" != 0 ]; then
-      logger -s "Skipped to perform install.sh"
-      exit 1
-    fi
+function test_system_service_arg {
+  if [ "$1" == "" ]; then
+    _try_systemd
+    _try_sysvinit
+  else
+    SYSTEM_SERVICE_TYPE="$1"
   fi
+
+  if [ "${SYSTEM_SERVICE_TYPE}" == "" ]; then
+    logger -s "Please provide the type of working system service. Either systemd or sysvinit is available"
+    exit 1
+  fi
+  
+  _test_system_service_type
 }
 
-function test_system_service_arg {
-  # if [ "$1" == "" ]; then
-  #   logger -s "Please provide the type of working system service. Either systemd or initd is available"
-  #   exit 1
-  # fi
-  
-  # SYSTEM_SERVICE_TYPE="$1"
+function _try_systemd {
+  if [ "${SYSTEM_SERVICE_TYPE}" != "" ]; then
+    return
+  fi
+  RET=`which systemctl`
+  if [ "$?" != 0 ]; then
+    return
+  fi
   SYSTEM_SERVICE_TYPE="systemd"
-  # _test_system_service_type
+}
+
+function _try_sysvinit {
+  if [ "${SYSTEM_SERVICE_TYPE}" != "" ]; then
+    return
+  fi
+  RET=`which init`
+  if [ "$?" != 0 ]; then
+    return
+  fi
+  SYSTEM_SERVICE_TYPE="sysvinit"
 }
 
 function _test_system_service_type {
   case "${SYSTEM_SERVICE_TYPE}" in
     systemd)
       ;;
-    initd)
+    sysvinit)
       ;;
     *)
-    logger -s "${SYSTEM_SERVICE_TYPE} is unsupported. Either systemd or initd is available"
+    logger -s "${SYSTEM_SERVICE_TYPE} is unsupported. Either systemd or sysvinit is available"
     exit 1
   esac
 }
@@ -82,32 +98,24 @@ function system_service_install {
   cp -f ${SERVICES}/_start.sh ${START_SH}
   sed -i -e "s/%SERVICE_NAME%/${SERVICE_NAME//\//\\/}/g" ${START_SH}
   sed -i -e "s/%SERVICE_HOME%/${ROOT//\//\\/}/g" ${START_SH}
+
+  cp -f ${SERVICES}/base_environment.txt ${SERVICES}/environment
+  sed -i -e "s/%WS_URL%/${WS_URL//\//\\/}/g" ${SERVICES}/environment
+  sed -i -e "s/%WS_USER%/${WS_USER//\//\\/}/g" ${SERVICES}/environment
+  sed -i -e "s/%WS_PASSWORD%/${WS_PASSWORD//\//\\/}/g" ${SERVICES}/environment
+  sed -i -e "s/%HCIDEVICE%/${HCIDEVICE//\//\\/}/g" ${SERVICES}/environment
   
   _install_${SYSTEM_SERVICE_TYPE}
 }
 
-# function _install_initd {
-# }
-
 function _install_systemd {
-  RET=`which systemctl`
-  RET=$?
-  if [ "${RET}" != "0" ]; then
-    logger -s "systemd seems not to be installed"
-    exit 2
-  fi
-  
   LOCAL_SYSTEMD="${SERVICES}/systemd"
   LIB_SYSTEMD="$(dirname $(dirname $(which systemctl)))/lib/systemd"
 
   cp -f ${LOCAL_SYSTEMD}/${SERVICE_NAME}.service.txt ${LOCAL_SYSTEMD}/${SERVICE_NAME}.service
   sed -i -e "s/%SERVICE_HOME%/${ROOT//\//\\/}/g" ${LOCAL_SYSTEMD}/${SERVICE_NAME}.service
 
-  cp -f ${LOCAL_SYSTEMD}/base_environment.txt ${LOCAL_SYSTEMD}/environment
-  sed -i -e "s/%WS_URL%/${WS_URL//\//\\/}/g" ${LOCAL_SYSTEMD}/environment
-  sed -i -e "s/%WS_USER%/${WS_USER//\//\\/}/g" ${LOCAL_SYSTEMD}/environment
-  sed -i -e "s/%WS_PASSWORD%/${WS_PASSWORD//\//\\/}/g" ${LOCAL_SYSTEMD}/environment
-  sed -i -e "s/%HCIDEVICE%/${HCIDEVICE//\//\\/}/g" ${LOCAL_SYSTEMD}/environment
+  cp -f ${SERVICES}/environment ${LOCAL_SYSTEMD}/environment
 
   set -e
   cp -f ${LOCAL_SYSTEMD}/${SERVICE_NAME}.service "${LIB_SYSTEMD}/system/"
@@ -122,8 +130,39 @@ function _install_systemd {
   fi
 }
 
+function _install_sysvinit {
+  LOCAL_SYSVINIT="${SERVICES}/sysvinit"
+  INIT=/etc/init.d/${SERVICE_NAME}
+
+  cp -f ${LOCAL_SYSVINIT}/${SERVICE_NAME}.sh ${INIT}
+  sed -i -e "s/%SERVICE_HOME%/${ROOT//\//\\/}/g" ${INIT}
+
+  cp -f ${LOCAL_SYSVINIT}/_wrapper.sh ${LOCAL_SYSVINIT}/wrapper.sh
+  sed -i -e "s/%SERVICE_HOME%/${ROOT//\//\\/}/g" ${LOCAL_SYSVINIT}/wrapper.sh
+
+  cp -f ${SERVICES}/environment /etc/default/${SERVICE_NAME}
+
+  if which insserv >/dev/null 2>&1; then
+    insserv ${SERVICE_NAME}
+  else
+    update-rc.d ${SERVICE_NAME} defaults > /dev/null
+  fi
+
+  logger -s "${SERVICE_NAME} service has been installed."
+
+  if [ -z "${WS_URL}" ]; then
+    logger -s "[WARNING] Please manually modify [/etc/default/${SERVICE_NAME}] in order to populate valid WebSocket server address."
+    logger -s "[WARNING] Then run 'service ${SERVICE_NAME} start' again."
+  else
+    if which invoke-rc.d >/dev/null 2>&1; then
+      invoke-rc.d ${SERVICE_NAME} restart
+    else
+      ${INIT} restart
+    fi
+  fi
+}
+
 assert_root
-assert_edison_yocto
 test_system_service_arg
 cd_module_root
 npm_install

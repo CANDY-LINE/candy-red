@@ -9,17 +9,6 @@ function assert_root {
   fi
 }
 
-function assert_edison_yocto {
-  edison=`uname -r | grep "\-edison+"`
-  if [ "$?" != 0 ]; then
-    edison=`uname -r | grep "\-yocto-"`
-    if [ "$?" != 0 ]; then
-      logger -s "Skipped to perform install.sh"
-      exit 1
-    fi
-  fi
-}
-
 function cd_module_root {
   RET=`which realpath`
   RET=$?
@@ -40,6 +29,9 @@ function cd_module_root {
 function system_service_uninstall {
   _lookup_system_service_type
   _uninstall_${SYSTEM_SERVICE_TYPE}
+
+  npm uninstall .
+  logger -s "${SERVICE_NAME} service has been uninstalled."
 }
 
 function _lookup_system_service_type {
@@ -58,16 +50,13 @@ function _lookup_system_service_type {
   case "${SYSTEM_SERVICE_TYPE}" in
     systemd)
       ;;
-    initd)
+    sysvinit)
       ;;
     *)
-    logger -s "${SYSTEM_SERVICE_TYPE} is unsupported. Either systemd or initd is available"
+    logger -s "${SYSTEM_SERVICE_TYPE} is unsupported. Either systemd or sysvinit is available"
     exit 3
   esac
 }
-
-# function _uninstall_initd {
-# }
 
 function _uninstall_systemd {
   LIB_SYSTEMD="$(dirname $(dirname $(which systemctl)))/lib/systemd"
@@ -76,13 +65,24 @@ function _uninstall_systemd {
   systemctl stop ${SERVICE_NAME}
   systemctl disable ${SERVICE_NAME}
   rm -f "${LIB_SYSTEMD}/system/${SERVICE_NAME}.service"
-
-  npm uninstall .
-
-  logger -s "${SERVICE_NAME} service has been uninstalled."
 }
 
+function _uninstall_sysvinit {
+  INIT=/etc/init.d/${SERVICE_NAME}
+
+  if [ -x ${INIT} ]; then
+    if [ -x /usr/sbin/invoke-rc.d ]; then
+      invoke-rc.d ${SERVICE_NAME} stop
+    else
+      ${INIT} stop
+    fi
+  fi
+  rm -f /etc/default/${SERVICE_NAME}
+  rm -f ${INIT}
+  rm -f /var/run/${SERVICE_NAME}.pid
+}
+
+
 assert_root
-assert_edison_yocto
 cd_module_root
 system_service_uninstall
