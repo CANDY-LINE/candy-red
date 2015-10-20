@@ -1,41 +1,130 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
-edison=`uname -r | grep "\-edison+"`
-if [ "$?" != 0 ]; then
-  edison=`uname -r | grep "\-yocto-"`
-  if [ "$?" != 0 ]; then
-    logger -s "Skipped to perform postinstall.sh"
-    exit 1
+SERVICE_NAME="candyred"
+
+function assert_root {
+  if [[ $EUID -ne 0 ]]; then
+     echo "This script must be run as root" 
+     exit 1
   fi
-fi
+}
 
-if [ ! -f "./package.json" ]; then
-  logger -s "Please run this script on the package root directory where package.json exists."
-  exit 2
-fi
+function assert_edison_yocto {
+  edison=`uname -r | grep "\-edison+"`
+  if [ "$?" != 0 ]; then
+    edison=`uname -r | grep "\-yocto-"`
+    if [ "$?" != 0 ]; then
+      logger -s "Skipped to perform install.sh"
+      exit 1
+    fi
+  fi
+}
 
-install=`GWD_INSTALLER=running npm install -g . --production`
-RET=$?
-if [ ${RET} != 0 ]; then
-  logger -s "npm uninstall failed: code [${RET}]"
-  exit ${RET}
-fi
+function test_system_service_arg {
+  # if [ "$1" == "" ]; then
+  #   logger -s "Please provide the type of working system service. Either systemd or initd is available"
+  #   exit 1
+  # fi
+  
+  # SYSTEM_SERVICE_TYPE="$1"
+  SYSTEM_SERVICE_TYPE="systemd"
+  # _test_system_service_type
+}
 
-SERVICES="/usr/lib/node_modules/candyred/services"
-SYSTEMD="${SERVICES}/systemd"
+function _test_system_service_type {
+  case "${SYSTEM_SERVICE_TYPE}" in
+    systemd)
+      ;;
+    initd)
+      ;;
+    *)
+    logger -s "${SYSTEM_SERVICE_TYPE} is unsupported. Either systemd or initd is available"
+    exit 1
+  esac
+}
 
-cp -f ${SERVICES}/base_environment.txt ${SERVICES}/environment
-sed -i -e "s/%WS_URL%/${WS_URL//\//\\/}/g" ${SERVICES}/environment
-sed -i -e "s/%WS_USER%/${WS_USER//\//\\/}/g" ${SERVICES}/environment
-sed -i -e "s/%WS_PASSWORD%/${WS_PASSWORD//\//\\/}/g" ${SERVICES}/environment
+function cd_module_root {
+  RET=`which realpath`
+  RET=$?
+  if [ "${RET}" == "0" ]; then
+    REALPATH=`realpath "$0"`
+  else
+    REALPATH=`readlink -f -- "$0"`
+  fi
+  ROOT=`dirname ${REALPATH}`
+  pushd ${ROOT}
 
-cp -f ${SYSTEMD}/candyred.service /lib/systemd/system/
-systemctl enable candyred
-systemctl start candyred
-logger -s "candyred service has been installed."
+  if [ ! -f "./package.json" ]; then
+    logger -s "install.sh is placed on a wrong place. Make sure 'npm install' is successful."
+    exit 2
+  fi
+}
 
-if [ -z "${WS_URL}" ]; then
-  logger -s "[WARNING] Please manually modify [${SERVICES}/environment] in order to populate valid WebSocket server address."
-  logger -s "[WARNING] Then run 'systemctl start candyred' again."
-  systemctl stop candyred
-fi
+function npm_install {
+  RET=`npm ls`
+  RET=$?
+  if [ "${RET}" != "0" ]; then
+    logger -s "Installing ${SERVICE_NAME}..."
+    install=`npm install .`
+    RET=$?
+    if [ ${RET} != 0 ]; then
+      logger -s "npm install failed: code [${RET}]"
+      exit ${RET}
+    fi
+  fi
+}
+
+function system_service_install {
+  SERVICES="${ROOT}/services"
+  START_SH="${SERVICES}/start_${SYSTEM_SERVICE_TYPE}.sh"
+
+  rm -f ${SERVICES}/start_*
+  cp -f ${SERVICES}/_start.sh ${START_SH}
+  sed -i -e "s/%SERVICE_NAME%/${SERVICE_NAME//\//\\/}/g" ${START_SH}
+  sed -i -e "s/%SERVICE_HOME%/${ROOT//\//\\/}/g" ${START_SH}
+  
+  _install_${SYSTEM_SERVICE_TYPE}
+}
+
+# function _install_initd {
+# }
+
+function _install_systemd {
+  RET=`which systemctl`
+  RET=$?
+  if [ "${RET}" != "0" ]; then
+    logger -s "systemd seems not to be installed"
+    exit 2
+  fi
+  
+  LOCAL_SYSTEMD="${SERVICES}/systemd"
+  LIB_SYSTEMD="$(dirname $(dirname $(which systemctl)))/lib/systemd"
+
+  cp -f ${LOCAL_SYSTEMD}/${SERVICE_NAME}.service.txt ${LOCAL_SYSTEMD}/${SERVICE_NAME}.service
+  sed -i -e "s/%SERVICE_HOME%/${ROOT//\//\\/}/g" ${LOCAL_SYSTEMD}/${SERVICE_NAME}.service
+
+  cp -f ${LOCAL_SYSTEMD}/base_environment.txt ${LOCAL_SYSTEMD}/environment
+  sed -i -e "s/%WS_URL%/${WS_URL//\//\\/}/g" ${LOCAL_SYSTEMD}/environment
+  sed -i -e "s/%WS_USER%/${WS_USER//\//\\/}/g" ${LOCAL_SYSTEMD}/environment
+  sed -i -e "s/%WS_PASSWORD%/${WS_PASSWORD//\//\\/}/g" ${LOCAL_SYSTEMD}/environment
+  sed -i -e "s/%HCIDEVICE%/${HCIDEVICE//\//\\/}/g" ${LOCAL_SYSTEMD}/environment
+
+  set -e
+  cp -f ${LOCAL_SYSTEMD}/${SERVICE_NAME}.service "${LIB_SYSTEMD}/system/"
+  systemctl enable ${SERVICE_NAME}
+  systemctl start ${SERVICE_NAME}
+  logger -s "${SERVICE_NAME} service has been installed."
+
+  if [ -z "${WS_URL}" ]; then
+    logger -s "[WARNING] Please manually modify [${LOCAL_SYSTEMD}/environment] in order to populate valid WebSocket server address."
+    logger -s "[WARNING] Then run 'systemctl start ${SERVICE_NAME}' again."
+    systemctl stop ${SERVICE_NAME}
+  fi
+}
+
+assert_root
+assert_edison_yocto
+test_system_service_arg
+cd_module_root
+npm_install
+system_service_install

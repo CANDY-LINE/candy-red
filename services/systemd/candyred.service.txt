@@ -1,0 +1,14 @@
+[Unit]
+Description=Intel Edison Gateway Service
+After=bluetooth.target
+Before=systemd-user-sessions.service
+
+[Service]
+Restart=always
+ExecStart=%SERVICE_HOME%/services/start_systemd.sh
+Environment="HOME=%SERVICE_HOME%"
+WorkingDirectory=%SERVICE_HOME%
+EnvironmentFile=%SERVICE_HOME%/services/systemd/environment
+
+[Install]
+WantedBy=multi-user.target
