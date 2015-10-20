@@ -98,6 +98,12 @@ function system_service_install {
   cp -f ${SERVICES}/_start.sh ${START_SH}
   sed -i -e "s/%SERVICE_NAME%/${SERVICE_NAME//\//\\/}/g" ${START_SH}
   sed -i -e "s/%SERVICE_HOME%/${ROOT//\//\\/}/g" ${START_SH}
+
+  cp -f ${SERVICES}/base_environment.txt ${SERVICES}/environment
+  sed -i -e "s/%WS_URL%/${WS_URL//\//\\/}/g" ${SERVICES}/environment
+  sed -i -e "s/%WS_USER%/${WS_USER//\//\\/}/g" ${SERVICES}/environment
+  sed -i -e "s/%WS_PASSWORD%/${WS_PASSWORD//\//\\/}/g" ${SERVICES}/environment
+  sed -i -e "s/%HCIDEVICE%/${HCIDEVICE//\//\\/}/g" ${SERVICES}/environment
   
   _install_${SYSTEM_SERVICE_TYPE}
 }
@@ -109,11 +115,7 @@ function _install_systemd {
   cp -f ${LOCAL_SYSTEMD}/${SERVICE_NAME}.service.txt ${LOCAL_SYSTEMD}/${SERVICE_NAME}.service
   sed -i -e "s/%SERVICE_HOME%/${ROOT//\//\\/}/g" ${LOCAL_SYSTEMD}/${SERVICE_NAME}.service
 
-  cp -f ${LOCAL_SYSTEMD}/base_environment.txt ${LOCAL_SYSTEMD}/environment
-  sed -i -e "s/%WS_URL%/${WS_URL//\//\\/}/g" ${LOCAL_SYSTEMD}/environment
-  sed -i -e "s/%WS_USER%/${WS_USER//\//\\/}/g" ${LOCAL_SYSTEMD}/environment
-  sed -i -e "s/%WS_PASSWORD%/${WS_PASSWORD//\//\\/}/g" ${LOCAL_SYSTEMD}/environment
-  sed -i -e "s/%HCIDEVICE%/${HCIDEVICE//\//\\/}/g" ${LOCAL_SYSTEMD}/environment
+  cp -f ${SERVICES}/environment ${LOCAL_SYSTEMD}/environment
 
   set -e
   cp -f ${LOCAL_SYSTEMD}/${SERVICE_NAME}.service "${LIB_SYSTEMD}/system/"
