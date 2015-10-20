@@ -130,6 +130,38 @@ function _install_systemd {
   fi
 }
 
+function _install_sysvinit {
+  LOCAL_SYSVINIT="${SERVICES}/sysvinit"
+  INIT=/etc/init.d/${SERVICE_NAME}
+
+  cp -f ${LOCAL_SYSVINIT}/${SERVICE_NAME}.sh ${INIT}
+  sed -i -e "s/%SERVICE_HOME%/${ROOT//\//\\/}/g" ${INIT}
+
+  cp -f ${LOCAL_SYSVINIT}/_wrapper.sh ${LOCAL_SYSVINIT}/wrapper.sh
+  sed -i -e "s/%SERVICE_HOME%/${ROOT//\//\\/}/g" ${LOCAL_SYSVINIT}/wrapper.sh
+
+  cp -f ${SERVICES}/environment /etc/default/${SERVICE_NAME}
+
+  if which insserv >/dev/null 2>&1; then
+    insserv ${SERVICE_NAME}
+  else
+    update-rc.d ${SERVICE_NAME} defaults > /dev/null
+  fi
+
+  logger -s "${SERVICE_NAME} service has been installed."
+
+  if [ -z "${WS_URL}" ]; then
+    logger -s "[WARNING] Please manually modify [/etc/default/${SERVICE_NAME}] in order to populate valid WebSocket server address."
+    logger -s "[WARNING] Then run 'service ${SERVICE_NAME} start' again."
+  else
+    if which invoke-rc.d >/dev/null 2>&1; then
+      invoke-rc.d ${SERVICE_NAME} restart
+    else
+      ${INIT} restart
+    fi
+  fi
+}
+
 assert_root
 test_system_service_arg
 cd_module_root
