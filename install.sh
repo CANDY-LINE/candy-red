@@ -44,6 +44,11 @@ if [ "${RET}" != "0" ]; then
 fi
 
 SERVICES="${ROOT}/services"
+
+cp -f ${SERVICES}/_start.sh ${SERVICES}/start.sh
+sed -i -e "s/%SERVICE_NAME%/${SERVICE_NAME//\//\\/}/g" ${SERVICES}/start.sh
+sed -i -e "s/%SERVICE_HOME%/${ROOT//\//\\/}/g" ${SERVICES}/start.sh
+
 LOCAL_SYSTEMD="${SERVICES}/systemd"
 LIB_SYSTEMD="$(dirname $(dirname $(which systemctl)))/lib/systemd"
 
