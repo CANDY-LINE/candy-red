@@ -5,10 +5,10 @@ Before=systemd-user-sessions.service
 
 [Service]
 Restart=always
-ExecStart=%SERVICE_HOME%/services/start.sh
+ExecStart=%SERVICE_HOME%/services/systemd/start.sh
 Environment="HOME=%SERVICE_HOME%"
 WorkingDirectory=%SERVICE_HOME%
-EnvironmentFile=%SERVICE_HOME%/services/environment
+EnvironmentFile=%SERVICE_HOME%/services/systemd/environment
 
 [Install]
 WantedBy=multi-user.target
