@@ -1,33 +1,33 @@
-candyred
+Candy-RED
 ===
 
-[![master Build Status](https://travis-ci.org/dbaba/candyred.svg?branch=master)](https://travis-ci.org/dbaba/candyred/)
+[![master Build Status](https://travis-ci.org/dbaba/candy-red.svg?branch=master)](https://travis-ci.org/dbaba/candy-red/)
 
-Candyred is a gateway service working between local area wiress network devices and internet servers.
+Candy-RED is a gateway service working between local area wiress network devices and internet servers.
 
-In this version, Candyred acts like a transceiver, which receives BLE advertisement packets and transmits them over WebSocket session.
+In this version, Candy-RED acts like a transceiver, which receives BLE advertisement packets and transmits them over WebSocket session.
 
 You can add an advertisement packet parser for your own BLE module by editing `src/peripherals.js`. Note that `Local Name` AD Data Type is required in order for peripheral.js to identify a type of BLE data.
 
 ## Install on Intel Edison
 
 ```
-$ npm install -g dbaba/candyred
-$ WS_URL=ws://your-websocket-address/and/path $(npm root -g)/candyred/install.sh
+$ npm install -g dbaba/candy-red
+$ WS_URL=ws://your-websocket-address/and/path $(npm root -g)/candy-red/install.sh
 ```
 
 This will take a couple of minutes.
 
-You can ignore `npm WARN`s, `gyp WARN`s, `gyp ERR!`s and `node-pre-gyp ERR!`s unless the installation terminates normally. You can check if the installation is successful by `systemctl status candyred` command.
+You can ignore `npm WARN`s, `gyp WARN`s, `gyp ERR!`s and `node-pre-gyp ERR!`s unless the installation terminates normally. You can check if the installation is successful by `systemctl status candy-red` command.
 
 ## Stop/Start/Status Service
 
-The service name is `candyred`.
+The service name is `candy-red`.
 
 ```
-$ systemctl stop candyred
-$ systemctl start candyred
-$ systemctl status candyred
+$ systemctl stop candy-red
+$ systemctl start candy-red
+$ systemctl status candy-red
 ```
 
 ## Uninstall from Intel Edison
@@ -35,15 +35,15 @@ $ systemctl status candyred
 Run `uninstall.sh` for the same reason described above.
 
 ```
-$ $(npm root -g)/candyred/uninstall.sh
+$ $(npm root -g)/candy-red/uninstall.sh
 ```
 
-If you run `npm uninstall candyred -g` prior to run the `uninstall.sh`, please run the following commands in order to reset systemd configurations.
+If you run `npm uninstall candy-red -g` prior to run the `uninstall.sh`, please run the following commands in order to reset systemd configurations.
 
 ```
-$ systemctl stop candyred
-$ systemctl disable candyred
-$ rm -f "$(dirname $(dirname $(which systemctl)))/lib/systemd/system/candyred.service"
+$ systemctl stop candy-red
+$ systemctl disable candy-red
+$ rm -f "$(dirname $(dirname $(which systemctl)))/lib/systemd/system/candy-red.service"
 ```
 
 ## Setup for Building
