@@ -9,26 +9,42 @@ function assert_root {
   fi
 }
 
-function assert_edison_yocto {
-  edison=`uname -r | grep "\-edison+"`
-  if [ "$?" != 0 ]; then
-    edison=`uname -r | grep "\-yocto-"`
-    if [ "$?" != 0 ]; then
-      logger -s "Skipped to perform install.sh"
-      exit 1
-    fi
+function test_system_service_arg {
+  if [ "$1" == "" ]; then
+    _try_systemd
+    _try_sysvinit
+  else
+    SYSTEM_SERVICE_TYPE="$1"
   fi
+
+  if [ "${SYSTEM_SERVICE_TYPE}" == "" ]; then
+    logger -s "Please provide the type of working system service. Either systemd or sysvinit is available"
+    exit 1
+  fi
+  
+  _test_system_service_type
 }
 
-function test_system_service_arg {
-  # if [ "$1" == "" ]; then
-  #   logger -s "Please provide the type of working system service. Either systemd or initd is available"
-  #   exit 1
-  # fi
-  
-  # SYSTEM_SERVICE_TYPE="$1"
+function _try_systemd {
+  if [ "${SYSTEM_SERVICE_TYPE}" != "" ]; then
+    return
+  fi
+  RET=`which systemctl`
+  if [ "$?" != 0 ]; then
+    return
+  fi
   SYSTEM_SERVICE_TYPE="systemd"
-  # _test_system_service_type
+}
+
+function _try_sysvinit {
+  if [ "${SYSTEM_SERVICE_TYPE}" != "" ]; then
+    return
+  fi
+  RET=`which init`
+  if [ "$?" != 0 ]; then
+    return
+  fi
+  SYSTEM_SERVICE_TYPE="sysvinit"
 }
 
 function _test_system_service_type {
@@ -87,13 +103,6 @@ function system_service_install {
 }
 
 function _install_systemd {
-  RET=`which systemctl`
-  RET=$?
-  if [ "${RET}" != "0" ]; then
-    logger -s "systemd seems not to be installed"
-    exit 2
-  fi
-  
   LOCAL_SYSTEMD="${SERVICES}/systemd"
   LIB_SYSTEMD="$(dirname $(dirname $(which systemctl)))/lib/systemd"
 
@@ -120,7 +129,6 @@ function _install_systemd {
 }
 
 assert_root
-assert_edison_yocto
 test_system_service_arg
 cd_module_root
 npm_install

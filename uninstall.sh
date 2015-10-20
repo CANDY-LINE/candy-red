@@ -9,17 +9,6 @@ function assert_root {
   fi
 }
 
-function assert_edison_yocto {
-  edison=`uname -r | grep "\-edison+"`
-  if [ "$?" != 0 ]; then
-    edison=`uname -r | grep "\-yocto-"`
-    if [ "$?" != 0 ]; then
-      logger -s "Skipped to perform install.sh"
-      exit 1
-    fi
-  fi
-}
-
 function cd_module_root {
   RET=`which realpath`
   RET=$?
@@ -83,6 +72,5 @@ function _uninstall_systemd {
 }
 
 assert_root
-assert_edison_yocto
 cd_module_root
 system_service_uninstall
