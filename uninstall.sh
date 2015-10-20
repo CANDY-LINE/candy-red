@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-SERVICE_NAME="candyred"
+SERVICE_NAME="candy-red"
 
 function assert_root {
   if [[ $EUID -ne 0 ]]; then

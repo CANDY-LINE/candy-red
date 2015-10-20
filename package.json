@@ -1,5 +1,5 @@
 {
-  "name": "candyred",
+  "name": "candy-red",
   "version": "1.1.0",
   "description": "Gateway Service",
   "main": "./dist/index.js",
@@ -17,7 +17,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://dbaba@github.com/dbaba/candyred.git"
+    "url": "git+https://dbaba@github.com/dbaba/candy-red.git"
   },
   "keywords": [
     "edison",
@@ -30,9 +30,9 @@
   "author": "Daisuke Baba",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/dbaba/candyred/issues"
+    "url": "https://github.com/dbaba/candy-red/issues"
   },
-  "homepage": "https://github.com/dbaba/candyred#readme",
+  "homepage": "https://github.com/dbaba/candy-red#readme",
   "devDependencies": {
     "babel": "^5.8.23",
     "chai": "^3.3.0",

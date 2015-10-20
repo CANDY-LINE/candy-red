@@ -1,5 +1,5 @@
 [Unit]
-Description=Intel Edison Gateway Service
+Description=Gateway Service
 After=bluetooth.target
 Before=systemd-user-sessions.service
 
