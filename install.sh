@@ -42,6 +42,9 @@ SERVICES="${ROOT}/services"
 LOCAL_SYSTEMD="${SERVICES}/systemd"
 LIB_SYSTEMD="$(dirname $(dirname $(which systemctl)))/lib/systemd"
 
+cp -f ${LOCAL_SYSTEMD}/${SERVICE_NAME}.service.txt ${LOCAL_SYSTEMD}/${SERVICE_NAME}.service
+sed -i -e "s/%SERVICE_HOME%/${ROOT//\//\\/}/g" ${LOCAL_SYSTEMD}/${SERVICE_NAME}.service
+
 cp -f ${SERVICES}/base_environment.txt ${SERVICES}/environment
 sed -i -e "s/%WS_URL%/${WS_URL//\//\\/}/g" ${SERVICES}/environment
 sed -i -e "s/%WS_USER%/${WS_USER//\//\\/}/g" ${SERVICES}/environment
