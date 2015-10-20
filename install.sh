@@ -35,10 +35,10 @@ function _test_system_service_type {
   case "${SYSTEM_SERVICE_TYPE}" in
     systemd)
       ;;
-    initd)
+    sysvinit)
       ;;
     *)
-    logger -s "${SYSTEM_SERVICE_TYPE} is unsupported. Either systemd or initd is available"
+    logger -s "${SYSTEM_SERVICE_TYPE} is unsupported. Either systemd or sysvinit is available"
     exit 1
   esac
 }
@@ -85,9 +85,6 @@ function system_service_install {
   
   _install_${SYSTEM_SERVICE_TYPE}
 }
-
-# function _install_initd {
-# }
 
 function _install_systemd {
   RET=`which systemctl`

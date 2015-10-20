@@ -58,15 +58,15 @@ function _lookup_system_service_type {
   case "${SYSTEM_SERVICE_TYPE}" in
     systemd)
       ;;
-    initd)
+    sysvinit)
       ;;
     *)
-    logger -s "${SYSTEM_SERVICE_TYPE} is unsupported. Either systemd or initd is available"
+    logger -s "${SYSTEM_SERVICE_TYPE} is unsupported. Either systemd or sysvinit is available"
     exit 3
   esac
 }
 
-# function _uninstall_initd {
+# function _uninstall_sysvinit {
 # }
 
 function _uninstall_systemd {
