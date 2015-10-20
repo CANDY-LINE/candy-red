@@ -59,6 +59,7 @@ cp -f ${LOCAL_SYSTEMD}/base_environment.txt ${LOCAL_SYSTEMD}/environment
 sed -i -e "s/%WS_URL%/${WS_URL//\//\\/}/g" ${LOCAL_SYSTEMD}/environment
 sed -i -e "s/%WS_USER%/${WS_USER//\//\\/}/g" ${LOCAL_SYSTEMD}/environment
 sed -i -e "s/%WS_PASSWORD%/${WS_PASSWORD//\//\\/}/g" ${LOCAL_SYSTEMD}/environment
+sed -i -e "s/%HCIDEVICE%/${HCIDEVICE//\//\\/}/g" ${LOCAL_SYSTEMD}/environment
 
 set -e
 cp -f ${LOCAL_SYSTEMD}/${SERVICE_NAME}.service "${LIB_SYSTEMD}/system/"
