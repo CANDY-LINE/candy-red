@@ -107,8 +107,10 @@ $ npm pack
 
 ## Revison History
 
-* 1.0.0
-  - Initial Release
 * 1.1.0
   - Modifies the installation process, running `npm install` then `install.sh`
   - Renames the module name
+  - Raspberry Pi (Raspbian) Support
+
+* 1.0.0
+  - Initial Release
