@@ -11,15 +11,28 @@ if [ "$?" != 0 ]; then
   fi
 fi
 
+RET=`which realpath`
+RET=$?
+if [ "${RET}" == "0" ]; then
+  REALPATH=`realpath "$0"`
+else
+  REALPATH=`readlink -f -- "$0"`
+fi
+ROOT=`dirname ${REALPATH}`
+pushd ${ROOT}
+
+if [ ! -f "./package.json" ]; then
+  logger -s "uninstall.sh is placed on a wrong place. Make sure 'npm install' is successful."
+  exit 2
+fi
+
+LIB_SYSTEMD="$(dirname $(dirname $(which systemctl)))/lib/systemd"
+
+set -e
 systemctl stop ${SERVICE_NAME}
 systemctl disable ${SERVICE_NAME}
-rm -f /lib/systemd/system/${SERVICE_NAME}.service
+rm -f "${LIB_SYSTEMD}/system/${SERVICE_NAME}.service"
 
-uninstall=`GWD_INSTALLER=running npm uninstall -g ${SERVICE_NAME}`
-RET=$?
-if [ "${RET}" != 0 ]; then
-  logger -s "npm uninstall failed: code [${RET}]"
-  exit ${RET}
-fi
+npm uninstall .
 
 logger -s "${SERVICE_NAME} service has been uninstalled."

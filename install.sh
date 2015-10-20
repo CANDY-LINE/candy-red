@@ -11,27 +11,44 @@ if [ "$?" != 0 ]; then
   fi
 fi
 
+RET=`which realpath`
+RET=$?
+if [ "${RET}" == "0" ]; then
+  REALPATH=`realpath "$0"`
+else
+  REALPATH=`readlink -f -- "$0"`
+fi
+ROOT=`dirname ${REALPATH}`
+pushd ${ROOT}
+
 if [ ! -f "./package.json" ]; then
-  logger -s "Please run this script on the package root directory where package.json exists."
+  logger -s "install.sh is placed on a wrong place. Make sure 'npm install' is successful."
   exit 2
 fi
 
-install=`GWD_INSTALLER=running npm install -g . --production`
+RET=`npm ls`
 RET=$?
-if [ ${RET} != 0 ]; then
-  logger -s "npm uninstall failed: code [${RET}]"
-  exit ${RET}
+if [ "${RET}" != "0" ]; then
+  logger -s "Installing ${SERVICE_NAME}..."
+  install=`npm install .`
+  RET=$?
+  if [ ${RET} != 0 ]; then
+    logger -s "npm install failed: code [${RET}]"
+    exit ${RET}
+  fi
 fi
 
-SERVICES="/usr/lib/node_modules/${SERVICE_NAME}/services"
-SYSTEMD="${SERVICES}/systemd"
+SERVICES="${ROOT}/services"
+LOCAL_SYSTEMD="${SERVICES}/systemd"
+LIB_SYSTEMD="$(dirname $(dirname $(which systemctl)))/lib/systemd"
 
 cp -f ${SERVICES}/base_environment.txt ${SERVICES}/environment
 sed -i -e "s/%WS_URL%/${WS_URL//\//\\/}/g" ${SERVICES}/environment
 sed -i -e "s/%WS_USER%/${WS_USER//\//\\/}/g" ${SERVICES}/environment
 sed -i -e "s/%WS_PASSWORD%/${WS_PASSWORD//\//\\/}/g" ${SERVICES}/environment
 
-cp -f ${SYSTEMD}/${SERVICE_NAME}.service /lib/systemd/system/
+set -e
+cp -f ${LOCAL_SYSTEMD}/${SERVICE_NAME}.service "${LIB_SYSTEMD}/system/"
 systemctl enable ${SERVICE_NAME}
 systemctl start ${SERVICE_NAME}
 logger -s "${SERVICE_NAME} service has been installed."
