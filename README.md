@@ -160,6 +160,8 @@ $ npm install -g babel mocha jshint
 Then install the local dependencies.
 
 ```
+$ git clone https://github.com/dbaba/candy-red.git
+$ cd candy-red
 $ npm install
 ```
 
