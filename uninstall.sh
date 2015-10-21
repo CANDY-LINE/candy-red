@@ -30,7 +30,8 @@ function system_service_uninstall {
   _lookup_system_service_type
   _uninstall_${SYSTEM_SERVICE_TYPE}
 
-  npm uninstall .
+  pushd ${ROOT}/../..
+  npm uninstall ${SERVICE_NAME}
   logger -s "${SERVICE_NAME} service has been uninstalled."
 }
 
@@ -81,7 +82,6 @@ function _uninstall_sysvinit {
   rm -f ${INIT}
   rm -f /var/run/${SERVICE_NAME}.pid
 }
-
 
 assert_root
 cd_module_root
