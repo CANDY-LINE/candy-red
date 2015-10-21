@@ -1,6 +1,23 @@
 language: node_js
-node_js:
-  - "0.12"
-install: "npm run setup"
+
+matrix:
+  exclude:
+    - node_js: "0.12"
+      env:
+        - "CC="
+        - "CXX="
+    - node_js: "4.2"
+      env:
+        - "CC=/usr/bin/gcc-4.8"
+        - "CXX=/usr/bin/g++-4.8"
+
+sudo: require
+
+before_install:
+  - sudo rm /etc/apt/sources.list.d/*.list
+  - sudo apt-get update -qq
+  - sudo apt-get install -qq build-essential libudev-dev libdbus-1-dev libdbus-glib-1-dev libglib2.0-dev libical-dev libreadline-dev g++-4.8
+
 script:
+  - "npm run build"
   - "npm run test"
