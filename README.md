@@ -1,13 +1,11 @@
-Candy-RED
+CANDY-Red
 ===
 
 [![master Build Status](https://travis-ci.org/dbaba/candy-red.svg?branch=master)](https://travis-ci.org/dbaba/candy-red/)
 
-Candy-RED is a gateway service working between local area wiress network devices and internet servers.
+CANDY-Red is a gateway service working between local area wiress network devices and internet servers.
 
-In this version, Candy-RED acts like a transceiver, which receives BLE advertisement packets and transmits them over WebSocket session.
-
-You can add an advertisement packet parser for your own BLE module by editing `src/peripherals.js`. Note that `Local Name` AD Data Type is required in order for peripheral.js to identify a type of BLE data.
+In this version, CANDY-Red acts like a transceiver, which receives BLE advertisement packets and transmits them over WebSocket session.
 
 # Intel Edison + Yocto
 
