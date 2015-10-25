@@ -4,6 +4,7 @@
 import * as bus from './bus';
 import * as ble from './ble';
 import * as serial from './serial';
+import * as enocean from './enocean';
 
 let url;
 let user;
@@ -37,6 +38,8 @@ bus.start(url, user, password).then(() => {
   return ble.start(bus);
 }).then(() => {
   return serial.start(bus);
+}).then(() => {
+  return enocean.start(bus);
 }).catch(e => {
   console.error('[ERROR]:', e);
   if (e instanceof Error) {
