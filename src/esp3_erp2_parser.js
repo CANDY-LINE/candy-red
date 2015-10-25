@@ -81,8 +81,11 @@ class Utils {
 export class ERP2Parser {
   
   parse(payload) {
-    let len, dataPl, p;
-    if (typeof(payload) === 'string') {
+    let len, dataPl, p, c;
+    if (typeof(payload) === 'object' && payload.payload && payload.payload instanceof Array) {
+      dataPl = payload.payload;
+      c = payload;
+    } else if (typeof(payload) === 'string') {
       dataPl = new Uint8Array(new Buffer(payload, 'hex'));
     } else if (payload instanceof Array) {
       dataPl = payload;
@@ -94,14 +97,14 @@ export class ERP2Parser {
     len = dataPl.length;
     
     if (len <= 6) {
-      p = this._doParseShort(len, dataPl);
+      p = this._doParseShort(len, dataPl, c);
     } else {
-      p = this._doParseLong(len, dataPl);
+      p = this._doParseLong(len, dataPl, c);
     }
     return p;
   }
   
-  _doParseShort(len, dataPl) {
+  _doParseShort(len, dataPl, c) {
     return new Promise((resolve, reject) => {
       try {
         let i, ctx = { len: len, payload: dataPl, originatorId: '' }, idLen = len - 1, dlLen = 1;
@@ -118,6 +121,9 @@ export class ERP2Parser {
         for (i = 0; i < dlLen; i++) {
           ctx.dataDl += Utils.pad(dataPl[i + idLen].toString(16), 2);
         }
+        if (c) {
+          ctx.container = c;
+        }
         resolve(ctx);
       } catch (e) {
         reject(e);
@@ -125,7 +131,7 @@ export class ERP2Parser {
     });
   }
   
-  _doParseLong(len, dataPl) {
+  _doParseLong(len, dataPl, c) {
     return new Promise((resolve, reject) => {
       try {
         // Bit 5...7 Address Control
@@ -166,6 +172,10 @@ export class ERP2Parser {
         }
         if (crc8 !== dataPl[dataPl.length - 1]) {
           throw new Error('CRC8 checksum failure');
+        }
+
+        if (c) {
+          ctx.container = c;
         }
 
         resolve(ctx);

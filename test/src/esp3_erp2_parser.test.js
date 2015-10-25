@@ -37,6 +37,22 @@ describe('ERP2Parser', () => {
           assert.equal('RPS', ctx.telegramType);
           assert.equal(0xf6, ctx.rorg);
           assert.equal('00', new Buffer(ctx.dataDl).toString('hex'));
+          assert.isUndefined(ctx.container);
+          done();
+      }).catch(e => {
+        done(e); // for showing assertion errors
+      });
+    });
+    it('should return a valid context from a parsing result object passed from ESP3RadioERP2Parser class', done => {
+      new ESP3RadioERP2Parser().parse('550007020a0a20002bcaa900d001328b').then(ctx => {
+        return parser.parse(ctx);
+      }).then(ctx => {
+          assert.equal('002bcaa9', ctx.originatorId);
+          assert.equal('', ctx.destinationId);
+          assert.equal('RPS', ctx.telegramType);
+          assert.equal(0xf6, ctx.rorg);
+          assert.equal('00', new Buffer(ctx.dataDl).toString('hex'));
+          assert.equal(0x32, ctx.container.dBm);
           done();
       }).catch(e => {
         done(e); // for showing assertion errors
