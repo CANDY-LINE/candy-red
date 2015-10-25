@@ -26,7 +26,6 @@ export function start(bus) {
     }
   }).then(() => {
     return new Promise((resolve, reject) => {
-      resolve = undefined; // won't exit normally
       noble.on('discover', peripheral => {
         let adv = peripheral.advertisement;
         peripherals.lookup(adv.localName).then(p => {
@@ -50,6 +49,7 @@ export function start(bus) {
           }
         });
       });
+      resolve();
     });
   });
 }
