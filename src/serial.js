@@ -18,7 +18,8 @@ export function start(bus, parser=new Dump()) {
   let port = process.env.SERIAL_PORT;
   let baudrate = process.env.SERIAL_BAUDRATE || 57600;
   if (!port) {
-    throw new Error('Seril port is required! Set SERIAL_PORT environment variable.');
+    console.log('Serial port is inactivated...');
+    return new Promise(resolve => { resolve(); });
   }
   serialPort = new SerialPort(port, {
     baudrate: baudrate

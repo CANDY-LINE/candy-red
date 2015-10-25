@@ -6,7 +6,7 @@
 # Required-Stop:
 # Default-Start:     3 4 5
 # Default-Stop:      0 6
-# Short-Description: Candy-RED Gateway Service
+# Short-Description: CANDY-Red Gateway Service
 # Description:
 ### END INIT INFO
 

@@ -28,7 +28,8 @@
     "BLE",
     "bluetooth low energy",
     "bluetooth smart",
-    "central"
+    "central",
+    "enocean"
   ],
   "author": "Daisuke Baba",
   "license": "MIT",
@@ -47,6 +48,7 @@
   "dependencies": {
     "es6-promises": "^1.0.10",
     "noble": "^1.1.0",
+    "node-enocean": "^1.0.1",
     "serialport": "^2.0.2",
     "ws": "^0.8.0"
   }

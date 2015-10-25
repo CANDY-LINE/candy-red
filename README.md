@@ -1,13 +1,11 @@
-Candy-RED
+CANDY-Red
 ===
 
 [![master Build Status](https://travis-ci.org/dbaba/candy-red.svg?branch=master)](https://travis-ci.org/dbaba/candy-red/)
 
-Candy-RED is a gateway service working between local area wiress network devices and internet servers.
+CANDY-Red is a gateway service working between local area wiress network devices and internet servers.
 
-In this version, Candy-RED acts like a transceiver, which receives BLE advertisement packets and transmits them over WebSocket session.
-
-You can add an advertisement packet parser for your own BLE module by editing `src/peripherals.js`. Note that `Local Name` AD Data Type is required in order for peripheral.js to identify a type of BLE data.
+In this version, CANDY-Red acts like a transceiver, which receives BLE advertisement packets and transmits them over WebSocket session.
 
 # Intel Edison + Yocto
 
@@ -112,14 +110,32 @@ $ sudo make install
 
 ## Install
 
+The module installation will take a couple of minutes.
+
+You can ignore `npm WARN`s, `gyp WARN`s, `gyp ERR!`s and `node-pre-gyp ERR!`s unless the installation terminates normally. You can check if the installation is successful by `sudo service candy-red status` command.
+
+Please refer to the following commands to isntall.
+
+### With BLE only
 ```
 $ sudo CC=/usr/bin/gcc-4.8 CXX=/usr/bin/g++-4.8 npm install -g --production dbaba/candy-red
 $ sudo WS_URL=ws://your-websocket-address/and/path $(npm root -g)/candy-red/install.sh
 ```
 
-This will take a couple of minutes.
+### With BLE and EnOcean
+```
+$ sudo CC=/usr/bin/gcc-4.8 CXX=/usr/bin/g++-4.8 npm install -g --production dbaba/candy-red
+$ sudo WS_URL=ws://your-websocket-address/and/path \
+    ENOCEAN_PORT=/dev/your/enocean/port $(npm root -g)/candy-red/install.sh
+```
 
-You can ignore `npm WARN`s, `gyp WARN`s, `gyp ERR!`s and `node-pre-gyp ERR!`s unless the installation terminates normally. You can check if the installation is successful by `sudo service candy-red status` command.
+### With BLE and EnOcean and Serial port
+```
+$ sudo CC=/usr/bin/gcc-4.8 CXX=/usr/bin/g++-4.8 npm install -g --production dbaba/candy-red
+$ sudo WS_URL=ws://your-websocket-address/and/path \
+    ENOCEAN_PORT=/dev/your/enocean/port \
+    SERIAL_PORT=/dev/your/serial/port $(npm root -g)/candy-red/install.sh
+```
 
 ## Stop/Start/Status Service
 
@@ -144,6 +160,30 @@ $ sudo service candy-red stop
 $ sudo rm -f "/etc/default/candy-red"
 $ sudo rm -f "/etc/init.d/candy-red"
 ```
+
+# Wireless Protocol Support
+
+## BLE
+
+You can add an advertisement packet parser for your own BLE module by editing `src/peripherals.js`. Note that `Local Name` AD Data Type is required in order for peripheral.js to identify a type of BLE data.
+
+[`noble`](https://www.npmjs.com/package/noble) is used for BLE support.
+
+## EnOcean
+
+In order to activate EnOcean support, set an environment variable `ENOCEAN_PORT` which points to a serial port for EnOcean communication, e.g. `ENOCEAN_PORT=/dev/tty.usbserial-ABCDE`.
+
+EnOcean support is inactivated unless ENOCEAN_PORT is set.
+
+[`node-enocean`](https://www.npmjs.com/package/node-enocean) and [esp3_erp2_parser.js](./src/esp3_erp2_parser.js) are used for EnOcean support.
+
+## Serial/UART
+
+In order to activate Serial port support, set an environment variable `SERIAL_PORT` which points to a serial port for serial communication, e.g. `SERIAL_PORT=/dev/tty.usbserial-ABCDE`.
+
+Serial port support is inactivated unless SERIAL_PORT is set.
+
+[`serialport`](https://www.npmjs.com/package/serialport) is used for Serial port support.
 
 # Development
 
@@ -193,6 +233,8 @@ connecting to ws://echo.websocket.org
 ready
 WebSocket opened.
 Starting Scanning...
+Serial port is inactivated...
+EnOcean is inactivated...
 Data:{"data":{"type":"lx","unit":"lx","val":11},"tstamp":1444892603243,"rssi":-34,"id":"20:73:7a:10:ad:bd"}
 ```
 
@@ -220,6 +262,9 @@ $ npm pack
 ```
 
 ## Revison History
+
+* 1.2.0
+  - EnOcean Protocol and Profile support (ESP3 with ERP2 and EEP2.6)
 
 * 1.1.0
   - Modifies the installation process, running `npm install` then `install.sh`
