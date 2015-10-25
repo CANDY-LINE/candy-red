@@ -84,12 +84,12 @@ export class ERP2Parser {
     let len, dataPl, p;
     if (typeof(payload) === 'string') {
       dataPl = new Uint8Array(new Buffer(payload, 'hex'));
-    } else if (payload instanceof Uint8Array) {
+    } else if (payload instanceof Array) {
       dataPl = payload;
     } else if (payload instanceof Buffer) {
       dataPl = new Uint8Array(payload);
     } else {
-      throw new Error('Unsupported payload data type!');
+      throw new Error('Unsupported ERP2 payload data type!');
     }
     len = dataPl.length;
     
@@ -104,7 +104,7 @@ export class ERP2Parser {
   _doParseShort(len, dataPl) {
     return new Promise((resolve, reject) => {
       try {
-        let i, ctx = { len: len, originatorId: '' }, idLen = len - 1, dlLen = 1;
+        let i, ctx = { len: len, payload: dataPl, originatorId: '' }, idLen = len - 1, dlLen = 1;
         if (len === 1) {
           ctx.originatorId = Utils.pad(dataPl[0].toString(16), 2);
           dlLen = 0;
@@ -133,7 +133,7 @@ export class ERP2Parser {
         if (!LONG_DATA_ID_IDX[addressControl]) {
           throw new Error('Reserved address is unsupported');
         }
-        let i, ctx = { len: len, originatorId: '', destinationId: '' };
+        let i, ctx = { len: len, payload: dataPl, originatorId: '', destinationId: '' };
         let idLen = LONG_DATA_ID_IDX[addressControl][0];
         let destLen = LONG_DATA_ID_IDX[addressControl][1];
         for (i = 0; i < idLen; i++) {
@@ -182,12 +182,12 @@ export class ESP3RadioERP2Parser {
     let len, esp3;
     if (typeof(payload) === 'string') {
       esp3 = new Uint8Array(new Buffer(payload, 'hex'));
-    } else if (payload instanceof Uint8Array) {
+    } else if (payload instanceof Array) {
       esp3 = payload;
     } else if (payload instanceof Buffer) {
       esp3 = new Uint8Array(payload);
     } else {
-      throw new Error('Unsupported payload data type!');
+      throw new Error('Unsupported ESP3 payload data type!');
     }
     len = esp3.length;
     return new Promise((resolve, reject) => {
