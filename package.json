@@ -47,6 +47,7 @@
   "dependencies": {
     "es6-promises": "^1.0.10",
     "noble": "^1.1.0",
+    "serialport": "^2.0.2",
     "ws": "^0.8.0"
   }
 }
