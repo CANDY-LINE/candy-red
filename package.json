@@ -28,7 +28,8 @@
     "BLE",
     "bluetooth low energy",
     "bluetooth smart",
-    "central"
+    "central",
+    "enocean"
   ],
   "author": "Daisuke Baba",
   "license": "MIT",
