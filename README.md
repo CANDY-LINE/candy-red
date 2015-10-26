@@ -208,24 +208,22 @@ $ npm install
 ## Build
 
 ```
-$ npm run build
+$ grunt build
 ```
 
 The processed files are placed under `dist` diretory.
 
-Please remember to insert `run` between `npm` and `build`.
-
 ## Run on localhost for development use
 
-Try the following commands after `npm run build`:
+Try the following commands after `grunt build`:
 ### without auth
 (Prepends `sudo` for Raspbian)
 
 ```
-$ WS_DEBUG=true WS_URL=ws://your-ws-host ./dist/index.js
+$ WS_DEBUG=true WS_URL=ws://your-ws-host node ./dist/index.js
 ```
 
-e.g. `WS_DEBUG=true WS_URL=ws://echo.websocket.org ./dist/index.js`
+e.g. `WS_DEBUG=true WS_URL=ws://echo.websocket.org node ./dist/index.js`
 
 And you'll see the sensor info like this:
 ```
@@ -242,17 +240,13 @@ Data:{"data":{"type":"lx","unit":"lx","val":11},"tstamp":1444892603243,"rssi":-3
 (Prepends `sudo` for Raspbian)
 
 ```
-$ WS_DEBUG=true WS_URL=ws://your-ws-host WS_USER=foo WS_PASSWORD=bar ./dist/index.js
+$ WS_DEBUG=true WS_URL=ws://your-ws-host WS_USER=foo WS_PASSWORD=bar node ./dist/index.js
 ```
 
 ## Test
 
 ```
-$ npm test
-```
-or
-```
-$ npm run test
+$ grunt test
 ```
 
 ## Package
@@ -265,6 +259,7 @@ $ npm pack
 
 * 1.2.0
   - EnOcean Protocol and Profile support (ESP3 with ERP2 and EEP2.6)
+  - Source map support for transpiled code
 
 * 1.1.0
   - Modifies the installation process, running `npm install` then `install.sh`

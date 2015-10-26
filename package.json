@@ -3,19 +3,7 @@
   "version": "1.2.0",
   "description": "Gateway Service",
   "main": "./dist/index.js",
-  "scripts": {
-    "build": "npm run lint_src",
-    "prepublish": "npm run transpile",
-    "transpile": "babel src -d dist",
-    "posttranspile": "chmod 755 dist/index.js",
-    "prelint_src": "npm run transpile",
-    "lint_src": "jshint -c .jshintrc src",
-    "prelint_test": "npm run lint_src",
-    "lint_test": "jshint -c .jshintrc test",
-    "pretest": "npm run lint_test",
-    "test": "mocha --recursive test",
-    "clean": "rm -fr dist; rm -f *.tgz"
-  },
+  "scripts": {},
   "repository": {
     "type": "git",
     "url": "git+https://dbaba@github.com/dbaba/candy-red.git"
@@ -40,16 +28,23 @@
   "preferGlobal": true,
   "devDependencies": {
     "babel": "^5.8.23",
+    "babel-plugin-uglify": "^1.0.2",
     "chai": "^3.3.0",
-    "jshint": "^2.8.0",
+    "grunt-babel": "^5.0.3",
+    "grunt-contrib-clean": "^0.6.0",
+    "grunt-contrib-jshint": "^0.11.3",
+    "grunt-mocha-test": "^0.12.7",
+    "jshint-stylish": "^2.0.1",
     "mocha": "^2.3.3",
-    "sinon": "^1.17.1"
+    "sinon": "^1.17.1",
+    "time-grunt": "^1.2.2"
   },
   "dependencies": {
     "es6-promises": "^1.0.10",
     "noble": "^1.1.0",
     "node-enocean": "^1.0.1",
     "serialport": "^2.0.2",
+    "source-map-support": "^0.3.3",
     "ws": "^0.8.0"
   }
 }

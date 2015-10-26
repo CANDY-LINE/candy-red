@@ -1,6 +1,6 @@
-#!/usr/bin/env node
 'use strict';
 
+import 'source-map-support/register';
 import * as bus from './bus';
 import * as ble from './ble';
 import * as serial from './serial';
