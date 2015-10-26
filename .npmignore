@@ -7,3 +7,5 @@ src
 test
 node_modules
 *.log
+Gruntfile.js
+.travis.yml
