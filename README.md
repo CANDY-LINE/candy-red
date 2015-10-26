@@ -259,6 +259,7 @@ $ npm pack
 
 * 1.2.0
   - EnOcean Protocol and Profile support (ESP3 with ERP2 and EEP2.6)
+  - Source map support for transpiled code
 
 * 1.1.0
   - Modifies the installation process, running `npm install` then `install.sh`
