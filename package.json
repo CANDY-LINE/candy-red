@@ -3,8 +3,7 @@
   "version": "1.2.0",
   "description": "Gateway Service",
   "main": "./dist/index.js",
-  "scripts": {
-  },
+  "scripts": {},
   "repository": {
     "type": "git",
     "url": "git+https://dbaba@github.com/dbaba/candy-red.git"
