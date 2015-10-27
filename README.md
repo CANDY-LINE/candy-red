@@ -112,26 +112,28 @@ $ sudo make install
 
 The module installation will take a couple of minutes.
 
-You can ignore `npm WARN`s, `gyp WARN`s, `gyp ERR!`s and `node-pre-gyp ERR!`s unless the installation terminates normally. You can check if the installation is successful by `sudo service candy-red status` command.
+`--unsafe-perm` flag is required for installing the module for performing privileged actions by npm. This is discussed in the [issue](https://github.com/voodootikigod/node-serialport/issues/535).
+
+You can ignore `npm WARN`s, `gyp WARN`s, `gyp ERR!`s and `node-pre-gyp ERR!`s unless the installation terminates normally. You can check if the installation is successful by `sudo service candy-red status` command after running `install.sh` script as well as `npm install`.
 
 Please refer to the following commands to isntall.
 
 ### With BLE only
 ```
-$ sudo CC=/usr/bin/gcc-4.8 CXX=/usr/bin/g++-4.8 npm install -g --production dbaba/candy-red
+$ sudo CC=/usr/bin/gcc-4.8 CXX=/usr/bin/g++-4.8 npm install -g --production --unsafe-perm dbaba/candy-red
 $ sudo WS_URL=ws://your-websocket-address/and/path $(npm root -g)/candy-red/install.sh
 ```
 
 ### With BLE and EnOcean
 ```
-$ sudo CC=/usr/bin/gcc-4.8 CXX=/usr/bin/g++-4.8 npm install -g --production dbaba/candy-red
+$ sudo CC=/usr/bin/gcc-4.8 CXX=/usr/bin/g++-4.8 npm install -g --production --unsafe-perm dbaba/candy-red
 $ sudo WS_URL=ws://your-websocket-address/and/path \
     ENOCEAN_PORT=/dev/your/enocean/port $(npm root -g)/candy-red/install.sh
 ```
 
 ### With BLE and EnOcean and Serial port
 ```
-$ sudo CC=/usr/bin/gcc-4.8 CXX=/usr/bin/g++-4.8 npm install -g --production dbaba/candy-red
+$ sudo CC=/usr/bin/gcc-4.8 CXX=/usr/bin/g++-4.8 npm install -g --production --unsafe-perm dbaba/candy-red
 $ sudo WS_URL=ws://your-websocket-address/and/path \
     ENOCEAN_PORT=/dev/your/enocean/port \
     SERIAL_PORT=/dev/your/serial/port $(npm root -g)/candy-red/install.sh
@@ -260,6 +262,7 @@ $ npm pack
 * 1.2.0
   - EnOcean Protocol and Profile support (ESP3 with ERP2 and EEP2.6)
   - Source map support for transpiled code
+  - [RaspberryPi (Raspbian)] `--unsafe-perm` flag is required for installation
 
 * 1.1.0
   - Modifies the installation process, running `npm install` then `install.sh`
