@@ -17,14 +17,31 @@ In this version, CANDY-Red acts like a transceiver, which receives BLE advertise
 
 ## Install
 
+This will take a couple of minutes.
+
+You can ignore `npm WARN`s, `gyp WARN`s, `gyp ERR!`s and `node-pre-gyp ERR!`s unless the installation terminates normally. You can check if the installation is successful by `systemctl status candy-red` command.
+
+### With BLE only
+
 ```
 $ npm install -g --production dbaba/candy-red
 $ WS_URL=ws://your-websocket-address/and/path $(npm root -g)/candy-red/install.sh
 ```
 
-This will take a couple of minutes.
+### With BLE and EnOcean
+```
+$ npm install -g --production dbaba/candy-red
+$ WS_URL=ws://your-websocket-address/and/path \
+    ENOCEAN_PORT=/dev/your/enocean/port $(npm root -g)/candy-red/install.sh
+```
 
-You can ignore `npm WARN`s, `gyp WARN`s, `gyp ERR!`s and `node-pre-gyp ERR!`s unless the installation terminates normally. You can check if the installation is successful by `systemctl status candy-red` command.
+### With BLE and EnOcean and Serial port
+```
+$ npm install -g --production dbaba/candy-red
+$ WS_URL=ws://your-websocket-address/and/path \
+    ENOCEAN_PORT=/dev/your/enocean/port \
+    SERIAL_PORT=/dev/your/serial/port $(npm root -g)/candy-red/install.sh
+```
 
 ## Stop/Start/Status Service
 
