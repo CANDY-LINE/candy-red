@@ -82,12 +82,12 @@ export class ERP2Parser {
   
   parse(payload) {
     let len, dataPl, p, c;
-    if (typeof(payload) === 'object' && payload.payload && payload.payload instanceof Array) {
+    if (typeof(payload) === 'object' && payload.payload && ERP2Parser.isArray(payload.payload)) {
       dataPl = payload.payload;
       c = payload;
     } else if (typeof(payload) === 'string') {
       dataPl = new Uint8Array(new Buffer(payload, 'hex'));
-    } else if (payload instanceof Array) {
+    } else if (ERP2Parser.isArray(payload)) {
       dataPl = payload;
     } else if (payload instanceof Buffer) {
       dataPl = new Uint8Array(payload);
@@ -102,6 +102,10 @@ export class ERP2Parser {
       p = this._doParseLong(len, dataPl, c);
     }
     return p;
+  }
+  
+  static isArray(val) {
+    return (val instanceof Array) || (val instanceof Uint8Array);
   }
   
   _doParseShort(len, dataPl, c) {

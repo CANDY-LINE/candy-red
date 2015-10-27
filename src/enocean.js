@@ -44,6 +44,8 @@ class ESP3Parser {
           } catch (e) {
             reject(e);
           }
+        }).catch(e => {
+          reject(e);
         });
       }
       resolve();
@@ -72,11 +74,7 @@ export function start(bus) {
       enocean.on('data', data => {
         if (parser) {
           parser.parse(data).catch(e => {
-            if (e instanceof Error) {
-              reject(e);
-            } else {
-              console.log(e, data);
-            }
+            console.log(e, data);
           });
         }
       });
