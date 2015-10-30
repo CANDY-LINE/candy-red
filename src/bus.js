@@ -48,7 +48,7 @@ export function start(url, user, password) {
     prepareWebSocket(resolve, reject);
     ws.on('message', data => {
       if (process.env.WS_DEBUG) {
-        console.log('Data:', data);
+        console.log('[RECV]:', data);
       }
     });
     console.log('ready');
@@ -62,6 +62,9 @@ export function send(data) {
       return;
     }
     try {
+      if (process.env.WS_DEBUG) {
+        console.log('[SEND]:', JSON.stringify(data));
+      }
       ws.send(JSON.stringify(data));
       resolve();
     } catch (e) {

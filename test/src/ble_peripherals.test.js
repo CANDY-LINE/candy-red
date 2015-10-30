@@ -1,6 +1,6 @@
 import { assert } from 'chai';
 import Promise from 'es6-promises';
-import peripherals from '../../src/peripherals';
+import peripherals from '../../src/ble_peripherals';
 
 describe('Peripherals', () => {
   describe('#lookup()', () => {

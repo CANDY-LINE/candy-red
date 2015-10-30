@@ -37,7 +37,7 @@ class Peripherals {
       if (!rawid) {
         reject('Unknown peripheral: local name is empty');
       }
-      let identifier = rawid.replace(/\0/g, ''); // in case of a NULL terminator is included
+      let identifier = rawid.replace(new RegExp('\0', 'g'), ''); // in case of a NULL terminator is included
       let p = PERIPHERALS[identifier];
       if (!p) {
         reject(`Unknown peripheral: [${identifier}]`);
