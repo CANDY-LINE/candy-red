@@ -279,6 +279,11 @@ $ npm pack
 
 ## Revison History
 
+* 1.3.0
+  - Add an option to enable to generate a list of copied files
+  - [Edison (Yocto)] Fix an isuse where npm install with a gihub repo id didn't work
+  - `npm test` now works
+
 * 1.2.0
   - EnOcean Protocol and Profile support (ESP3 with ERP2 and EEP2.6)
   - Source map support for transpiled code
@@ -291,3 +296,10 @@ $ npm pack
 
 * 1.0.0
   - Initial Release
+
+### Files including the package version
+
+1. README.md
+1. [package.json](/package.json)
+1. [services/systemd/candy-red.service.txt](/services/systemd/candy-red.service.txt)
+1. [services/sysvinit/candy-red.sh](/services/sysvinit/candy-red.sh)
