@@ -268,7 +268,7 @@ $ WS_DEBUG=true WS_URL=ws://your-ws-host WS_USER=foo WS_PASSWORD=bar node ./dist
 ## Test
 
 ```
-$ grunt test
+$ npm test
 ```
 
 ## Package
