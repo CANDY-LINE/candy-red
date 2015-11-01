@@ -21,7 +21,3 @@ before_install:
 install:
   - npm install -g grunt babel mocha jshint
   - npm install --unsafe-perm
-
-script:
-  - grunt build
-  - grunt test
