@@ -2,6 +2,33 @@
 
 SERVICE_NAME="candy-red"
 
+function setup {
+  assert_root
+  if [ "${CP_DESTS}" != "" ]; then
+    rm -f "${CP_DESTS}"
+    touch "${CP_DESTS}"
+  fi
+}
+
+function cpf {
+  cp -f $1 $2
+  if [ "$?" == "0" ] && [ -f "${CP_DESTS}" ]; then
+    if [ -f "$2" ]; then
+      echo "$2" >> "${CP_DESTS}"
+    else
+      case "$2" in
+        */)
+        DEST="$2"
+        ;;
+        *)
+        DEST="$2/"
+        ;;
+      esac
+      echo "${DEST}$(basename $1)" >> "${CP_DESTS}"
+    fi
+  fi
+}
+
 function assert_root {
   if [[ $EUID -ne 0 ]]; then
      echo "This script must be run as root" 
@@ -95,7 +122,7 @@ function system_service_install {
   START_SH="${SERVICES}/start_${SYSTEM_SERVICE_TYPE}.sh"
 
   rm -f ${SERVICES}/start_*
-  cp -f ${SERVICES}/_start.sh ${START_SH}
+  cpf ${SERVICES}/_start.sh ${START_SH}
   sed -i -e "s/%SERVICE_NAME%/${SERVICE_NAME//\//\\/}/g" ${START_SH}
   sed -i -e "s/%SERVICE_HOME%/${ROOT//\//\\/}/g" ${START_SH}
 
@@ -118,13 +145,13 @@ function _install_systemd {
   fi
   LIB_SYSTEMD="${LIB_SYSTEMD}/lib/systemd"
 
-  cp -f ${LOCAL_SYSTEMD}/${SERVICE_NAME}.service.txt ${LOCAL_SYSTEMD}/${SERVICE_NAME}.service
+  cpf ${LOCAL_SYSTEMD}/${SERVICE_NAME}.service.txt ${LOCAL_SYSTEMD}/${SERVICE_NAME}.service
   sed -i -e "s/%SERVICE_HOME%/${ROOT//\//\\/}/g" ${LOCAL_SYSTEMD}/${SERVICE_NAME}.service
 
-  cp -f ${SERVICES}/environment ${LOCAL_SYSTEMD}/environment
+  cpf ${SERVICES}/environment ${LOCAL_SYSTEMD}/environment
 
   set -e
-  cp -f ${LOCAL_SYSTEMD}/${SERVICE_NAME}.service "${LIB_SYSTEMD}/system/"
+  cpf ${LOCAL_SYSTEMD}/${SERVICE_NAME}.service "${LIB_SYSTEMD}/system/"
   systemctl enable ${SERVICE_NAME}
   systemctl start ${SERVICE_NAME}
   logger -s "${SERVICE_NAME} service has been installed."
@@ -140,13 +167,13 @@ function _install_sysvinit {
   LOCAL_SYSVINIT="${SERVICES}/sysvinit"
   INIT=/etc/init.d/${SERVICE_NAME}
 
-  cp -f ${LOCAL_SYSVINIT}/${SERVICE_NAME}.sh ${INIT}
+  cpf ${LOCAL_SYSVINIT}/${SERVICE_NAME}.sh ${INIT}
   sed -i -e "s/%SERVICE_HOME%/${ROOT//\//\\/}/g" ${INIT}
 
-  cp -f ${LOCAL_SYSVINIT}/_wrapper.sh ${LOCAL_SYSVINIT}/wrapper.sh
+  cpf ${LOCAL_SYSVINIT}/_wrapper.sh ${LOCAL_SYSVINIT}/wrapper.sh
   sed -i -e "s/%SERVICE_HOME%/${ROOT//\//\\/}/g" ${LOCAL_SYSVINIT}/wrapper.sh
 
-  cp -f ${SERVICES}/environment /etc/default/${SERVICE_NAME}
+  cpf ${SERVICES}/environment /etc/default/${SERVICE_NAME}
 
   if which insserv >/dev/null 2>&1; then
     insserv ${SERVICE_NAME}
@@ -168,7 +195,7 @@ function _install_sysvinit {
   fi
 }
 
-assert_root
+setup
 test_system_service_arg
 cd_module_root
 npm_install
