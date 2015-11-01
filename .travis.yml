@@ -19,7 +19,7 @@ before_install:
   - sudo apt-get install -qq build-essential libudev-dev libdbus-1-dev libdbus-glib-1-dev libglib2.0-dev libical-dev libreadline-dev g++-4.8
 
 install:
-  - npm install -g babel mocha jshint
+  - npm install -g grunt babel mocha jshint
   - npm install --unsafe-perm
 
 script:
