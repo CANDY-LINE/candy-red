@@ -24,14 +24,14 @@ You can ignore `npm WARN`s, `gyp WARN`s, `gyp ERR!`s and `node-pre-gyp ERR!`s un
 ### With BLE only
 
 ```
-$ VERSION=1.2.0 npm install -g --production \
+$ VERSION=1.3.0 npm install -g --production \
     https://github.com/dbaba/candy-red/archive/${VERSION}.tar.gz
 $ WS_URL=ws://your-websocket-address/and/path $(npm root -g)/candy-red/install.sh
 ```
 
 ### With BLE and EnOcean
 ```
-$ VERSION=1.2.0 npm install -g --production \
+$ VERSION=1.3.0 npm install -g --production \
     https://github.com/dbaba/candy-red/archive/${VERSION}.tar.gz
 $ WS_URL=ws://your-websocket-address/and/path \
     ENOCEAN_PORT=/dev/your/enocean/port $(npm root -g)/candy-red/install.sh
@@ -39,7 +39,7 @@ $ WS_URL=ws://your-websocket-address/and/path \
 
 ### With BLE and EnOcean and Serial port
 ```
-$ VERSION=1.2.0 npm install -g --production \
+$ VERSION=1.3.0 npm install -g --production \
     https://github.com/dbaba/candy-red/archive/${VERSION}.tar.gz
 $ WS_URL=ws://your-websocket-address/and/path \
     ENOCEAN_PORT=/dev/your/enocean/port \
@@ -279,6 +279,11 @@ $ npm pack
 
 ## Revison History
 
+* 1.3.0
+  - Add an option to enable to generate a list of copied files
+  - [Edison (Yocto)] Fix an isuse where npm install with a gihub repo id didn't work
+  - `npm test` now works
+
 * 1.2.0
   - EnOcean Protocol and Profile support (ESP3 with ERP2 and EEP2.6)
   - Source map support for transpiled code
@@ -291,3 +296,10 @@ $ npm pack
 
 * 1.0.0
   - Initial Release
+
+### Files including the package version
+
+1. README.md
+1. [package.json](/package.json)
+1. [services/systemd/candy-red.service.txt](/services/systemd/candy-red.service.txt)
+1. [services/sysvinit/candy-red.sh](/services/sysvinit/candy-red.sh)
