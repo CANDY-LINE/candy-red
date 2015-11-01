@@ -24,20 +24,23 @@ You can ignore `npm WARN`s, `gyp WARN`s, `gyp ERR!`s and `node-pre-gyp ERR!`s un
 ### With BLE only
 
 ```
-$ npm install -g --production dbaba/candy-red
+$ VERSION=1.3.0 npm install -g --production \
+    https://github.com/dbaba/candy-red/archive/${VERSION}.tar.gz
 $ WS_URL=ws://your-websocket-address/and/path $(npm root -g)/candy-red/install.sh
 ```
 
 ### With BLE and EnOcean
 ```
-$ npm install -g --production dbaba/candy-red
+$ VERSION=1.3.0 npm install -g --production \
+    https://github.com/dbaba/candy-red/archive/${VERSION}.tar.gz
 $ WS_URL=ws://your-websocket-address/and/path \
     ENOCEAN_PORT=/dev/your/enocean/port $(npm root -g)/candy-red/install.sh
 ```
 
 ### With BLE and EnOcean and Serial port
 ```
-$ npm install -g --production dbaba/candy-red
+$ VERSION=1.3.0 npm install -g --production \
+    https://github.com/dbaba/candy-red/archive/${VERSION}.tar.gz
 $ WS_URL=ws://your-websocket-address/and/path \
     ENOCEAN_PORT=/dev/your/enocean/port \
     SERIAL_PORT=/dev/your/serial/port $(npm root -g)/candy-red/install.sh
@@ -213,7 +216,7 @@ In order to install dependencies for development use.
 Install the global dependencies at first (`sudo` is required for Raspbian).
 
 ```
-$ npm install -g babel mocha jshint
+$ npm install -g grunt babel mocha jshint
 ```
 
 Then install the local dependencies.
@@ -265,7 +268,7 @@ $ WS_DEBUG=true WS_URL=ws://your-ws-host WS_USER=foo WS_PASSWORD=bar node ./dist
 ## Test
 
 ```
-$ grunt test
+$ npm test
 ```
 
 ## Package
@@ -275,6 +278,11 @@ $ npm pack
 ```
 
 ## Revison History
+
+* 1.3.0
+  - Add an option to enable to generate a list of copied files
+  - [Edison (Yocto)] Fix an isuse where npm install with a gihub repo id didn't work
+  - `npm test` now works
 
 * 1.2.0
   - EnOcean Protocol and Profile support (ESP3 with ERP2 and EEP2.6)
@@ -288,3 +296,10 @@ $ npm pack
 
 * 1.0.0
   - Initial Release
+
+### Files including the package version
+
+1. README.md
+1. [package.json](/package.json)
+1. [services/systemd/candy-red.service.txt](/services/systemd/candy-red.service.txt)
+1. [services/sysvinit/candy-red.sh](/services/sysvinit/candy-red.sh)
