@@ -1,5 +1,5 @@
 [Unit]
-Description=CANDY-Red Gateway Service (v1.2.0)
+Description=CANDY-Red Gateway Service (v1.3.0)
 After=bluetooth.target
 Before=systemd-user-sessions.service
 
