@@ -112,7 +112,11 @@ function system_service_install {
 
 function _install_systemd {
   LOCAL_SYSTEMD="${SERVICES}/systemd"
-  LIB_SYSTEMD="$(dirname $(dirname $(which systemctl)))/lib/systemd"
+  LIB_SYSTEMD="$(dirname $(dirname $(which systemctl)))"
+  if [ "${LIB_SYSTEMD}" == "/" ]; then
+    LIB_SYSTEMD=""
+  fi
+  LIB_SYSTEMD="${LIB_SYSTEMD}/lib/systemd"
 
   cp -f ${LOCAL_SYSTEMD}/${SERVICE_NAME}.service.txt ${LOCAL_SYSTEMD}/${SERVICE_NAME}.service
   sed -i -e "s/%SERVICE_HOME%/${ROOT//\//\\/}/g" ${LOCAL_SYSTEMD}/${SERVICE_NAME}.service
