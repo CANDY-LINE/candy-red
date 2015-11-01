@@ -24,20 +24,23 @@ You can ignore `npm WARN`s, `gyp WARN`s, `gyp ERR!`s and `node-pre-gyp ERR!`s un
 ### With BLE only
 
 ```
-$ npm install -g --production dbaba/candy-red
+$ VERSION=1.2.0 npm install -g --production \
+    https://github.com/dbaba/candy-red/archive/${VERSION}.tar.gz
 $ WS_URL=ws://your-websocket-address/and/path $(npm root -g)/candy-red/install.sh
 ```
 
 ### With BLE and EnOcean
 ```
-$ npm install -g --production dbaba/candy-red
+$ VERSION=1.2.0 npm install -g --production \
+    https://github.com/dbaba/candy-red/archive/${VERSION}.tar.gz
 $ WS_URL=ws://your-websocket-address/and/path \
     ENOCEAN_PORT=/dev/your/enocean/port $(npm root -g)/candy-red/install.sh
 ```
 
 ### With BLE and EnOcean and Serial port
 ```
-$ npm install -g --production dbaba/candy-red
+$ VERSION=1.2.0 npm install -g --production \
+    https://github.com/dbaba/candy-red/archive/${VERSION}.tar.gz
 $ WS_URL=ws://your-websocket-address/and/path \
     ENOCEAN_PORT=/dev/your/enocean/port \
     SERIAL_PORT=/dev/your/serial/port $(npm root -g)/candy-red/install.sh
@@ -213,7 +216,7 @@ In order to install dependencies for development use.
 Install the global dependencies at first (`sudo` is required for Raspbian).
 
 ```
-$ npm install -g babel mocha jshint
+$ npm install -g grunt babel mocha jshint
 ```
 
 Then install the local dependencies.
