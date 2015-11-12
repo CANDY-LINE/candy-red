@@ -1,30 +1,13 @@
 import { assert } from 'chai';
 import { spawn } from 'child_process';
 
-describe('index.js executable script', () => {
-  it('should not accept missing URL argument', done => {
-    let stdout = '';
-    let stderr = '';
-    let env = Object.create(process.env);
-    let candyred = spawn('node', [`${__dirname}/../../dist/index.js`], { env: env });
-    candyred.stdout.on('data', data => {
-      stdout += data.toString();
-    });
-    candyred.stderr.on('data', data => {
-      stderr += data.toString();
-    });
-    candyred.on('exit', code => {
-      assert.equal(1, code);
-      assert.equal('WS_URL is missing', stderr.trim());
-      done();
-    });
-  });
+describe('v1-index.js executable script', () => {
   it('should not accept a wrong scheme URL', done => {
     let stdout = '';
     let stderr = '';
     let env = Object.create(process.env);
     env.WS_URL = 'http://localhost';
-    let candyred = spawn('node', [`${__dirname}/../../dist/index.js`], { env: env });
+    let candyred = spawn('node', [`${__dirname}/../../dist/v1-index.js`], { env: env });
     candyred.stdout.on('data', data => {
       stdout += data.toString();
     });
@@ -42,7 +25,7 @@ describe('index.js executable script', () => {
     let stderr = '';
     let env = Object.create(process.env);
     env.WS_URL = 'http_//_localhost';
-    let candyred = spawn('node', [`${__dirname}/../../dist/index.js`], { env: env });
+    let candyred = spawn('node', [`${__dirname}/../../dist/v1-index.js`], { env: env });
     candyred.stdout.on('data', data => {
       stdout += data.toString();
     });
