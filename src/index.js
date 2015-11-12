@@ -15,6 +15,7 @@ let server = http.createServer(app);
 let settings = {
   verbose: true,
   disableEditor: false,
+  nodesDir: [__dirname + '/nodes'],
   httpAdminRoot: '/red',
   httpNodeRoot: '/api',
   userDir: (process.env.HOME || process.env.USERPROFILE) + '/.node-red',
