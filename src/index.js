@@ -24,8 +24,8 @@ let settings = {
 RED.init(server, settings);
 
 // Add a simple route for static content served from 'public'
-app.use('/*', express.static('public'));
-if (settings.httpAdminRoot !== '/') {
+app.use('/', express.static('public'));
+if (settings.httpAdminRoot) {
   app.get('/', (_, res) => {
     res.redirect(settings.httpAdminRoot);
   });
