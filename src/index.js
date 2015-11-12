@@ -14,6 +14,7 @@ let server = http.createServer(app);
 // Create the settings object - see default settings.js file for other options
 let settings = {
   verbose: true,
+  disableEditor: false,
   httpAdminRoot: '/red',
   httpNodeRoot: '/api',
   userDir: (process.env.HOME || process.env.USERPROFILE) + '/.node-red',
