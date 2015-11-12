@@ -4,7 +4,7 @@ module.exports = function (grunt) {
 
   require('time-grunt')(grunt);
 
-  grunt.initConfig({
+  var config = {
 
     babel: {
       options: {
@@ -38,7 +38,7 @@ module.exports = function (grunt) {
     run: {
       npm_local_install: {
         cmd: 'npm',
-        args: [ 'install', './dist/nodes/local-node-candy-ble' ]
+        args: [ 'install' ]
       }
     },
     
@@ -74,7 +74,16 @@ module.exports = function (grunt) {
         src: ['./test/src/**/*.js']
       }
     },
+  };
+  
+  var fs = require('fs');
+  fs.readdirSync('./dist/nodes/').forEach(function(f) {
+    if (f.indexOf('local-node-candy-') === 0) {
+      config.run.npm_local_install.args.push('./dist/nodes/' + f);
+    }
   });
+  
+  grunt.initConfig(config);
   
   grunt.loadNpmTasks('grunt-contrib-clean');
   grunt.loadNpmTasks('grunt-contrib-jshint');
