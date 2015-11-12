@@ -22,6 +22,19 @@ module.exports = function (grunt) {
       }
     },
 
+    copy: {
+      main: {
+        files: [
+          {
+            expand: true,
+            cwd: 'src/',
+            src: ['**/*.json', 'src/**/*.html'],
+            dest: 'dist/'
+          },
+        ],
+      },
+    },
+
     clean: {
       dist: {
         files: [{
@@ -57,18 +70,21 @@ module.exports = function (grunt) {
   
   grunt.loadNpmTasks('grunt-contrib-clean');
   grunt.loadNpmTasks('grunt-contrib-jshint');
+  grunt.loadNpmTasks('grunt-contrib-copy');
   grunt.loadNpmTasks('grunt-babel');
   grunt.loadNpmTasks('grunt-mocha-test');
 
   grunt.registerTask('test', [
     'babel',
+    'copy',
     'jshint',
     'mochaTest'
   ]);
 
   grunt.registerTask('build', [
     'clean',
-    'babel'
+    'babel',
+    'copy'
   ]);
 
   grunt.registerTask('default', [
