@@ -284,6 +284,9 @@ $ npm pack
 
 ## Revison History
 
+* 2.0.0
+  - Node-RED integration
+
 * 1.3.0
   - Add an option to enable to generate a list of copied files
   - [Edison (Yocto)] Fix an isuse where npm install with a gihub repo id didn't work
