@@ -77,11 +77,13 @@ module.exports = function (grunt) {
   };
   
   var fs = require('fs');
-  fs.readdirSync('./dist/nodes/').forEach(function(f) {
-    if (f.indexOf('local-node-candy-') === 0) {
-      config.run.npm_local_install.args.push('./dist/nodes/' + f);
-    }
-  });
+  try {
+    fs.readdirSync('./dist/nodes/').forEach(function(f) {
+      if (f.indexOf('local-node-candy-') === 0) {
+        config.run.npm_local_install.args.push('./dist/nodes/' + f);
+      }
+    });
+  } catch (e) { /* pass */ }
   
   grunt.initConfig(config);
   
