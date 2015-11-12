@@ -30,18 +30,26 @@ module.exports = function (grunt) {
             cwd: 'src/',
             src: ['**/*.json', '**/*.html'],
             dest: 'dist/'
-          },
+          }
         ],
       },
     },
 
+    run: {
+      npm_local_install: {
+        cmd: 'npm',
+        args: [ 'install', './dist/nodes/local-node-candy-ble' ]
+      }
+    },
+    
     clean: {
       dist: {
         files: [{
           dot: true,
           src: [
             './dist/*',
-            './*.tgz'
+            './*.tgz',
+            './node_modules/local-node-candy-*'
           ]
         }]
       }
@@ -73,10 +81,12 @@ module.exports = function (grunt) {
   grunt.loadNpmTasks('grunt-contrib-copy');
   grunt.loadNpmTasks('grunt-babel');
   grunt.loadNpmTasks('grunt-mocha-test');
+  grunt.loadNpmTasks('grunt-run');
 
   grunt.registerTask('test', [
     'babel',
     'copy',
+    'run',
     'jshint',
     'mochaTest'
   ]);
@@ -84,7 +94,8 @@ module.exports = function (grunt) {
   grunt.registerTask('build', [
     'clean',
     'babel',
-    'copy'
+    'copy',
+    'run',
   ]);
 
   grunt.registerTask('default', [
