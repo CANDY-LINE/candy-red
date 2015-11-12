@@ -43,6 +43,8 @@
     "time-grunt": "^1.2.2"
   },
   "dependencies": {
+    "node-red": "^0.12.1",
+    "express": "^4.13.3",
     "es6-promises": "^1.0.10",
     "noble": "^1.1.0",
     "node-enocean": "^1.0.1",
