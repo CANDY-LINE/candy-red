@@ -24,23 +24,23 @@ You can ignore `npm WARN`s, `gyp WARN`s, `gyp ERR!`s and `node-pre-gyp ERR!`s un
 ### With BLE only
 
 ```
-$ VERSION=1.3.0 npm install -g --production \
-    https://github.com/dbaba/candy-red/archive/${VERSION}.tar.gz
+$ VERSION=1.3.0
+$ npm install -g --production https://github.com/dbaba/candy-red/archive/${VERSION}.tar.gz
 $ WS_URL=ws://your-websocket-address/and/path $(npm root -g)/candy-red/install.sh
 ```
 
 ### With BLE and EnOcean
 ```
-$ VERSION=1.3.0 npm install -g --production \
-    https://github.com/dbaba/candy-red/archive/${VERSION}.tar.gz
+$ VERSION=1.3.0
+$ npm install -g --production https://github.com/dbaba/candy-red/archive/${VERSION}.tar.gz
 $ WS_URL=ws://your-websocket-address/and/path \
     ENOCEAN_PORT=/dev/your/enocean/port $(npm root -g)/candy-red/install.sh
 ```
 
 ### With BLE and EnOcean and Serial port
 ```
-$ VERSION=1.3.0 npm install -g --production \
-    https://github.com/dbaba/candy-red/archive/${VERSION}.tar.gz
+$ VERSION=1.3.0
+$ npm install -g --production https://github.com/dbaba/candy-red/archive/${VERSION}.tar.gz
 $ WS_URL=ws://your-websocket-address/and/path \
     ENOCEAN_PORT=/dev/your/enocean/port \
     SERIAL_PORT=/dev/your/serial/port $(npm root -g)/candy-red/install.sh
