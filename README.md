@@ -14,13 +14,8 @@ In this version, CANDY-Red acts like a transceiver, which receives BLE advertise
 ### Tested versions
 
 * Node.js v0.10.38 (preinstalled)
-* npm v3.3.12 (Should be **upgraded**)
-
-The default `npm` version is too old. Please run `npm install -g npm` with internet connected.
 
 ## Install
-
-**Please make sure that your `npm` is latest. Run `npm install -g npm` if `npm -v` is older than 2.11.3.**
 
 The installation of CANDY-Red will take a couple of minutes.
 
