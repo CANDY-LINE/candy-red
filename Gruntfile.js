@@ -49,7 +49,7 @@ module.exports = function (grunt) {
           src: [
             './dist/*',
             './*.tgz',
-            './node_modules/local-node-candy-*'
+            './node_modules/local-node-*'
           ]
         }]
       }
@@ -79,7 +79,7 @@ module.exports = function (grunt) {
   var fs = require('fs');
   try {
     fs.readdirSync('./dist/nodes/').forEach(function(f) {
-      if (f.indexOf('local-node-candy-') === 0) {
+      if (f.indexOf('local-node-') === 0) {
         config.run.npm_local_install.args.push('./dist/nodes/' + f);
       }
     });
