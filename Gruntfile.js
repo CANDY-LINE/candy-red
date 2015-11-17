@@ -36,7 +36,7 @@ module.exports = function (grunt) {
     },
 
     run: {
-      npm_local_install: {
+      npmLocalInstall: {
         cmd: 'npm',
         args: [ 'install' ]
       }
@@ -80,7 +80,7 @@ module.exports = function (grunt) {
   try {
     fs.readdirSync('./dist/nodes/').forEach(function(f) {
       if (f.indexOf('local-node-') === 0) {
-        config.run.npm_local_install.args.push('./dist/nodes/' + f);
+        config.run.npmLocalInstall.args.push('./dist/nodes/' + f);
       }
     });
   } catch (e) { /* pass */ }
