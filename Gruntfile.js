@@ -49,7 +49,14 @@ module.exports = function (grunt) {
           src: [
             './dist/*',
             './*.tgz',
-            './node_modules/local-node-*'
+            './node_modules/local-node-*',
+            './services/environment',
+            './services/start_systemd.sh',
+            './services/systemd/candy-red.service',
+            './services/systemd/environment',
+            './services/start_sysvinit.sh',
+            './services/sysvinit/environment',
+            './services/sysvinit/wrapper.sh'
           ]
         }]
       }
