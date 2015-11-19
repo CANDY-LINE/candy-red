@@ -5,6 +5,22 @@ import http from 'http';
 import express from 'express';
 import RED from 'node-red';
 
+// Exit handler
+process.stdin.resume();
+function exitHandler(err) {
+  if (err instanceof Error) {
+    console.log(err.stack);
+    process.exit(1);
+  } else if (isNaN(err)) {
+    process.exit();
+  } else {
+    process.exit(err);
+  }
+}
+process.on('exit', exitHandler);
+process.on('SIGINT', exitHandler);
+process.on('uncaughtException', exitHandler);
+
 // Create an Express app
 let app = express();
 
