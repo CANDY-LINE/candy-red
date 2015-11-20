@@ -37,7 +37,9 @@ let settings = {
   httpAdminRoot: '/red',
   httpNodeRoot: '/api',
   userDir: (process.env.HOME || process.env.USERPROFILE) + '/.node-red',
-  functionGlobalContext: { }    // enables global context
+  functionGlobalContext: {
+  },
+  ble: ble
 };
 
 // Initialise the runtime with a server and settings
