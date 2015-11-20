@@ -216,7 +216,7 @@ In order to install dependencies for development use.
 Install the global dependencies at first (`sudo` is required for Raspbian).
 
 ```
-$ npm install -g grunt babel mocha jshint
+$ npm install -g grunt-cli babel mocha jshint
 ```
 
 Then install the local dependencies.
