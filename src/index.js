@@ -4,10 +4,13 @@ import 'source-map-support/register';
 import http from 'http';
 import express from 'express';
 import RED from 'node-red';
+import * as ble from './ble';
 
 // Exit handler
 process.stdin.resume();
 function exitHandler(err) {
+  console.log('Bye');
+  ble.stop(); // sync
   if (err instanceof Error) {
     console.log(err.stack);
     process.exit(1);
