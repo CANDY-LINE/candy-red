@@ -9,8 +9,8 @@ import * as ble from './ble';
 // Exit handler
 process.stdin.resume();
 function exitHandler(err) {
-  console.log('Bye');
-  ble.stop(); // sync
+  console.log('[CANDY-Red] Bye');
+  ble.stop(RED); // sync
   if (err instanceof Error) {
     console.log(err.stack);
     process.exit(1);
