@@ -5,6 +5,7 @@ import Promise from 'es6-promises';
 
 let peripheralsIn = {};
 let isScanning = false;
+let isMonitoring = false;
 
 /**
  * Associate the given in-Node object with the BLE module.
@@ -76,6 +77,11 @@ export function start(RED) {
     }
   }).then(() => {
     return new Promise((resolve, reject) => {
+      if (isMonitoring) {
+        resolve();
+        return;
+      }
+      isMonitoring = true;
       noble.on('discover', peripheral => {
         let adv = peripheral.advertisement;
         // Remove a NULL terminator
