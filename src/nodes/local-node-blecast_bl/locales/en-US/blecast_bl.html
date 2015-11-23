@@ -1,3 +1,40 @@
 <script type="text/x-red" data-help-name="BLECAST_BL in">
-   <p></p>
+   <p>This is a BLE illuminance sensor</p>
+   <p>The lx data is emitted per second.</p>
+   <p>The <code>msg.payload</code> format is as follows.</p>
+<table>
+  <tr>
+    <th>data</th>
+    <td>The sensor data. JSON format. e.g. <code>{ type: 'lx', unit: 'lx', val: 37 }</code></td>
+  </tr>
+  <tr>
+    <th>tstamp</th>
+    <td>Epoch time in milliseconds</td>
+  </tr>
+  <tr>
+    <th>rssi</th>
+    <td>The signal strength in dBm</td>
+  </tr>
+  <tr>
+    <th>address</th>
+    <td>The BLE address</td>
+  </tr>
+  <tr>
+    <th>uuid</th>
+    <td>The BLE UUID</td>
+  </tr>
+</table>
+   <p>The typical JSON payload is shown as below.
+<pre>{  
+  "data":{  
+    "type":"lx",
+    "unit":"lx",
+    "val":37
+  },
+  "tstamp":1448259848905,
+  "rssi":-59,
+  "address":"unknown",
+  "uuid":"e23520e001714e99b8afc51fcee28b35"
+}</pre>
+    </p>
 </script>
