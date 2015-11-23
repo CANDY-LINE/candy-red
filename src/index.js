@@ -24,11 +24,15 @@ process.on('exit', exitHandler);
 process.on('SIGINT', exitHandler);
 process.on('uncaughtException', exitHandler);
 
+// Listen port
+const PORT = process.env.PORT || 8000;
+
 // Create an Express app
 let app = express();
 
 // Create a server
 let server = http.createServer(app);
+server.listen(PORT);
 
 // Create the settings object - see default settings.js file for other options
 let settings = {
@@ -58,8 +62,6 @@ app.use(settings.httpAdminRoot, RED.httpAdmin);
 
 // Serve the http nodes UI from /api
 app.use(settings.httpNodeRoot, RED.httpNode);
-
-server.listen(8000);
 
 // Start the runtime
 RED.start();
