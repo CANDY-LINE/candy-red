@@ -64,4 +64,6 @@ app.use(settings.httpAdminRoot, RED.httpAdmin);
 app.use(settings.httpNodeRoot, RED.httpNode);
 
 // Start the runtime
-RED.start();
+RED.start().then(() => {
+  RED.log.info(`Listen port=${PORT}`);
+});
