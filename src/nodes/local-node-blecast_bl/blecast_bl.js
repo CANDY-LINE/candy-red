@@ -21,9 +21,11 @@ export default function(RED) {
 
     function BlecastBlInNode(n) {
       RED.nodes.createNode(this, n);
+      this.useString = n.useString;
       this.blecastBlNodeId = n.blecastBl;
       this.blecastBlNode = RED.nodes.getNode(this.blecastBlNodeId);
-      ble.registerIn(this, CATEGORY, this.blecastBlNode.address, this.blecastBlNode.uuid, blecastBl.parse, RED);
+      ble.registerIn(this, CATEGORY, this.blecastBlNode.address, this.blecastBlNode.uuid,
+        blecastBl.parse, this.useString, RED);
       this.name = n.name;
     }
     RED.nodes.registerType(`${CATEGORY} in`, BlecastBlInNode);

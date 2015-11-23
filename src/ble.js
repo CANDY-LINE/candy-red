@@ -13,10 +13,11 @@ let isScanning = false;
  * @param address the ble address delimited by '-'
  * @param uuid the ble identifier (optional)
  * @param parse the parse function
+ * @param useString whether or not to use String type rather than JSON object as the payload format
  * @param RED the initialized RED object
  * @return void (sync)
  */
-export function registerIn(n, categoryName, address, uuid, parse, RED) {
+export function registerIn(n, categoryName, address, uuid, parse, useString, RED) {
   if (!n || !categoryName || !address || !parse) {
     throw new Error('Invalid node!');
   }
@@ -30,7 +31,8 @@ export function registerIn(n, categoryName, address, uuid, parse, RED) {
   }
   category[address] = {
     node: n,
-    parse: parse
+    parse: parse,
+    useString: useString
   };
   if (uuid) {
     category[uuid] = category[address];
@@ -114,6 +116,9 @@ export function start(RED) {
         };
         if (uuid) {
           payload.uuid = uuid;
+        }
+        if (bleNode.useString) {
+          payload = JSON.stringify(payload);
         }
         node.send({'payload': payload});
       });

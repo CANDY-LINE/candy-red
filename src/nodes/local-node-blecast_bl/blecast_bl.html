@@ -13,6 +13,11 @@
       <span data-i18n="blecast_bl.label.blecastBl"></span></label>
     <input type="text" id="node-input-blecastBl">
   </div>
+  <div class="form-row" id="node-useString">
+    <label>&nbsp;</label>
+    <input type="checkbox" id="node-input-useString" style="display: inline-block; width: auto; vertical-align: top;">
+    <label for="node-input-useString" style="width: 70%;" data-i18n="blecast_bl.label.useString"></label>
+  </div>
 </script>
 
 <script type='text/javascript'>
@@ -20,7 +25,8 @@
     category: 'CANDY Box',
     defaults: {
       name: { name: '' },
-      blecastBl: { type: 'BLECAST_BL', required: true }
+      blecastBl: { type: 'BLECAST_BL', required: true },
+      useString: { value: false, required: false }
     },
     color: 'SkyBlue',
     inputs: 0,

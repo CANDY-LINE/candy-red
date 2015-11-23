@@ -3,6 +3,7 @@
     "label" : {
       "category" : "BLECAST_TM",
       "blecastTm" : "BLE Temperature Sensor",
+      "useString" : "Use string payload",
       "address" : "Address",
       "uuid" : "UUID"
     },

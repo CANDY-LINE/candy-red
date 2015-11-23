@@ -3,6 +3,7 @@
     "label" : {
       "category" : "BLECAST_BL",
       "blecastBl" : "BLE Illuminance Sensor",
+      "useString" : "Use string payload",
       "address" : "Address",
       "uuid" : "UUID"
     },
