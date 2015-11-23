@@ -45,11 +45,11 @@
     "time-grunt": "^1.2.2"
   },
   "dependencies": {
-    "node-red": "^0.12.1",
-    "express": "^4.13.3",
     "es6-promises": "^1.0.10",
-    "noble": "^1.1.0",
+    "express": "^4.13.3",
+    "noble": "^1.2.1",
     "node-enocean": "^1.0.1",
+    "node-red": "^0.12.1",
     "serialport": "^2.0.2",
     "source-map-support": "^0.3.3",
     "ws": "^0.8.0"
