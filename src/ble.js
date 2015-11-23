@@ -30,16 +30,27 @@ export function registerIn(n, categoryName, address, uuid, parse, useString, RED
     category = {};
     peripheralsIn[categoryName] = category;
   }
-  category[address] = {
-    node: n,
+  let ary = [];
+  if (address in category) {
+    ary = category[address];
+    ary = ary.filter(ele => {
+      if (RED.nodes.getNode(ele.id)) {
+        return (ele.id !== n.id);
+      }
+      return false;
+    });
+  }
+  ary.push({
+    id: n.id,
     parse: parse,
     useString: useString
-  };
+  });
+  category[address] = ary;
   if (uuid) {
     category[uuid] = category[address];
-    RED.log.info(`[BLE] category=[${categoryName}], address=[${address}, uuid=[${uuid}]] has been registered.`);
+    RED.log.info(`[BLE] category=[${categoryName}], address=[${address}], uuid=[${uuid}], node ID=[${n.id}] has been registered.`);
   } else {
-    RED.log.info(`[BLE] category=[${categoryName}], address=[${address}] has been registered.`);
+    RED.log.info(`[BLE] category=[${categoryName}], address=[${address}], node ID=[${n.id}] has been registered.`);
   }
 }
 
@@ -95,38 +106,52 @@ export function start(RED) {
         // check if the peripheral.address matches
         let address = peripheral.address;
         let uuid = null;
-        let bleNode = null;
+        let bleNodes = null;
         if (address === 'unknown') {
           uuid = peripheral.uuid;
-          bleNode = category[uuid];
-          if (!bleNode) {
+          bleNodes = category[uuid];
+          if (!bleNodes || bleNodes.length === 0) {
             RED.log.warn(`[BLE] Unknown node: category=[${categoryName}], uuid=[${uuid}]`);
             return;
           }
         }
         if (!uuid) {
-          bleNode = category[address];
-          if (!bleNode) {
+          bleNodes = category[address];
+          if (!bleNodes || bleNodes.length === 0) {
             RED.log.warn(`[BLE] Unknown node: category=[${categoryName}], address=[${address}]`);
             return;
           }
         }
         // send the ble node a payload if the address exists
-        let node = bleNode.node;
-        let data = bleNode.parse(adv.manufacturerData);
-        let payload = {
-          data: data,
-          tstamp: Date.now(),
-          rssi: peripheral.rssi,
-          address: address
-        };
-        if (uuid) {
-          payload.uuid = uuid;
+        let removed = false;
+        bleNodes = bleNodes.filter(ele => {
+          let node = RED.nodes.getNode(ele.id);
+          if (!node) {
+            removed = true;
+            return false;
+          }
+          let data = ele.parse(adv.manufacturerData);
+          let payload = {
+            data: data,
+            tstamp: Date.now(),
+            rssi: peripheral.rssi,
+            address: address
+          };
+          if (uuid) {
+            payload.uuid = uuid;
+          }
+          if (ele.useString) {
+            payload = JSON.stringify(payload);
+          }
+          node.send({'payload': payload});
+          return true;
+        });
+        if (removed) {
+          category[uuid] = bleNodes;
+          if (address !== 'unknown') {
+            category[address] = bleNodes;
+          }
         }
-        if (bleNode.useString) {
-          payload = JSON.stringify(payload);
-        }
-        node.send({'payload': payload});
       });
       resolve();
       RED.log.info('[BLE] Set up done.');
