@@ -1,0 +1,20 @@
+{
+  "blecast_bl" : {
+    "label" : {
+      "category" : "BLECAST_BL",
+      "blecastBl" : "BLE Illuminance Sensor",
+      "address" : "Address",
+      "uuid" : "UUID"
+    },
+    "placeholder" : {
+      "address" : "e.g. 99-ff-00-99-ff-ff",
+      "uuid" : "(optional)"
+    },
+    "status" : {
+      "receiving" : "Receiving"
+    },
+    "errors" : {
+      "unknown" : "Unknown Error (__error__)"
+    }
+  }
+}

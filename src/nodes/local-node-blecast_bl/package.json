@@ -1,0 +1,9 @@
+{
+  "name": "local-node-blecast_bl",
+  "version": "1.0.0",
+  "node-red": {
+    "nodes": {
+      "blecast_bl": "blecast_bl.js"
+    }
+  }
+}
