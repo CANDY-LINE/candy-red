@@ -95,6 +95,9 @@ export function start(RED) {
       isMonitoring = true;
       noble.on('discover', peripheral => {
         let adv = peripheral.advertisement;
+        if (!adv.localName) {
+          return;
+        }
         // Remove a NULL terminator
         let categoryName = adv.localName.replace(new RegExp('\0', 'g'), '');
         // look up a category by the category name
