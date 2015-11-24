@@ -119,6 +119,9 @@ export function start(RED) {
           }
         }
         if (!uuid) {
+          if (address.indexOf('-') >= 0) {
+            address = address.replace(new RegExp('-', 'g'), ':');
+          }
           bleNodes = category[address];
           if (!bleNodes || bleNodes.length === 0) {
             RED.log.warn(`[BLE] Unknown node: category=[${categoryName}], address=[${address}]`);

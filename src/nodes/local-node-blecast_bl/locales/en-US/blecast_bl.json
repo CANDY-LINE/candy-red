@@ -8,7 +8,7 @@
       "uuid" : "UUID"
     },
     "placeholder" : {
-      "address" : "e.g. 99-ff-00-99-ff-ff",
+      "address" : "e.g. 99:ff:00:99:ff:ff",
       "uuid" : "(optional)"
     },
     "errors" : {
