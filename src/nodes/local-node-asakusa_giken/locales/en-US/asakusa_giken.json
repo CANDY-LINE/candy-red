@@ -1,8 +1,8 @@
 {
-  "blecast_bl" : {
+  "asakusa_giken" : {
     "label" : {
-      "category" : "BLECAST_BL",
       "blecastBl" : "BLE Illuminance Sensor",
+      "blecastTm" : "BLE Temperature Sensor",
       "useString" : "Use string payload",
       "address" : "Address",
       "uuid" : "UUID"
