@@ -87,7 +87,7 @@ export function start(RED) {
       resolve();
     }
   }).then(() => {
-    return new Promise((resolve, reject) => {
+    return new Promise(resolve => {
       if (isMonitoring) {
         resolve();
         return;
