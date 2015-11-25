@@ -1,0 +1,9 @@
+{
+  "name": "local-node-enocean",
+  "version": "1.0.0",
+  "node-red": {
+    "nodes": {
+      "enocean": "enocean.js"
+    }
+  }
+}
