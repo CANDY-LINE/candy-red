@@ -82,16 +82,7 @@ module.exports = function (grunt) {
       }
     },
   };
-  
-  var fs = require('fs');
-  try {
-    fs.readdirSync('./dist/nodes/').forEach(function(f) {
-      if (f.indexOf('local-node-') === 0) {
-        config.run.npmLocalInstall.args.push('./dist/nodes/' + f);
-      }
-    });
-  } catch (e) { /* pass */ }
-  
+    
   grunt.initConfig(config);
   
   grunt.loadNpmTasks('grunt-contrib-clean');
@@ -100,6 +91,15 @@ module.exports = function (grunt) {
   grunt.loadNpmTasks('grunt-babel');
   grunt.loadNpmTasks('grunt-mocha-test');
   grunt.loadNpmTasks('grunt-run');
+
+  grunt.registerTask('pre-run', function() {
+    var fs = require('fs');
+    fs.readdirSync('./dist/nodes/').forEach(function(f) {
+      if (f.indexOf('local-node-') === 0) {
+        config.run.npmLocalInstall.args.push('./dist/nodes/' + f);
+      }
+    });
+  });
 
   grunt.registerTask('test', [
     'babel',
@@ -113,6 +113,7 @@ module.exports = function (grunt) {
     'clean',
     'babel',
     'copy',
+    'pre-run',
     'run',
   ]);
 
