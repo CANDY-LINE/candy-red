@@ -3,15 +3,13 @@
  * BLECAST_BL (BLE with Illuminance Sensor) node
  */
 
-import noble from 'noble';
-import Promise from 'es6-promises';
 import * as blecastBl from './lib/blecast_bl';
 
 const CATEGORY = 'BLECAST_BL';
 
 export default function(RED) {
   let ble = RED.settings.ble;
-  ble.start(RED).then(enabled => {
+  ble.start(RED).then(() => {
     function BlecastBlNode(n) {
       RED.nodes.createNode(this, n);
       this.address = n.address;

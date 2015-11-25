@@ -3,15 +3,13 @@
  * BLECAST_TM (BLE with Temeprature Sensor) node
  */
 
-import noble from 'noble';
-import Promise from 'es6-promises';
 import * as blecastTm from './lib/blecast_tm';
 
 const CATEGORY = 'BLECAST_TM';
 
 export default function(RED) {
   let ble = RED.settings.ble;
-  ble.start(RED).then(enabled => {
+  ble.start(RED).then(() => {
     function BlecastTmNode(n) {
       RED.nodes.createNode(this, n);
       this.address = n.address;
