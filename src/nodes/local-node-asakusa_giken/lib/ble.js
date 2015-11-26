@@ -55,6 +55,17 @@ export function registerIn(n, categoryName, address, uuid, parse, useString, RED
 }
 
 /**
+ * Stop the BLE module immediately.
+ * @param RED the initialized RED object
+ * @return void (sync)
+ */
+export function stop(RED) {
+  noble.stopScanning();
+  isScanning = false;
+  RED.log.info('[BLE] Stop scanning.');
+}
+
+/**
  * Start the BLE module.
  * @param RED the initialized RED object
  * @return Promise
@@ -62,6 +73,10 @@ export function registerIn(n, categoryName, address, uuid, parse, useString, RED
 export function start(RED) {
   if (!RED) {
     throw new Error('RED is required!');
+  }
+  let handlers = RED.settings.exitHandlers;
+  if (handlers.indexOf(stop) < 0) {
+    handlers.push(stop);
   }
   return new Promise((resolve, reject) => {
     if (isScanning) {
@@ -163,15 +178,4 @@ export function start(RED) {
       RED.log.info('[BLE] Set up done.');
     });
   });
-}
-
-/**
- * Stop the BLE module immediately.
- * @param RED the initialized RED object
- * @return void (sync)
- */
-export function stop(RED) {
-  noble.stopScanning();
-  isScanning = false;
-  RED.log.info('[BLE] Stop scanning.');
 }

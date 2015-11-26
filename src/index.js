@@ -4,25 +4,6 @@ import 'source-map-support/register';
 import http from 'http';
 import express from 'express';
 import RED from 'node-red';
-import * as ble from './ble';
-
-// Exit handler
-process.stdin.resume();
-function exitHandler(err) {
-  console.log('[CANDY-Red] Bye');
-  ble.stop(RED); // sync
-  if (err instanceof Error) {
-    console.log(err.stack);
-    process.exit(1);
-  } else if (isNaN(err)) {
-    process.exit();
-  } else {
-    process.exit(err);
-  }
-}
-process.on('exit', exitHandler);
-process.on('SIGINT', exitHandler);
-process.on('uncaughtException', exitHandler);
 
 // Listen port
 const PORT = process.env.PORT || 8000;
@@ -43,8 +24,34 @@ let settings = {
   userDir: (process.env.HOME || process.env.USERPROFILE) + '/.node-red',
   functionGlobalContext: {
   },
-  ble: ble
+  exitHandlers: []
 };
+
+// Exit handler
+process.stdin.resume();
+function exitHandler(err) {
+  console.log('[CANDY-Red] Bye');
+  if (RED.settings.exitHandlers) {
+    RED.settings.exitHandlers.forEach(handler => {
+      try {
+        handler(RED);
+      } catch (e) {
+        console.log(`The error [${e}] is ignored`);
+      }
+    });
+  }
+  if (err instanceof Error) {
+    console.log(err.stack);
+    process.exit(1);
+  } else if (isNaN(err)) {
+    process.exit();
+  } else {
+    process.exit(err);
+  }
+}
+process.on('exit', exitHandler);
+process.on('SIGINT', exitHandler);
+process.on('uncaughtException', exitHandler);
 
 // Initialise the runtime with a server and settings
 RED.init(server, settings);

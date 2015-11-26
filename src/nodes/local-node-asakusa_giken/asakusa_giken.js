@@ -6,9 +6,9 @@
 
 import * as blecastBl from './lib/blecast_bl';
 import * as blecastTm from './lib/blecast_tm';
+import * as ble from './lib/ble';
 
 export default function(RED) {
-  let ble = RED.settings.ble;
   ble.start(RED).then(() => {
     function BlecastBlNode(n) {
       RED.nodes.createNode(this, n);
