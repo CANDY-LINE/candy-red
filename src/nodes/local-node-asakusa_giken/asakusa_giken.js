@@ -22,7 +22,7 @@ export default function(RED) {
       this.useString = n.useString;
       this.blecastBlNodeId = n.blecastBl;
       this.blecastBlNode = RED.nodes.getNode(this.blecastBlNodeId);
-      ble.registerIn(this, CATEGORY, this.blecastBlNode.address, this.blecastBlNode.uuid,
+      ble.registerIn(this, 'BLECAST_BL', this.blecastBlNode.address, this.blecastBlNode.uuid,
         blecastBl.parse, this.useString, RED);
       this.name = n.name;
     }
@@ -40,7 +40,7 @@ export default function(RED) {
       this.useString = n.useString;
       this.blecastTmNodeId = n.blecastTm;
       this.blecastTmNode = RED.nodes.getNode(this.blecastTmNodeId);
-      ble.registerIn(this, CATEGORY, this.blecastTmNode.address, this.blecastTmNode.uuid,
+      ble.registerIn(this, 'BLECAST_TM', this.blecastTmNode.address, this.blecastTmNode.uuid,
         blecastTm.parse, this.useString, RED);
       this.name = n.name;
     }
