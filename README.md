@@ -21,29 +21,10 @@ The installation of CANDY-Red will take a couple of minutes.
 
 You can ignore `npm WARN`s, `gyp WARN`s, `gyp ERR!`s and `node-pre-gyp ERR!`s unless the installation terminates normally. You can check if the installation is successful by `systemctl status candy-red` command.
 
-### With BLE only
-
 ```
 $ VERSION=2.0.0
-$ npm install -g --production https://github.com/dbaba/candy-red/archive/${VERSION}.tar.gz
-$ WS_URL=ws://your-websocket-address/and/path $(npm root -g)/candy-red/install.sh
-```
-
-### With BLE and EnOcean
-```
-$ VERSION=2.0.0
-$ npm install -g --production https://github.com/dbaba/candy-red/archive/${VERSION}.tar.gz
-$ WS_URL=ws://your-websocket-address/and/path \
-    ENOCEAN_PORT=/dev/your/enocean/port $(npm root -g)/candy-red/install.sh
-```
-
-### With BLE and EnOcean and Serial port
-```
-$ VERSION=2.0.0
-$ npm install -g --production https://github.com/dbaba/candy-red/archive/${VERSION}.tar.gz
-$ WS_URL=ws://your-websocket-address/and/path \
-    ENOCEAN_PORT=/dev/your/enocean/port \
-    SERIAL_PORT=/dev/your/serial/port $(npm root -g)/candy-red/install.sh
+$ npm install -g --production --unsafe-perm https://github.com/dbaba/candy-red/archive/${VERSION}.tar.gz
+$ $(npm root -g)/candy-red/install.sh
 ```
 
 ## Stop/Start/Status Service
@@ -138,25 +119,9 @@ You can ignore `npm WARN`s, `gyp WARN`s, `gyp ERR!`s and `node-pre-gyp ERR!`s un
 
 Please refer to the following commands to isntall.
 
-### With BLE only
 ```
 $ sudo CC=/usr/bin/gcc-4.8 CXX=/usr/bin/g++-4.8 npm install -g --production --unsafe-perm dbaba/candy-red
-$ sudo WS_URL=ws://your-websocket-address/and/path $(npm root -g)/candy-red/install.sh
-```
-
-### With BLE and EnOcean
-```
-$ sudo CC=/usr/bin/gcc-4.8 CXX=/usr/bin/g++-4.8 npm install -g --production --unsafe-perm dbaba/candy-red
-$ sudo WS_URL=ws://your-websocket-address/and/path \
-    ENOCEAN_PORT=/dev/your/enocean/port $(npm root -g)/candy-red/install.sh
-```
-
-### With BLE and EnOcean and Serial port
-```
-$ sudo CC=/usr/bin/gcc-4.8 CXX=/usr/bin/g++-4.8 npm install -g --production --unsafe-perm dbaba/candy-red
-$ sudo WS_URL=ws://your-websocket-address/and/path \
-    ENOCEAN_PORT=/dev/your/enocean/port \
-    SERIAL_PORT=/dev/your/serial/port $(npm root -g)/candy-red/install.sh
+$ sudo NODE_OPTS=--max-old-space-size=128 $(npm root -g)/candy-red/install.sh
 ```
 
 ## Stop/Start/Status Service
@@ -190,22 +155,6 @@ $ sudo rm -f "/etc/init.d/candy-red"
 You can add an advertisement packet parser for your own BLE module by editing `src/peripherals.js`. Note that `Local Name` AD Data Type is required in order for peripheral.js to identify a type of BLE data.
 
 [`noble`](https://www.npmjs.com/package/noble) is used for BLE support.
-
-## EnOcean
-
-In order to activate EnOcean support, set an environment variable `ENOCEAN_PORT` which points to a serial port for EnOcean communication, e.g. `ENOCEAN_PORT=/dev/tty.usbserial-ABCDE`.
-
-EnOcean support is inactivated unless ENOCEAN_PORT is set.
-
-[`node-enocean`](https://www.npmjs.com/package/node-enocean) and [esp3_erp2_parser.js](./src/esp3_erp2_parser.js) are used for EnOcean support.
-
-## Serial/UART
-
-In order to activate Serial port support, set an environment variable `SERIAL_PORT` which points to a serial port for serial communication, e.g. `SERIAL_PORT=/dev/tty.usbserial-ABCDE`.
-
-Serial port support is inactivated unless SERIAL_PORT is set.
-
-[`serialport`](https://www.npmjs.com/package/serialport) is used for Serial port support.
 
 # Development
 
