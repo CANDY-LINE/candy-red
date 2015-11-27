@@ -87,7 +87,6 @@ export class SerialPool {
       node: enOceanPortNode,
       port: port
     };
-    that.pool[portName] = enOceanPortNode;
     that.RED.log.info(that.RED._('enocean.info.serialPortAdded',{ portName: portName }));
   }
   
