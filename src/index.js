@@ -24,7 +24,17 @@ let settings = {
   userDir: (process.env.HOME || process.env.USERPROFILE) + '/.node-red',
   functionGlobalContext: {
   },
-  exitHandlers: []
+  exitHandlers: [],
+  editorTheme: {
+    page: {
+      title: 'CANDY-Box',
+      favicon: 'favicon.ico'
+    },
+    header: {
+      title: 'CANDY-Box',
+      image: 'banner.png'
+    },
+  }
 };
 
 // Exit handler
@@ -57,7 +67,7 @@ process.on('uncaughtException', exitHandler);
 RED.init(server, settings);
 
 // Add a simple route for static content served from 'public'
-app.use('/', express.static('public'));
+app.use('/', express.static(__dirname + '/public'));
 if (settings.httpAdminRoot) {
   app.get('/', (_, res) => {
     res.redirect(settings.httpAdminRoot);
