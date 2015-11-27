@@ -23,7 +23,7 @@ export default function(RED) {
     RED.nodes.createNode(this, n);
     let that = this;
     that.name = n.name;
-    that.orignatorId = n.originatorId;
+    that.originatorId = n.originatorId;
     that.eepType = n.eepType;
     that.useString = n.useString;
     that.enoceanPortNodeId = n.enoceanPort;
@@ -38,7 +38,7 @@ export default function(RED) {
       }
     });
     let enocean = EnOceanPortNode.pool.get(that.enoceanPortNode.serialPort);
-    enocean.port.on(`ctx-${that.orignatorId}`, ctx => {
+    enocean.port.on(`ctx-${that.originatorId}`, ctx => {
       let handleIt = ERP2_HANDLERS[that.eepType];
       if (!handleIt) {
         RED.log.warn('enocean.warn.noHandler', { eepType: that.eepType });
