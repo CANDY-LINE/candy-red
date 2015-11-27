@@ -68,7 +68,7 @@ export class SerialPool {
             that.RED.log.error(that.RED._('enocean.errors.parseError', { error: e, data: JSON.stringify(ctx) }));
           });
         }).catch(e => {
-          that.RED.log.error(that.RED._('enocean.errors.parseError', { error: e, data: rawBytes }));
+          that.RED.log.error(that.RED._('enocean.errors.parseError', { error: e, data: result.payload }));
         });
       }).catch(e => {
         if (e instanceof Error && e.message === 'enocean.info.unsupportedPacketType') {
