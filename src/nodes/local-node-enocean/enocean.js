@@ -25,6 +25,7 @@ export default function(RED) {
     that.name = n.name;
     that.originatorId = n.originatorId;
     that.eepType = n.eepType;
+    that.addEepType = n.addEepType;
     that.useString = n.useString;
     that.enoceanPortNodeId = n.enoceanPort;
     that.enoceanPortNode = RED.nodes.getNode(that.enoceanPortNodeId);
@@ -51,6 +52,9 @@ export default function(RED) {
         rssi: ctx.container.dBm,
         id: ctx.originatorId
       };
+      if (that.addEepType) {
+        payload.eep = that.eepType;
+      }
       if (that.useString) {
         payload = JSON.stringify(payload);
       }
