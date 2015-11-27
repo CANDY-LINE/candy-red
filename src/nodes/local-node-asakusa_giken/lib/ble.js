@@ -75,8 +75,11 @@ export function start(RED) {
     throw new Error('RED is required!');
   }
   let handlers = RED.settings.exitHandlers;
-  if (handlers.indexOf(stop) < 0) {
+  if (handlers && handlers.indexOf(stop) < 0) {
     handlers.push(stop);
+  } else {
+    handlers = [stop];
+    RED.settings.exitHandlers = handlers;
   }
   return new Promise((resolve, reject) => {
     if (isScanning) {
