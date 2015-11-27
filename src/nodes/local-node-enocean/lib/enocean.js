@@ -22,7 +22,10 @@ class ESP3Parser {
     return new Promise((resolve, reject) => {
       let esp3PacketParser = ESP3_PACKET_PARSERS[data.packetType];
       if (esp3PacketParser) {
-        resolve(esp3PacketParser, data.rawByte);
+        resolve({
+          parser: esp3PacketParser,
+          payload: data.rawByte
+        });
       } else {
         let e = new Error('enocean.errors.unsupportedPacketType');
         e.packetType = data.packetType;
@@ -55,8 +58,8 @@ export class SerialPool {
     let port = setUpEnocean();
     port.listen(portName);
     port.on('data', data => {
-      that.esp3Parser.parse(data).then((esp3PacketParser, rawBytes) => {
-        esp3PacketParser.parse(rawBytes).then(ctx => {
+      that.esp3Parser.parse(data).then(result => {
+        result.parser.parse(result.payload).then(ctx => {
           that.erp2Parser.parse(ctx).then(ctx => {
             if (!port.emit(`ctx-${ctx.orignatorId}`, ctx)) {
               that.RED.log.error(that.RED._('enocean.warn.noNode', { originatorId: ctx.orignatorId }));
