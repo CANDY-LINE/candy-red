@@ -61,8 +61,8 @@ export class SerialPool {
       that.esp3Parser.parse(data).then(result => {
         result.parser.parse(result.payload).then(ctx => {
           that.erp2Parser.parse(ctx).then(ctx => {
-            if (!port.emit(`ctx-${ctx.orignatorId}`, ctx)) {
-              that.RED.log.error(that.RED._('enocean.warn.noNode', { originatorId: ctx.orignatorId }));
+            if (!port.emit(`ctx-${ctx.originatorId}`, ctx)) {
+              that.RED.log.error(that.RED._('enocean.warn.noNode', { originatorId: ctx.originatorId }));
             }
           }).catch(e => {
             that.RED.log.error(that.RED._('enocean.errors.parseError', { error: e, data: JSON.stringify(ctx) }));
