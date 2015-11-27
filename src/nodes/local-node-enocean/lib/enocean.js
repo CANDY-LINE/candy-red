@@ -65,7 +65,7 @@ export class SerialPool {
               that.RED.log.error(that.RED._('enocean.warn.noNode', { originatorId: ctx.orignatorId }));
             }
           }).catch(e => {
-            that.RED.log.error(that.RED._('enocean.errors.parseError', { error: e, data: ctx }));
+            that.RED.log.error(that.RED._('enocean.errors.parseError', { error: e, data: JSON.stringify(ctx) }));
           });
         }).catch(e => {
           that.RED.log.error(that.RED._('enocean.errors.parseError', { error: e, data: rawBytes }));
@@ -74,7 +74,7 @@ export class SerialPool {
         if (e instanceof Error && e.message === 'enocean.info.unsupportedPacketType') {
           that.RED.log.info(that.RED._('enocean.info.unsupportedPacketType', { packetType: e.packetType }));
         } else {
-          that.RED.log.error(that.RED._('enocean.errors.parseError', { error: e, data: data }));
+          that.RED.log.error(that.RED._('enocean.errors.parseError', { error: e, data: JSON.stringify(data) }));
         }
       });
     });
