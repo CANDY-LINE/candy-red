@@ -1,6 +1,8 @@
 {
   "name": "local-node-enocean",
   "version": "1.0.0",
+  "description": "Node-RED nodes for EnOcean Devices",
+  "private": "true",
   "node-red": {
     "nodes": {
       "enocean": "enocean.js"

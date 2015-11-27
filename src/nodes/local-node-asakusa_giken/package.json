@@ -1,6 +1,8 @@
 {
   "name": "local-node-asakusa_giken",
   "version": "1.0.0",
+  "description": "Node-RED nodes for Asakusa Giken Devices",
+  "private": "true",
   "node-red": {
     "nodes": {
       "asakusa_giken": "asakusa_giken.js"
