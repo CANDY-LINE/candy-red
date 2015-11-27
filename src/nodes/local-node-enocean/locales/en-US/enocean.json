@@ -4,6 +4,7 @@
       "category" : "EnOcean",
       "originatorId" : "Originator ID",
       "eepType" : "EEP Type",
+      "addEepType" : "Add EEP Type to payload",
       "enoceanPort" : "EnOcean Serial Port",
       "useString" : "Use string payload",
       "serialPort" : "Serial Port"
