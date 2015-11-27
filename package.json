@@ -5,7 +5,8 @@
   "main": "./dist/index.js",
   "scripts": {
     "pretest": "grunt build",
-    "test": "grunt test"
+    "test": "grunt test",
+    "postinstall": "cp -r ./dist/nodes/local-node-* node_modules/"
   },
   "repository": {
     "type": "git",
