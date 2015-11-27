@@ -8,18 +8,18 @@
     <input type='text' id='node-input-name' data-i18n='[placeholder]node-red:common.label.name'>
   </div>
   <div class='form-row'>
-    <label for='node-config-input-originatorId'>
+    <label for='node-input-originatorId'>
       <i class='fa fa-paw'></i>
       <span data-i18n='enocean.label.originatorId'></span>
     </label>
-    <input type='text' id='node-config-input-originatorId' data-i18n='[placeholder]enocean.placeholder.originatorId'>
+    <input type='text' id='node-input-originatorId' data-i18n='[placeholder]enocean.placeholder.originatorId'>
   </div>
   <div class='form-row'>
     <label for='node-input-eepType'>
       <i class='fa fa-simplybuilt'></i>
       <span data-i18n="enocean.label.eepType"></span></label>
     </label>
-    <select type="text" id="node-config-input-eepType" style="width: 72%;">
+    <select type="text" id="node-input-eepType" style="width: 72%;">
       <option value="f6-02-04" data-i18n="enocean.eepType.f6-02-04"></option>
     </select>
   </div>
@@ -41,7 +41,7 @@
     category: 'input',
     defaults: {
       name: { name: '' },
-      orignatorId: { value: '', required: true },
+      originatorId: { value: '', required: true },
       eepType: { value: '', requried: true },
       enoceanPort: { type: 'EnOcean Port', required: true },
       useString: { value: false, required: false }
@@ -57,7 +57,7 @@
       return this.name ? 'node_label_italic' : '';
     },
     oneditprepare: function() {
-      $('#node-config-input-originatorId').blur(function() {
+      $('#node-input-originatorId').blur(function() {
         var text = $(this).val();
         if (text && typeof(text) === 'string') {
           $(this).val(text.toLowerCase().trim().substring(0, 4));
@@ -65,10 +65,10 @@
           $(this).val('');
         }
       });
-      $('#node-config-input-eepType').val('f6-02-04'); // default
+      $('#node-input-eepType').val('f6-02-04'); // default
 
       // enabled in the future when new types are added
-      $('#node-config-input-eepType').prop('disabled', true);
+      $('#node-input-eepType').prop('disabled', true);
     }
   });
 </script>
