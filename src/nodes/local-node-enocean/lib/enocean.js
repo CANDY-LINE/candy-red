@@ -24,7 +24,7 @@ class ESP3Parser {
       if (esp3PacketParser) {
         resolve(esp3PacketParser, data.rawByte);
       } else {
-        let e = new Error('enocean.error.unsupportedPacketType');
+        let e = new Error('enocean.errors.unsupportedPacketType');
         e.packetType = data.packetType;
         reject(e);
       }
@@ -59,19 +59,19 @@ export class SerialPool {
         esp3PacketParser.parse(rawBytes).then(ctx => {
           that.erp2Parser.parse(ctx).then(ctx => {
             if (!port.emit(`ctx-${ctx.orignatorId}`, ctx)) {
-              that.RED.log.error('enocean.warn.noNode', { originatorId: ctx.orignatorId });
+              that.RED.log.error(that.RED._('enocean.warn.noNode', { originatorId: ctx.orignatorId }));
             }
           }).catch(e => {
-            that.RED.log.error('enocean.errors.parseError', { error: e, data: ctx });
+            that.RED.log.error(that.RED._('enocean.errors.parseError', { error: e, data: ctx }));
           });
         }).catch(e => {
-          that.RED.log.error('enocean.errors.parseError', { error: e, data: rawBytes });
+          that.RED.log.error(that.RED._('enocean.errors.parseError', { error: e, data: rawBytes }));
         });
       }).catch(e => {
         if (e instanceof Error && e.message === 'enocean.info.unsupportedPacketType') {
-          that.RED.log.info('enocean.info.unsupportedPacketType', { packetType: e.packetType });
+          that.RED.log.info(that.RED._('enocean.info.unsupportedPacketType', { packetType: e.packetType }));
         } else {
-          that.RED.log.error('enocean.error.parseError', { error: e, data: data });
+          that.RED.log.error(that.RED._('enocean.errors.parseError', { error: e, data: data }));
         }
       });
     });
