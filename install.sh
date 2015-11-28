@@ -131,8 +131,6 @@ function system_service_install {
   sed -i -e "s/%WS_USER%/${WS_USER//\//\\/}/g" ${SERVICES}/environment
   sed -i -e "s/%WS_PASSWORD%/${WS_PASSWORD//\//\\/}/g" ${SERVICES}/environment
   sed -i -e "s/%HCIDEVICE%/${HCIDEVICE//\//\\/}/g" ${SERVICES}/environment
-  sed -i -e "s/%ENOCEAN_PORT%/${ENOCEAN_PORT//\//\\/}/g" ${SERVICES}/environment
-  sed -i -e "s/%SERIAL_PORT%/${SERIAL_PORT//\//\\/}/g" ${SERVICES}/environment
   sed -i -e "s/%NODE_OPTS%/${NODE_OPTS//\//\\/}/g" ${SERVICES}/environment
   
   _install_${SYSTEM_SERVICE_TYPE}
