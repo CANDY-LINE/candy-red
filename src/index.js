@@ -28,11 +28,12 @@ let settings = {
   editorTheme: {
     page: {
       title: 'CANDY-Box',
-      favicon: 'favicon.ico'
+      favicon: __dirname + '/public/images/favicon.png',
+      css: __dirname + '/public/css/style.css'
     },
     header: {
       title: 'CANDY-Box',
-      image: 'banner.png'
+      image: __dirname + '/public/images/banner.png'
     },
   }
 };
