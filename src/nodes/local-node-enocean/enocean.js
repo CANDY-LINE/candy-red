@@ -4,6 +4,9 @@
  * Supported Protocols (Partially):
  * - EnOcean Serial Protocol 3 (ESP3) V1.27 / July 30, 2014
  * - EnOcean Radio Protocol 2 SPECIFICATION V1.0 September 26, 2013
+ *
+ * This node expects "node-red-node-serialport" to be available
+ * on the editor in order to use its `/serialports` endpoint.
  */
 
 import { SerialPool } from './lib/enocean';

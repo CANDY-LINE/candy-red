@@ -17,27 +17,27 @@
   <div class='form-row'>
     <label for='node-input-eepType'>
       <i class='fa fa-simplybuilt'></i>
-      <span data-i18n="enocean.label.eepType"></span></label>
+      <span data-i18n='enocean.label.eepType'></span></label>
     </label>
-    <select type="text" id="node-input-eepType" style="width: 72%;">
-      <option value="f6-02-04" data-i18n="enocean.eepType.f6-02-04"></option>
+    <select type='text' id='node-input-eepType' style='width: 72%;'>
+      <option value='f6-02-04' data-i18n='enocean.eepType.f6-02-04'></option>
     </select>
   </div>
-  <div class="form-row" id="node-addEepType">
+  <div class='form-row' id='node-addEepType'>
     <label>&nbsp;</label>
-    <input type="checkbox" id="node-input-addEepType" style="display: inline-block; width: auto; vertical-align: top;">
-    <label for="node-input-addEepType" style="width: 70%;" data-i18n="enocean.label.addEepType"></label>
+    <input type='checkbox' id='node-input-addEepType' style='display: inline-block; width: auto; vertical-align: top;'>
+    <label for='node-input-addEepType' style='width: 70%;' data-i18n='enocean.label.addEepType'></label>
   </div>
-  <div class="form-row node-input-enoceanPort">
-    <label for="node-input-enoceanPort">
-      <i class="fa fa-random"></i>
-      <span data-i18n="enocean.label.enoceanPort"></span></label>
-    <input type="text" id="node-input-enoceanPort">
+  <div class='form-row node-input-enoceanPort'>
+    <label for='node-input-enoceanPort'>
+      <i class='fa fa-random'></i>
+      <span data-i18n='enocean.label.enoceanPort'></span></label>
+    <input type='text' id='node-input-enoceanPort'>
   </div>
-  <div class="form-row" id="node-useString">
+  <div class='form-row' id='node-useString'>
     <label>&nbsp;</label>
-    <input type="checkbox" id="node-input-useString" style="display: inline-block; width: auto; vertical-align: top;">
-    <label for="node-input-useString" style="width: 70%;" data-i18n="enocean.label.useString"></label>
+    <input type='checkbox' id='node-input-useString' style='display: inline-block; width: auto; vertical-align: top;'>
+    <label for='node-input-useString' style='width: 70%;' data-i18n='enocean.label.useString'></label>
   </div>
 </script>
 
@@ -55,7 +55,7 @@
     color: 'PaleGreen',
     inputs: 0,
     outputs: 1,
-    icon: "enocean.png",
+    icon: 'enocean.png',
     label: function() {
       return this.name || this._('enocean.label.category');
     },
@@ -86,7 +86,10 @@
       <i class='fa fa-random'></i>
       <span data-i18n='enocean.label.serialPort'></span>
     </label>
-    <input type='text' id='node-config-input-serialPort' data-i18n='[placeholder]enocean.placeholder.serialPort'>
+    <input type='text' id='node-config-input-serialPort' data-i18n='[placeholder]enocean.placeholder.serialPort' style='width:60%;'>
+    <a id='node-config-lookup-serial' class='btn'>
+      <i id='node-config-lookup-serial-icon' class='fa fa-search'></i>
+    </a>
   </div>
 </script>
 
@@ -105,6 +108,24 @@
         if (text && typeof(text) === 'string') {
           $(this).val(text.trim());
         }
+      });
+
+      $('#node-config-lookup-serial').click(function() {
+        $('#node-config-lookup-serial').addClass('disabled');
+        $.getJSON('serialports',function(data) {
+          $('#node-config-lookup-serial').removeClass('disabled');
+          var ports = [];
+          $.each(data, function(i, port){
+            ports.push(port.comName);
+          });
+          $('#node-config-input-serialPort').autocomplete({
+            source: ports,
+            minLength: 0,
+            close: function( event, ui ) {
+              $('#node-config-input-serialPort').autocomplete('destroy');
+            }
+          }).autocomplete('search', '');
+        });
       });
     }
   });
