@@ -1,49 +1,87 @@
 'use strict';
 
 import 'source-map-support/register';
-import * as bus from './bus';
-import * as ble from './ble';
-import * as serial from './serial';
-import * as enocean from './enocean';
+import http from 'http';
+import express from 'express';
+import RED from 'node-red';
 
-let url;
-let user;
-let password;
+// Listen port
+const PORT = process.env.PORT || 8000;
 
-if (process.env.WS_URL) {
-  url = process.env.WS_URL;
-}
-if (!url) {
-  console.error('WS_URL is missing');
-  process.exit(1);
-}
-if (url.indexOf('ws') !== 0 || url.indexOf(':') < 0) {
-  console.error('Invalid WS_URL');
-  process.exit(2);
-}
+// Create an Express app
+let app = express();
 
-if (process.env.WS_USER) {
-  user = process.env.WS_USER;
-}
-if (process.env.WS_PASSWORD) {
-  password = process.env.WS_USER;
-}
+// Create a server
+let server = http.createServer(app);
+server.listen(PORT);
 
-console.log(`connecting to ${url}`);
-if (user || password) {
-  console.log(`The given credentials will be used for authentication: user=${user}`);
-}
-
-bus.start(url, user, password).then(() => {
-  return ble.start(bus);
-}).then(() => {
-  return serial.start(bus);
-}).then(() => {
-  return enocean.start(bus);
-}).catch(e => {
-  console.error('[ERROR]:', e);
-  if (e instanceof Error) {
-    console.error(e.stack);
+// Create the settings object - see default settings.js file for other options
+let settings = {
+  verbose: true,
+  disableEditor: false,
+  httpAdminRoot: '/red',
+  httpNodeRoot: '/api',
+  userDir: (process.env.HOME || process.env.USERPROFILE) + '/.node-red',
+  functionGlobalContext: {
+  },
+  exitHandlers: [],
+  editorTheme: {
+    page: {
+      title: 'CANDY-Box',
+      favicon: __dirname + '/public/images/favicon.png',
+      css: __dirname + '/public/css/style.css'
+    },
+    header: {
+      title: 'CANDY-Box',
+      image: __dirname + '/public/images/banner.png'
+    },
   }
-  process.exit(3);
+};
+
+// Exit handler
+process.stdin.resume();
+function exitHandler(err) {
+  console.log('[CANDY-Red] Bye');
+  if (RED.settings.exitHandlers) {
+    RED.settings.exitHandlers.forEach(handler => {
+      try {
+        handler(RED);
+      } catch (e) {
+        console.log(`The error [${e}] is ignored`);
+      }
+    });
+  }
+  if (err instanceof Error) {
+    console.log(err.stack);
+    process.exit(1);
+  } else if (isNaN(err)) {
+    process.exit();
+  } else {
+    process.exit(err);
+  }
+}
+process.on('exit', exitHandler);
+process.on('SIGINT', exitHandler);
+process.on('uncaughtException', exitHandler);
+
+// Initialise the runtime with a server and settings
+RED.init(server, settings);
+
+// Add a simple route for static content served from 'public'
+app.use('/', express.static(__dirname + '/public'));
+if (settings.httpAdminRoot) {
+  app.get('/', (_, res) => {
+    res.redirect(settings.httpAdminRoot);
+  });
+}
+
+// Serve the editor UI from /red
+app.use(settings.httpAdminRoot, RED.httpAdmin);
+
+// Serve the http nodes UI from /api
+app.use(settings.httpNodeRoot, RED.httpNode);
+
+// Start the runtime
+RED.start().then(() => {
+  RED.log.info(`Listen port=${PORT}`);
 });

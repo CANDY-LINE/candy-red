@@ -1,0 +1,18 @@
+{
+  "asakusa_giken" : {
+    "label" : {
+      "blecastBl" : "BLE Illuminance Sensor",
+      "blecastTm" : "BLE Temperature Sensor",
+      "useString" : "Use string payload",
+      "address" : "Address",
+      "uuid" : "UUID"
+    },
+    "placeholder" : {
+      "address" : "e.g. 99:ff:00:99:ff:ff",
+      "uuid" : "(optional)"
+    },
+    "errors" : {
+      "unknown" : "Unknown Error (__error__)"
+    }
+  }
+}

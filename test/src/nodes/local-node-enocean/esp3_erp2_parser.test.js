@@ -1,5 +1,7 @@
+'use strict';
+
 import { assert } from 'chai';
-import { ERP2Parser, ESP3RadioERP2Parser } from '../../src/esp3_erp2_parser';
+import { ERP2Parser, ESP3RadioERP2Parser } from '../../../../src/nodes/local-node-enocean/lib/esp3_erp2_parser';
 
 describe('ERP2Parser', () => {
   let parser = new ERP2Parser();
