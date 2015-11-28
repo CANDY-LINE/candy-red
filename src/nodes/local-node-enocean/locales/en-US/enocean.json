@@ -13,7 +13,7 @@
       "f6-02-04" : "RPS/Rocker Switch, 2 Rocker/Light and blind control ERP2"
     },
     "placeholder" : {
-      "originatorId" : "4-digit hex string (lower cases)",
+      "originatorId" : "8-digit hex string",
       "serialPort" : "e.g. /dev/ttyMFD1"
     },
     "info" : {
