@@ -4,6 +4,7 @@ import 'source-map-support/register';
 import http from 'http';
 import express from 'express';
 import RED from 'node-red';
+import os from 'os';
 
 // Listen port
 const PORT = process.env.PORT || 8000;
@@ -15,6 +16,16 @@ let app = express();
 let server = http.createServer(app);
 server.listen(PORT);
 
+let title = 'CANDY-Red@' + os.hostname();
+let editorTheme = {
+  page: {
+    title: title
+  },
+  header: {
+    title: title
+  }
+};
+
 // Create the settings object - see default settings.js file for other options
 let settings = {
   verbose: true,
@@ -25,17 +36,7 @@ let settings = {
   functionGlobalContext: {
   },
   exitHandlers: [],
-  editorTheme: {
-    page: {
-      title: 'CANDY-Box',
-      favicon: __dirname + '/public/images/favicon.png',
-      css: __dirname + '/public/css/style.css'
-    },
-    header: {
-      title: 'CANDY-Box',
-      image: __dirname + '/public/images/banner.png'
-    },
-  }
+  editorTheme: editorTheme
 };
 
 // Exit handler
