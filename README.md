@@ -23,7 +23,7 @@ You can ignore `npm WARN`s, `gyp WARN`s, `gyp ERR!`s and `node-pre-gyp ERR!`s un
 
 ```
 $ VERSION=2.0.0
-$ npm install -g --production --unsafe-perm https://github.com/dbaba/candy-red/archive/${VERSION}.tar.gz
+$ npm install -g --unsafe-perm https://github.com/dbaba/candy-red/archive/${VERSION}.tar.gz
 $ $(npm root -g)/candy-red/install.sh
 ```
 
@@ -120,7 +120,7 @@ You can ignore `npm WARN`s, `gyp WARN`s, `gyp ERR!`s and `node-pre-gyp ERR!`s un
 Please refer to the following commands to isntall.
 
 ```
-$ sudo CC=/usr/bin/gcc-4.8 CXX=/usr/bin/g++-4.8 npm install -g --production --unsafe-perm dbaba/candy-red
+$ sudo CC=/usr/bin/gcc-4.8 CXX=/usr/bin/g++-4.8 npm install -g --unsafe-perm dbaba/candy-red
 $ sudo NODE_OPTS=--max-old-space-size=128 $(npm root -g)/candy-red/install.sh
 ```
 
