@@ -6,7 +6,8 @@
   "scripts": {
     "pretest": "grunt build",
     "test": "grunt test",
-    "postinstall": "cp -r ./dist/nodes/local-node-* node_modules/"
+    "postinstall": "cp -r ./dist/nodes/local-node-* node_modules/",
+    "prepublish": "grunt build"
   },
   "repository": {
     "type": "git",
