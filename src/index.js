@@ -16,15 +16,30 @@ let app = express();
 let server = http.createServer(app);
 server.listen(PORT);
 
-let title = 'CANDY-Red@' + os.hostname();
 let editorTheme = {
   page: {
-    title: title
+    title: 'CANDY-Red@' + os.hostname()
   },
   header: {
-    title: title
+    title: ' :: ' + os.hostname() + ' ::'
   }
 };
+
+// TODO check if CANDY-IoT is installed
+let isCANDYIoTInstalled = true;
+if (isCANDYIoTInstalled) {
+  editorTheme = {
+    page: {
+      title: 'CANDY-Box@' + os.hostname(),
+      favicon: __dirname + '/public/images/favicon.png',
+      css: __dirname + '/public/css/style.css'
+    },
+    header: {
+      title: ' :: ' + os.hostname() + ' ::',
+      image: __dirname + '/public/images/banner.png'
+    }
+  }
+}
 
 // Create the settings object - see default settings.js file for other options
 let settings = {

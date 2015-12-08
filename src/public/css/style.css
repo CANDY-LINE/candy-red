@@ -30,3 +30,8 @@
 .deploy-button-group.open #btn-deploy-options {
   background: #710f3c !important;
 }
+span.logo span {
+  font-family: "Lucida Console", Monaco, monospace;
+  font-weight: bold;
+  font-size: 14px !important;
+}
