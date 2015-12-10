@@ -38,7 +38,7 @@ if (isCANDYIoTInstalled) {
       title: ' :: ' + os.hostname() + ' ::',
       image: __dirname + '/public/images/banner.png'
     }
-  }
+  };
 }
 
 // Create the settings object - see default settings.js file for other options
