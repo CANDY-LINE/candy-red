@@ -5,7 +5,7 @@ CANDY-Red
 
 CANDY-Red is a gateway service working between local area wiress network devices and internet servers.
 
-In this version, CANDY-Red acts like a transceiver, which receives BLE advertisement packets and transmits them over WebSocket session.
+CANDY-Red also includes Node-RED in order for users to create/manipulate logic flows with browsers.
 
 # Intel Edison + Yocto
 
