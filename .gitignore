@@ -35,3 +35,7 @@ services/systemd/environment
 services/start_sysvinit.sh
 services/sysvinit/environment
 services/sysvinit/wrapper.sh
+*.map
+*.js
+!*.es6.js
+!Gruntfile.js
