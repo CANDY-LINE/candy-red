@@ -1,7 +1,7 @@
 'use strict';
 
 import { assert } from 'chai';
-import { ERP2_HANDLERS } from '../../../../src/nodes/local-node-enocean/lib/eep_handlers';
+import { ERP2_HANDLERS } from '../../../../dist/nodes/local-node-enocean/lib/eep_handlers';
 
 describe('ERP2_HANDLERS', () => {
   describe('f6-02-04', () => {

@@ -2,8 +2,8 @@
 
 import { assert } from 'chai';
 import RED from 'node-red';
-import asakusaGikenModule from '../../../../src/nodes/local-node-asakusa_giken/asakusa_giken.js';
-import * as ble from '../../../../src/nodes/local-node-asakusa_giken/lib/ble';
+import asakusaGikenModule from '../../../../dist/nodes/local-node-asakusa_giken/asakusa_giken.js';
+import * as ble from '../../../../dist/nodes/local-node-asakusa_giken/lib/ble';
 
 RED.debug = true;
 RED.init({
