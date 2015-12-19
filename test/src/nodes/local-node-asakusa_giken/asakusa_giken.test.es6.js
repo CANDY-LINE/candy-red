@@ -16,12 +16,14 @@ describe('asakusa_giken node', () => {
     it('should have valid Node-RED plugin classes', done => {
       assert.isNotNull(RED);
       asakusaGikenModule(RED).then(() => {
-        assert.equal('BlecastBlNode', RED.nodes.getType('BLECAST_BL').name);
-        assert.equal('BlecastBlInNode', RED.nodes.getType('BLECAST_BL in').name);
-        assert.equal('BlecastTmNode', RED.nodes.getType('BLECAST_TM').name);
-        assert.equal('BlecastTmInNode', RED.nodes.getType('BLECAST_TM in').name);
+        assert.isNotNull(RED.nodes.getType('BLECAST_BL').name);
+        assert.isNotNull(RED.nodes.getType('BLECAST_BL in').name);
+        assert.isNotNull(RED.nodes.getType('BLECAST_TM').name);
+        assert.isNotNull(RED.nodes.getType('BLECAST_TM in').name);
         ble.stop(RED);
         done();
+      }).catch(err => {
+        done(err);
       });
     });
   });
