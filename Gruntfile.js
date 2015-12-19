@@ -15,8 +15,14 @@ module.exports = function (grunt) {
         files: [{
           expand: true,
           cwd: './src',
-          src: '**/*.js',
+          src: '**/*.es6.js',
           dest: './dist',
+          ext: '.js'
+        },{
+          expand: true,
+          cwd: './test',
+          src: '**/*.es6.js',
+          dest: './test',
           ext: '.js'
         }]
       }
@@ -48,6 +54,8 @@ module.exports = function (grunt) {
           dot: true,
           src: [
             './dist/*',
+            './test/**/*.js',
+            '!**/*.es6.js',
             './*.tgz',
             './node_modules/local-node-*',
             './services/environment',
@@ -69,8 +77,8 @@ module.exports = function (grunt) {
       },
       all: [
         './*.js',
-        './test/src/**/*.js',
-        './src/**/*.js'
+        './test/src/**/*.es6.js',
+        './src/**/*.es6.js'
       ]
     },
     mochaTest: {
@@ -78,7 +86,7 @@ module.exports = function (grunt) {
         options: {
           require: 'babel/register'
         },
-        src: ['./test/src/**/*.js']
+        src: ['./test/src/**/*.js', '!./test/src/**/*.es6.js']
       }
     },
   };
