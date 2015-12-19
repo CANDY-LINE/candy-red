@@ -112,7 +112,6 @@ module.exports = function (grunt) {
   grunt.registerTask('test', [
     'babel',
     'copy',
-    'run',
     'jshint',
     'mochaTest'
   ]);
