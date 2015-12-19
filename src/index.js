@@ -21,7 +21,7 @@ let editorTheme = {
     title: 'CANDY-Red@' + os.hostname()
   },
   header: {
-    title: ' :: ' + os.hostname() + ' ::'
+    title: ' ** ' + os.hostname() + ' **'
   }
 };
 
@@ -35,7 +35,7 @@ if (isCANDYIoTInstalled) {
       css: __dirname + '/public/css/style.css'
     },
     header: {
-      title: ' :: ' + os.hostname() + ' ::',
+      title: ' ** ' + os.hostname() + ' **',
       image: __dirname + '/public/images/banner.png'
     }
   };
