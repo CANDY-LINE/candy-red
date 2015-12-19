@@ -54,8 +54,9 @@ module.exports = function (grunt) {
           dot: true,
           src: [
             './dist/*',
+            './test/**/*.map',
             './test/**/*.js',
-            '!**/*.es6.js',
+            '!./test/**/*.es6.js',
             './*.tgz',
             './node_modules/local-node-*',
             './services/environment',
@@ -76,7 +77,6 @@ module.exports = function (grunt) {
         reporter: require('jshint-stylish')
       },
       all: [
-        './*.js',
         './test/src/**/*.es6.js',
         './src/**/*.es6.js'
       ]
