@@ -7,7 +7,7 @@ import RED from 'node-red';
 import os from 'os';
 
 // Listen port
-const PORT = process.env.PORT || 8000;
+const PORT = process.env.PORT || 8100;
 
 // Create an Express app
 let app = express();
