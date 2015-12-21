@@ -56,6 +56,9 @@ export default function(RED) {
   });
 
   if (RED.debug) {
+    // Should not return anything except for test
+    // since Node-RED tries to manipulate the return value unless it's null/undefined
+    // and TypeError will be raised in the end.
     return p;
   }
 }
