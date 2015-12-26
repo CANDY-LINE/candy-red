@@ -104,7 +104,7 @@ function cd_module_root {
 }
 
 function npm_install {
-  RET=`npm ls`
+  RET=`npm ls | grep candy-red`
   RET=$?
   if [ "${RET}" != "0" ]; then
     logger -s "Installing ${SERVICE_NAME}..."
