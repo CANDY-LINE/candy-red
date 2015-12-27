@@ -28,5 +28,19 @@ export const ERP2_HANDLERS = {
       data.ra = '0';
     }
     return data;
+  },
+  'd5-00-01' : function(ctx) {
+    let data = {
+      lrn: false, // false for pressed, true for not pressed
+      co: false   // false for open, true for closed
+    };
+    let state = ctx.dataDl[0];
+    if (state & 0x08) {
+      data.lrn = true;
+    }
+    if (state & 0x01) {
+      data.co = true;
+    }
+    return data;
   }
 };

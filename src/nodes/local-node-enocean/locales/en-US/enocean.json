@@ -10,7 +10,8 @@
       "serialPort" : "Serial Port"
     },
     "eepType" : {
-      "f6-02-04" : "RPS/Rocker Switch, 2 Rocker/Light and blind control ERP2"
+      "f6-02-04" : "RPS/Rocker Switch, 2 Rocker/Light and blind control ERP2",
+      "d5-00-01" : "1BS/Contacts and Switches/Single Input Contact"
     },
     "placeholder" : {
       "originatorId" : "8-digit hex string",
