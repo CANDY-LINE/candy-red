@@ -20,7 +20,6 @@
       <span data-i18n='enocean.label.eepType'></span></label>
     </label>
     <select type='text' id='node-input-eepType' style='width: 72%;'>
-      <option value='f6-02-04' data-i18n='enocean.eepType.f6-02-04'></option>
     </select>
   </div>
   <div class='form-row' id='node-addEepType'>
@@ -71,10 +70,19 @@
           $(this).val('');
         }
       });
-      $('#node-input-eepType').val('f6-02-04'); // default
 
-      // enabled in the future when new types are added
-      $('#node-input-eepType').prop('disabled', true);
+      var that = this;
+      $.getJSON('eeps',function(profiles) {
+        $.each(profiles, function(i, v) {
+          var option = $('<option></option>').attr('value', v).text(that._('enocean.eepType.' + v));
+          $('#node-input-eepType').append(option);
+        });
+        
+        $('#node-input-eepType').val(profiles[0]); // default
+        if (profiles.length === 1) {
+          $('#node-input-eepType').prop('disabled', true);
+        }
+      });
     }
   });
 </script>

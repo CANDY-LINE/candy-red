@@ -71,4 +71,9 @@ export default function(RED) {
     });
   }
   RED.nodes.registerType('EnOcean in', EnOceanInNode);
+
+  RED.httpAdmin.get("/eeps", RED.auth.needsPermission('eep.read'), function(req,res) {
+    res.json(Object.keys(ERP2_HANDLERS));
+  });
+
 }
