@@ -31,7 +31,7 @@ if (isCANDYIoTInstalled) {
   editorTheme = {
     page: {
       title: 'CANDY-Box@' + os.hostname(),
-      favicon: __dirname + '/public/images/favicon.png',
+      favicon: __dirname + '/public/images/favicon.ico',
       css: __dirname + '/public/css/style.css'
     },
     header: {
