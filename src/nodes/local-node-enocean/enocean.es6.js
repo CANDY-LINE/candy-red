@@ -16,8 +16,12 @@ export default function(RED) {
   function EnOceanPortNode(n) {
     RED.nodes.createNode(this, n);
     let that = this;
-    that.serialPort = n.serialPort;
-    EnOceanPortNode.pool.add(that);
+    try {
+      that.serialPort = n.serialPort;
+      EnOceanPortNode.pool.add(that);
+    } catch (e) {
+      RED.log.warn(RED._('enocean.errors.serialPortError', { error: e }));
+    }
   }
   EnOceanPortNode.pool = new SerialPool(RED);
   RED.nodes.registerType('EnOcean Port', EnOceanPortNode);
@@ -41,34 +45,38 @@ export default function(RED) {
         done();
       }
     });
-    let enocean = EnOceanPortNode.pool.get(that.enoceanPortNode.serialPort);
-    enocean.port.on(`ctx-${that.originatorId}`, ctx => {
-      let handleIt = ERP2_HANDLERS[that.eepType];
-      if (!handleIt) {
-        RED.log.warn('enocean.warn.noHandler', { eepType: that.eepType });
-        return;
-      }
-      let data = handleIt(ctx);
-      let payload = {
-        data: data,
-        tstamp: Date.now(),
-        rssi: ctx.container.dBm,
-        id: ctx.originatorId
-      };
-      if (that.addEepType) {
-        payload.eep = that.eepType;
-      }
-      if (that.useString) {
-        payload = JSON.stringify(payload);
-      }
-      that.send({ payload: payload });
-    });
-    enocean.port.on('ready', () => {
-      that.status({ fill: 'green', shape: 'dot', text: 'node-red:common.status.connected'});
-    });
-    enocean.port.on('closed', () => {
-      that.status({ fill: 'red', shape: 'ring', text: 'node-red:common.status.not-connected'});
-    });
+    try {
+      let enocean = EnOceanPortNode.pool.get(that.enoceanPortNode.serialPort);
+      enocean.port.on(`ctx-${that.originatorId}`, ctx => {
+        let handleIt = ERP2_HANDLERS[that.eepType];
+        if (!handleIt) {
+          RED.log.warn(RED._('enocean.warn.noHandler', { eepType: that.eepType }));
+          return;
+        }
+        let data = handleIt(ctx);
+        let payload = {
+          data: data,
+          tstamp: Date.now(),
+          rssi: ctx.container.dBm,
+          id: ctx.originatorId
+        };
+        if (that.addEepType) {
+          payload.eep = that.eepType;
+        }
+        if (that.useString) {
+          payload = JSON.stringify(payload);
+        }
+        that.send({ payload: payload });
+      });
+      enocean.port.on('ready', () => {
+        that.status({ fill: 'green', shape: 'dot', text: 'node-red:common.status.connected'});
+      });
+      enocean.port.on('closed', () => {
+        that.status({ fill: 'red', shape: 'ring', text: 'node-red:common.status.not-connected'});
+      });
+    } catch (e) {
+      RED.log.warn(RED._('enocean.errors.serialPortError', { error: e }));
+    }
   }
   RED.nodes.registerType('EnOcean in', EnOceanInNode);
 
