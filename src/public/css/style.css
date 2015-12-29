@@ -27,6 +27,9 @@
 .deploy-button {
   background: #b41861;
 }
+.deploy-button:hover {
+  background: #710f3c;
+}
 .deploy-button-group.open #btn-deploy-options {
   background: #710f3c !important;
 }
