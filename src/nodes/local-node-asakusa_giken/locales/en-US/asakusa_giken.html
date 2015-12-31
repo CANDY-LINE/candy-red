@@ -4,8 +4,16 @@
    <p>The <code>msg.payload</code> format is as follows.</p>
 <table>
   <tr>
-    <th>data</th>
-    <td>The sensor data. JSON format. e.g. <code>{ type: 'lx', unit: 'lx', val: 37 }</code></td>
+    <th>type</th>
+    <td>Type of the sensor data, <code>lx</code> for illuminance</td>
+  </tr>
+  <tr>
+    <th>unit</th>
+    <td>The unit of the temperature value. <code>lx</code> for lux</td>
+  </tr>
+  <tr>
+    <th>val</th>
+    <td>The sensor data value</td>
   </tr>
   <tr>
     <th>tstamp</th>
@@ -26,11 +34,9 @@
 </table>
    <p>The typical JSON payload is shown as below.
 <pre>{  
-  "data":{  
-    "type":"lx",
-    "unit":"lx",
-    "val":37
-  },
+  "type":"lx",
+  "unit":"lx",
+  "val":37
   "tstamp":1448259848905,
   "rssi":-59,
   "address":"aa:bb:cc:99:99:99",
@@ -45,8 +51,16 @@
    <p>The <code>msg.payload</code> format is as follows.</p>
 <table>
   <tr>
-    <th>data</th>
-    <td>The sensor data. JSON format. e.g. <code>{ type: 'te', unit: 'C', val: 20 }</code></td>
+    <th>type</th>
+    <td>Type of the sensor data, <code>te</code> for temperature</td>
+  </tr>
+  <tr>
+    <th>unit</th>
+    <td>The unit of the temperature value. <code>C</code> for Celcius</td>
+  </tr>
+  <tr>
+    <th>val</th>
+    <td>The sensor data value</td>
   </tr>
   <tr>
     <th>tstamp</th>
@@ -67,11 +81,9 @@
 </table>
    <p>The typical JSON payload is shown as below.
 <pre>{  
-  "data":{  
-    "type":"te",
-    "unit":"C",
-    "val":20
-  },
+  "type":"te",
+  "unit":"C",
+  "val":20,
   "tstamp":1448259848905,
   "rssi":-59,
   "address":"33-22-11-99-88-77",

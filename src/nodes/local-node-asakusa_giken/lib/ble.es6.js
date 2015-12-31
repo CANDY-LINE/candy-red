@@ -154,13 +154,10 @@ export function start(RED) {
             removed = true;
             return false;
           }
-          let data = ele.parse(adv.manufacturerData);
-          let payload = {
-            data: data,
-            tstamp: Date.now(),
-            rssi: peripheral.rssi,
-            address: address
-          };
+          let payload = ele.parse(adv.manufacturerData);
+          payload.tstamp = Date.now();
+          payload.rssi = peripheral.rssi;
+          payload.address = address;
           if (uuid) {
             payload.uuid = uuid;
           }

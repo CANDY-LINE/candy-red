@@ -5,7 +5,7 @@
  * - EnOcean Serial Protocol 3 (ESP3) V1.27 / July 30, 2014
  * - EnOcean Radio Protocol 2 SPECIFICATION V1.0 September 26, 2013
  *
- * This node expects "node-red-node-serialport" to be available
+ * This node expects 'node-red-node-serialport' to be available
  * on the editor in order to use its `/serialports` endpoint.
  */
 
@@ -53,13 +53,10 @@ export default function(RED) {
           RED.log.warn(RED._('enocean.warn.noHandler', { eepType: that.eepType }));
           return;
         }
-        let data = handleIt(ctx);
-        let payload = {
-          data: data,
-          tstamp: Date.now(),
-          rssi: ctx.container.dBm,
-          id: ctx.originatorId
-        };
+        let payload = handleIt(ctx);
+        payload.tstamp = Date.now();
+        payload.rssi = ctx.container.dBm;
+        payload.id = ctx.originatorId;
         if (that.addEepType) {
           payload.eep = that.eepType;
         }
