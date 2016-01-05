@@ -22,6 +22,12 @@ let editorTheme = {
   },
   header: {
     title: ' ** ' + os.hostname() + ' **'
+  },
+  menu: {
+    'menu-item-help': {
+      label: 'Powered By Node-RED',
+      url: 'http://nodered.org/docs'
+    }
   }
 };
 
@@ -37,6 +43,12 @@ if (isCANDYIoTInstalled) {
     header: {
       title: ' ** ' + os.hostname() + ' **',
       image: __dirname + '/public/images/banner.png'
+    },
+    menu: {
+      'menu-item-help': {
+        label: 'Powered By Node-RED',
+        url: 'http://nodered.org/docs'
+      }
     }
   };
 }
