@@ -1,0 +1,15 @@
+{
+  "name": "local-node-candy-egg",
+  "version": "1.0.0",
+  "description": "Node-RED nodes for CANDY-Egg user environment",
+  "private": "true",
+  "dependencies": {
+    "follow-redirects": "^0.0.7",
+    "mustache": "^2.2.1"
+  },
+  "node-red": {
+    "nodes": {
+      "candy-egg-ws": "candy-egg-ws.js"
+    }
+  }
+}

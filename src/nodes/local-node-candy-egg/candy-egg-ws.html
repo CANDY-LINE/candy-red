@@ -1,0 +1,132 @@
+<!-- WebSocket Input Node -->
+<script type='text/x-red' data-template-name='CANDY-Egg WS endpoint in'>
+  <div class='form-row' id='candy-egg-ws-account-row'>
+    <label for='node-input-account'><i class='fa fa-user'></i> <span data-i18n='candy-egg-ws.label.account'></span></label>
+    <input type='text' id='node-input-account'>
+  </div>
+  <div class='form-row' id='candy-egg-ws-path-row'>
+    <label for='node-input-path'><i class='fa fa-bookmark'></i> <span data-i18n='candy-egg-ws.label.path'></span></label>
+    <input type='text' id='node-input-path'>
+  </div>
+  <div class='form-row'>
+    <label for='node-config-input-wholemsg'>&nbsp;</label>
+    <select type='text' id='node-config-input-wholemsg' style='width: 70%;'>
+      <option value='false' data-i18n='candy-egg-ws.payload'></option>
+      <option value='true' data-i18n='candy-egg-ws.message'></option>
+    </select>
+  </div>
+  <div class='form-row'>
+    <label for='node-input-name'><i class='fa fa-tag'></i> <span data-i18n='node-red:common.label.name'></span></label>
+    <input type='text' id='node-input-name' data-i18n='[placeholder]node-red:common.label.name'>
+  </div>
+</script>
+
+<script type='text/javascript'>
+
+(function() {
+
+  RED.nodes.registerType('CANDY-Egg WS endpoint in',{
+    category: 'input',
+    defaults: {
+      name: {value:''},
+      account: {type: 'CANDY-Egg Account', required: true},
+      path: {value:'',required:true,validate:RED.validators.regex(/^((?!\/debug\/ws).)*$/) },
+      wholemsg: {value:'false'}
+    },
+    color:'rgb(128, 219, 255)',
+    inputs:0,
+    outputs:1,
+    icon: 'candy-egg.png',
+    labelStyle: function() {
+      return this.name?'node_label_italic':this.path;
+    },
+    label: function() {
+      var accountNode = RED.nodes.node(this.account);
+      return this.name||(accountNode ? accountNode.label() : this._('candy-egg-ws.label.category-IN'));
+    }
+  });
+  
+  RED.nodes.registerType('CANDY-Egg WS endpoint out',{
+    category: 'output',
+    defaults: {
+      name: {value:''},
+      account: {type: 'CANDY-Egg Account', required: true},
+      path: {value:'',required:true,validate:RED.validators.regex(/^((?!\/debug\/ws).)*$/) },
+      wholemsg: {value:'false'}
+    },
+    color:'rgb(128, 219, 255)',
+    inputs:1,
+    outputs:0,
+    icon: 'candy-egg.png',
+    align: 'right',
+    labelStyle: function() {
+      return this.name?'node_label_italic':this.path;
+    },
+    label: function() {
+      var accountNode = RED.nodes.node(this.account);
+      return this.name||(accountNode ? accountNode.label() : this._('candy-egg-ws.label.category-OUT'));
+    }
+  });
+  
+  RED.nodes.registerType('CANDY-Egg Account',{
+    category: 'config',
+    defaults: {
+      accountFqn: {value:'',required:true,validate:RED.validators.regex(/^[0-9a-zA-Z]+@[^-\s]*$/) },
+      loginUser: {value:'', required:true},
+      loginPassword: {value:'', required:true},
+      secure: {value:true}
+    },
+    inputs:0,
+    outputs:0,
+    label: function() {
+      return this.accountFqn;
+    }
+  });
+  
+})();
+</script>
+
+<!-- WebSocket out Node -->
+<script type='text/x-red' data-template-name='CANDY-Egg WS endpoint out'>
+  <div class='form-row' id='candy-egg-ws-account-row'>
+    <label for='node-input-account'><i class='fa fa-user'></i> <span data-i18n='candy-egg-ws.label.account'></span></label>
+    <input type='text' id='node-input-account'>
+  </div>
+  <div class='form-row' id='candy-egg-ws-path-row'>
+    <label for='node-input-path'><i class='fa fa-bookmark'></i> <span data-i18n='candy-egg-ws.label.path'></span></label>
+    <input type='text' id='node-input-path'>
+  </div>
+  <div class='form-row'>
+    <label for='node-config-input-wholemsg'>&nbsp;</label>
+    <select type='text' id='node-config-input-wholemsg' style='width: 70%;'>
+      <option value='false' data-i18n='candy-egg-ws.payload'></option>
+      <option value='true' data-i18n='candy-egg-ws.message'></option>
+    </select>
+  </div>
+  <div class='form-row'>
+    <label for='node-input-name'><i class='fa fa-tag'></i> <span data-i18n='node-red:common.label.name'></span></label>
+    <input type='text' id='node-input-name' data-i18n='[placeholder]node-red:common.label.name'>
+  </div>
+</script>
+
+
+<!-- CANDY-Egg Account configuration node -->
+<script type='text/x-red' data-template-name='CANDY-Egg Account'>
+  <div class='form-row'>
+    <label for='node-config-input-accountFqn' style='width: 100px'><i class='fa fa-user'></i> <span data-i18n='candy-egg-ws.label.account-fqn'></span></label>
+    <input type='text' id='node-config-input-accountFqn' placeholder='account@host.candy-egg.com'>
+  </div>
+  <div class='form-row'>
+    <label for='node-config-input-loginUser' style='width: 100px'><i class='fa fa-hand-o-right'></i> <span data-i18n='candy-egg-ws.label.login-user'></span></label>
+    <input type='text' id='node-config-input-loginUser' placeholder='login_user_id'>
+  </div>
+  <div class='form-row'>
+    <label for='node-config-input-loginPassword' style='width: 100px'><i class='fa fa-key'></i> <span data-i18n='candy-egg-ws.label.login-password'></span></label>
+    <input type='password' id='node-config-input-loginPassword'>
+  </div>
+  <div class='form-row'>
+    <label>&nbsp;</label>
+    <input type='checkbox' id='node-config-input-secure' style='display: inline-block; width: auto; vertical-align: top;'>
+    <label for='node-config-input-secure' style='width: 70%;' data-i18n='candy-egg-ws.label.secure'></label>
+  </div>
+</script>
