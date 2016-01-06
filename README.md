@@ -191,27 +191,27 @@ Try the following commands after `grunt build`:
 (Prepends `sudo` for Raspbian)
 
 ```
-$ WS_DEBUG=true WS_URL=ws://your-ws-host node ./dist/index.js
+$ node ./dist/index.js
 ```
-
-e.g. `WS_DEBUG=true WS_URL=ws://echo.websocket.org node ./dist/index.js`
 
 And you'll see the sensor info like this:
 ```
-connecting to ws://echo.websocket.org
-ready
-WebSocket opened.
-Starting Scanning...
-Serial port is inactivated...
-EnOcean is inactivated...
-Data:{"type":"lx","unit":"lx","val":11,"tstamp":1444892603243,"rssi":-34,"id":"20:73:7a:10:ad:bd"}
-```
+Welcome to Node-RED
+===================
 
-### with basic auth
-(Prepends `sudo` for Raspbian)
-
-```
-$ WS_DEBUG=true WS_URL=ws://your-ws-host WS_USER=foo WS_PASSWORD=bar node ./dist/index.js
+6 Jan 10:13:10 - [info] Node-RED version: v0.12.4
+6 Jan 10:13:10 - [info] Node.js  version: v0.12.7
+6 Jan 10:13:10 - [info] Loading palette nodes
+6 Jan 10:13:11 - [warn] ------------------------------------------
+6 Jan 10:13:11 - [warn] [rpi-gpio] Info : Ignoring Raspberry Pi specific node
+6 Jan 10:13:11 - [warn] ------------------------------------------
+6 Jan 10:13:11 - [info] Settings file  : undefined
+6 Jan 10:13:11 - [info] User directory : /Users/daisukeb/.node-red
+6 Jan 10:13:11 - [info] Flows file : /path/to/.node-red/flows_candy-box_chorinho.json
+6 Jan 10:13:11 - [info] Listen port=8100
+6 Jan 10:13:11 - [info] Creating new flow file
+6 Jan 10:13:11 - [info] Starting flows
+6 Jan 10:13:11 - [info] Started flows
 ```
 
 ## Test
