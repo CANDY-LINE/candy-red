@@ -15,7 +15,7 @@ let app = express();
 // Create a server
 let server = http.createServer(app);
 server.listen(PORT);
-
+let flowFile = 'flows_candy-red_' + os.hostname() + '.json';
 let editorTheme = {
   page: {
     title: 'CANDY-Red@' + os.hostname()
@@ -34,6 +34,7 @@ let editorTheme = {
 // TODO check if CANDY-IoT is installed
 let isCANDYIoTInstalled = true;
 if (isCANDYIoTInstalled) {
+  flowFile = 'flows_candy-box_' + os.hostname() + '.json';
   editorTheme = {
     page: {
       title: 'CANDY-Box@' + os.hostname(),
@@ -60,6 +61,7 @@ let settings = {
   httpAdminRoot: '/red',
   httpNodeRoot: '/api',
   userDir: (process.env.HOME || process.env.USERPROFILE) + '/.node-red',
+  flowFile: flowFile,
   functionGlobalContext: {
   },
   exitHandlers: [],
