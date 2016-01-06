@@ -1,8 +1,8 @@
 {
   "candy-egg-ws": {
     "label": {
-      "category-IN": "CANDY-Egg Endpoint IN",
-      "category-OUT": "CANDY-Egg Endpoint OUT",
+      "category-IN": "CANDY EGG Endpoint IN",
+      "category-OUT": "CANDY EGG Endpoint OUT",
       "path": "Path",
       "account": "Account",
       "account-fqn": "Account FQN",

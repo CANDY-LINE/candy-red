@@ -18,7 +18,7 @@ server.listen(PORT);
 let flowFile = 'flows_candy-red_' + os.hostname() + '.json';
 let editorTheme = {
   page: {
-    title: 'CANDY-Red@' + os.hostname()
+    title: 'CANDY RED@' + os.hostname()
   },
   header: {
     title: ' ** ' + os.hostname() + ' **'
@@ -37,7 +37,7 @@ if (isCANDYIoTInstalled) {
   flowFile = 'flows_candy-box_' + os.hostname() + '.json';
   editorTheme = {
     page: {
-      title: 'CANDY-Box@' + os.hostname(),
+      title: 'CANDY BOXx@' + os.hostname(),
       favicon: __dirname + '/public/images/favicon.ico',
       css: __dirname + '/public/css/style.css'
     },
@@ -71,7 +71,7 @@ let settings = {
 // Exit handler
 process.stdin.resume();
 function exitHandler(err) {
-  console.log('[CANDY-Red] Bye');
+  console.log('[CANDY RED] Bye');
   if (RED.settings.exitHandlers) {
     RED.settings.exitHandlers.forEach(handler => {
       try {

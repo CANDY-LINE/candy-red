@@ -14,7 +14,7 @@ export default function(RED) {
       this.secure = n.secure;
     }
   }
-  RED.nodes.registerType('CANDY-Egg Account', CANDYEggAccountNode);
+  RED.nodes.registerType('CANDY EGG Account', CANDYEggAccountNode);
 
   class WebSocketListener {
     constructor(accountConfig, account, path, webSocketListeners) {
@@ -190,7 +190,7 @@ export default function(RED) {
       });
     }
   }
-  RED.nodes.registerType('CANDY-Egg WS endpoint in', WebSocketInNode);
+  RED.nodes.registerType('CANDY EGG WS endpoint in', WebSocketInNode);
 
   class WebSocketOutNode {
     constructor(n) {
@@ -239,5 +239,5 @@ export default function(RED) {
       });
     }
   }
-  RED.nodes.registerType('CANDY-Egg WS endpoint out',WebSocketOutNode);
+  RED.nodes.registerType('CANDY EGG WS endpoint out',WebSocketOutNode);
 }

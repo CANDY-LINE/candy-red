@@ -1,5 +1,5 @@
 <!-- WebSocket Input Node -->
-<script type='text/x-red' data-template-name='CANDY-Egg WS endpoint in'>
+<script type='text/x-red' data-template-name='CANDY EGG WS endpoint in'>
   <div class='form-row' id='candy-egg-ws-account-row'>
     <label for='node-input-account'><i class='fa fa-user'></i> <span data-i18n='candy-egg-ws.label.account'></span></label>
     <input type='text' id='node-input-account'>
@@ -25,11 +25,11 @@
 
 (function() {
 
-  RED.nodes.registerType('CANDY-Egg WS endpoint in',{
+  RED.nodes.registerType('CANDY EGG WS endpoint in',{
     category: 'input',
     defaults: {
       name: {value:''},
-      account: {type: 'CANDY-Egg Account', required: true},
+      account: {type: 'CANDY EGG Account', required: true},
       path: {value:'',required:true,validate:RED.validators.regex(/^((?!\/debug\/ws).)*$/) },
       wholemsg: {value:'false'}
     },
@@ -46,11 +46,11 @@
     }
   });
   
-  RED.nodes.registerType('CANDY-Egg WS endpoint out',{
+  RED.nodes.registerType('CANDY EGG WS endpoint out',{
     category: 'output',
     defaults: {
       name: {value:''},
-      account: {type: 'CANDY-Egg Account', required: true},
+      account: {type: 'CANDY EGG Account', required: true},
       path: {value:'',required:true,validate:RED.validators.regex(/^((?!\/debug\/ws).)*$/) },
       wholemsg: {value:'false'}
     },
@@ -68,7 +68,7 @@
     }
   });
   
-  RED.nodes.registerType('CANDY-Egg Account',{
+  RED.nodes.registerType('CANDY EGG Account',{
     category: 'config',
     defaults: {
       accountFqn: {value:'',required:true,validate:RED.validators.regex(/^[0-9a-zA-Z]+@[^-\s]*$/) },
@@ -87,7 +87,7 @@
 </script>
 
 <!-- WebSocket out Node -->
-<script type='text/x-red' data-template-name='CANDY-Egg WS endpoint out'>
+<script type='text/x-red' data-template-name='CANDY EGG WS endpoint out'>
   <div class='form-row' id='candy-egg-ws-account-row'>
     <label for='node-input-account'><i class='fa fa-user'></i> <span data-i18n='candy-egg-ws.label.account'></span></label>
     <input type='text' id='node-input-account'>
@@ -110,8 +110,8 @@
 </script>
 
 
-<!-- CANDY-Egg Account configuration node -->
-<script type='text/x-red' data-template-name='CANDY-Egg Account'>
+<!-- CANDY EGG Account configuration node -->
+<script type='text/x-red' data-template-name='CANDY EGG Account'>
   <div class='form-row'>
     <label for='node-config-input-accountFqn' style='width: 100px'><i class='fa fa-user'></i> <span data-i18n='candy-egg-ws.label.account-fqn'></span></label>
     <input type='text' id='node-config-input-accountFqn' placeholder='account@host.candy-egg.com'>

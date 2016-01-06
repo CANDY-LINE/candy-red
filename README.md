@@ -1,11 +1,11 @@
-CANDY-Red
+CANDY RED
 ===
 
 [![master Build Status](https://travis-ci.org/dbaba/candy-red.svg?branch=master)](https://travis-ci.org/dbaba/candy-red/)
 
-CANDY-Red is a gateway service working between local area wiress network devices and internet servers.
+CANDY RED is a gateway service working between local area wiress network devices and internet servers.
 
-CANDY-Red also includes Node-RED in order for users to create/manipulate logic flows with browsers.
+CANDY RED also includes Node-RED in order for users to create/manipulate logic flows with browsers.
 
 # Intel Edison + Yocto
 
@@ -17,7 +17,7 @@ CANDY-Red also includes Node-RED in order for users to create/manipulate logic f
 
 ## Install
 
-The installation of CANDY-Red will take a couple of minutes.
+The installation of CANDY RED will take a couple of minutes.
 
 You can ignore `npm WARN`s, `gyp WARN`s, `gyp ERR!`s and `node-pre-gyp ERR!`s unless the installation terminates normally. You can check if the installation is successful by `systemctl status candy-red` command.
 
@@ -230,6 +230,7 @@ $ npm pack
 
 * 2.0.0
   - Node-RED integration
+  - Add CANDY EGG cloud endpoint nodes
 
 * 1.3.0
   - Add an option to enable to generate a list of copied files
