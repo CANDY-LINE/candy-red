@@ -8,8 +8,8 @@ import querystring from 'querystring';
 export default function(RED) {
   function HTTPRequest(n) {
     RED.nodes.createNode(this,n);
-    let path = n.path;
-    let isTemplatedPath = (path||'').indexOf('{{') !== -1;
+    this.path = n.path;
+    let isTemplatedPath = (this.path||'').indexOf('{{') !== -1;
     let nodeMethod = n.method || 'GET';
     this.ret = n.ret || 'obj';
     let node = this;
@@ -32,6 +32,11 @@ export default function(RED) {
       let url = (conf.secure ? 'https' : 'http') + '://';
       let accountId = conf.accountFqn.split('@');
       url += accountId[1] + '/' + accountId[0] + '/api';
+
+      let path = msg.path || node.path;
+      if (msg.path && node.path && (msg.path !== node.path)) {   // warn if override option not set
+        node.warn(RED._('common.errors.nooverride'));
+      }
       if (path && path.length > 0 && path.charAt(0) !== '/') {
         prefix += '/';
       }
@@ -45,8 +50,6 @@ export default function(RED) {
       let method = nodeMethod.toUpperCase() || 'GET';
       if (msg.method && n.method && (n.method !== 'use')) {   // warn if override option not set
         node.warn(RED._('common.errors.nooverride'));
-      }
-      if (msg.method && n.method && (n.method === 'use')) {
         method = msg.method.toUpperCase();      // use the msg parameter
       }
       let opts = urllib.parse(url);
