@@ -5,17 +5,6 @@ import { inspect } from 'util';
 
 export default function(RED) {
   
-  class CANDYEggAccountNode {
-    constructor(n) {
-      RED.nodes.createNode(this,n);
-      this.accountFqn = n.accountFqn;
-      this.loginUser = n.loginUser;
-      this.loginPassword = n.loginPassword;
-      this.secure = n.secure;
-    }
-  }
-  RED.nodes.registerType('CANDY EGG Account', CANDYEggAccountNode);
-
   class WebSocketListener {
     constructor(accountConfig, account, path, webSocketListeners) {
       this.accountConfig = accountConfig;
@@ -53,16 +42,33 @@ export default function(RED) {
       socket.on('close', () => {
         that.emit2all('closed');
         if (!that.closing) {
-          that.tout = setTimeout(() => { that.startconn(); }, 3000); // try to reconnect every 3 secs... bit fast ?
+          // try to reconnect every 3+ secs
+          that.tout = setTimeout(() => { that.startconn(); }, 3000 + Math.random() * 1000);
         }
       });
       socket.on('message', (data,flags) => {
-        node.handleEvent(id,socket,'message',data,flags);
+        that.handleEvent(id,socket,'message',data,flags);
       });
-      socket.on('error',  () => {
+      socket.on('unexpected-response', (req, res) => {
+        that.emit2all('erro');
+        req.abort();
+        res.socket.end();
+        if (res.statusCode === 404) {
+          RED.log.error(RED._('candy-egg-ws.errors.wrong-path', { path: that.path }));
+        } else if (res.statusCode === 401) {
+          RED.log.error(RED._('candy-egg-ws.errors.auth-error', { path: that.path, user: this.accountConfig.loginUser }));
+          return; // never retry
+        } else {
+          RED.log.error(RED._('candy-egg-ws.errors.server-error', { path: that.path, status: res.statusCode }));
+        }
+        // try to reconnect every approx. 1 min
+        that.tout = setTimeout(() => { that.startconn(); }, 55000 + Math.random() * 10000);
+      });
+      socket.on('error', (err, code) => {
         that.emit2all('erro');
         if (!that.closing) {
-          that.tout = setTimeout(() => { that.startconn(); }, 3000); // try to reconnect every 3 secs... bit fast ?
+          // try to reconnect every 3+ secs
+          that.tout = setTimeout(() => { that.startconn(); }, 3000 + Math.random() * 1000);
         }
       });
     }
@@ -149,7 +155,7 @@ export default function(RED) {
       if (!node.accountConfig) {
         throw new Error(RED._('candy-egg-ws.errors.missing-conf'));
       }
-      let key = node.path + ':' + node.account;
+      let key = node.account + ':' + node.path;
       let listener = this.store[key];
       if (!listener) {
         listener = new WebSocketListener(node.accountConfig, node.account, node.path, this);
@@ -159,12 +165,37 @@ export default function(RED) {
     }
 
     remove(listener) {
-      let key = listener.path + ':' + listener.account;
+      let key = listener.account + ':' + listener.path;
       delete this.store[key];
+    }
+    
+    reset(nodeId) {
+      let prefix = nodeId + ':';
+      let keys = [];
+      for (let key in this.store) {
+        if (this.store.hasOwnProperty(key) && key.indexOf(prefix) === 0) {
+          keys.push(key);
+        }
+      }
+      keys.forEach(key => {
+        delete this.store[key];
+      });
     }
   }
   let webSocketListeners = new WebSocketListeners();
-  
+
+  class CANDYEggAccountNode {
+    constructor(n) {
+      RED.nodes.createNode(this,n);
+      this.accountFqn = n.accountFqn;
+      this.loginUser = n.loginUser;
+      this.loginPassword = n.loginPassword;
+      this.secure = n.secure;
+      webSocketListeners.reset(n.id);
+    }
+  }
+  RED.nodes.registerType('CANDY EGG Account', CANDYEggAccountNode);
+
   class WebSocketInNode {
     constructor(n) {
       RED.nodes.createNode(this, n);
