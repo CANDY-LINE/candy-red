@@ -48,10 +48,12 @@
     icon: 'candy-egg.png',
     label: function() {
       var accountNode = RED.nodes.node(this.account);
-      return this.name||(accountNode ? accountNode.label() : this._('candy-egg-httpreq.label.category'));
+      return (accountNode ? accountNode.label() +
+        (this.path ? ' ' + this.method + ' ' + this.path : '') :
+        this._('candy-egg-httpreq.label.category'));
     },
     labelStyle: function() {
-      return this.name?'node_label_italic':this.path;
+      return this.name?'node_label_italic':'';
     },
     oneditprepare: function() {
       $('#node-input-ret').change(function() {

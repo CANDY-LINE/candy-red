@@ -3,6 +3,7 @@
     "label": {
       "category-IN": "CANDY EGG Endpoint IN",
       "category-OUT": "CANDY EGG Endpoint OUT",
+      "category-acc": "CANDY EGG Account",
       "path": "Path",
       "account": "Account",
       "account-fqn": "Account FQN",
