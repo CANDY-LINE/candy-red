@@ -37,7 +37,7 @@ if (isCANDYIoTInstalled) {
   flowFile = 'flows_candy-box_' + os.hostname() + '.json';
   editorTheme = {
     page: {
-      title: 'CANDY BOXx@' + os.hostname(),
+      title: 'CANDY BOX@' + os.hostname(),
       favicon: __dirname + '/public/images/favicon.ico',
       css: __dirname + '/public/css/style.css'
     },
