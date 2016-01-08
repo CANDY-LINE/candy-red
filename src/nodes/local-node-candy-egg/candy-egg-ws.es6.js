@@ -93,8 +93,9 @@ export default function(RED) {
         that.tout = setTimeout(() => { that.startconn(); }, 55000 + Math.random() * 10000);
         this.redirect = 0;
       });
-      socket.on('error', (err, code) => {
+      socket.on('error', err => {
         that.emit2all('erro');
+        RED.log.error(RED._('candy-egg-ws.errors.connect-error', { err: err }));
         if (!that.closing) {
           // try to reconnect every 3+ secs
           that.tout = setTimeout(() => { that.startconn(); }, 3000 + Math.random() * 1000);
