@@ -2,6 +2,7 @@
 
 import WebSocket from 'ws';
 import { inspect } from 'util';
+import urllib from 'url';
 
 export default function(RED) {
   
@@ -16,19 +17,35 @@ export default function(RED) {
       this._clients = {};
       this.closing = false;
       this.startconn(); // start outbound connection
+      this.redirect = 0;
     }
 
-    startconn() {  // Connect to remote endpoint
+    startconn(url) {  // Connect to remote endpoint
       let conf = this.accountConfig;
-      let url = 'ws' + (conf.secure ? 's' : '') + '://';
-      url += conf.loginUser + ':' + conf.loginPassword + '@';
+      let prefix = 'ws' + (conf.secure ? 's' : '') + '://';
+      prefix += conf.loginUser + ':' + conf.loginPassword + '@';
       let accountId = conf.accountFqn.split('@');
-      url += accountId[1] + '/' + accountId[0] + '/api';
-      if (this.path && this.path.length > 0 && this.path.charAt(0) !== '/') {
-        url += '/';
+      prefix += accountId[1];
+      let path = this.path;
+      if (url) {
+        let urlobj = urllib.parse(url);
+        if (!urlobj.host) {
+          path = urlobj.href;
+        } else {
+          prefix = urlobj.href;
+          path = null;
+        }
+      } else {
+        prefix += '/' + accountId[0] + '/api';
       }
-      url += this.path;
-      let socket = new WebSocket(url);
+      
+      if (path && path.length > 0 && path.charAt(0) !== '/') {
+        prefix += '/';
+      }
+      if (path) {
+        prefix += path;
+      }
+      let socket = new WebSocket(prefix);
       this.server = socket; // keep for closing
       this.handleConnection(socket);
     }
@@ -38,6 +55,7 @@ export default function(RED) {
       let id = (1+Math.random()*4294967295).toString(16);
       socket.on('open', () => {
         that.emit2all('opened');
+        that.redirect = 0;
       });
       socket.on('close', () => {
         that.emit2all('closed');
@@ -53,7 +71,17 @@ export default function(RED) {
         that.emit2all('erro');
         req.abort();
         res.socket.end();
-        if (res.statusCode === 404) {
+        if (res.statusCode === 301 || res.statusCode === 302 || res.statusCode === 307) {
+          if (res.headers.location) {
+            if (this.redirect > 3) {
+              this.redirect = 0;
+              RED.log.error(RED._('candy-egg-ws.errors.too-many-redirects', { path: that.path, location: res.headers.location }));
+            } else {
+              ++this.redirect;
+              return this.startconn(res.headers.location);
+            }
+          }
+        } else if (res.statusCode === 404) {
           RED.log.error(RED._('candy-egg-ws.errors.wrong-path', { path: that.path }));
         } else if (res.statusCode === 401) {
           RED.log.error(RED._('candy-egg-ws.errors.auth-error', { path: that.path, user: this.accountConfig.loginUser }));
@@ -63,6 +91,7 @@ export default function(RED) {
         }
         // try to reconnect every approx. 1 min
         that.tout = setTimeout(() => { that.startconn(); }, 55000 + Math.random() * 10000);
+        this.redirect = 0;
       });
       socket.on('error', (err, code) => {
         that.emit2all('erro');
