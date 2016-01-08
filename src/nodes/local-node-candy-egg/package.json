@@ -9,6 +9,7 @@
   },
   "node-red": {
     "nodes": {
+      "candy-egg-httpreq": "candy-egg-httpreq.js",
       "candy-egg-ws": "candy-egg-ws.js"
     }
   }
