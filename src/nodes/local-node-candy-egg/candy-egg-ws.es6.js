@@ -239,9 +239,9 @@ export default function(RED) {
       if (that.accountConfig) {
         that.listenerConfig = webSocketListeners.get(that);
         that.listenerConfig.registerInputNode(that);
-        that.on('opened', () => { that.status({fill:'green',shape:'dot',text:RED._('candy-egg-ws.status.connected')}); });
-        that.on('erro',  () => { that.status({fill:'red',shape:'ring',text:RED._('candy-egg-ws.status.error')}); });
-        that.on('closed',  () => { that.status({fill:'red',shape:'ring',text:RED._('candy-egg-ws.status.disconnected')}); });
+        that.on('opened', () => { that.status({fill:'green',shape:'dot',text:'candy-egg-ws.status.connected'}); });
+        that.on('erro',  () => { that.status({fill:'red',shape:'ring',text:'candy-egg-ws.status.error'}); });
+        that.on('closed',  () => { that.status({fill:'red',shape:'ring',text:'candy-egg-ws.status.disconnected'}); });
       } else {
         that.error(RED._('candy-egg-ws.errors.missing-conf'));
       }
@@ -266,9 +266,9 @@ export default function(RED) {
       if (that.accountConfig) {
         that.listenerConfig = webSocketListeners.get(that);
         that.listenerConfig.registerInputNode(that);
-        that.on('opened', () => { that.status({fill:'green',shape:'dot',text:RED._('candy-egg-ws.status.connected')}); });
-        that.on('erro',  () => { that.status({fill:'red',shape:'ring',text:RED._('candy-egg-ws.status.error')}); });
-        that.on('closed',  () => { that.status({fill:'red',shape:'ring',text:RED._('candy-egg-ws.status.disconnected')}); });
+        that.on('opened', () => { that.status({fill:'green',shape:'dot',text:'candy-egg-ws.status.connected'}); });
+        that.on('erro',  () => { that.status({fill:'red',shape:'ring',text:'candy-egg-ws.status.error'}); });
+        that.on('closed',  () => { that.status({fill:'red',shape:'ring',text:'candy-egg-ws.status.disconnected'}); });
       } else {
         that.error(RED._('candy-egg-ws.errors.missing-conf'));
       }
