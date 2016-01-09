@@ -76,8 +76,9 @@ function exitHandler(err) {
     RED.settings.exitHandlers.forEach(handler => {
       try {
         handler(RED);
-      } catch (e) {
-        console.log(`The error [${e}] is ignored`);
+      } catch (err) {
+        console.log(`The error [${err}] is ignored`);
+        console.log(err.stack);
       }
     });
   }
