@@ -1,12 +1,14 @@
 <script type="text/x-red" data-help-name="CANDY EGG websocket in">
-    <p>WebSocket input node.</p>
+    <p>WebSocket input node, coming from CANDY EGG</p>
+    <p>This node represents a data source from a CANDY EGG cloud environment. It can emit the data coming from the cloud over the WebScoket to the output port.</p>
     <p>By default, the data received from the WebSocket will be in <b>msg.payload</b>.
     The socket can be configured to expect a properly formed JSON string, in which
     case it will parse the JSON and send on the resulting object as the entire message.</p>
 </script>
 
 <script type="text/x-red" data-help-name="CANDY EGG websocket out">
-    <p>WebSocket out node.</p>
+    <p>WebSocket out node, outgoing to CANDY EGG</p>
+    <p>This node represents a data destination to a CANDY EGG cloud environment. It can receive the data transferring to the cloud over the WebScoket from the input port.</p>
     <p>By default, <b>msg.payload</b> will be sent over the WebSocket. The socket
     can be configured to encode the entire message object as a JSON string and send that
     over the WebSocket.</p>
