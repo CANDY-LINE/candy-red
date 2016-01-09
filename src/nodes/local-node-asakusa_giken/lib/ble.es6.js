@@ -111,7 +111,7 @@ export function start(RED) {
   }).then(() => {
     return new Promise(resolve => {
       if (isMonitoring) {
-        return rsolve();
+        return resolve();
       }
       isMonitoring = true;
       noble.on('discover', peripheral => {
