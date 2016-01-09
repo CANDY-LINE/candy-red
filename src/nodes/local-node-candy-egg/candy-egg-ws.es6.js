@@ -265,7 +265,6 @@ export default function(RED) {
 
       if (that.accountConfig) {
         that.listenerConfig = webSocketListeners.get(that);
-        that.listenerConfig.registerInputNode(that);
         that.on('opened', () => { that.status({fill:'green',shape:'dot',text:'candy-egg-ws.status.connected'}); });
         that.on('erro',  () => { that.status({fill:'red',shape:'ring',text:'candy-egg-ws.status.error'}); });
         that.on('closed',  () => { that.status({fill:'red',shape:'ring',text:'candy-egg-ws.status.disconnected'}); });
