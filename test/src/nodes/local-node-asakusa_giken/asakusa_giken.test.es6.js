@@ -10,6 +10,7 @@ RED.init({
   init: function() {}
 }, {});
 RED.nodes.init(RED.settings);
+RED._ = function() {};
 
 describe('asakusa_giken node', () => {
   describe('asakusa_giken module', () => {
