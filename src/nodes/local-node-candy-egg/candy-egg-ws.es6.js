@@ -14,6 +14,7 @@ export default function(RED) {
       this.webSocketListeners = webSocketListeners;
 
       this._inputNodes = [];  // collection of thats that want to receive events
+      this._outputNodes = []; // node status event listeners
       this._clients = {};
       this.closing = false;
       this.startconn(); // start outbound connection
@@ -102,6 +103,21 @@ export default function(RED) {
         }
       });
     }
+
+    registerOutputNode(/*Node*/handler) {
+      this._outputNodes.push(handler);
+    }
+
+    removeOutputNode(/*Node*/handler) {
+      this._outputNodes.forEach((node, i, outputNodes) => {
+        if (node === handler) {
+          outputNodes.splice(i, 1);
+        }
+      });
+      if (this._inputNodes.length === 0 && this._outputNodes.length === 0) {
+        this.close();
+      }
+    }
     
     registerInputNode(/*Node*/handler) {
       this._inputNodes.push(handler);
@@ -113,7 +129,7 @@ export default function(RED) {
           inputNodes.splice(i, 1);
         }
       });
-      if (this._inputNodes.length === 0) {
+      if (this._inputNodes.length === 0 && this._outputNodes.length === 0) {
         this.close();
       }
     }
@@ -144,6 +160,9 @@ export default function(RED) {
     emit2all(event) {
       for (let i = 0; i < this._inputNodes.length; i++) {
         this._inputNodes[i].emit(event);
+      }
+      for (let i = 0; i < this._inputNodes.length; i++) {
+        this._outputNodes[i].emit(event);
       }
     }
 
@@ -265,12 +284,17 @@ export default function(RED) {
 
       if (that.accountConfig) {
         that.listenerConfig = webSocketListeners.get(that);
+        that.listenerConfig.registerOutputNode(that);
         that.on('opened', () => { that.status({fill:'green',shape:'dot',text:'candy-egg-ws.status.connected'}); });
         that.on('erro',  () => { that.status({fill:'red',shape:'ring',text:'candy-egg-ws.status.error'}); });
         that.on('closed',  () => { that.status({fill:'red',shape:'ring',text:'candy-egg-ws.status.disconnected'}); });
       } else {
         that.error(RED._('candy-egg-ws.errors.missing-conf'));
       }
+
+      that.on('close', () => {
+        that.listenerConfig.removeOutputNode(that);
+      });
 
       that.on('input', msg => {
         let payload;
