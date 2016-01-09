@@ -76,12 +76,20 @@
       accountFqn: {value:'',required:true,validate:RED.validators.regex(/^[0-9a-zA-Z]+@[^-\s]*$/) },
       loginUser: {value:'', required:true},
       loginPassword: {value:'', required:true},
-      secure: {value:true}
+      secure: {value:true},
+      managed: {value:false}
     },
     inputs:0,
     outputs:0,
     label: function() {
       return this.accountFqn ? this.accountFqn.split('@')[0] : this._('candy-egg-ws.label.category-acc');
+    },
+    oneditprepare: function() {
+      if (RED.settings.version.indexOf('[CANDY RED]') >= 0) {
+        $('#form-row-managed').show();
+      } else {
+        $('#form-row-managed').hide();
+      }
     }
   });
   
@@ -130,5 +138,10 @@
     <label>&nbsp;</label>
     <input type='checkbox' id='node-config-input-secure' style='display: inline-block; width: auto; vertical-align: top;'>
     <label for='node-config-input-secure' style='width: 70%;' data-i18n='candy-egg-ws.label.secure'></label>
+  </div>
+  <div class='form-row' id='form-row-managed'>
+    <label>&nbsp;</label>
+    <input type='checkbox' id='node-config-input-managed' style='display: inline-block; width: auto; vertical-align: top;'>
+    <label for='node-config-input-managed' style='width: 70%;' data-i18n='candy-egg-ws.label.managed'></label>
   </div>
 </script>

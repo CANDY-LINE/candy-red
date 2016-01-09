@@ -9,7 +9,8 @@
       "account-fqn": "Account FQN",
       "login-user": "User ID",
       "login-password": "Password",
-      "secure": "Use Secure Connection"
+      "secure": "Use Secure Connection",
+      "managed": "Manage This Device"
     },
     "payload": "Send/Receive payload",
     "message": "Send/Receive entire message",

@@ -241,6 +241,15 @@ export default function(RED) {
       this.loginPassword = n.loginPassword;
       this.secure = n.secure;
       webSocketListeners.reset(n.id);
+
+      this.managed = n.managed;
+      // deploying implicit API clients (candy-ws)
+      let deviceManager = RED.settings.deviceManager;
+      if (this.managed && deviceManager && deviceManager.isWsClientInitialized) {
+        if (!deviceManager.isWsClientInitialized()) {
+          deviceManager.initWsClient(n.id, this, webSocketListeners);
+        }
+      }
     }
   }
   RED.nodes.registerType('CANDY EGG account', CANDYEggAccountNode);
