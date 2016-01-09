@@ -30,7 +30,7 @@
     defaults: {
       name: {value:''},
       account: {type: 'CANDY EGG account', required: true},
-      path: {value:'',required:true,validate:RED.validators.regex(/^((?!\/debug\/ws).)*$/) },
+      path: {value:'',required:true,validate:RED.validators.regex(/^((?!candy-(api|ws)).)*$/) },
       wholemsg: {value:'false'}
     },
     color:'rgb(128, 219, 255)',
@@ -42,7 +42,7 @@
     },
     label: function() {
       var accountNode = RED.nodes.node(this.account);
-      return this.name||(accountNode ? accountNode.label() + (this.path ? ' [ws]' + this.path : '') :
+      return this.name||(accountNode ? accountNode.label() + (this.path ? ' [ws] ' + this.path : '') :
         this._('candy-egg-ws.label.category-IN'));
     }
   });
@@ -52,7 +52,7 @@
     defaults: {
       name: {value:''},
       account: {type: 'CANDY EGG account', required: true},
-      path: {value:'',required:true,validate:RED.validators.regex(/^((?!\/debug\/ws).)*$/) },
+      path: {value:'',required:true,validate:RED.validators.regex(/^((?!candy-(api|ws)).)*$/) },
       wholemsg: {value:'false'}
     },
     color:'rgb(128, 219, 255)',
@@ -65,7 +65,7 @@
     },
     label: function() {
       var accountNode = RED.nodes.node(this.account);
-      return this.name||(accountNode ? accountNode.label() + (this.path ? ' [ws]' + this.path : '') :
+      return this.name||(accountNode ? accountNode.label() + (this.path ? ' [ws] ' + this.path : '') :
         this._('candy-egg-ws.label.category-OUT'));
     }
   });
