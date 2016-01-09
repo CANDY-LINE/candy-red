@@ -8,6 +8,12 @@ import setUpEnocean from 'node-enocean';
 import { ESP3RadioERP2Parser, ERP2Parser } from './esp3_erp2_parser';
 import Promise from 'es6-promises';
 import fs from 'fs';
+import LRU from 'lru-cache';
+
+let unknown = LRU({
+  max: 100,
+  maxAge: 1000 * 60 * 60
+});
 
 const ESP3_PACKET_PARSERS = {
   10: new ESP3RadioERP2Parser() // Packet Type 10: RADIO_ERP2
@@ -61,8 +67,12 @@ export class SerialPool {
       that.esp3Parser.parse(data).then(result => {
         result.parser.parse(result.payload).then(ctx => {
           that.erp2Parser.parse(ctx).then(ctx => {
-            if (!port.emit(`ctx-${ctx.originatorId}`, ctx)) {
-              that.RED.log.error(that.RED._('enocean.warn.noNode', { originatorId: ctx.originatorId }));
+            let originatorId = ctx.originatorId;
+            if (!port.emit(`ctx-${originatorId}`, ctx)) {
+              if (!unknown.get(originatorId)) {
+                unknown.set(originatorId, 1);
+                that.RED.log.warn(that.RED._('enocean.warn.noNode', { originatorId: originatorId }));
+              }
             }
           }).catch(e => {
             that.RED.log.error(that.RED._('enocean.errors.parseError', { error: e, data: JSON.stringify(ctx) }));
