@@ -2,10 +2,15 @@
 
 import noble from 'noble';
 import Promise from 'es6-promises';
+import LRU from 'lru-cache';
 
 let peripheralsIn = {};
 let isScanning = false;
 let isMonitoring = false;
+let unknown = LRU({
+  max: 100,
+  maxAge: 1000 * 60 * 60
+});
 
 /**
  * Associate the given in-Node object with the BLE module.
@@ -62,7 +67,7 @@ export function registerIn(n, categoryName, address, uuid, parse, useString, RED
 export function stop(RED) {
   noble.stopScanning();
   isScanning = false;
-  RED.log.info('[BLE] Stop scanning.');
+  RED.log.info(RED._('asakusa_giken.message.stop-scanning'));
 }
 
 /**
@@ -81,34 +86,32 @@ export function start(RED) {
     handlers = [stop];
     RED.settings.exitHandlers = handlers;
   }
-  return new Promise((resolve, reject) => {
+  return new Promise(resolve => {
     if (isScanning) {
-      resolve();
-      return;
+      return resolve();
     }
     noble.on('stateChange', state => {
       if (state === 'poweredOn') {
-        RED.log.info('[BLE] Start Scanning...');
-        noble.startScanning([], true);
-        isScanning = true;
-        resolve();
+        if (!isScanning) {
+          RED.log.info(RED._('asakusa_giken.message.start-scanning'));
+          noble.startScanning([], true);
+          isScanning = true;
+        }
       } else {
         noble.stopScanning();
         isScanning = false;
-        reject();
       }
     });
-    if (noble.state === 'poweredOn') {
-      RED.log.info('[BLE] Start Scanning...');
+    if (!isScanning && noble.state === 'poweredOn') {
+      RED.log.info(RED._('asakusa_giken.message.start-scanning'));
       noble.startScanning([], true);
       isScanning = true;
-      resolve();
     }
+    resolve();
   }).then(() => {
     return new Promise(resolve => {
       if (isMonitoring) {
-        resolve();
-        return;
+        return rsolve();
       }
       isMonitoring = true;
       noble.on('discover', peripheral => {
@@ -121,7 +124,12 @@ export function start(RED) {
         // look up a category by the category name
         let category = peripheralsIn[categoryName];
         if (!category) {
-          RED.log.warn(`[BLE] Unknown peripheral: category=[${categoryName}], peripheral.address=[${peripheral.address}], peripheral.uuid=[${peripheral.uuid}]`);
+          let key = categoryName + ':' + peripheral.address + ':' + peripheral.uuid;
+          if (!unknown.get(key)) {
+            unknown.set(key, 1);
+            RED.log.warn(RED._('asakusa_giken.errors.unknown-peripheral',
+              { categoryName: categoryName, peripheralAddress: peripheral.address, peripheralUuid: peripheral.uuid }));
+          }
           return;
         }
         // check if the peripheral.address matches
@@ -132,7 +140,12 @@ export function start(RED) {
           uuid = peripheral.uuid;
           bleNodes = category[uuid];
           if (!bleNodes || bleNodes.length === 0) {
-            RED.log.warn(`[BLE] Unknown node: category=[${categoryName}], uuid=[${uuid}]`);
+            let key = categoryName + ':' + uuid;
+            if (!unknown.get(key)) {
+              unknown.set(key, 1);
+              RED.log.warn(RED._('asakusa_giken.errors.unknown-uuid',
+                { categoryName: categoryName, peripheralUuid: uuid }));
+            }
             return;
           }
         }
@@ -142,7 +155,12 @@ export function start(RED) {
           }
           bleNodes = category[address];
           if (!bleNodes || bleNodes.length === 0) {
-            RED.log.warn(`[BLE] Unknown node: category=[${categoryName}], address=[${address}]`);
+            let key = categoryName + ':' + address;
+            if (!unknown.get(key)) {
+              unknown.set(key, 1);
+              RED.log.warn(RED._('asakusa_giken.errors.unknown-address',
+                { categoryName: categoryName, peripheralAddress: address }));
+            }
             return;
           }
         }
@@ -175,7 +193,7 @@ export function start(RED) {
         }
       });
       resolve();
-      RED.log.info('[BLE] Set up done.');
+      RED.log.info(RED._('asakusa_giken.message.setup-done'));
     });
   });
 }

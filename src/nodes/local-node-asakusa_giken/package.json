@@ -3,6 +3,9 @@
   "version": "1.0.0",
   "description": "Node-RED nodes for Asakusa Giken Devices",
   "private": "true",
+  "dependencies": {
+    "lru-cache": "^4.0.0"
+  },
   "node-red": {
     "nodes": {
       "asakusa_giken": "asakusa_giken.js"
