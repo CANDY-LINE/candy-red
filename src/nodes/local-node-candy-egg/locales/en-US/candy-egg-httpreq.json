@@ -1,7 +1,7 @@
 {
   "candy-egg-httpreq": {
     "label": {
-      "category": "CANDY EGG HTTP Endpoint",
+      "category": "CANDY EGG http request",
        "method": "Method",
        "path": "Path",
        "account": "Account",

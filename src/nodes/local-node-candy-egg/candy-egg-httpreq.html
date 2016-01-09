@@ -1,4 +1,4 @@
-<script type='text/x-red' data-template-name='CANDY EGG HTTP Endpoint'>
+<script type='text/x-red' data-template-name='CANDY EGG http request'>
   <div class='form-row' id='candy-egg-ws-account-row'>
     <label for='node-input-account'><i class='fa fa-user'></i> <span data-i18n='candy-egg-httpreq.label.account'></span></label>
     <input type='text' id='node-input-account'>
@@ -33,12 +33,12 @@
 </script>
 
 <script type='text/javascript'>
-  RED.nodes.registerType('CANDY EGG HTTP Endpoint',{
+  RED.nodes.registerType('CANDY EGG http request',{
     category: 'function',
     color:'rgb(128, 219, 255)',
     defaults: {
       name: {value:''},
-      account: {type: 'CANDY EGG Account', required: true},
+      account: {type: 'CANDY EGG account', required: true},
       method:{value:'GET'},
       ret: {value:'obj'},
       path:{value:''},
