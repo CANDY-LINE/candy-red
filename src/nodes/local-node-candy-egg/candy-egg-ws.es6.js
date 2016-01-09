@@ -313,11 +313,7 @@ export default function(RED) {
           if (msg._session && msg._session.type === 'candy-egg-ws') {
             that.listenerConfig.reply(msg._session.id,payload);
           } else {
-            that.listenerConfig.broadcast(payload, error => {
-              if (!!error) {
-                that.warn(RED._('candy-egg-ws.errors.send-error')+inspect(error));
-              }
-            });
+            that.listenerConfig.broadcast(payload);
           }
         }
       });
