@@ -161,7 +161,7 @@ export default function(RED) {
       for (let i = 0; i < this._inputNodes.length; i++) {
         this._inputNodes[i].emit(event);
       }
-      for (let i = 0; i < this._inputNodes.length; i++) {
+      for (let i = 0; i < this._outputNodes.length; i++) {
         this._outputNodes[i].emit(event);
       }
     }
