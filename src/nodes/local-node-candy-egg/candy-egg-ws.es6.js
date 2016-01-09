@@ -1,7 +1,6 @@
 'use strict';
 
 import WebSocket from 'ws';
-import { inspect } from 'util';
 import urllib from 'url';
 
 export default function(RED) {
