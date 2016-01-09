@@ -67,7 +67,9 @@ export function registerIn(n, categoryName, address, uuid, parse, useString, RED
 export function stop(RED) {
   noble.stopScanning();
   isScanning = false;
-  RED.log.info(RED._('asakusa_giken.message.stop-scanning'));
+  if (RED && RED._) {
+    RED.log.info(RED._('asakusa_giken.message.stop-scanning'));
+  }
 }
 
 /**
