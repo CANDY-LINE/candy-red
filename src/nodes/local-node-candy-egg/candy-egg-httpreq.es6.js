@@ -38,7 +38,7 @@ export default function(RED) {
         node.warn(RED._('common.errors.nooverride'));
       }
       if (path && path.length > 0 && path.charAt(0) !== '/') {
-        prefix += '/';
+        url += '/';
       }
       if (path) {
         if (isTemplatedPath) {
