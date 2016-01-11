@@ -6,7 +6,7 @@ import urllib from 'url';
 export default function(RED) {
   
   class WebSocketListener {
-    constructor(accountConfig, account, path, webSocketListeners) {
+    constructor(accountConfig, account, path, webSocketListeners, options) {
       this.accountConfig = accountConfig;
       this.account = account;
       this.path = path;
@@ -16,11 +16,16 @@ export default function(RED) {
       this._outputNodes = []; // node status event listeners
       this._clients = {};
       this.closing = false;
-      this.startconn(); // start outbound connection
+      this.startconn(options); // start outbound connection
       this.redirect = 0;
     }
 
     startconn(url) {  // Connect to remote endpoint
+      let options = null;
+      if (url && typeof(url) === 'object') {
+        options = url;
+        url = null;
+      }
       let conf = this.accountConfig;
       let prefix = 'ws' + (conf.secure ? 's' : '') + '://';
       prefix += conf.loginUser + ':' + conf.loginPassword + '@';
@@ -45,7 +50,7 @@ export default function(RED) {
       if (path) {
         prefix += path;
       }
-      let socket = new WebSocket(prefix);
+      let socket = new WebSocket(prefix, options);
       this.server = socket; // keep for closing
       this.handleConnection(socket);
     }
@@ -199,14 +204,14 @@ export default function(RED) {
       this.store = {};
     }
 
-    get(node) {
+    get(node, options=null) {
       if (!node.accountConfig) {
         throw new Error(RED._('candy-egg-ws.errors.missing-conf'));
       }
       let key = node.account + ':' + node.path;
       let listener = this.store[key];
       if (!listener) {
-        listener = new WebSocketListener(node.accountConfig, node.account, node.path, this);
+        listener = new WebSocketListener(node.accountConfig, node.account, node.path, this, options);
         this.store[key] = listener;
       }
       return listener;
