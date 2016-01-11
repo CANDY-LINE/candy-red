@@ -37,4 +37,20 @@ describe('DeviceManager', () => {
       assert.isTrue(manager.isWsClientInitialized());
     });
   });
+  describe('#testIfUIisEnabled()', () => {
+    it('should tell the UI is enabled', done => {
+      let manager = new DeviceManager(RED);
+      manager.testIfUIisEnabled(__dirname + '/test-flow-enabled.json').then(enabled => {
+        assert.isTrue(enabled);
+        done();
+      });
+    });
+    it('should tell the UI is DISABLED', done => {
+      let manager = new DeviceManager(RED);
+      manager.testIfUIisEnabled(__dirname + '/test-flow-disabled.json').then(enabled => {
+        assert.isFalse(enabled);
+        done();
+      });
+    });
+  });
 });

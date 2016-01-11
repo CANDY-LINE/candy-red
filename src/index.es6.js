@@ -101,22 +101,26 @@ deviceManager.testIfCANDYIoTInstalled().then(installed => {
   RED.init(server, settings);
   settings.version += '-[CANDY RED]';
 
-  // Add a simple route for static content served from 'public'
-  app.use('/', express.static(__dirname + '/public'));
-  if (settings.httpAdminRoot) {
-    app.get('/', (_, res) => {
-      res.redirect(settings.httpAdminRoot);
-    });
-  }
-
-  // Serve the editor UI from /red
-  app.use(settings.httpAdminRoot, RED.httpAdmin);
-
-  // Serve the http nodes UI from /api
+  // Serve the http nodes from /api
   app.use(settings.httpNodeRoot, RED.httpNode);
 
-  // Start the runtime
-  RED.start().then(() => {
-    RED.log.info(`Listen port=${PORT}`);
+  deviceManager.testIfUIisEnabled(flowFile).then(enabled => {
+    if (enabled) {
+      RED.log.info('Deploying Flow Editor UI...');
+      // Add a simple route for static content served from 'public'
+      app.use('/', express.static(__dirname + '/public'));
+      if (settings.httpAdminRoot) {
+        app.get('/', (_, res) => {
+          res.redirect(settings.httpAdminRoot);
+        });
+      }
+      // Serve the editor UI from /red
+      app.use(settings.httpAdminRoot, RED.httpAdmin);
+    }
+
+    // Start the runtime
+    RED.start().then(() => {
+      RED.log.info(`Listen port=${PORT}`);
+    });
   });
 });

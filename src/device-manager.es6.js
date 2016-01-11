@@ -175,4 +175,23 @@ export class DeviceManager {
       resolve(true);
     });
   }
+  
+  testIfUIisEnabled(flowFile) {
+    return new Promise(resolve => {
+      fs.readFile(flowFile, (err, data) => {
+        if (err) {
+          return resolve(true);
+        }
+        let flows = JSON.parse(data);
+        if (!Array.isArray(flows)) {
+          return resolve(true);
+        }
+        resolve(flows.filter(f => {
+          return f.type === 'CANDY EGG account';
+        }).reduce((p, c) => {
+          return p && !c.headless;
+        }, true));
+      });
+    });
+  }
 }
