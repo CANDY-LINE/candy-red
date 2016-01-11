@@ -83,9 +83,6 @@ module.exports = function (grunt) {
     },
     mochaTest: {
       all: {
-        options: {
-          require: 'babel/register'
-        },
         src: ['./test/src/**/*.js', '!./test/src/**/*.es6.js']
       }
     },
