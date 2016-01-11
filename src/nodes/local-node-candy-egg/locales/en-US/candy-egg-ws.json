@@ -10,6 +10,10 @@
       "login-user": "User ID",
       "login-password": "Password",
       "secure": "Use Secure Connection",
+      "flow": "Flow Meta Info.",
+      "lastDeliveredAt": "Delivered At",
+      "revision": "Revision",
+      "originator": "Originator",
       "managed": "Manage This Device"
     },
     "payload": "Send/Receive payload",
