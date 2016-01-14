@@ -105,7 +105,6 @@ export class DeviceManager {
   }
 
   _initWsClient(id, account, accountConfig, webSocketListeners) {
-    let that = this;
     this.listenerConfig = webSocketListeners.get({
       accountConfig: accountConfig,
       account: account,
@@ -119,17 +118,17 @@ export class DeviceManager {
       }
     });
     accountConfig.on('close', () => {
-      that.listenerConfig.close();
+      this.listenerConfig.close();
     });
     let prefix = '{DeviceManager}:[' + accountConfig.accountFqn + '] ';
     this.events.on('opened', () => {
-      that.RED.log.warn(prefix + 'connected');
+      this.RED.log.warn(prefix + 'connected');
     });
     this.events.on('closed', () => {
-      that.RED.log.warn(prefix + 'disconnected');
+      this.RED.log.warn(prefix + 'disconnected');
     });
     this.events.on('erro', () => {
-      that.RED.log.warn(prefix + 'error');
+      this.RED.log.warn(prefix + 'error');
     });
     // receiving an incoming message (sent from a source)
     this.events.send = msg => {
@@ -142,15 +141,15 @@ export class DeviceManager {
           }
         }
       }
-      that.RED.log.info('[CANDY RED] Received!');
+      this.RED.log.info('[CANDY RED] Received!');
       if (payload.status) {
         switch (payload.status) {
         case 401:
         case 403:
         case 407:
           // Terminate everything and never retry
-          that.listenerConfig.close();
-          that.RED.log.error('[CANDY RED] Enrollment error!' +
+          this.listenerConfig.close();
+          this.RED.log.error('[CANDY RED] Enrollment error!' +
             ' This device is not allowed to access the account:' +
             accountConfig.accountFqn);
           return;
@@ -162,9 +161,9 @@ export class DeviceManager {
     this.listenerConfig.registerInputNode(this.events);
     this.listenerConfig.send = (payload, msg) => {
       if (msg && msg._session && msg._session.type === 'candy-egg-ws') {
-        that.listenerConfig.reply(msg._session.id, payload);
+        this.listenerConfig.reply(msg._session.id, payload);
       } else {
-        that.listenerConfig.broadcast(payload);
+        this.listenerConfig.broadcast(payload);
       }
     };
   }
