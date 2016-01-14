@@ -14,7 +14,6 @@ export default function(RED) {
 
       this._inputNodes = [];  // collection of thats that want to receive events
       this._outputNodes = []; // node status event listeners
-      this._clients = {};
       this.closing = false;
       this.options = options || {};
       this.startconn(); // start outbound connection
@@ -179,23 +178,12 @@ export default function(RED) {
     }
 
     broadcast(data) {
-      let i;
       try {
         this.server.send(data);
-      }
-      catch(e) { // swallow any errors
-        RED.log.warn('ws:'+i+' : '+e);
-      }
-    }
-
-    reply(id,data) {
-      let session = this._clients[id];
-      if (session) {
-        try {
-          session.send(data);
-        }
-        catch(e) { // swallow any errors
-        }
+        return true;
+      } catch(e) { // swallow any errors
+        RED.log.warn(e.stack);
+        return false;
       }
     }
   }
