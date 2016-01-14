@@ -53,59 +53,58 @@ export default function(RED) {
     }
 
     handleConnection(/*socket*/socket) {
-      let that = this;
       let id = (1+Math.random()*4294967295).toString(16);
       socket.on('open', () => {
-        that.emit2all('opened');
-        that.redirect = 0;
-        that.authRetry = 0;
+        this.emit2all('opened');
+        this.redirect = 0;
+        this.authRetry = 0;
       });
       socket.on('close', () => {
-        that.emit2all('closed');
-        if (!that.closing) {
+        this.emit2all('closed');
+        if (!this.closing) {
           // try to reconnect every 3+ secs
-          that.tout = setTimeout(() => { that.startconn(); }, 3000 + Math.random() * 1000);
+          this.tout = setTimeout(() => { this.startconn(); }, 3000 + Math.random() * 1000);
         }
       });
       socket.on('message', (data,flags) => {
-        that.handleEvent(id,socket,'message',data,flags);
+        this.handleEvent(id,socket,'message',data,flags);
       });
       socket.on('unexpected-response', (req, res) => {
-        that.emit2all('erro');
+        this.emit2all('erro');
         req.abort();
         res.socket.end();
         if (res.statusCode === 301 || res.statusCode === 302 || res.statusCode === 307) {
           if (res.headers.location) {
             if (this.redirect > 3) {
               this.redirect = 0;
-              RED.log.error(RED._('candy-egg-ws.errors.too-many-redirects', { path: that.path, location: res.headers.location }));
+              RED.log.error(RED._('candy-egg-ws.errors.too-many-redirects', { path: this.path, location: res.headers.location }));
             } else {
               ++this.redirect;
               return this.startconn(res.headers.location);
             }
           }
         } else if (res.statusCode === 404) {
-          RED.log.error(RED._('candy-egg-ws.errors.wrong-path', { path: that.path }));
+          RED.log.error(RED._('candy-egg-ws.errors.wrong-path', { path: this.path }));
         } else if (res.statusCode === 401) {
-          RED.log.error(RED._('candy-egg-ws.errors.auth-error', { path: that.path, user: this.accountConfig.loginUser }));
+          RED.log.error(RED._('candy-egg-ws.errors.auth-error', { path: this.path, user: this.accountConfig.loginUser }));
           ++this.authRetry;
           if (this.authRetry > 10) {
             return; // never retry
           }
           RED.log.info(RED._('candy-egg-ws.status.auth-retry'));
         } else {
-          RED.log.error(RED._('candy-egg-ws.errors.server-error', { path: that.path, status: res.statusCode }));
+          RED.log.error(RED._('candy-egg-ws.errors.server-error', { path: this.path, status: res.statusCode }));
         }
         // try to reconnect every approx. 1 min
-        that.tout = setTimeout(() => { that.startconn(); }, 55000 + Math.random() * 10000);
+        this.tout = setTimeout(() => { this.startconn(); }, 55000 + Math.random() * 10000);
         this.redirect = 0;
       });
       socket.on('error', err => {
-        that.emit2all('erro');
+        this.emit2all('erro');
         RED.log.error(RED._('candy-egg-ws.errors.connect-error', { err: err }));
-        if (!that.closing) {
+        if (!this.closing) {
           // try to reconnect every 3+ secs
-          that.tout = setTimeout(() => { that.startconn(); }, 3000 + Math.random() * 1000);
+          this.tout = setTimeout(() => { that.startconn(); }, 3000 + Math.random() * 1000);
         }
       });
     }
