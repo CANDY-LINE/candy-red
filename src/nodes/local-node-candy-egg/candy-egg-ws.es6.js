@@ -16,16 +16,13 @@ export default function(RED) {
       this._outputNodes = []; // node status event listeners
       this._clients = {};
       this.closing = false;
-      this.startconn(options); // start outbound connection
+      this.options = options || {};
+      this.startconn(); // start outbound connection
       this.redirect = 0;
+      this.authRetry = 0;
     }
 
     startconn(url) {  // Connect to remote endpoint
-      let options = null;
-      if (url && typeof(url) === 'object') {
-        options = url;
-        url = null;
-      }
       let conf = this.accountConfig;
       let prefix = 'ws' + (conf.secure ? 's' : '') + '://';
       prefix += conf.loginUser + ':' + conf.loginPassword + '@';
@@ -50,7 +47,7 @@ export default function(RED) {
       if (path) {
         prefix += path;
       }
-      let socket = new WebSocket(prefix, options);
+      let socket = new WebSocket(prefix, this.options);
       this.server = socket; // keep for closing
       this.handleConnection(socket);
     }
