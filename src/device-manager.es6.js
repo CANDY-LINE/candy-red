@@ -6,6 +6,7 @@ import fs from 'fs';
 import readline from 'readline';
 import { EventEmitter } from 'events';
 import Promise from 'es6-promises';
+import cproc from 'child_process';
 
 export class DeviceIdResolver {
   constructor(RED) {
@@ -111,7 +112,10 @@ export class DeviceManager {
       path: 'candy-ws'
     }, {
       headers: {
-        'x-device-id': id
+        'x-device-id': id,
+        'x-hostname': os.hostname(),
+        'x-candy-iotv': this.RED.settings.candyIotVersion,
+        'x-candy-redv': this.RED.settings.candyRedVersion,
       }
     });
     accountConfig.on('close', () => {
@@ -170,9 +174,37 @@ export class DeviceManager {
   // }
 
   testIfCANDYIoTInstalled() {
-    return new Promise(resolve => {
-      // TODO
-      resolve(true);
+    return new Promise((resolve, reject) => {
+      let which = cproc.spawn('which', ['ciot'], { timeout: 1000 });
+      which.on('close', code => {
+        let ciotSupported = (code === 0);
+        resolve(ciotSupported);
+      });
+      which.on('error', err => {
+        reject(err);
+      });
+    }).then(ciotSupported => {
+      return new Promise((resolve, reject) => {
+        let version = process.env.DEBUG_CIOTV || '';
+        if (ciotSupported) {
+          let ciot = cproc.spawn('ciot', ['info','version'], { timeout: 1000 });
+          ciot.stdout.on('data', data => {
+            try {
+              let ret = JSON.parse(data);
+              version = ret.version;
+            } catch (e) {
+              this.RED.log.info(e);
+            }
+          });
+          ciot.on('close', () => {
+            resolve(version);
+          });
+          ciot.on('error', err => {
+            reject(err);
+          });
+        }
+        resolve(version);
+      });
     });
   }
   

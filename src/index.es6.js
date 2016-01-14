@@ -5,10 +5,12 @@ import http from 'http';
 import express from 'express';
 import RED from 'node-red';
 import os from 'os';
+import fs from 'fs';
 import { DeviceManager } from './device-manager';
 
 // Listen port
 const PORT = process.env.PORT || 8100;
+const DEFAULT_PACKAGE_JSON = __dirname + '/../package.json';
 
 // Exit handler
 process.stdin.resume();
@@ -59,9 +61,9 @@ let editorTheme = {
   }
 };
 
-let deviceManager = new DeviceManager(RED);
-deviceManager.testIfCANDYIoTInstalled().then(installed => {
-  if (installed) {
+let deviceManager = new DeviceManager(RED, DEFAULT_PACKAGE_JSON);
+deviceManager.testIfCANDYIoTInstalled().then(candyIotv => {
+  if (candyIotv) {
     flowFile = 'flows_candy-box_' + os.hostname() + '.json';
     editorTheme = {
       page: {
@@ -81,7 +83,34 @@ deviceManager.testIfCANDYIoTInstalled().then(installed => {
       }
     };
   }
-
+  return new Promise(resolve => {
+    if (process.argv.length > 2) {
+      fs.stat(process.argv[2], err => {
+        if (!err) {
+          return resolve(process.argv[2]);
+        }
+        return resolve(DEFAULT_PACKAGE_JSON);
+      });
+    }
+    resolve(DEFAULT_PACKAGE_JSON);
+  }).then(packageJsonPath => {
+    return new Promise(resolve => {
+      fs.readFile(packageJsonPath, (err, data) => {
+        if (err) {
+          return resolve({
+            candyIotv: candyIotv,
+            candyRedv: 'N/A'
+          });
+        }
+        let packageJson = JSON.parse(data);
+        return resolve({
+          candyIotv: candyIotv,
+          candyRedv: packageJson.version || 'N/A'
+        });
+      });
+    });
+  });
+}).then(versions => {
   // Create the settings object - see default settings.js file for other options
   let settings = {
     verbose: true,
@@ -94,7 +123,9 @@ deviceManager.testIfCANDYIoTInstalled().then(installed => {
     },
     exitHandlers: [],
     deviceManager: deviceManager,
-    editorTheme: editorTheme
+    editorTheme: editorTheme,
+    candyIotVersion: versions.candyIotv,
+    candyRedVersion: versions.candyRedv,
   };
 
   // Initialise the runtime with a server and settings
