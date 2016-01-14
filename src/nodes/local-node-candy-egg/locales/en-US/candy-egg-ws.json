@@ -21,7 +21,8 @@
     "status": {
       "error": "error",
       "connected": "connected",
-      "disconnected": "disconnected"
+      "disconnected": "disconnected",
+      "auth-retry": "Retrying authenticaton"
     },
     "errors": {
       "too-many-redirects": "Too many redirects, WS path:__path__, Redirect Location:__location__ (Retry after approx. 1min)",

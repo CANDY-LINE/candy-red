@@ -58,6 +58,7 @@ export default function(RED) {
       socket.on('open', () => {
         that.emit2all('opened');
         that.redirect = 0;
+        that.authRetry = 0;
       });
       socket.on('close', () => {
         that.emit2all('closed');
@@ -87,7 +88,11 @@ export default function(RED) {
           RED.log.error(RED._('candy-egg-ws.errors.wrong-path', { path: that.path }));
         } else if (res.statusCode === 401) {
           RED.log.error(RED._('candy-egg-ws.errors.auth-error', { path: that.path, user: this.accountConfig.loginUser }));
-          return; // never retry
+          ++this.authRetry;
+          if (this.authRetry > 10) {
+            return; // never retry
+          }
+          RED.log.info(RED._('candy-egg-ws.status.auth-retry'));
         } else {
           RED.log.error(RED._('candy-egg-ws.errors.server-error', { path: that.path, status: res.statusCode }));
         }
