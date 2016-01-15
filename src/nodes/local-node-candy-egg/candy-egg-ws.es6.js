@@ -103,7 +103,7 @@ export default function(RED) {
         RED.log.error(RED._('candy-egg-ws.errors.connect-error', { err: err }));
         if (!this.closing) {
           // try to reconnect every 3+ secs
-          this.tout = setTimeout(() => { that.startconn(); }, 3000 + Math.random() * 1000);
+          this.tout = setTimeout(() => { this.startconn(); }, 3000 + Math.random() * 1000);
         }
       });
     }
