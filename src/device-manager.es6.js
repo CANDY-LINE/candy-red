@@ -118,6 +118,8 @@ export class DeviceManager {
       path: 'candy-ws'
     }, {
       headers: {
+        'x-acc-fqn': accountConfig.accountFqn,
+        'x-acc-user': accountConfig.loginUser,
         'x-device-id': id,
         'x-hostname': os.hostname(),
         'x-candy-iotv': this.RED.settings.candyIotVersion,
