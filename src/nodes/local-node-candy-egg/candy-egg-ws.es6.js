@@ -179,6 +179,9 @@ export default function(RED) {
 
     broadcast(data) {
       try {
+        if ((typeof(data) === 'object') && !(data instanceof Buffer)) {
+          data = JSON.stringify(data);
+        }
         this.server.send(data);
         return true;
       } catch(e) { // swallow any errors
