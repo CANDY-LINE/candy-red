@@ -186,6 +186,14 @@ export class DeviceManager {
       return reject({status:501, message:'TODO!!'});
     });
   }
+  
+  _performProvision(c) {
+    this.hearbeatIntervalMs = c.args.hearbeatIntervalMs;
+    return new Promise(resolve => {
+      // do stuff if any after provisioning
+      return resolve();
+    });
+  }
 
   testIfCANDYIoTInstalled() {
     return new Promise((resolve, reject) => {
