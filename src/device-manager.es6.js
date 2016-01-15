@@ -11,6 +11,7 @@ import cproc from 'child_process';
 export class DeviceIdResolver {
   constructor(RED) {
     this.RED = RED;
+    this.ciotSupported = false;
   }
 
   resolve() {
@@ -176,6 +177,15 @@ export class DeviceManager {
     };
   }
 
+  
+  _performInspect(c) {
+    return new Promise((resolve, reject) => {
+      if (!this.ciotSupported) {
+        return reject({status:405});
+      }
+      return reject({status:501, message:'TODO!!'});
+    });
+  }
 
   testIfCANDYIoTInstalled() {
     return new Promise((resolve, reject) => {
@@ -188,6 +198,7 @@ export class DeviceManager {
         reject(err);
       });
     }).then(ciotSupported => {
+      this.ciotSupported = ciotSupported;
       return new Promise((resolve, reject) => {
         let version = process.env.DEBUG_CIOTV || '';
         if (ciotSupported) {
