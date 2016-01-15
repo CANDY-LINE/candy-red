@@ -238,6 +238,25 @@ export class DeviceManager {
       }
     });
   }
+  
+  _performUpdateFlows(c) {
+    return new Promise((resolve, reject) => {
+      try {
+        if (!c.args.content) {
+          return reject({status:400});
+        }
+        fs.writeFile(this.flowFilePath, c.args.content, err => {
+          if (err) {
+            return reject(err);
+          }
+          this._setFlowSignature(c.args.content);
+          return resolve({status:200, reboot:true});
+        });
+      } catch (err) {
+        return reject(err);
+      }
+    });
+  }
 
   testIfCANDYIoTInstalled() {
     return new Promise((resolve, reject) => {
