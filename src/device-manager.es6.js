@@ -7,10 +7,14 @@ import readline from 'readline';
 import { EventEmitter } from 'events';
 import Promise from 'es6-promises';
 import cproc from 'child_process';
+import crypto from 'crypto';
+import path from 'path';
+
 
 export class DeviceIdResolver {
   constructor(RED) {
     this.RED = RED;
+    this.flowFileSignature = '';
     this.ciotSupported = false;
   }
 
@@ -194,6 +198,46 @@ export class DeviceManager {
       return resolve();
     });
   }
+  
+  _performSyncFlows(c) {
+    return new Promise((resolve, reject) => {
+      try {
+        if (!c.args.expectedSignature) {
+          fs.readFile(this.flowFilePath, (err, data) => {
+            if (err) {
+              return reject(err);
+            }
+            this._setFlowSignature(data);
+            try {
+              data = JSON.parse(data);
+            } catch (_) {
+              return reject({status:500, message:'My flow is invalid'});
+            }
+            return resolve({status:202, commands: {
+              cat: 'sys',
+              act: 'updateflows',
+              args: {
+                name: path.basename(this.flowFilePath),
+                signature: this.flowFileSignature,
+                content: data
+              }
+            }});
+          });
+          return;
+        }
+        if (this.flowFileSignature !== c.args.expectedSignature) {
+          return resolve({status:202, commands: {
+            cat: 'sys',
+            act: 'deliverflows'
+          }});
+        }
+        // 304 Not Modified
+        return resolve({status:304});
+      } catch (err) {
+        return reject(err);
+      }
+    });
+  }
 
   testIfCANDYIoTInstalled() {
     return new Promise((resolve, reject) => {
@@ -231,12 +275,26 @@ export class DeviceManager {
     });
   }
   
-  testIfUIisEnabled(flowFile) {
+  _setFlowSignature(data) {
+    let sha1 = crypto.createHash('sha1');
+    sha1.update(data);
+    this.flowFileSignature = sha1.digest('hex');
+  }
+  
+  testIfUIisEnabled(flowFilePath) {
+    if (flowFilePath) {
+      this.flowFilePath = flowFilePath;
+    } else {
+      flowFilePath = this.flowFilePath;
+    }
     return new Promise(resolve => {
-      fs.readFile(flowFile, (err, data) => {
+      fs.readFile(flowFilePath, (err, data) => {
         if (err) {
           return resolve(true);
         }
+        this._setFlowSignature(data);
+        this.RED.log.info(`[CANDY RED] flowFileSignature: ${this.flowFileSignature}`);
+
         let flows = JSON.parse(data);
         if (!Array.isArray(flows)) {
           return resolve(true);
