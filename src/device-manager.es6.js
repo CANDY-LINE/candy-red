@@ -10,11 +10,14 @@ import cproc from 'child_process';
 import crypto from 'crypto';
 import path from 'path';
 
+const REBOOT_DELAY_MS = 1000;
+const TRACE = process.env.DEBUG || false;
 
 export class DeviceIdResolver {
   constructor(RED) {
     this.RED = RED;
     this.flowFileSignature = '';
+    this.hearbeatIntervalMs = -1;
     this.ciotSupported = false;
   }
 
@@ -155,22 +158,38 @@ export class DeviceManager {
         } catch (_) {
         }
       }
-      this.RED.log.info('[CANDY RED] Received!');
-      if (payload.status) {
-        switch (payload.status) {
-        case 401:
-        case 403:
-        case 407:
+      if (TRACE) {
+        this.RED.log.info('[CANDY RED] Received!:' + JSON.stringify(payload));
+      }
+      if (!this.enrolled) {
+        if (!payload || !payload.status || payload.status / 100 !== 2) {
           // Terminate everything and never retry
           this.listenerConfig.close();
           this.RED.log.error('[CANDY RED] Enrollment error!' +
             ' This device is not allowed to access the account:' +
             accountConfig.accountFqn);
           return;
-        default:
-          console.log('CONGRATS!', payload);
+        } else {
+          payload = payload.commands;
+          this.enrolled = true;
         }
       }
+      this._performCommands(payload).then(result => {
+        this._sendToServer(result);
+      }).catch(result => {
+        if (result instanceof Error) {
+          let err = result;
+          result = {};
+          result.status = 500;
+          result.message = err.toString();
+          result.stack = err.stack;
+        } else if (result && !Array.isArray(result)) {
+          result = [result];
+        }
+        this._sendToServer(result);
+      }).catch(err => {
+        this.RED.log.error(err.stack);
+      });
     };
     this.listenerConfig.registerInputNode(this.events);
     this.listenerConfig.send = payload => {
@@ -180,7 +199,216 @@ export class DeviceManager {
       return this.listenerConfig.broadcast(payload);
     };
   }
+  
+  _sendToServer(result) {
+    if (!result || Array.isArray(result) && result.length === 0 || Object.keys(result) === 0) {
+      // do nothing
+      this.RED.log.info('[CANDY RED] No commands to respind to');
+      return;
+    }
+    result = this._numberResponseCommands(result);
+    let sent = this.listenerConfig.send(result);
+    if (TRACE && sent) {
+      this.RED.log.info('[CANDY RED] Sent!:' + JSON.stringify(result));
+    }
+    if (!Array.isArray(result)) {
+      result = [result];
+    }
+    if (result.reduce((p, c) => {
+      return p || (c && c.reboot);
+    }, false)) {
+      // systemctl shuould restart the service
+      setTimeout(() => {
+        process.exit(219);
+      }, REBOOT_DELAY_MS);
+    }
+  }
+  
+  _nextCmdIdx() {
+    this.cmdIdx = (this.cmdIdx + 1) % 65536;
+    return this.cmdIdx;
+  }
+  
+  _numberResponseCommands(result) {
+    let processed = result;
+    if (!Array.isArray(result)) {
+      processed = [result];
+    }
+    processed.forEach(r => {
+      if (r.commands) {
+        if (!Array.isArray(r.commands)) {
+          r.commands = [r.commands];
+        }
+        r.commands.forEach(c => {
+          c.id = this._nextCmdIdx();
+          this.commands[c.id] = c;
+        });
+      }
+    });
+    return result;
+  }
+  
+  _performCommands(commands) {
+    if (!commands) {
+      return new Promise(resolve => resolve()); // do nothing
+    }
 
+    if (Array.isArray(commands)) {
+      // same as act:parallel
+      let promises = commands.map(c => {
+        return this._performCommands(c);
+      });
+      return Promise.all(promises).then(resultArray => {
+        let result = resultArray.reduce((a, b) => {
+          if (a && b) {
+            return a.concat(b);
+          } else if (!a) {
+            return b;
+          }
+          return a;
+        }, []);
+        return new Promise(resolve => resolve(result));
+      });
+    }
+
+    if (commands.status) {
+      // response to the issued command
+      if (commands.id) {
+        let c = this.commands[commands.id];
+        if (!c) {
+          if (commands.status / 100 !== 2) {
+            this.RED.log.info(`[CANDY RED] Failed to perform command: ${JSON.stringify(c)}, status:${JSON.stringify(commands)}`);
+          }
+          delete this.commands[commands.id];
+        }
+      }
+      if (commands.commands) {
+        return this._performCommands(commands.commands);
+      }
+      if (commands.status / 100 !== 2) {
+        this.RED.log.info(`[CANDY RED] Server returned error, status:${JSON.stringify(commands)}`);
+      }
+      return new Promise(resolve => resolve()); // do nothing
+    }
+
+    if (!commands.id) {
+      return new Promise(resolve => resolve({status:400, message:'id missing'}));
+    }
+    if (!commands.cat) {
+      return new Promise(resolve => resolve({status:400, message:'category missing'}));
+    }
+
+    if (commands.cat === 'ctrl') {
+      let children = commands.args || [];
+      if (!Array.isArray(children)) {
+        children = [children];
+      }
+      let promises;
+      switch(commands.act) {
+      case 'sequence':
+        promises = children.reduce((p, c) => {
+          if (!c) {
+            return p;
+          }
+          let next = p.then(result => {
+            return this._performCommand(c, result);
+          });
+          return next;
+        }, new Promise(resolve => resolve())).then(result => {
+          return new Promise(resolve => {
+            if (result) {
+              result.push({status:200, id:commands.id});
+              return resolve(result);
+            }
+            return resolve({status:400, id:commands.id});
+          });
+        });
+        return promises;
+
+      case 'parallel':
+        promises = children.map(c => {
+          return this._performCommands(c);
+        });
+        return Promise.all(promises).then(resultArray => {
+          let result = resultArray.reduce((a, b) => {
+            if (a && b) {
+              return a.concat(b);
+            } else if (!a) {
+              return b;
+            }
+            return a;
+          }, []);
+          return new Promise(resolve => {
+            result.push({status:200, id:commands.id});
+            resolve(result);
+          });
+        });
+        
+      default:
+        throw new Error('unknown action:' + commands.act);
+      }
+
+      return new Promise(resolve => resolve({status:400, errCommands: commands}));
+    }
+    return this._performCommand(commands);
+  }
+  
+  _buildErrResult(err, c) {
+    if (err instanceof Error) {
+      return {status:500, message:err.toString(), stack:err.stack, id:c.id};
+    } else {
+      err.id = c.id;
+      return err;
+    }
+  }
+  
+  _performCommand(c, result) {
+    return new Promise((resolve, reject) => {
+      try {
+        if (!result) {
+          result = [];
+        } else if (!Array.isArray(result)) {
+          result = [result];
+        }
+        switch(c.cat) {
+        case 'sys':
+          return this._performSysCommand(c).then(sysResult => {
+            if (sysResult) {
+              sysResult.id = c.id;
+              result.push(sysResult);
+            } else {
+              result.push({status:200, id:c.id});
+            }
+            return resolve(result);
+          }).catch(err => {
+            result.push(this._buildErrResult(err, c));
+            return reject(result);
+          });
+        default:
+          result.push(this._buildErrResult({status:400}, c));
+          return reject(result);
+        }
+      } catch (err) {
+        result.push(this._buildErrResult(err, c));
+        return reject(result);
+      }
+    });
+  }
+
+  _performSysCommand(c) {
+    switch(c.act) {
+    case 'provision':
+      return this._performProvision(c);
+    case 'syncflows':
+      return this._performSyncFlows(c);
+    case 'updateflows':
+      return this._performUpdateFlows(c);
+    case 'inspect':
+      return this._performInspect(c);
+    default:
+      throw new Error('Unsupported action:' + c.act);
+    }    
+  }
   
   _performInspect(c) {
     return new Promise((resolve, reject) => {
