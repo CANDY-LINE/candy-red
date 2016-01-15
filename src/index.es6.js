@@ -135,7 +135,7 @@ deviceManager.testIfCANDYIoTInstalled().then(candyIotv => {
   // Serve the http nodes from /api
   app.use(settings.httpNodeRoot, RED.httpNode);
 
-  deviceManager.testIfUIisEnabled(flowFile).then(enabled => {
+  deviceManager.testIfUIisEnabled(settings.userDir + '/' + flowFile).then(enabled => {
     if (enabled) {
       RED.log.info('[CANDY RED] Deploying Flow Editor UI...');
       // Add a simple route for static content served from 'public'
