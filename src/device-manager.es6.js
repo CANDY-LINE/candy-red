@@ -129,7 +129,7 @@ export class DeviceManager {
     accountConfig.on('close', () => {
       this.listenerConfig.close();
     });
-    let prefix = '{DeviceManager}:[' + accountConfig.accountFqn + '] ';
+    let prefix = '[CANDY RED] {DeviceManager}:[' + accountConfig.accountFqn + '] ';
     this.events.on('opened', () => {
       this.RED.log.warn(prefix + 'connected');
     });
