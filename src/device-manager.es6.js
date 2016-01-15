@@ -92,6 +92,7 @@ export class DeviceManager {
     this.listenerConfig = null;
     this.events = new EventEmitter();
     this.resolver = new DeviceIdResolver(RED);
+    this._reset();
   }
 
   isWsClientInitialized() {
@@ -102,6 +103,12 @@ export class DeviceManager {
     this.resolver.resolve().then(id => {
       this._initWsClient(id, account, accountConfig, webSocketListeners);
     });
+  }
+  
+  _reset() {
+    this.cmdIdx = 0;
+    this.commands = {};
+    this.enrolled = false;
   }
 
   _initWsClient(id, account, accountConfig, webSocketListeners) {
@@ -126,9 +133,11 @@ export class DeviceManager {
     });
     this.events.on('closed', () => {
       this.RED.log.warn(prefix + 'disconnected');
+      this._reset();
     });
     this.events.on('erro', () => {
       this.RED.log.warn(prefix + 'error');
+      this._reset();
     });
     // receiving an incoming message (sent from a source)
     this.events.send = msg => {
