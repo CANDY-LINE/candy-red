@@ -145,11 +145,9 @@ export class DeviceManager {
     this.events.send = msg => {
       let payload = msg.payload;
       if (payload) {
-        if (!Buffer.isBuffer(payload)) {
-          try {
-            payload = JSON.parse(payload);
-          } catch (_) {
-          }
+        try {
+          payload = JSON.parse(payload);
+        } catch (_) {
         }
       }
       this.RED.log.info('[CANDY RED] Received!');
