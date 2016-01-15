@@ -315,11 +315,7 @@ export default function(RED) {
           }
         }
         if (payload) {
-          if (msg._session && msg._session.type === 'candy-egg-ws') {
-            that.listenerConfig.reply(msg._session.id,payload);
-          } else {
-            that.listenerConfig.broadcast(payload);
-          }
+          that.listenerConfig.broadcast(payload);
         }
       });
     }
