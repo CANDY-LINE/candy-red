@@ -137,7 +137,7 @@ deviceManager.testIfCANDYIoTInstalled().then(candyIotv => {
 
   deviceManager.testIfUIisEnabled(flowFile).then(enabled => {
     if (enabled) {
-      RED.log.info('Deploying Flow Editor UI...');
+      RED.log.info('[CANDY RED] Deploying Flow Editor UI...');
       // Add a simple route for static content served from 'public'
       app.use('/', express.static(__dirname + '/public'));
       if (settings.httpAdminRoot) {
