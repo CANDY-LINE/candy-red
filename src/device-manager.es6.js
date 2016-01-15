@@ -168,12 +168,11 @@ export class DeviceManager {
       }
     };
     this.listenerConfig.registerInputNode(this.events);
-    this.listenerConfig.send = (payload, msg) => {
-      if (msg && msg._session && msg._session.type === 'candy-egg-ws') {
-        this.listenerConfig.reply(msg._session.id, payload);
-      } else {
-        this.listenerConfig.broadcast(payload);
+    this.listenerConfig.send = payload => {
+      if ((typeof(payload) === 'object') && !(payload instanceof Buffer)) {
+        payload = JSON.stringify(payload);
       }
+      return this.listenerConfig.broadcast(payload);
     };
   }
 
