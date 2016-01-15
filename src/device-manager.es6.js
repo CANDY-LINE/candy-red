@@ -176,9 +176,6 @@ export class DeviceManager {
     };
   }
 
-  // resetWsClient(accountConfig) {
-  //
-  // }
 
   testIfCANDYIoTInstalled() {
     return new Promise((resolve, reject) => {
