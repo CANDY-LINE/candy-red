@@ -430,7 +430,7 @@ export class DeviceManager {
   _performSyncFlows(c) {
     return new Promise((resolve, reject) => {
       try {
-        if (!c.args.expectedSignature) {
+        if (c.args.flowUpdateRequired) {
           fs.readFile(this.flowFilePath, (err, data) => {
             if (err) {
               return reject(err);
