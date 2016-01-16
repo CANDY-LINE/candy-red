@@ -203,7 +203,7 @@ export class DeviceManager {
   _sendToServer(result) {
     if (!result || Array.isArray(result) && result.length === 0 || Object.keys(result) === 0) {
       // do nothing
-      this.RED.log.info('[CANDY RED] No commands to respind to');
+      this.RED.log.info('[CANDY RED] No commands to respond to');
       return;
     }
     result = this._numberResponseCommands(result);
