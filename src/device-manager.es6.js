@@ -13,7 +13,7 @@ import path from 'path';
 const REBOOT_DELAY_MS = 1000;
 const TRACE = process.env.DEBUG || false;
 
-export class DeviceIdResolver {
+class DeviceIdResolver {
   constructor(RED) {
     this.RED = RED;
     this.flowFileSignature = '';
@@ -94,60 +94,14 @@ export class DeviceIdResolver {
   }
 }
 
-export class DeviceManager {
-  constructor(RED) {
+class DeviceManager {
+  constructor(listenerConfig, accountConfig, deviceState, RED) {
     this.RED = RED;
-    this.listenerConfig = null;
-    this.events = new EventEmitter();
-    this.resolver = new DeviceIdResolver(RED);
-    this._reset();
-  }
-  
-  _info(msg) {
-    this.RED.log.info(this.prefix  + msg);
-  }
-  _warn(msg) {
-    this.RED.log.warn(this.prefix  + msg);
-  }
-  _error(msg) {
-    this.RED.log.error(this.prefix  + msg);
-  }
-
-  isWsClientInitialized() {
-    return this.listenerConfig !== null;
-  }
-
-  initWsClient(account, accountConfig, webSocketListeners) {
-    this.resolver.resolve().then(id => {
-      this._initWsClient(id, account, accountConfig, webSocketListeners);
-    });
-  }
-  
-  _reset() {
-    this.cmdIdx = 0;
-    this.commands = {};
-    this.enrolled = false;
-  }
-
-  _initWsClient(id, account, accountConfig, webSocketListeners) {
-    this.listenerConfig = webSocketListeners.get({
-      accountConfig: accountConfig,
-      account: account,
-      path: 'candy-ws'
-    }, {
-      headers: {
-        'x-acc-fqn': accountConfig.accountFqn,
-        'x-acc-user': accountConfig.loginUser,
-        'x-device-id': id,
-        'x-hostname': os.hostname(),
-        'x-candy-iotv': this.RED.settings.candyIotVersion,
-        'x-candy-redv': this.RED.settings.candyRedVersion,
-      }
-    });
+    this.listenerConfig = listenerConfig;
+    this.accountConfig = accountConfig;
+    this.deviceState = deviceState;
     this.prefix = '[CANDY RED] {DeviceManager}:[' + accountConfig.accountFqn + '] ';
-    accountConfig.on('close', () => {
-      this.listenerConfig.close();
-    });
+    this.events = new EventEmitter();
     this.events.on('opened', () => {
       this._warn('connected');
     });
@@ -156,7 +110,7 @@ export class DeviceManager {
       this._reset();
     });
     this.events.on('erro', () => {
-      this._warn('error');
+      this._warn('connection error');
       this._reset();
     });
     // receiving an incoming message (sent from a source)
@@ -208,6 +162,23 @@ export class DeviceManager {
       }
       return this.listenerConfig.broadcast(payload);
     };
+    this._reset();
+  }
+  
+  _info(msg) {
+    this.RED.log.info(this.prefix  + msg);
+  }
+  _warn(msg) {
+    this.RED.log.warn(this.prefix  + msg);
+  }
+  _error(msg) {
+    this.RED.log.error(this.prefix  + msg);
+  }
+
+  _reset() {
+    this.cmdIdx = 0;
+    this.commands = {};
+    this.enrolled = false;
   }
   
   _sendToServer(result) {
@@ -441,11 +412,11 @@ export class DeviceManager {
     return new Promise((resolve, reject) => {
       try {
         if (c.args.flowUpdateRequired) {
-          fs.readFile(this.flowFilePath, (err, data) => {
+          fs.readFile(this.deviceState.flowFilePath, (err, data) => {
             if (err) {
               return reject(err);
             }
-            this._setFlowSignature(data);
+            this.deviceState.setFlowSignature(data);
             try {
               data = JSON.parse(data);
             } catch (_) {
@@ -455,15 +426,15 @@ export class DeviceManager {
               cat: 'sys',
               act: 'updateflows',
               args: {
-                name: path.basename(this.flowFilePath),
-                signature: this.flowFileSignature,
+                name: path.basename(this.deviceState.flowFilePath),
+                signature: this.deviceState.flowFileSignature,
                 content: data
               }
             }});
           });
           return;
         }
-        if (this.flowFileSignature !== c.args.expectedSignature) {
+        if (this.deviceState.flowFileSignature !== c.args.expectedSignature) {
           return resolve({status:202, commands: {
             cat: 'sys',
             act: 'deliverflows'
@@ -483,11 +454,11 @@ export class DeviceManager {
         if (!c.args.content) {
           return reject({status:400});
         }
-        fs.writeFile(this.flowFilePath, c.args.content, err => {
+        fs.writeFile(this.deviceState.flowFilePath, c.args.content, err => {
           if (err) {
             return reject(err);
           }
-          this._setFlowSignature(c.args.content);
+          this.deviceState.setFlowSignature(c.args.content);
           return resolve({status:200, reboot:true});
         });
       } catch (err) {
@@ -495,73 +466,146 @@ export class DeviceManager {
       }
     });
   }
+}
+
+class DeviceState {
+
+  constructor(RED) {
+    this.RED = RED;
+    this.ciotSupported = false;
+    this.flowFileSignature = '';
+    this.flowFilePath = '';
+    this.resolver = new DeviceIdResolver(RED);
+  }
+  
+  init() {
+    return new Promise(resolve => {
+      if (this.deviceId) {
+        resolve();
+      } else {
+        this.resolver.resolve().then(id => {
+          this.deviceId = id;
+          resolve();
+        });
+      }
+    });
+  }
 
   testIfCANDYIoTInstalled() {
-    return new Promise((resolve, reject) => {
-      let which = cproc.spawn('which', ['ciot'], { timeout: 1000 });
-      which.on('close', code => {
-        let ciotSupported = (code === 0);
-        resolve(ciotSupported);
-      });
-      which.on('error', err => {
-        reject(err);
-      });
-    }).then(ciotSupported => {
-      this.ciotSupported = ciotSupported;
+    return this.init().then(() => {
       return new Promise((resolve, reject) => {
-        let version = process.env.DEBUG_CIOTV || '';
-        if (ciotSupported) {
-          let ciot = cproc.spawn('ciot', ['info','version'], { timeout: 1000 });
-          ciot.stdout.on('data', data => {
-            try {
-              let ret = JSON.parse(data);
-              version = ret.version;
-            } catch (e) {
-              this._info(e);
-            }
-          });
-          ciot.on('close', () => {
-            resolve(version);
-          });
-          ciot.on('error', err => {
-            reject(err);
-          });
-        }
-        resolve(version);
+        let which = cproc.spawn('which', ['ciot'], { timeout: 1000 });
+        which.on('close', code => {
+          let ciotSupported = (code === 0);
+          resolve(ciotSupported);
+        });
+        which.on('error', err => {
+          reject(err);
+        });
+      }).then(ciotSupported => {
+        this.ciotSupported = ciotSupported;
+        return new Promise((resolve, reject) => {
+          let version = process.env.DEBUG_CIOTV || '';
+          if (ciotSupported) {
+            let ciot = cproc.spawn('ciot', ['info','version'], { timeout: 1000 });
+            ciot.stdout.on('data', data => {
+              try {
+                let ret = JSON.parse(data);
+                version = ret.version;
+              } catch (e) {
+                this.RED.log.info(e);
+              }
+            });
+            ciot.on('close', () => {
+              resolve(version);
+            });
+            ciot.on('error', err => {
+              reject(err);
+            });
+          }
+          resolve(version);
+        });
       });
     });
   }
   
-  _setFlowSignature(data) {
+  setFlowSignature(data) {
     let sha1 = crypto.createHash('sha1');
     sha1.update(data);
     this.flowFileSignature = sha1.digest('hex');
   }
   
   testIfUIisEnabled(flowFilePath) {
-    if (flowFilePath) {
-      this.flowFilePath = flowFilePath;
-    } else {
-      flowFilePath = this.flowFilePath;
-    }
-    return new Promise(resolve => {
-      fs.readFile(flowFilePath, (err, data) => {
-        if (err) {
-          return resolve(true);
-        }
-        this._setFlowSignature(data);
-        this._info(`flowFileSignature: ${this.flowFileSignature}`);
+    return this.init().then(() => {
+      if (flowFilePath) {
+        this.flowFilePath = flowFilePath;
+      } else {
+        flowFilePath = this.flowFilePath;
+      }
+      return new Promise(resolve => {
+        fs.readFile(flowFilePath, (err, data) => {
+          if (err) {
+            return resolve(true);
+          }
+          this.setFlowSignature(data);
+          this.RED.log.info(`flowFileSignature: ${this.flowFileSignature}`);
 
-        let flows = JSON.parse(data);
-        if (!Array.isArray(flows)) {
-          return resolve(true);
-        }
-        resolve(flows.filter(f => {
-          return f.type === 'CANDY EGG account';
-        }).reduce((p, c) => {
-          return p && !c.headless;
-        }, true));
+          let flows = JSON.parse(data);
+          if (!Array.isArray(flows)) {
+            return resolve(true);
+          }
+          resolve(flows.filter(f => {
+            return f.type === 'CANDY EGG account';
+          }).reduce((p, c) => {
+            return p && !c.headless;
+          }, true));
+        });
       });
     });
+  }
+}
+
+export class DeviceManagerStore {
+  constructor(RED) {
+    this.RED = RED;
+    this.store = {};
+    this.deviceState = new DeviceState(RED);
+  }
+    
+  _get(accountFqn) {
+    return this.store[accountFqn];
+  }
+  
+  _remove(accountFqn) {
+    delete this.store[accountFqn];
+  }
+  
+  isWsClientInitialized(accountFqn) {
+    return !!this._get(accountFqn);
+  }
+
+  initWsClient(account, accountConfig, webSocketListeners) {
+    let accountFqn = accountConfig.accountFqn;
+    let listenerConfig = webSocketListeners.get({
+      accountConfig: accountConfig,
+      account: account,
+      path: 'candy-ws'
+    }, {
+      headers: {
+        'x-acc-fqn': accountFqn,
+        'x-acc-user': accountConfig.loginUser,
+        'x-device-id': this.deviceState.deviceId,
+        'x-hostname': os.hostname(),
+        'x-candy-iotv': this.RED.settings.candyIotVersion,
+        'x-candy-redv': this.RED.settings.candyRedVersion,
+      }
+    });
+    accountConfig.on('close', () => {
+      listenerConfig.close();
+      this._remove(accountFqn);
+      this.RED.log.info(`[CANDY RED] Disassociated from [${accountFqn}]`);
+    });
+    this.store[accountFqn] = new DeviceManager(listenerConfig, accountConfig, this.deviceState, this.RED);
+    this.RED.log.info(`[CANDY RED] Associated with [${accountFqn}]`);
   }
 }

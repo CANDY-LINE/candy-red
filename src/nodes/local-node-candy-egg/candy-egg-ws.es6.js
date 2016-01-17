@@ -240,10 +240,10 @@ export default function(RED) {
 
       this.managed = n.managed;
       // deploying implicit API clients (candy-ws)
-      let deviceManager = RED.settings.deviceManager;
-      if (this.managed && deviceManager && deviceManager.isWsClientInitialized) {
-        if (!deviceManager.isWsClientInitialized()) {
-          deviceManager.initWsClient(n.id, this, webSocketListeners);
+      let deviceManagerStore = RED.settings.deviceManagerStore;
+      if (this.managed && deviceManagerStore && deviceManagerStore.isWsClientInitialized) {
+        if (!deviceManagerStore.isWsClientInitialized(this.accountFqn)) {
+          deviceManagerStore.initWsClient(n.id, this, webSocketListeners);
         }
       }
     }

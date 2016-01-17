@@ -6,7 +6,7 @@ import express from 'express';
 import RED from 'node-red';
 import os from 'os';
 import fs from 'fs';
-import { DeviceManager } from './device-manager';
+import { DeviceManagerStore } from './device-manager';
 
 // Listen port
 const PORT = process.env.PORT || 8100;
@@ -61,8 +61,8 @@ let editorTheme = {
   }
 };
 
-let deviceManager = new DeviceManager(RED, DEFAULT_PACKAGE_JSON);
-deviceManager.testIfCANDYIoTInstalled().then(candyIotv => {
+let deviceManagerStore = new DeviceManagerStore(RED);
+deviceManagerStore.deviceState.testIfCANDYIoTInstalled().then(candyIotv => {
   if (candyIotv) {
     flowFile = 'flows_candy-box_' + os.hostname() + '.json';
     editorTheme = {
@@ -122,7 +122,7 @@ deviceManager.testIfCANDYIoTInstalled().then(candyIotv => {
     functionGlobalContext: {
     },
     exitHandlers: [],
-    deviceManager: deviceManager,
+    deviceManagerStore: deviceManagerStore,
     editorTheme: editorTheme,
     candyIotVersion: versions.candyIotv,
     candyRedVersion: versions.candyRedv,
@@ -135,7 +135,7 @@ deviceManager.testIfCANDYIoTInstalled().then(candyIotv => {
   // Serve the http nodes from /api
   app.use(settings.httpNodeRoot, RED.httpNode);
 
-  deviceManager.testIfUIisEnabled(settings.userDir + '/' + flowFile).then(enabled => {
+  deviceManagerStore.deviceState.testIfUIisEnabled(settings.userDir + '/' + flowFile).then(enabled => {
     if (enabled) {
       RED.log.info('[CANDY RED] Deploying Flow Editor UI...');
       // Add a simple route for static content served from 'public'
