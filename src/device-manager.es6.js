@@ -102,6 +102,16 @@ export class DeviceManager {
     this.resolver = new DeviceIdResolver(RED);
     this._reset();
   }
+  
+  _info(msg) {
+    this.RED.log.info(this.prefix  + msg);
+  }
+  _warn(msg) {
+    this.RED.log.warn(this.prefix  + msg);
+  }
+  _error(msg) {
+    this.RED.log.error(this.prefix  + msg);
+  }
 
   isWsClientInitialized() {
     return this.listenerConfig !== null;
@@ -134,19 +144,19 @@ export class DeviceManager {
         'x-candy-redv': this.RED.settings.candyRedVersion,
       }
     });
+    this.prefix = '[CANDY RED] {DeviceManager}:[' + accountConfig.accountFqn + '] ';
     accountConfig.on('close', () => {
       this.listenerConfig.close();
     });
-    let prefix = '[CANDY RED] {DeviceManager}:[' + accountConfig.accountFqn + '] ';
     this.events.on('opened', () => {
-      this.RED.log.warn(prefix + 'connected');
+      this._warn('connected');
     });
     this.events.on('closed', () => {
-      this.RED.log.warn(prefix + 'disconnected');
+      this._warn('disconnected');
       this._reset();
     });
     this.events.on('erro', () => {
-      this.RED.log.warn(prefix + 'error');
+      this._warn('error');
       this._reset();
     });
     // receiving an incoming message (sent from a source)
@@ -159,13 +169,13 @@ export class DeviceManager {
         }
       }
       if (TRACE) {
-        this.RED.log.info('[CANDY RED] Received!:' + JSON.stringify(payload));
+        this._info('Received!:' + JSON.stringify(payload));
       }
       if (!this.enrolled) {
         if (!payload || !payload.status || payload.status / 100 !== 2) {
           // Terminate everything and never retry
           this.listenerConfig.close();
-          this.RED.log.error('[CANDY RED] Enrollment error!' +
+          this._error('Enrollment error!' +
             ' This device is not allowed to access the account:' +
             accountConfig.accountFqn);
           return;
@@ -188,7 +198,7 @@ export class DeviceManager {
         }
         this._sendToServer(result);
       }).catch(err => {
-        this.RED.log.error(err.stack);
+        this._error(err.stack);
       });
     };
     this.listenerConfig.registerInputNode(this.events);
@@ -203,13 +213,13 @@ export class DeviceManager {
   _sendToServer(result) {
     if (!result || Array.isArray(result) && result.length === 0 || Object.keys(result) === 0) {
       // do nothing
-      this.RED.log.info('[CANDY RED] No commands to respond to');
+      this._info('No commands to respond to');
       return;
     }
     result = this._numberResponseCommands(result);
     let sent = this.listenerConfig.send(result);
     if (TRACE && sent) {
-      this.RED.log.info('[CANDY RED] Sent!:' + JSON.stringify(result));
+      this._info('Sent!:' + JSON.stringify(result));
     }
     if (!Array.isArray(result)) {
       result = [result];
@@ -277,7 +287,7 @@ export class DeviceManager {
         let c = this.commands[commands.id];
         if (!c) {
           if (commands.status / 100 !== 2) {
-            this.RED.log.info(`[CANDY RED] Failed to perform command: ${JSON.stringify(c)}, status:${JSON.stringify(commands)}`);
+            this._info(`Failed to perform command: ${JSON.stringify(c)}, status:${JSON.stringify(commands)}`);
           }
           delete this.commands[commands.id];
         }
@@ -286,7 +296,7 @@ export class DeviceManager {
         return this._performCommands(commands.commands);
       }
       if (commands.status / 100 !== 2) {
-        this.RED.log.info(`[CANDY RED] Server returned error, status:${JSON.stringify(commands)}`);
+        this._info(`Server returned error, status:${JSON.stringify(commands)}`);
       }
       return new Promise(resolve => resolve()); // do nothing
     }
@@ -507,7 +517,7 @@ export class DeviceManager {
               let ret = JSON.parse(data);
               version = ret.version;
             } catch (e) {
-              this.RED.log.info(e);
+              this._info(e);
             }
           });
           ciot.on('close', () => {
@@ -540,7 +550,7 @@ export class DeviceManager {
           return resolve(true);
         }
         this._setFlowSignature(data);
-        this.RED.log.info(`[CANDY RED] flowFileSignature: ${this.flowFileSignature}`);
+        this._info(`flowFileSignature: ${this.flowFileSignature}`);
 
         let flows = JSON.parse(data);
         if (!Array.isArray(flows)) {
