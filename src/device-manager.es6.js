@@ -399,6 +399,9 @@ class DeviceManager {
       if (!this.ciotSupported) {
         return reject({status:405});
       }
+      if (!c) {
+        return reject({status:400});
+      }
       return reject({status:501, message:'TODO!!'});
     });
   }
