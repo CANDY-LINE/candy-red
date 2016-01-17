@@ -224,6 +224,14 @@ class DeviceManager {
         r.commands.forEach(c => {
           c.id = this._nextCmdIdx();
           this.commands[c.id] = c;
+          if (c.success) {
+            // success callback
+            if (!this.success) {
+              this.success = {};
+            }
+            this.success[c.id] = c.success;
+            delete c.success;
+          }
         });
       }
     });
