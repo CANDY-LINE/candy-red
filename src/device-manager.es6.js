@@ -196,10 +196,11 @@ class DeviceManager {
       result = [result];
     }
     if (result.reduce((p, c) => {
-      return p || (c && c.reboot);
+      return p || (c && c.restart);
     }, false)) {
       // systemctl shuould restart the service
       setTimeout(() => {
+        this._warn('Restarting this process!!');
         process.exit(219);
       }, REBOOT_DELAY_MS);
     }
