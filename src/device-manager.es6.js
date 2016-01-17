@@ -443,7 +443,10 @@ class DeviceManager {
         if (this.deviceState.flowFileSignature !== c.args.expectedSignature) {
           return resolve({status:202, commands: {
             cat: 'sys',
-            act: 'deliverflows'
+            act: 'deliverflows',
+            args: {
+              flowId: c.args.flowId
+            }
           }});
         }
         // 304 Not Modified
