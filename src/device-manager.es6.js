@@ -258,8 +258,20 @@ class DeviceManager {
       if (commands.id) {
         let c = this.commands[commands.id];
         if (c) {
+          let success;
+          if (this.success && this.success[commands.id]) {
+            success = this.success[commands.id];
+          }
           if (commands.status / 100 !== 2) {
             this._info(`Failed to perform command: ${JSON.stringify(c)}, status:${JSON.stringify(commands)}`);
+          } else if (success) {
+            try {
+              success(client);
+            } catch (_) {
+            }
+          }
+          if (success) {
+            delete this.success[commands.id];
           }
           delete this.commands[commands.id];
         }
