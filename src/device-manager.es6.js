@@ -257,7 +257,7 @@ class DeviceManager {
       // response to the issued command
       if (commands.id) {
         let c = this.commands[commands.id];
-        if (!c) {
+        if (c) {
           if (commands.status / 100 !== 2) {
             this._info(`Failed to perform command: ${JSON.stringify(c)}, status:${JSON.stringify(commands)}`);
           }
