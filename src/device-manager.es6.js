@@ -387,6 +387,8 @@ class DeviceManager {
       return this._performUpdateFlows(c);
     case 'inspect':
       return this._performInspect(c);
+    case 'restart':
+      return this._performRestart(c);
     default:
       throw new Error('Unsupported action:' + c.act);
     }    
@@ -460,11 +462,20 @@ class DeviceManager {
             return reject(err);
           }
           this.deviceState.setFlowSignature(c.args.content);
-          return resolve({status:200, reboot:true});
+          return resolve({status:200, restart:true});
         });
       } catch (err) {
         return reject(err);
       }
+    });
+  }
+
+  _performRestart(c) {
+    return new Promise((resolve, reject) => {
+      if (c) {
+        return resolve({status:200, restart:true});
+      }
+      return reject({status:400});
     });
   }
 }
