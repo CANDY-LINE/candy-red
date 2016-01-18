@@ -438,29 +438,29 @@ class DeviceManager {
     return new Promise((resolve, reject) => {
       try {
         if (c.args.flowUpdateRequired) {
-          fs.readFile(this.deviceState.flowFilePath, (err, data) => {
-            if (err) {
-              return reject(err);
-            }
-            this.deviceState.setFlowSignature(data);
-            try {
-              data = JSON.parse(data);
-            } catch (_) {
-              return reject({status:500, message:'My flow is invalid'});
-            }
-            return resolve({status:202, commands: {
-              cat: 'sys',
-              act: 'updateflows',
-              args: {
-                name: path.basename(this.deviceState.flowFilePath),
-                signature: this.deviceState.flowFileSignature,
-                content: data
+          if (this.deviceState.flowFileSignature !== c.args.expectedSignature) {
+            fs.readFile(this.deviceState.flowFilePath, (err, data) => {
+              if (err) {
+                return reject(err);
               }
-            }});
-          });
-          return;
-        }
-        if (this.deviceState.flowFileSignature !== c.args.expectedSignature) {
+              this.deviceState.setFlowSignature(data);
+              try {
+                data = JSON.parse(data);
+              } catch (_) {
+                return reject({status:500, message:'My flow is invalid'});
+              }
+              return resolve({status:202, commands: {
+                cat: 'sys',
+                act: 'updateflows',
+                args: {
+                  name: path.basename(this.deviceState.flowFilePath),
+                  signature: this.deviceState.flowFileSignature,
+                  content: data
+                }
+              }});
+            });
+          }
+        } else if (this.deviceState.flowFileSignature !== c.args.expectedSignature) {
           return resolve({status:202, commands: {
             cat: 'sys',
             act: 'deliverflows',
@@ -468,9 +468,10 @@ class DeviceManager {
               flowId: c.args.flowId
             }
           }});
+        } else {
+          // 304 Not Modified
+          return resolve({status:304});
         }
-        // 304 Not Modified
-        return resolve({status:304});
       } catch (err) {
         return reject(err);
       }
