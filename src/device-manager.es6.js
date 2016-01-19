@@ -697,9 +697,15 @@ export class DeviceManagerStore {
   _onFlowFileChangedFunc() {
     let that = this;
     return (() => {
+      let wip = false;
       return () => {
+        if (wip) {
+          return;
+        }
+        wip = true;
         that.deviceState.loadAndSetFlowSignature().then(modified => {
           if (!modified) {
+            wip = false;
             return;
           }
           Object.keys(that.store).forEach(accountFqn => {
@@ -711,6 +717,10 @@ export class DeviceManagerStore {
               }
             });
           });
+          wip = false;
+        }).catch(err => {
+          this.RED.log.warn(err.stack);
+          wip = false;
         });
       };
     }());
