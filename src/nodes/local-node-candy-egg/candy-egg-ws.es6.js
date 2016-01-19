@@ -108,8 +108,12 @@ export default function(RED) {
       socket.on('error', err => {
         this.emit2all('erro');
         RED.log.error(RED._('candy-egg-ws.errors.connect-error', { err: err, accountFqn: this.accountConfig.accountFqn}));
-        socket.close(); // retry will be performed on the above 'close' event handler
         socket.skipCloseEventHandler = true;
+        socket.close();
+        if (!this.closing) {
+          // try to reconnect every 3+ secs
+          this.tout = setTimeout(() => { this.startconn(); }, 3000 + Math.random() * 1000);
+        }
       });
     }
 
