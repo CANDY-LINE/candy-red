@@ -11,14 +11,15 @@ export default function(RED) {
       this.account = account;
       this.path = path;
       this.webSocketListeners = webSocketListeners;
+      this.server = null; // socket for server connection
 
       this._inputNodes = [];  // collection of thats that want to receive events
       this._outputNodes = []; // node status event listeners
       this.closing = false;
       this.options = options || {};
-      this.startconn(); // start outbound connection
       this.redirect = 0;
       this.authRetry = 0;
+      this.startconn(); // start outbound connection
     }
 
     startconn(url) {  // Connect to remote endpoint
