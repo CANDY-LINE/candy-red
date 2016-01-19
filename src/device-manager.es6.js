@@ -109,8 +109,12 @@ class DeviceManager {
       this._warn('disconnected');
       this._reset();
     });
-    this.events.on('erro', () => {
-      this._warn('connection error');
+    this.events.on('erro', (err1, err2) => {
+      if (err2) {
+        this._warn('failed to connect');
+      } else {
+        this._warn('connection error');
+      }
       this._reset();
     });
     this.events.on('ping', (data, flags) => {
