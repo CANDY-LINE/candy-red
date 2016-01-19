@@ -13,7 +13,7 @@ import path from 'path';
 const REBOOT_DELAY_MS = 1000;
 const TRACE = process.env.DEBUG || false;
 
-class DeviceIdResolver {
+export class DeviceIdResolver {
   constructor(RED) {
     this.RED = RED;
     this.flowFileSignature = '';
@@ -94,7 +94,7 @@ class DeviceIdResolver {
   }
 }
 
-class DeviceManager {
+export class DeviceManager {
   constructor(listenerConfig, accountConfig, deviceState, RED) {
     this.RED = RED;
     this.listenerConfig = listenerConfig;
@@ -525,7 +525,7 @@ class DeviceManager {
   }
 }
 
-class DeviceState {
+export class DeviceState {
 
   constructor(RED) {
     this.RED = RED;
