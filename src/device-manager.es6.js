@@ -95,10 +95,11 @@ export class DeviceIdResolver {
 }
 
 export class DeviceManager {
-  constructor(listenerConfig, accountConfig, deviceState, RED) {
+  constructor(primary, listenerConfig, accountConfig, deviceState, RED) {
     if (!accountConfig) {
       throw new Error('accountConfig is required');
     }
+    this.primary = primary;
     this.RED = RED;
     this.listenerConfig = listenerConfig;
     this.accountConfig = accountConfig;
@@ -486,6 +487,51 @@ export class DeviceManager {
     });
   }
   
+  _updateLocalFlows(flows) {
+    return new Promise((resolve, reject) => {
+      if (!Array.isArray(flows)) {
+        flows = [flows];
+      }
+      let accounts = flows.filter(f => {
+        if (f.type !== 'CANDY EGG account') {
+          return false;
+        }
+        if (!f.managed) {
+          return false;
+        }
+        if (!f.accountFqn) {
+          return false;
+        }
+        if (!f.loginUser) {
+          return false;
+        }
+        return true;
+      });
+      if (accounts.length === 0) {
+        return reject({status:400, message:'invalid flow content'});
+      }
+      accounts.forEach(a => {
+        if (!a.revision) {
+          a.revision = 1;
+        } else {
+          a.revision++;
+        }
+        a.originator = this.deviceState.deviceId;
+      });
+      let content = JSON.stringify(flows);
+      fs.writeFile(this.deviceState.flowFilePath, content, err => {
+        if (err) {
+          return reject(err);
+        }
+        this.deviceState.setFlowSignature(content);
+        return resolve({data:content, done: () => {
+          this._warn('FLOW IS UPDATED! RELOAD THE PAGE NOW!!');
+          DeviceManager.restart();
+        }});
+      });
+    });
+  }
+  
   _performSyncFlows(c) {
     return new Promise((resolve, reject) => {
       try {
@@ -495,25 +541,31 @@ export class DeviceManager {
               if (err) {
                 return reject(err);
               }
-              this.deviceState.setFlowSignature(data);
+              let flows = [];
               try {
-                data = JSON.parse(data);
+                flows = JSON.parse(data);
               } catch (_) {
                 return reject({status:500, message:'My flow is invalid'});
               }
-              return resolve({status:202, commands: {
-                cat: 'sys',
-                act: 'updateflows',
-                args: {
-                  name: path.basename(this.deviceState.flowFilePath),
-                  signature: this.deviceState.flowFileSignature,
-                  content: data
-                }
-              }});
+              if (c.args.publishable) {
+                this._updateLocalFlows(flows).then(result => {
+                  return resolve(result);
+                }).catch(err => {
+                  return reject(err);
+                });
+              } else {
+                data = data.toString('utf-8');
+                this.deviceState.setFlowSignature(data);
+                return resolve({data: data});
+              }
             });
           }
         } else if (this.deviceState.flowFileSignature !== c.args.expectedSignature) {
-          return resolve({status:202, commands: {
+          // non-primary accounts are NOT allowed to download (to be delivered) flow files
+          if (!this.primary) {
+            return reject({status:405,message:'not the primary account'});
+          }
+          return reject({status:202, commands: {
             cat: 'sys',
             act: 'deliverflows',
             args: {
@@ -522,15 +574,30 @@ export class DeviceManager {
           }});
         } else {
           // 304 Not Modified
-          return resolve({status:304});
+          return reject({status:304});
         }
       } catch (err) {
         return reject(err);
       }
+    }).then(result => {
+      return new Promise(resolve => {
+        let status = {status:202, commands: {
+          cat: 'sys',
+          act: 'updateflows',
+          args: {
+            name: path.basename(this.deviceState.flowFilePath),
+            signature: this.deviceState.flowFileSignature,
+            content: result.data
+          },
+          done: result.done
+        }};
+        return resolve(status);
+      });
     });
   }
   
   _performUpdateFlows(c) {
+    // non-primary accounts are allowed to upload flow files
     return new Promise((resolve, reject) => {
       try {
         if (!c.args.content) {
@@ -736,10 +803,12 @@ export class DeviceManagerStore {
       return () => {
         if (that.deviceState.flowFileSignature) {
           Object.keys(that.store).forEach(accountFqn => {
-            that.store[accountFqn].publish({
-              cat: 'sys',
-              act: 'deliverflows'
-            });
+            if (that.store[accountFqn].primary) {
+              that.store[accountFqn].publish({
+                cat: 'sys',
+                act: 'deliverflows'
+              });
+            }
           });
         }
       };
@@ -760,6 +829,11 @@ export class DeviceManagerStore {
 
   initWsClient(account, accountConfig, webSocketListeners) {
     let accountFqn = accountConfig.accountFqn;
+    let primary = (Object.keys(this.store).length === 0);
+    if (primary) {
+      this.RED.log.error(`[CANDY RED] This account is PRIMARY: ${accountFqn}`);
+    }
+    
     let listenerConfig = webSocketListeners.get({
       accountConfig: accountConfig,
       account: account,
@@ -779,7 +853,7 @@ export class DeviceManagerStore {
       this._remove(accountFqn);
       this.RED.log.info(`[CANDY RED] Disassociated from [${accountFqn}]`);
     });
-    this.store[accountFqn] = new DeviceManager(listenerConfig, accountConfig, this.deviceState, this.RED);
+    this.store[accountFqn] = new DeviceManager(primary, listenerConfig, accountConfig, this.deviceState, this.RED);
     this.RED.log.info(`[CANDY RED] Associated with [${accountFqn}]`);
   }
 }
