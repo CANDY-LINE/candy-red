@@ -82,7 +82,7 @@ export default function(RED) {
         this.emit2all('ping', data, flags);
       });
       socket.on('unexpected-response', (req, res) => {
-        this.emit2all('erro');
+        this.emit2all('erro', req, res);
         req.abort();
         res.socket.end();
         if (res.statusCode === 301 || res.statusCode === 302 || res.statusCode === 307) {
@@ -114,7 +114,7 @@ export default function(RED) {
         this.redirect = 0;
       });
       socket.on('error', err => {
-        this.emit2all('erro');
+        this.emit2all('erro', err);
         RED.log.error(RED._('candy-egg-ws.errors.connect-error', { err: err, accountFqn: this.accountConfig.accountFqn}));
         socket.skipCloseEventHandler = true;
         socket.close();
