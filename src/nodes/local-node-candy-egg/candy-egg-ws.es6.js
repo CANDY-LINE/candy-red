@@ -58,10 +58,10 @@ export default function(RED) {
         this.emit2all('opened');
         this.redirect = 0;
         this.authRetry = 0;
-        socket.eventHandled = false;
+        socket.skipCloseEventHandler = false;
       });
       socket.on('close', () => {
-        if (socket.eventHandled) {
+        if (socket.skipCloseEventHandler) {
           return;
         }
         this.emit2all('closed');
@@ -100,7 +100,7 @@ export default function(RED) {
           RED.log.error(RED._('candy-egg-ws.errors.server-error', { path: this.path, status: res.statusCode }));
         }
         // try to reconnect every approx. 1 min
-        socket.eventHandled = true;
+        socket.skipCloseEventHandler = true;
         socket.close();
         this.tout = setTimeout(() => { this.startconn(); }, 55000 + Math.random() * 10000);
         this.redirect = 0;
@@ -108,8 +108,8 @@ export default function(RED) {
       socket.on('error', err => {
         this.emit2all('erro');
         RED.log.error(RED._('candy-egg-ws.errors.connect-error', { err: err, accountFqn: this.accountConfig.accountFqn}));
-        socket.eventHandled = true;
         socket.close(); // retry will be performed on the above 'close' event handler
+        socket.skipCloseEventHandler = true;
       });
     }
 
