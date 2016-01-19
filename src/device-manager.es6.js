@@ -206,6 +206,13 @@ export class DeviceManager {
     return this._sendToServer(commands);
   }
   
+  static restart() {
+    // systemctl shuould restart the service
+    setTimeout(() => {
+      process.exit(219);
+    }, REBOOT_DELAY_MS);
+  }
+  
   _sendToServer(result) {
     return new Promise((resolve, reject) => {
       if (!result || Array.isArray(result) && result.length === 0 || Object.keys(result) === 0) {
@@ -227,11 +234,8 @@ export class DeviceManager {
       if (result.reduce((p, c) => {
         return p || (c && c.restart);
       }, false)) {
-        // systemctl shuould restart the service
-        setTimeout(() => {
-          this._warn('Restarting this process!!');
-          process.exit(219);
-        }, REBOOT_DELAY_MS);
+        this._warn('Restarting this process!!');
+        DeviceManager.restart();
       }
       resolve();
     });
