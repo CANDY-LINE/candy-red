@@ -113,6 +113,16 @@ class DeviceManager {
       this._warn('connection error');
       this._reset();
     });
+    this.events.on('ping', (data, flags) => {
+      if (this.pingTimeoutTimer) {
+        clearTimeout(this.pingTimeoutTimer);
+      }
+      this.pingTimeoutTimer = setTimeout(() => {
+        this._warn(`ping has not come for more than ${this.hearbeatIntervalMs * 1.5 / 1000} seconds`);
+        this._reset();
+        this.listenerConfig.server.close(); // close event will start a new connection after 3+ seconds
+      }, this.hearbeatIntervalMs * 1.5);
+    });
     // receiving an incoming message (sent from a source)
     this.events.send = msg => {
       let payload = msg.payload;
@@ -179,6 +189,10 @@ class DeviceManager {
     this.cmdIdx = 0;
     this.commands = {};
     this.enrolled = false;
+    if (this.pingTimeoutTimer) {
+      clearTimeout(this.pingTimeoutTimer);
+      delete this.pingTimeoutTimer;
+    }
   }
   
   _sendToServer(result) {
