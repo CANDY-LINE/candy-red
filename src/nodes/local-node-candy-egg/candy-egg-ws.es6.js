@@ -165,12 +165,14 @@ export default function(RED) {
       RED.log.debug('flags:' + flags);
     }
 
-    emit2all(event) {
+    emit2all(...args) {
       for (let i = 0; i < this._inputNodes.length; i++) {
-        this._inputNodes[i].emit(event);
+        let thisArg = this._inputNodes[i];
+        thisArg.emit.apply(thisArg, args);
       }
       for (let i = 0; i < this._outputNodes.length; i++) {
-        this._outputNodes[i].emit(event);
+        let thisArg = this._outputNodes[i];
+        thisArg.emit.apply(thisArg, args);
       }
     }
 
