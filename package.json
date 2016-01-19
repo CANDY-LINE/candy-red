@@ -53,11 +53,11 @@
   "dependencies": {
     "es6-promises": "^1.0.10",
     "express": "^4.13.3",
-    "noble": "^1.2.1",
+    "noble": "^1.3.0",
     "node-enocean": "^1.0.1",
     "node-red": "^0.12.5",
-    "serialport": "^2.0.2",
+    "serialport": "^2.0.6",
     "source-map-support": "^0.3.3",
-    "ws": "^0.8.0"
+    "ws": "^1.0.1"
   }
 }
