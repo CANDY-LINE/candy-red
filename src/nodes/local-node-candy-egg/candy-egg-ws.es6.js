@@ -3,6 +3,8 @@
 import WebSocket from 'ws';
 import urllib from 'url';
 
+const TEST_SERVER_PING_TIMEOUT = false;
+
 export default function(RED) {
   
   class WebSocketListener {
@@ -72,6 +74,12 @@ export default function(RED) {
       });
       socket.on('message', (data,flags) => {
         this.handleEvent(id,socket,'message',data,flags);
+      });
+      if (TEST_SERVER_PING_TIMEOUT) {
+        socket.removeAllListeners('ping');
+      }
+      socket.on('ping', (data,flags) => {
+        this.emit2all('ping', data, flags);
       });
       socket.on('unexpected-response', (req, res) => {
         this.emit2all('erro');
