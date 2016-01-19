@@ -1,5 +1,5 @@
 import { assert } from 'chai';
-import { DeviceIdResolver, DeviceManager } from '../../dist/device-manager';
+import { DeviceIdResolver, DeviceState } from '../../dist/device-manager';
 import RED from 'node-red';
 
 RED.init({
@@ -21,35 +21,33 @@ describe('DeviceIdResolver', () => {
   });
 });
 
-describe('DeviceManager', () => {
+describe('DeviceState', () => {
   it('should return whether or not CANDY IoT board is installed', done => {
-    let manager = new DeviceManager(RED);
-    manager.testIfCANDYIoTInstalled().then(installed => {
-      console.log(`installed? => ${installed}`);
+    let state = new DeviceState(() => {}, () => {}, RED);
+    state.testIfCANDYIoTInstalled().then(version => {
+      console.log(`installed version? => ${version}`);
       done();
-    });
-  });
-  describe('#isWsClientInitialized()', () => {
-    it('should return true if listenerConfig is set', () => {
-      let manager = new DeviceManager(RED);
-      assert.isFalse(manager.isWsClientInitialized());
-      manager.listenerConfig= {};
-      assert.isTrue(manager.isWsClientInitialized());
+    }).catch(err => {
+      done(err);
     });
   });
   describe('#testIfUIisEnabled()', () => {
     it('should tell the UI is enabled', done => {
-      let manager = new DeviceManager(RED);
-      manager.testIfUIisEnabled(__dirname + '/test-flow-enabled.json').then(enabled => {
+      let state = new DeviceState(() => {}, () => {}, RED);
+      state.testIfUIisEnabled(__dirname + '/test-flow-enabled.json').then(enabled => {
         assert.isTrue(enabled);
         done();
+      }).catch(err => {
+        done(err);
       });
     });
     it('should tell the UI is DISABLED', done => {
-      let manager = new DeviceManager(RED);
-      manager.testIfUIisEnabled(__dirname + '/test-flow-disabled.json').then(enabled => {
+      let state = new DeviceState(() => {}, () => {}, RED);
+      state.testIfUIisEnabled(__dirname + '/test-flow-disabled.json').then(enabled => {
         assert.isFalse(enabled);
         done();
+      }).catch(err => {
+        done(err);
       });
     });
   });
