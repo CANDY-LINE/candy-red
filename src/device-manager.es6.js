@@ -143,7 +143,7 @@ export class DeviceManager {
         this._info('Received!:' + JSON.stringify(payload));
       }
       if (!this.enrolled) {
-        if (!payload || !payload.status || payload.status / 100 !== 2) {
+        if (!payload || !payload.status || Math.floor(payload.status / 100) !== 2) {
           // Terminate everything and never retry
           this.listenerConfig.close();
           this._error('Enrollment error!' +
@@ -314,7 +314,7 @@ export class DeviceManager {
           if (this.done && this.done[commands.id]) {
             done = this.done[commands.id];
           }
-          if (commands.status / 100 !== 2) {
+          if (Math.floor(commands.status / 100) !== 2) {
             this.RED.log.info(`Not-OK status to command: ${JSON.stringify(c)}, status:${JSON.stringify(commands)}`);
             try {
               done(commands.status);
@@ -335,7 +335,7 @@ export class DeviceManager {
       if (commands.commands) {
         return this._performCommands(commands.commands);
       }
-      if (commands.status / 100 !== 2) {
+      if (Math.floor(commands.status / 100) !== 2) {
         this._info(`Server returned Not-OK, status:${JSON.stringify(commands)}`);
       }
       return new Promise(resolve => resolve()); // do nothing
