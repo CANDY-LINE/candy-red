@@ -9,6 +9,7 @@ import Promise from 'es6-promises';
 import cproc from 'child_process';
 import crypto from 'crypto';
 import path from 'path';
+import * as chokidar from 'chokidar';
 
 const REBOOT_DELAY_MS = 1000;
 const TRACE = process.env.DEBUG || false;
@@ -16,7 +17,6 @@ const TRACE = process.env.DEBUG || false;
 export class DeviceIdResolver {
   constructor(RED) {
     this.RED = RED;
-    this.flowFileSignature = '';
     this.hearbeatIntervalMs = -1;
     this.ciotSupported = false;
   }
@@ -96,6 +96,9 @@ export class DeviceIdResolver {
 
 export class DeviceManager {
   constructor(listenerConfig, accountConfig, deviceState, RED) {
+    if (!accountConfig) {
+      throw new Error('accountConfig is required');
+    }
     this.RED = RED;
     this.listenerConfig = listenerConfig;
     this.accountConfig = accountConfig;
@@ -117,7 +120,7 @@ export class DeviceManager {
       }
       this._reset();
     });
-    this.events.on('ping', (data, flags) => {
+    this.events.on('ping', () => {
       if (this.pingTimeoutTimer) {
         clearTimeout(this.pingTimeoutTimer);
       }
@@ -199,36 +202,46 @@ export class DeviceManager {
     }
   }
   
+  publish(commands) {
+    return this._sendToServer(commands);
+  }
+  
   _sendToServer(result) {
-    if (!result || Array.isArray(result) && result.length === 0 || Object.keys(result) === 0) {
-      // do nothing
-      this._info('No commands to respond to');
-      return;
-    }
-    result = this._numberResponseCommands(result);
-    let sent = this.listenerConfig.send(result);
-    if (TRACE && sent) {
-      this._info('Sent!:' + JSON.stringify(result));
-    }
-    if (!Array.isArray(result)) {
-      result = [result];
-    }
-    if (result.reduce((p, c) => {
-      return p || (c && c.restart);
-    }, false)) {
-      // systemctl shuould restart the service
-      setTimeout(() => {
-        this._warn('Restarting this process!!');
-        process.exit(219);
-      }, REBOOT_DELAY_MS);
-    }
+    return new Promise((resolve, reject) => {
+      if (!result || Array.isArray(result) && result.length === 0 || Object.keys(result) === 0) {
+        // do nothing
+        this._info('No commands to respond to');
+        return resolve();
+      }
+      result = this._numberResponseCommands(result);
+      let sent = this.listenerConfig.send(result);
+      if (TRACE && sent) {
+        this._info('Sent!:' + JSON.stringify(result));
+      }
+      if (!sent) {
+        return reject(new Error('Failed to send' + JSON.stringify(result)));
+      }
+      if (!Array.isArray(result)) {
+        result = [result];
+      }
+      if (result.reduce((p, c) => {
+        return p || (c && c.restart);
+      }, false)) {
+        // systemctl shuould restart the service
+        setTimeout(() => {
+          this._warn('Restarting this process!!');
+          process.exit(219);
+        }, REBOOT_DELAY_MS);
+      }
+      resolve();
+    });
   }
   
   _nextCmdIdx() {
     this.cmdIdx = (this.cmdIdx + 1) % 65536;
     return this.cmdIdx;
   }
-  
+
   _numberResponseCommands(result) {
     let processed = result;
     if (!Array.isArray(result)) {
@@ -236,26 +249,39 @@ export class DeviceManager {
     }
     processed.forEach(r => {
       if (r.commands) {
-        if (!Array.isArray(r.commands)) {
-          r.commands = [r.commands];
-        }
-        r.commands.forEach(c => {
-          c.id = this._nextCmdIdx();
-          this.commands[c.id] = c;
-          if (c.success) {
-            // success callback
-            if (!this.success) {
-              this.success = {};
-            }
-            this.success[c.id] = c.success;
-            delete c.success;
-          }
-        });
+        this._numberRequestCommands(r.commands);
+      } else {
+        this._numberRequestCommands(r);
       }
     });
     return result;
   }
   
+  _numberRequestCommands(commands) {
+    let processed = commands;
+    if (!Array.isArray(commands)) {
+      processed = [commands];
+    }
+    processed.forEach(c => {
+      if (!c.id) {
+        c.id = this._nextCmdIdx();
+      }
+      this.commands[c.id] = c;
+      if (c.done) {
+        // done callback
+        if (!this.done) {
+          this.done = {};
+        }
+        this.done[c.id] = c.done;
+        delete c.done;
+      }
+      if (c.cat === 'ctrl' && (c.act === 'sequence' || c.act === 'parallel')) {
+        this._numberRequestCommands(c.args);
+      }
+    });
+    return commands;
+  }
+
   _performCommands(commands) {
     if (!commands) {
       return new Promise(resolve => resolve()); // do nothing
@@ -284,20 +310,24 @@ export class DeviceManager {
       if (commands.id) {
         let c = this.commands[commands.id];
         if (c) {
-          let success;
-          if (this.success && this.success[commands.id]) {
-            success = this.success[commands.id];
+          let done;
+          if (this.done && this.done[commands.id]) {
+            done = this.done[commands.id];
           }
           if (commands.status / 100 !== 2) {
-            this._info(`Failed to perform command: ${JSON.stringify(c)}, status:${JSON.stringify(commands)}`);
-          } else if (success) {
+            this.RED.log.info(`Not-OK status to command: ${JSON.stringify(c)}, status:${JSON.stringify(commands)}`);
             try {
-              success(client);
+              done(commands.status);
+            } catch (_) {
+            }
+          } else if (done) {
+            try {
+              done();
             } catch (_) {
             }
           }
-          if (success) {
-            delete this.success[commands.id];
+          if (done) {
+            delete this.done[commands.id];
           }
           delete this.commands[commands.id];
         }
@@ -306,7 +336,7 @@ export class DeviceManager {
         return this._performCommands(commands.commands);
       }
       if (commands.status / 100 !== 2) {
-        this._info(`Server returned error, status:${JSON.stringify(commands)}`);
+        this._info(`Server returned Not-OK, status:${JSON.stringify(commands)}`);
       }
       return new Promise(resolve => resolve()); // do nothing
     }
@@ -527,12 +557,15 @@ export class DeviceManager {
 
 export class DeviceState {
 
-  constructor(RED) {
+  constructor(onFlowFileChanged, onFlowFileRemoved, RED) {
     this.RED = RED;
     this.ciotSupported = false;
     this.flowFileSignature = '';
     this.flowFilePath = '';
     this.resolver = new DeviceIdResolver(RED);
+    this.wartcher = null;
+    this.onFlowFileChanged = onFlowFileChanged;
+    this.onFlowFileRemoved = onFlowFileRemoved;
   }
   
   init() {
@@ -586,16 +619,34 @@ export class DeviceState {
     });
   }
   
+  loadAndSetFlowSignature() {
+    return new Promise((resolve, reject) => {
+      fs.readFile(this.flowFilePath, (err, data) => {
+        if (err) {
+          return reject(err);
+        }
+        return resolve(this.setFlowSignature(data));
+      });
+    });
+  }
+  
   setFlowSignature(data) {
+    let current = this.flowFileSignature;
     let sha1 = crypto.createHash('sha1');
     sha1.update(data);
     this.flowFileSignature = sha1.digest('hex');
+    // true for modified
+    return (current !== this.flowFileSignature);
   }
   
   testIfUIisEnabled(flowFilePath) {
     return this.init().then(() => {
-      if (flowFilePath) {
+      if (flowFilePath && this.flowFilePath !== flowFilePath) {
         this.flowFilePath = flowFilePath;
+        if (this.watcher) {
+          this.watcher.close();
+        }
+        this.watcher = null;
       } else {
         flowFilePath = this.flowFilePath;
       }
@@ -618,6 +669,20 @@ export class DeviceState {
           }, true));
         });
       });
+    }).then(enabled => {
+      return new Promise((resolve, reject) => {
+        try {
+          if (this.watcher || !this.flowFileSignature) {
+            return resolve(enabled);
+          }
+          this.watcher = chokidar.watch(this.flowFilePath);
+          this.watcher.on('change', this.onFlowFileChanged);
+          this.watcher.on('unlink', this.onFlowFileRemoved);
+          return resolve(enabled);
+        } catch (err) {
+          return reject(err);
+        }
+      });
     });
   }
 }
@@ -626,7 +691,45 @@ export class DeviceManagerStore {
   constructor(RED) {
     this.RED = RED;
     this.store = {};
-    this.deviceState = new DeviceState(RED);
+    this.deviceState = new DeviceState(this._onFlowFileChangedFunc(), this._onFlowFileRemovedFunc(), RED);
+  }
+
+  _onFlowFileChangedFunc() {
+    let that = this;
+    return (() => {
+      return () => {
+        that.deviceState.loadAndSetFlowSignature().then(modified => {
+          if (!modified) {
+            return;
+          }
+          Object.keys(that.store).forEach(accountFqn => {
+            that.store[accountFqn].publish({
+              cat: 'sys',
+              act: 'syncflows',
+              args: {
+                expectedSignature: that.deviceState.flowFileSignature
+              }
+            });
+          });
+        });
+      };
+    }());
+  }
+  
+  _onFlowFileRemovedFunc() {
+    let that = this;
+    return (() => {
+      return () => {
+        if (that.deviceState.flowFileSignature) {
+          Object.keys(that.store).forEach(accountFqn => {
+            that.store[accountFqn].publish({
+              cat: 'sys',
+              act: 'deliverflows'
+            });
+          });
+        }
+      };
+    }());
   }
     
   _get(accountFqn) {
