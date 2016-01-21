@@ -103,6 +103,16 @@ function cd_module_root {
   fi
 }
 
+function resolve_version {
+  # https://gist.github.com/DarrenN/8c6a5b969481725a4413
+  PACKAGE_VERSION=$(cat ${ROOT}/package.json \
+    | grep version \
+    | head -1 \
+    | awk -F: '{ print $2 }' \
+    | sed 's/[",]//g'
+    | tr -d '[[:space:]]')
+}
+
 function npm_install {
   RET=`npm ls | grep candy-red`
   RET=$?
@@ -146,6 +156,7 @@ function _install_systemd {
 
   cpf ${LOCAL_SYSTEMD}/${SERVICE_NAME}.service.txt ${LOCAL_SYSTEMD}/${SERVICE_NAME}.service
   sed -i -e "s/%SERVICE_HOME%/${ROOT//\//\\/}/g" ${LOCAL_SYSTEMD}/${SERVICE_NAME}.service
+  sed -i -e "s/%VERSION%/${VERSION//\//\\/}/g" ${LOCAL_SYSTEMD}/${SERVICE_NAME}.service
 
   cpf ${SERVICES}/environment ${LOCAL_SYSTEMD}/environment
 
@@ -168,6 +179,7 @@ function _install_sysvinit {
 
   cpf ${LOCAL_SYSVINIT}/${SERVICE_NAME}.sh ${INIT}
   sed -i -e "s/%SERVICE_HOME%/${ROOT//\//\\/}/g" ${INIT}
+  sed -i -e "s/%VERSION%/${VERSION//\//\\/}/g" ${INIT}
 
   cpf ${LOCAL_SYSVINIT}/_wrapper.sh ${LOCAL_SYSVINIT}/wrapper.sh
   sed -i -e "s/%SERVICE_HOME%/${ROOT//\//\\/}/g" ${LOCAL_SYSVINIT}/wrapper.sh
@@ -197,5 +209,6 @@ function _install_sysvinit {
 setup
 test_system_service_arg
 cd_module_root
+resolve_version
 npm_install
 system_service_install

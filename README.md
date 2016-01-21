@@ -254,5 +254,3 @@ $ npm pack
 
 1. README.md
 1. [package.json](/package.json)
-1. [services/systemd/candy-red.service.txt](/services/systemd/candy-red.service.txt)
-1. [services/sysvinit/candy-red.sh](/services/sysvinit/candy-red.sh)
