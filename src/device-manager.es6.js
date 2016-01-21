@@ -347,10 +347,10 @@ export class DeviceManager {
     }
 
     if (!commands.id) {
-      return new Promise(resolve => resolve({status:400, message:'id missing'}));
+      return new Promise(resolve => resolve({ status: 400, message: 'id missing' }));
     }
     if (!commands.cat) {
-      return new Promise(resolve => resolve({status:400, message:'category missing'}));
+      return new Promise(resolve => resolve({ status: 400, message: 'category missing' }));
     }
 
     if (commands.cat === 'ctrl') {
@@ -372,10 +372,10 @@ export class DeviceManager {
         }, new Promise(resolve => resolve())).then(result => {
           return new Promise(resolve => {
             if (result) {
-              result.push({status:200, id:commands.id});
+              result.push({ status: 200, id: commands.id });
               return resolve(result);
             }
-            return resolve({status:400, id:commands.id});
+            return resolve({ status: 400, id: commands.id });
           });
         });
         return promises;
@@ -394,7 +394,7 @@ export class DeviceManager {
             return a;
           }, []);
           return new Promise(resolve => {
-            result.push({status:200, id:commands.id});
+            result.push({ status: 200, id: commands.id });
             resolve(result);
           });
         });
@@ -403,14 +403,14 @@ export class DeviceManager {
         throw new Error('unknown action:' + commands.act);
       }
 
-      return new Promise(resolve => resolve({status:400, errCommands: commands}));
+      return new Promise(resolve => resolve({ status: 400, errCommands: commands }));
     }
     return this._performCommand(commands);
   }
   
   _buildErrResult(err, c) {
     if (err instanceof Error) {
-      return {status:500, message:err.toString(), stack:err.stack, id:c.id};
+      return { status: 500, message: err.toString(), stack: err.stack, id: c.id };
     } else {
       err.id = c.id;
       return err;
@@ -432,7 +432,7 @@ export class DeviceManager {
               sysResult.id = c.id;
               result.push(sysResult);
             } else {
-              result.push({status:200, id:c.id});
+              result.push({ status: 200, id: c.id });
             }
             return resolve(result);
           }).catch(err => {
@@ -440,7 +440,7 @@ export class DeviceManager {
             return reject(result);
           });
         default:
-          result.push(this._buildErrResult({status:400}, c));
+          result.push(this._buildErrResult({ status: 400 }, c));
           return reject(result);
         }
       } catch (err) {
@@ -470,12 +470,12 @@ export class DeviceManager {
   _performInspect(c) {
     return new Promise((resolve, reject) => {
       if (!this.ciotSupported) {
-        return reject({status:405});
+        return reject({ status: 405 });
       }
       if (!c) {
-        return reject({status:400});
+        return reject({ status: 400 });
       }
-      return reject({status:501, message:'TODO!!'});
+      return reject({ status: 501, message: 'TODO!!' });
     });
   }
   
@@ -508,7 +508,7 @@ export class DeviceManager {
         return true;
       });
       if (accounts.length === 0) {
-        return reject({status:400, message:'invalid flow content'});
+        return reject({ status: 400, message: 'invalid flow content' });
       }
       accounts.forEach(a => {
         if (!a.revision) {
@@ -545,7 +545,7 @@ export class DeviceManager {
               try {
                 flows = JSON.parse(data);
               } catch (_) {
-                return reject({status:500, message:'My flow is invalid'});
+                return reject({ status: 500, message: 'My flow is invalid' });
               }
               if (c.args.publishable) {
                 this._updateLocalFlows(flows).then(result => {
@@ -563,9 +563,9 @@ export class DeviceManager {
         } else if (this.deviceState.flowFileSignature !== c.args.expectedSignature) {
           // non-primary accounts are NOT allowed to download (to be delivered) flow files
           if (!this.primary) {
-            return reject({status:405,message:'not the primary account'});
+            return reject({ status: 405, message: 'not the primary account' });
           }
-          return reject({status:202, commands: {
+          return reject({ status: 202, commands: {
             cat: 'sys',
             act: 'deliverflows',
             args: {
@@ -574,14 +574,14 @@ export class DeviceManager {
           }});
         } else {
           // 304 Not Modified
-          return reject({status:304});
+          return reject({ status: 304 });
         }
       } catch (err) {
         return reject(err);
       }
     }).then(result => {
       return new Promise(resolve => {
-        let status = {status:202, commands: {
+        let status = { status: 202, commands: {
           cat: 'sys',
           act: 'updateflows',
           args: {
@@ -601,14 +601,14 @@ export class DeviceManager {
     return new Promise((resolve, reject) => {
       try {
         if (!c.args.content) {
-          return reject({status:400});
+          return reject({ status: 400 });
         }
         fs.writeFile(this.deviceState.flowFilePath, c.args.content, err => {
           if (err) {
             return reject(err);
           }
           this.deviceState.setFlowSignature(c.args.content);
-          return resolve({status:200, restart:true});
+          return resolve({ status: 200, restart: true });
         });
       } catch (err) {
         return reject(err);
@@ -619,9 +619,9 @@ export class DeviceManager {
   _performRestart(c) {
     return new Promise((resolve, reject) => {
       if (c) {
-        return resolve({status:200, restart:true});
+        return resolve({ status: 200, restart: true });
       }
-      return reject({status:400});
+      return reject({ status: 400 });
     });
   }
 }
