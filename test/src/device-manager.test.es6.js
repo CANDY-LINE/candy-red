@@ -2,10 +2,6 @@ import { assert } from 'chai';
 import { DeviceIdResolver, DeviceState } from '../../dist/device-manager';
 import RED from 'node-red';
 
-RED.init({
-  init: function() {}
-}, {});
-RED.nodes.init(RED.settings);
 
 describe('DeviceIdResolver', () => {
   it('should resolve the unique device identifier', done => {
