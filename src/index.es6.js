@@ -48,10 +48,13 @@ server.listen(PORT);
 let flowFile = 'flows_candy-red_' + os.hostname() + '.json';
 let editorTheme = {
   page: {
-    title: 'CANDY RED@' + os.hostname()
+    title: 'CANDY RED@' + os.hostname(),
+    favicon: __dirname + '/public/images/candy-red.ico',
+    css: __dirname + '/public/css/candy-red.css'
   },
   header: {
-    title: 'CANDY RED //Powerd by Node-RED// ** ' + os.hostname() + ' **'
+    title: ' ** ' + os.hostname() + ' **',
+    image: __dirname + '/public/images/candy-red.png'
   },
   menu: {
     'menu-item-help': {
@@ -68,12 +71,12 @@ deviceManagerStore.deviceState.testIfCANDYIoTInstalled().then(candyIotv => {
     editorTheme = {
       page: {
         title: 'CANDY BOX@' + os.hostname(),
-        favicon: __dirname + '/public/images/favicon.ico',
-        css: __dirname + '/public/css/style.css'
+        favicon: __dirname + '/public/images/candy-box.ico',
+        css: __dirname + '/public/css/candy-box.css'
       },
       header: {
         title: ' ** ' + os.hostname() + ' **',
-        image: __dirname + '/public/images/banner.png'
+        image: __dirname + '/public/images/candy-box.png'
       },
       menu: {
         'menu-item-help': {
