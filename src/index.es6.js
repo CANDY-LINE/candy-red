@@ -33,14 +33,14 @@ export class CandyRed {
 	start() {
 		this.server.listen(PORT);
 		this._setupExitHandler();
-		this._inspectBoardStatus(this.packageJsonPath).then(versions => {
+		return this._inspectBoardStatus(this.packageJsonPath).then(versions => {
 		  // Create the settings object - see default settings.js file for other options
 		  let settings = this._createREDSettigngs(versions);
 
 		  // Initialise the runtime with a server and settings
 		  RED.init(this.server, settings);
 		  settings.version += ` [candy-red v${versions.candyRedv}]`;
-
+			
 		  // Serve the http nodes from /api
 		  this.app.use(settings.httpNodeRoot, RED.httpNode);
 
@@ -206,5 +206,8 @@ if (require.main === module) {
 		packageJsonPath = process.argv[2];
 	}
 	let app = new CandyRed(packageJsonPath);
-	app.start();
+	app.start().catch(err => {
+		console.error(err.stack);
+		process.exit(1);
+	});
 }
