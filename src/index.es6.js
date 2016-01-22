@@ -86,7 +86,8 @@ export class CandyRed {
 		    'menu-item-help': {
 		      label: 'Powered By Node-RED',
 		      url: 'http://nodered.org/docs'
-		    }
+		    },
+				'menu-item-keyboard-shortcuts': true
 		  }
 		};
 	}
@@ -110,7 +111,8 @@ export class CandyRed {
 	      'menu-item-help': {
 	        label: 'Powered By Node-RED',
 	        url: 'http://nodered.org/docs'
-	      }
+		    },
+				'menu-item-keyboard-shortcuts': true
 	    }
 	  };
 	}
