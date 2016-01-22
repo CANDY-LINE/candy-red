@@ -10,13 +10,13 @@ import cproc from 'child_process';
 import crypto from 'crypto';
 import path from 'path';
 import * as chokidar from 'chokidar';
+import RED from 'node-red';
 
 const REBOOT_DELAY_MS = 1000;
 const TRACE = process.env.DEBUG || false;
 
 export class DeviceIdResolver {
-  constructor(RED) {
-    this.RED = RED;
+  constructor() {
     this.hearbeatIntervalMs = -1;
     this.ciotSupported = false;
   }
@@ -95,12 +95,11 @@ export class DeviceIdResolver {
 }
 
 export class DeviceManager {
-  constructor(primary, listenerConfig, accountConfig, deviceState, RED) {
+  constructor(primary, listenerConfig, accountConfig, deviceState) {
     if (!accountConfig) {
       throw new Error('accountConfig is required');
     }
     this.primary = primary;
-    this.RED = RED;
     this.listenerConfig = listenerConfig;
     this.accountConfig = accountConfig;
     this.deviceState = deviceState;
@@ -115,7 +114,7 @@ export class DeviceManager {
     });
     this.events.on('erro', (err1, err2) => {
       if (err2) {
-        this._warn('failed to connect');
+        this._warn('failed to connect' + (err2.status ? ' :' + err2.status : ''));
       } else {
         this._warn('connection error');
       }
@@ -184,13 +183,13 @@ export class DeviceManager {
   }
   
   _info(msg) {
-    this.RED.log.info(this.prefix  + msg);
+    RED.log.info(this.prefix  + msg);
   }
   _warn(msg) {
-    this.RED.log.warn(this.prefix  + msg);
+    RED.log.warn(this.prefix  + msg);
   }
   _error(msg) {
-    this.RED.log.error(this.prefix  + msg);
+    RED.log.error(this.prefix  + msg);
   }
 
   _reset() {
@@ -320,7 +319,7 @@ export class DeviceManager {
             done = this.done[commands.id];
           }
           if (Math.floor(commands.status / 100) !== 2) {
-            this.RED.log.info(`Not-OK status to command: ${JSON.stringify(c)}, status:${JSON.stringify(commands)}`);
+            RED.log.info(`Not-OK status to command: ${JSON.stringify(c)}, status:${JSON.stringify(commands)}`);
             try {
               done(commands.status);
             } catch (_) {
@@ -628,8 +627,7 @@ export class DeviceManager {
 
 export class DeviceState {
 
-  constructor(onFlowFileChanged, onFlowFileRemoved, RED) {
-    this.RED = RED;
+  constructor(onFlowFileChanged, onFlowFileRemoved) {
     this.ciotSupported = false;
     this.flowFileSignature = '';
     this.flowFilePath = '';
@@ -674,7 +672,7 @@ export class DeviceState {
                 let ret = JSON.parse(data);
                 version = ret.version;
               } catch (e) {
-                this.RED.log.info(e);
+                RED.log.info(e);
               }
             });
             ciot.on('close', () => {
@@ -727,7 +725,7 @@ export class DeviceState {
             return resolve(true);
           }
           this.setFlowSignature(data);
-          this.RED.log.info(`[CANDY RED] flowFileSignature: ${this.flowFileSignature}`);
+          RED.log.info(`[CANDY RED] flowFileSignature: ${this.flowFileSignature}`);
 
           let flows = JSON.parse(data);
           if (!Array.isArray(flows)) {
@@ -760,9 +758,9 @@ export class DeviceState {
 
 export class DeviceManagerStore {
   constructor(RED) {
-    this.RED = RED;
+    RED = RED;
     this.store = {};
-    this.deviceState = new DeviceState(this._onFlowFileChangedFunc(), this._onFlowFileRemovedFunc(), RED);
+    this.deviceState = new DeviceState(this._onFlowFileChangedFunc(), this._onFlowFileRemovedFunc());
   }
 
   _onFlowFileChangedFunc() {
@@ -790,7 +788,7 @@ export class DeviceManagerStore {
           });
           wip = false;
         }).catch(err => {
-          this.RED.log.warn(err.stack);
+          RED.log.warn(err.stack);
           wip = false;
         });
       };
@@ -831,7 +829,7 @@ export class DeviceManagerStore {
     let accountFqn = accountConfig.accountFqn;
     let primary = (Object.keys(this.store).length === 0);
     if (primary) {
-      this.RED.log.error(`[CANDY RED] This account is PRIMARY: ${accountFqn}`);
+      RED.log.error(`[CANDY RED] This account is PRIMARY: ${accountFqn}`);
     }
     
     let listenerConfig = webSocketListeners.get({
@@ -844,16 +842,16 @@ export class DeviceManagerStore {
         'x-acc-user': accountConfig.loginUser,
         'x-device-id': this.deviceState.deviceId,
         'x-hostname': os.hostname(),
-        'x-candy-iotv': this.RED.settings.candyIotVersion,
-        'x-candy-redv': this.RED.settings.candyRedVersion,
+        'x-candy-iotv': RED.settings.candyIotVersion,
+        'x-candy-redv': RED.settings.candyRedVersion,
       }
     });
     accountConfig.on('close', () => {
       listenerConfig.close();
       this._remove(accountFqn);
-      this.RED.log.info(`[CANDY RED] Disassociated from [${accountFqn}]`);
+      RED.log.info(`[CANDY RED] Disassociated from [${accountFqn}]`);
     });
-    this.store[accountFqn] = new DeviceManager(primary, listenerConfig, accountConfig, this.deviceState, this.RED);
-    this.RED.log.info(`[CANDY RED] Associated with [${accountFqn}]`);
+    this.store[accountFqn] = new DeviceManager(primary, listenerConfig, accountConfig, this.deviceState);
+    RED.log.info(`[CANDY RED] Associated with [${accountFqn}]`);
   }
 }
