@@ -39,7 +39,7 @@ export class CandyRed {
 
 		  // Initialise the runtime with a server and settings
 		  RED.init(this.server, settings);
-		  settings.version += '-[CANDY RED]';
+		  settings.version += ` [candy-red v${versions.candyRedv}]`;
 
 		  // Serve the http nodes from /api
 		  this.app.use(settings.httpNodeRoot, RED.httpNode);
