@@ -727,7 +727,7 @@ export class DeviceState {
             return resolve(true);
           }
           this.setFlowSignature(data);
-          this.RED.log.info(`flowFileSignature: ${this.flowFileSignature}`);
+          this.RED.log.info(`[CANDY RED] flowFileSignature: ${this.flowFileSignature}`);
 
           let flows = JSON.parse(data);
           if (!Array.isArray(flows)) {
