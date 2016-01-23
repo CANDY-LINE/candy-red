@@ -634,7 +634,7 @@ export class DeviceState {
     this.ciotSupported = false;
     this.flowFileSignature = '';
     this.flowFilePath = '';
-    this.resolver = new DeviceIdResolver(RED);
+    this.resolver = new DeviceIdResolver();
     this.wartcher = null;
     this.onFlowFileChanged = onFlowFileChanged;
     this.onFlowFileRemoved = onFlowFileRemoved;
@@ -760,8 +760,7 @@ export class DeviceState {
 }
 
 export class DeviceManagerStore {
-  constructor(RED) {
-    RED = RED;
+  constructor() {
     this.store = {};
     this.deviceState = new DeviceState(this._onFlowFileChangedFunc(), this._onFlowFileRemovedFunc());
   }
