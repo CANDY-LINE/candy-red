@@ -218,8 +218,8 @@ export default function(RED) {
         }
         this.server.send(data);
         return true;
-      } catch(e) { // swallow any errors
-        RED.log.warn(e.stack);
+      } catch (err) {
+        RED.log.error(RED._('candy-egg-ws.errors.send-error', { err: err, accountFqn: this.accountConfig.accountFqn}));
         return false;
       }
     }

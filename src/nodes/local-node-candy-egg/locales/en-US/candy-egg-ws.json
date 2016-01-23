@@ -30,7 +30,7 @@
       "auth-error": "Auth error for the path:[__path__] ], User ID:[__user__]",
       "server-error": "Server error for the path:[__path__], Status:[__status__] (Retry after approx. 1min)",
       "connect-error": "An error occured on the ws connection to __accountFqn__: __err__",
-      "send-error": "An error occurred while sending: ",
+      "send-error": "An error occurred while sending a mesage to __accountFqn__: __err__",
       "missing-conf": "Missing server configuration"
     }
   }
