@@ -766,51 +766,69 @@ export class DeviceManagerStore {
   }
 
   _onFlowFileChangedFunc() {
-    let that = this;
     return (() => {
       let wip = false;
       return () => {
-        if (wip) {
-          return;
-        }
-        wip = true;
-        that.deviceState.loadAndSetFlowSignature().then(modified => {
-          if (!modified) {
-            wip = false;
+        return new Promise((resovle, reject) => {
+          if (wip) {
             return;
           }
-          Object.keys(that.store).forEach(accountFqn => {
-            that.store[accountFqn].publish({
-              cat: 'sys',
-              act: 'syncflows',
-              args: {
-                expectedSignature: that.deviceState.flowFileSignature
-              }
+          wip = true;
+          this.deviceState.loadAndSetFlowSignature().then(modified => {
+            if (!modified) {
+              wip = false;
+              return resovle();
+            }
+            let promises = Object.keys(this.store).map(accountFqn => {
+              return this.store[accountFqn].publish({
+                cat: 'sys',
+                act: 'syncflows',
+                args: {
+                  expectedSignature: this.deviceState.flowFileSignature
+                }
+              });
             });
+            return Promise.all(promises);
+          }).then(() => {
+            wip = false;
+            return resovle();
+          }).catch(err => {
+            RED.log.warn(err.stack);
+            wip = false;
+            return reject(err);
           });
-          wip = false;
-        }).catch(err => {
-          RED.log.warn(err.stack);
-          wip = false;
         });
       };
     }());
   }
   
   _onFlowFileRemovedFunc() {
-    let that = this;
     return (() => {
       return () => {
-        if (that.deviceState.flowFileSignature) {
-          Object.keys(that.store).forEach(accountFqn => {
-            if (that.store[accountFqn].primary) {
-              that.store[accountFqn].publish({
-                cat: 'sys',
-                act: 'deliverflows'
+        return new Promise((resolve, reject) => {
+          try {
+            if (this.deviceState.flowFileSignature) {
+              let promises = Object.keys(this.store).map(accountFqn => {
+                if (this.store[accountFqn].primary) {
+                  return this.store[accountFqn].publish({
+                    cat: 'sys',
+                    act: 'deliverflows'
+                  });
+                }
               });
+              Promise.all(promises).then(() => {
+                return resolve();
+              }).catch(err => {
+                RED.log.warn(err.stack);
+                return reject(err);
+              });
+            } else {
+              return resolve();
             }
-          });
-        }
+          } catch (err) {
+            return reject(err);
+          }
+        });
       };
     }());
   }
