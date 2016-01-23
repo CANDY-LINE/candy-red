@@ -15,6 +15,9 @@ import RED from 'node-red';
 const REBOOT_DELAY_MS = 1000;
 const TRACE = process.env.DEBUG || false;
 
+const EDITON_YOCTO_SN_PATH = '/factory/serial_number';
+const PROC_CPUINFO_PATH = '/proc/cpuinfo';
+
 export class DeviceIdResolver {
   constructor() {
     this.hearbeatIntervalMs = -1;
@@ -35,11 +38,11 @@ export class DeviceIdResolver {
 
   _resolveEdison(resolve, reject) {
     // Intel Edison Yocto
-    fs.stat('/factory/serial_number', err => {
+    fs.stat(EDITON_YOCTO_SN_PATH, err => {
       if (err) {
         return this._resolveLTEPi(resolve, reject);
       }
-      fs.read('/factory/serial_number', (err, data) => {
+      fs.read(EDITON_YOCTO_SN_PATH, (err, data) => {
         if (err) {
           return reject(err);
         }
@@ -56,16 +59,16 @@ export class DeviceIdResolver {
   
   _resolveRPi(resolve, reject) {
     // RPi
-    fs.stat('/proc/cpuinfo', err => {
+    fs.stat(PROC_CPUINFO_PATH, err => {
       if (err) {
         return this._resolveMAC(resolve, reject);
       }
       let reader = readline.createInterface({
-        input: fs.createReadStream('/proc/cpuinfo')
+        input: fs.createReadStream(PROC_CPUINFO_PATH)
       });
       let id = '';
       reader.on('line', line => {
-        if (line.indexOf('Serial ') >= 0 && line.indexOf(':') >= 0) {
+        if (line.indexOf('Serial') >= 0 && line.indexOf(':') >= 0) {
           id = line.split(':')[1].trim();
         }
       });
