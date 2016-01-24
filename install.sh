@@ -137,9 +137,6 @@ function system_service_install {
   sed -i -e "s/%SERVICE_HOME%/${ROOT//\//\\/}/g" ${START_SH}
 
   cp -f ${SERVICES}/base_environment.txt ${SERVICES}/environment
-  sed -i -e "s/%WS_URL%/${WS_URL//\//\\/}/g" ${SERVICES}/environment
-  sed -i -e "s/%WS_USER%/${WS_USER//\//\\/}/g" ${SERVICES}/environment
-  sed -i -e "s/%WS_PASSWORD%/${WS_PASSWORD//\//\\/}/g" ${SERVICES}/environment
   sed -i -e "s/%HCIDEVICE%/${HCIDEVICE//\//\\/}/g" ${SERVICES}/environment
   sed -i -e "s/%NODE_OPTS%/${NODE_OPTS//\//\\/}/g" ${SERVICES}/environment
   
@@ -165,12 +162,6 @@ function _install_systemd {
   systemctl enable ${SERVICE_NAME}
   systemctl start ${SERVICE_NAME}
   logger -s "${SERVICE_NAME} service has been installed."
-
-  if [ -z "${WS_URL}" ]; then
-    logger -s "[WARNING] Please manually modify [${LOCAL_SYSTEMD}/environment] in order to populate valid WebSocket server address."
-    logger -s "[WARNING] Then run 'systemctl start ${SERVICE_NAME}' again."
-    systemctl stop ${SERVICE_NAME}
-  fi
 }
 
 function _install_sysvinit {
@@ -194,15 +185,10 @@ function _install_sysvinit {
 
   logger -s "${SERVICE_NAME} service has been installed."
 
-  if [ -z "${WS_URL}" ]; then
-    logger -s "[WARNING] Please manually modify [/etc/default/${SERVICE_NAME}] in order to populate valid WebSocket server address."
-    logger -s "[WARNING] Then run 'service ${SERVICE_NAME} start' again."
+  if which invoke-rc.d >/dev/null 2>&1; then
+    invoke-rc.d ${SERVICE_NAME} restart
   else
-    if which invoke-rc.d >/dev/null 2>&1; then
-      invoke-rc.d ${SERVICE_NAME} restart
-    else
-      ${INIT} restart
-    fi
+    ${INIT} restart
   fi
 }
 
