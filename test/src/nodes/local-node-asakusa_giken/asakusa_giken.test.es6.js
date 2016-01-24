@@ -6,10 +6,17 @@ import RED from 'node-red';
 import asakusaGikenModule from '../../../../dist/nodes/local-node-asakusa_giken/asakusa_giken.js';
 import * as ble from '../../../../dist/nodes/local-node-asakusa_giken/lib/ble';
 
-RED.debug = true;
-RED._ = sinon.spy();
 
 describe('asakusa_giken node', () => {
+  RED.debug = true;
+	let sandbox;
+	beforeEach(() => {
+		sandbox = sinon.sandbox.create();
+    RED._ = sinon.spy();
+	});
+	afterEach(() => {
+		sandbox = sandbox.restore();
+	});
   describe('asakusa_giken module', () => {
     it('should have valid Node-RED plugin classes', done => {
       assert.isNotNull(RED);
