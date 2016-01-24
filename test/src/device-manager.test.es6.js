@@ -3,6 +3,7 @@ import { assert } from 'chai';
 import os from 'os';
 import fs from 'fs';
 import stream from 'stream';
+import cproc from 'child_process';
 import RED from 'node-red';
 import Promise from 'es6-promises';
 import { DeviceIdResolver, DeviceState, DeviceManager, DeviceManagerStore } from '../../dist/device-manager';
@@ -99,25 +100,56 @@ describe('DeviceIdResolver', () => {
 
 describe('DeviceState', () => {
 	let sandbox;
+	let state;
 	beforeEach(() => {
+    state = new DeviceState(() => {}, () => {});
 		sandbox = sinon.sandbox.create();
 	});
 	afterEach(() => {
 		sandbox = sandbox.restore();
 	});
 
-  it('should return whether or not CANDY IoT board is installed', done => {
-    let state = new DeviceState(() => {}, () => {});
-    state.testIfCANDYIoTInstalled().then(version => {
-      console.log(`installed version? => ${version}`);
-      done();
-    }).catch(err => {
-      done(err);
-    });
-  });
+  describe('#testIfUIisEnabled()', () => {
+	  it('should return whether or not CANDY IoT board is installed', done => {
+	    state.testIfCANDYIoTInstalled().then(version => {
+	      console.log(`installed version? => [${version}]`);
+	      done();
+	    }).catch(err => {
+	      done(err);
+	    });
+	  });
+
+	  it('should return the installed CANDY IoT Board version', done => {
+			let stubCproc = sandbox.stub(cproc);
+			let which = sandbox.stub({
+				on: () => {}
+			});
+			which.on.onFirstCall().yields(0);
+			stubCproc.spawn.onFirstCall().returns(which);
+
+			let stdout = sandbox.stub({
+				on: () => {}
+			});
+			stdout.on.onFirstCall().yields(JSON.stringify({
+				version: '1234'
+			}));
+			let ciot = sandbox.stub({
+				stdout: stdout,
+				on: () => {}
+			});
+			stubCproc.spawn.onSecondCall().returns(ciot);
+
+	    state.testIfCANDYIoTInstalled().then(version => {
+	      assert.equal('1234', version);
+	      done();
+	    }).catch(err => {
+	      done(err);
+	    });
+	  });
+	});
+
   describe('#testIfUIisEnabled()', () => {
     it('should tell the UI is enabled', done => {
-      let state = new DeviceState(() => {}, () => {});
       state.testIfUIisEnabled(__dirname + '/test-flow-enabled.json').then(enabled => {
         assert.isTrue(enabled);
         done();
@@ -126,7 +158,6 @@ describe('DeviceState', () => {
       });
     });
     it('should tell the UI is DISABLED', done => {
-      let state = new DeviceState(() => {}, () => {});
       state.testIfUIisEnabled(__dirname + '/test-flow-disabled.json').then(enabled => {
         assert.isFalse(enabled);
         done();
