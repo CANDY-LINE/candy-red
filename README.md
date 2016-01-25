@@ -283,4 +283,10 @@ $ npm pack
 ### Files including the package version
 
 1. README.md
-1. [package.json](/package.json)
+1. [package.json](package.json)
+
+# Copyright and License
+
+PNG/ICO images under src/public folder are released under [CC BY-NC-SA](http://creativecommons.org/licenses/by-nc-sa/4.0/), copyright 2016 Robotma.com.
+
+Other stuff than the files above is released under MIT. See [LICENSE](LICENSE) for the license terms and the copyright.
