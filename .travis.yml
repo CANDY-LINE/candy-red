@@ -21,3 +21,4 @@ before_install:
 
 install:
   - npm install --unsafe-perm
+  - npm install
