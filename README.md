@@ -16,6 +16,12 @@ CANDY RED is a gateway service working between local area wiress network devices
 
 _**1 CANDY EGG cloud services are required_
 
+
+## OS and Hardwares
+
+* [Intel Edison + Yocto](#intel-edison--yocto)
+* [Raspberry Pi + Raspbian](#raspberry-pi--raspbian)
+
 # Screenshots
 ## CANDY RED flow editor page on browser
 
@@ -83,7 +89,7 @@ $ rm -f "$(dirname $(dirname $(which systemctl)))/lib/systemd/system/candy-red.s
 
 ### Tested Node.js versions
 
-* 0.12.6
+* v0.12.6
 
 The preinstalled version of Node.js v0.10.29 won't work because of the [header file issue](http://dustinbolton.com/replace_invalid_utf8-is-not-a-member-of-v8string-installing-nodejs-packages-on-raspbian-debian-on-raspberry-pi-2-b/) appearing on installing native addons.
 
