@@ -245,24 +245,23 @@ $ node ./dist/index.js
 ```
 
 And you'll see the sensor info like this:
-```
-24 Jan 08:53:12 - [info] [CANDY RED] Deploying Flow Editor UI...
 
-
-Welcome to Node-RED
-===================
-
-24 Jan 08:53:15 - [info] Node-RED version: v0.13.1 [candy-red v2.0.0]
-24 Jan 08:53:15 - [info] Node.js  version: v0.12.6
-24 Jan 08:53:15 - [info] Loading palette nodes
-24 Jan 08:53:44 - [info] [BLE] Set up done
-24 Jan 08:53:44 - [info] User directory : /root/.node-red
-24 Jan 08:53:44 - [info] Flows file : /root/.node-red/flows_candy-red_my-ltepi.json
-24 Jan 08:53:44 - [info] Creating new flow file
-24 Jan 08:53:44 - [info] Starting flows
-24 Jan 08:53:44 - [info] Started flows
-24 Jan 08:53:44 - [info] Listen port=8100
-```
+		24 Jan 08:53:12 - [info] [CANDY RED] Deploying Flow Editor UI...
+		
+		
+		Welcome to Node-RED
+		===================
+		
+		24 Jan 08:53:15 - [info] Node-RED version: v0.13.1 [candy-red v2.0.0]
+		24 Jan 08:53:15 - [info] Node.js  version: v0.12.6
+		24 Jan 08:53:15 - [info] Loading palette nodes
+		24 Jan 08:53:44 - [info] [BLE] Set up done
+		24 Jan 08:53:44 - [info] User directory : /root/.node-red
+		24 Jan 08:53:44 - [info] Flows file : /root/.node-red/flows_candy-red_my-ltepi.json
+		24 Jan 08:53:44 - [info] Creating new flow file
+		24 Jan 08:53:44 - [info] Starting flows
+		24 Jan 08:53:44 - [info] Started flows
+		24 Jan 08:53:44 - [info] Listen port=8100
 
 ## Test
 
@@ -276,11 +275,35 @@ $ npm test
 $ npm pack
 ```
 
+## Coding Styles
+
+1. Use ES6 (except Gruntfile.js and *.html)
+1. 2-space soft tabs
+1. Append .es6.js suffix to ES6 JS files
+1. See .jshintrc for detail
+
+## Known Issues
+
+* CANDY EGG cloud services aren't yet available
+* CANDY EGG credentials are embedded in a flow file
+  - In this version, CANDY EGG credentials are stored into the flow file rather than the dedicated [credentials file](http://nodered.org/docs/creating-nodes/credentials.html) which Node-RED offers. This behavior can be modified in the future release.
+
+## TODO
+
+* publish local Node-RED nodes in this project to npm repository
+* [CANDY IoT Board for Intel® Edison](https://translate.googleusercontent.com/translate_c?act=url&depth=1&hl=en&ie=UTF8&prev=_t&rurl=translate.google.com&sl=ja&tl=en&u=https://github.com/Robotma-com/candy-iot-service&usg=ALkJrhgViBgwht0t9vgBvmuJNkJb_kjoJg) with 3G/LTE module support
+* [LTEPi Board for Raspberry Pi](https://translate.google.co.jp/translate?sl=auto&tl=en&js=y&prev=_t&hl=en&ie=UTF-8&u=http%3A%2F%2Flte4iot.com%2Fproducts%2Fltepi%2F&edit-text=&act=url) with LTE module support
+
 ## Revison History
 
 * 2.0.0
   - Node-RED integration
   - Add CANDY EGG cloud endpoint nodes
+  - Add Asakusa Giken-made BLE nodes
+  - Add EnOcean node
+  - Add device management features provided with CANDY EGG cloud
+     - This feature includes process restart which should work with system services like systemd/sysvinit
+  - Bump up Node.js version and Bluez version for RPi devices
 
 * 1.3.0
   - Add an option to enable to generate a list of copied files
@@ -309,4 +332,4 @@ $ npm pack
 
 PNG/ICO images under src/public folder are released under [CC BY-NC-SA](http://creativecommons.org/licenses/by-nc-sa/4.0/), copyright 2016 Robotma.com.
 
-Other stuff than the files above is released under MIT. See [LICENSE](LICENSE) for the license terms and the copyright.
+Other stuff than the files above in this project repository is released under MIT. See [LICENSE](LICENSE) for the license terms and the copyright.
