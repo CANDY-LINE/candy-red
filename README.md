@@ -85,7 +85,7 @@ $ rm -f "$(dirname $(dirname $(which systemctl)))/lib/systemd/system/candy-red.s
 
 The preinstalled version of Node.js v0.10.29 won't work because of the [header file issue](http://dustinbolton.com/replace_invalid_utf8-is-not-a-member-of-v8string-installing-nodejs-packages-on-raspbian-debian-on-raspberry-pi-2-b/) appearing on installing native addons.
 
-I highly recommend to uninstall the preinstalled version of Node.js, Node-RED (which depends on `nodejs` and `nodejs-legacy` packages) and npm by the following command, and to install another version.
+I highly recommend you to uninstall the preinstalled version of Node.js, Node-RED (which depends on `nodejs` and `nodejs-legacy` packages) and npm by the following command, and to install another version instead.
 
 ```
 $ sudo apt-get remove -y nodered nodejs nodejs-legacy npm
@@ -200,11 +200,11 @@ $ sudo sed -i -e "s/raspberrypi/${NEW_NAME//\//\\/}/g" /etc/hostname
 $ sudo /etc/init.d/hostname.sh && sudo reboot
 ```
 
-You can ignore `sudo: unable to resolve host raspberrypi` error messages.
+You can ignore `sudo: unable to resolve host raspberrypi` error message.
 
 ### Node-RED home
 
-The Node-RED home path, where flow files are placed, is set to `$(npm root -g)/candy-red/.node-red/`.
+The Node-RED home path, where flow files are placed, is found at `$(npm root -g)/candy-red/.node-red/`.
 
 # Development
 
