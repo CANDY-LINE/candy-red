@@ -5,19 +5,39 @@ CANDY RED
 
 CANDY RED is a gateway service working between local area wiress network devices and internet servers.
 
-CANDY RED also includes Node-RED in order for users to create/manipulate logic flows with browsers.
+## Features
+
+* Include Node-RED flow editor/flow execution runtime
+* BLE and EnOcean nodes (which will be published to npm in the future release)
+* Dedicated nodeds for CANDY EGG cloud services offering you to connect your server side flows with ease **1
+* Flow file syncing (both to be delivered and to upload to the cloud) **1
+
+_**1 CANDY EGG cloud services are required_
+
+# Screenshots
+## CANDY RED flow editor page on browser
+
+This is the default screen theme.
+
+![CANDY RED Screenshot](images/screenshot-candy-red.png "CANDY RED Screenshot")
+
+## CANDY BOX flow editor page on browser
+
+This theme appears when CANDY IoT Board is available on a device.
+
+![CANDY BOX Screenshot](images/screenshot-candy-box.png "CANDY BOX Screenshot")
 
 # Intel Edison + Yocto
 
 ## Prerequisites
 
-### Tested versions
+### Tested Node.js versions
 
-* Node.js v0.10.38 (preinstalled)
+* v0.10.38 (preinstalled)
 
 ## Install
 
-The installation of CANDY RED will take a couple of minutes.
+The installation will take a couple of minutes.
 
 You can ignore `npm WARN`s, `gyp WARN`s, `gyp ERR!`s and `node-pre-gyp ERR!`s unless the installation terminates normally. You can check if the installation is successful by `systemctl status candy-red` command.
 
