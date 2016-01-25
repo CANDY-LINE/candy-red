@@ -1,6 +1,8 @@
 CANDY RED
 ===
 
+**BETA Release**
+
 [![master Build Status](https://travis-ci.org/dbaba/candy-red.svg?branch=master)](https://travis-ci.org/dbaba/candy-red/)
 
 CANDY RED is a gateway service working between local area wiress network devices and internet servers.
