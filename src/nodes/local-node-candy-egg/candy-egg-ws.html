@@ -1,0 +1,188 @@
+<!--
+  Copyright 2013,2015 IBM Corp.
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+  http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<!-- WebSocket Input Node -->
+<script type='text/x-red' data-template-name='CANDY EGG websocket in'>
+  <div class='form-row' id='candy-egg-ws-account-row'>
+    <label for='node-input-account'><i class='fa fa-user'></i> <span data-i18n='candy-egg-ws.label.account'></span></label>
+    <input type='text' id='node-input-account'>
+  </div>
+  <div class='form-row' id='candy-egg-ws-path-row'>
+    <label for='node-input-path'><i class='fa fa-bookmark'></i> <span data-i18n='candy-egg-ws.label.path'></span></label>
+    <input type='text' id='node-input-path'>
+  </div>
+  <div class='form-row'>
+    <label for='node-config-input-wholemsg'>&nbsp;</label>
+    <select type='text' id='node-config-input-wholemsg' style='width: 70%;'>
+      <option value='false' data-i18n='candy-egg-ws.payload'></option>
+      <option value='true' data-i18n='candy-egg-ws.message'></option>
+    </select>
+  </div>
+  <div class='form-row'>
+    <label for='node-input-name'><i class='fa fa-tag'></i> <span data-i18n='node-red:common.label.name'></span></label>
+    <input type='text' id='node-input-name' data-i18n='[placeholder]node-red:common.label.name'>
+  </div>
+</script>
+
+<script type='text/javascript'>
+
+(function() {
+
+  RED.nodes.registerType('CANDY EGG websocket in',{
+    category: 'input',
+    defaults: {
+      name: {value:''},
+      account: {type: 'CANDY EGG account', required: true},
+      path: {value:'',required:true,validate:RED.validators.regex(/^((?!candy-(api|ws)).)*$/) },
+      wholemsg: {value:'false'}
+    },
+    color:'rgb(128, 219, 255)',
+    inputs:0,
+    outputs:1,
+    icon: 'candy-egg.png',
+    labelStyle: function() {
+      return this.name?'node_label_italic':'';
+    },
+    label: function() {
+      var accountNode = RED.nodes.node(this.account);
+      return this.name||(accountNode ? accountNode.label() + (this.path ? ' [ws] ' + this.path : '') :
+        this._('candy-egg-ws.label.category-IN'));
+    }
+  });
+  
+  RED.nodes.registerType('CANDY EGG websocket out',{
+    category: 'output',
+    defaults: {
+      name: {value:''},
+      account: {type: 'CANDY EGG account', required: true},
+      path: {value:'',required:true,validate:RED.validators.regex(/^((?!candy-(api|ws)).)*$/) },
+      wholemsg: {value:'false'}
+    },
+    color:'rgb(128, 219, 255)',
+    inputs:1,
+    outputs:0,
+    icon: 'candy-egg.png',
+    align: 'right',
+    labelStyle: function() {
+      return this.name?'node_label_italic':'';
+    },
+    label: function() {
+      var accountNode = RED.nodes.node(this.account);
+      return this.name||(accountNode ? accountNode.label() + (this.path ? ' [ws] ' + this.path : '') :
+        this._('candy-egg-ws.label.category-OUT'));
+    }
+  });
+  
+  RED.nodes.registerType('CANDY EGG account',{
+    category: 'config',
+    defaults: {
+      accountFqn: {value:'',required:true,validate:RED.validators.regex(/^[0-9a-zA-Z]+@[^-\s]*$/) },
+      loginUser: {value:'', required:true},
+      loginPassword: {value:'', required:true},
+      secure: {value:true},
+      managed: {value:false},
+      lastDeliveredAt: {value:''},
+      revision: {value:''},
+      originator: {value:''}
+    },
+    inputs:0,
+    outputs:0,
+    label: function() {
+      return this.accountFqn ? this.accountFqn.split('@')[0] : this._('candy-egg-ws.label.category-acc');
+    },
+    oneditprepare: function() {
+      if (RED.settings.version.indexOf('[candy-red v') >= 0) {
+        $('.form-row-managed').show();
+        if (this.managed) {
+          $('.form-row-device-managed').show();
+          if (this.lastDeliveredAt) {
+            $('#node-config-input-last-delivered').val(new Date(this.lastDeliveredAt).toString());
+          }
+        } else {
+          $('.form-row-device-managed').hide();
+        }
+      } else {
+        $('.form-row-managed').hide();
+      }
+    }
+  });
+  
+})();
+</script>
+
+<!-- WebSocket out Node -->
+<script type='text/x-red' data-template-name='CANDY EGG websocket out'>
+  <div class='form-row' id='candy-egg-ws-account-row'>
+    <label for='node-input-account'><i class='fa fa-user'></i> <span data-i18n='candy-egg-ws.label.account'></span></label>
+    <input type='text' id='node-input-account'>
+  </div>
+  <div class='form-row' id='candy-egg-ws-path-row'>
+    <label for='node-input-path'><i class='fa fa-bookmark'></i> <span data-i18n='candy-egg-ws.label.path'></span></label>
+    <input type='text' id='node-input-path'>
+  </div>
+  <div class='form-row'>
+    <label for='node-config-input-wholemsg'>&nbsp;</label>
+    <select type='text' id='node-config-input-wholemsg' style='width: 70%;'>
+      <option value='false' data-i18n='candy-egg-ws.payload'></option>
+      <option value='true' data-i18n='candy-egg-ws.message'></option>
+    </select>
+  </div>
+  <div class='form-row'>
+    <label for='node-input-name'><i class='fa fa-tag'></i> <span data-i18n='node-red:common.label.name'></span></label>
+    <input type='text' id='node-input-name' data-i18n='[placeholder]node-red:common.label.name'>
+  </div>
+</script>
+
+
+<!-- CANDY EGG account configuration node -->
+<script type='text/x-red' data-template-name='CANDY EGG account'>
+  <div class='form-row'>
+    <label for='node-config-input-accountFqn' style='width: 100px'><i class='fa fa-user'></i> <span data-i18n='candy-egg-ws.label.account-fqn'></span></label>
+    <input type='text' id='node-config-input-accountFqn' placeholder='account@host.candy-egg.com'>
+  </div>
+  <div class='form-row'>
+    <label for='node-config-input-loginUser' style='width: 100px'><i class='fa fa-hand-o-right'></i> <span data-i18n='candy-egg-ws.label.login-user'></span></label>
+    <input type='text' id='node-config-input-loginUser' placeholder='login_user_id'>
+  </div>
+  <div class='form-row'>
+    <label for='node-config-input-loginPassword' style='width: 100px'><i class='fa fa-key'></i> <span data-i18n='candy-egg-ws.label.login-password'></span></label>
+    <input type='password' id='node-config-input-loginPassword'>
+  </div>
+  <div class='form-row'>
+    <label>&nbsp;</label>
+    <input type='checkbox' id='node-config-input-secure' style='display: inline-block; width: auto; vertical-align: top;'>
+    <label for='node-config-input-secure' style='width: 70%;' data-i18n='candy-egg-ws.label.secure'></label>
+  </div>
+  <div class='form-row form-row-managed'>
+    <label>&nbsp;</label>
+    <input type='checkbox' id='node-config-input-managed' style='display: inline-block; width: auto; vertical-align: top;'>
+    <label for='node-config-input-managed' style='width: 70%;' data-i18n='candy-egg-ws.label.managed'></label>
+  </div>
+  <div class='form-row form-row-managed form-row-device-managed'>
+    <span data-i18n='candy-egg-ws.label.flow'></span>
+  </div>
+  <div class='form-row form-row-managed form-row-device-managed'>
+    <label for='node-config-input-last-delivered' style='width: 100px'><i class='fa fa-clock-o'></i> <span data-i18n='candy-egg-ws.label.lastDeliveredAt'></span></label>
+    <input type='text' id='node-config-input-last-delivered' disabled>
+  </div>
+  <div class='form-row form-row-managed form-row-device-managed'>
+    <label for='node-config-input-revision' style='width: 100px'><i class='fa fa-bolt'></i> <span data-i18n='candy-egg-ws.label.revision'></span></label>
+    <input type='text' id='node-config-input-revision' disabled>
+  </div>
+  <div class='form-row form-row-managed form-row-device-managed'>
+    <label for='node-config-input-originator' style='width: 100px'><i class='fa  fa-upload'></i> <span data-i18n='candy-egg-ws.label.originator'></span></label>
+    <input type='text' id='node-config-input-originator' disabled>
+  </div>
+</script>

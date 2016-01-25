@@ -103,8 +103,18 @@ function cd_module_root {
   fi
 }
 
+function resolve_version {
+  # https://gist.github.com/DarrenN/8c6a5b969481725a4413
+  PACKAGE_VERSION=$(cat ${ROOT}/package.json \
+    | grep version \
+    | head -1 \
+    | awk -F: '{ print $2 }' \
+    | sed 's/[",]//g' \
+    | tr -d '[[:space:]]')
+}
+
 function npm_install {
-  RET=`npm ls`
+  RET=`npm ls | grep candy-red`
   RET=$?
   if [ "${RET}" != "0" ]; then
     logger -s "Installing ${SERVICE_NAME}..."
@@ -127,12 +137,8 @@ function system_service_install {
   sed -i -e "s/%SERVICE_HOME%/${ROOT//\//\\/}/g" ${START_SH}
 
   cp -f ${SERVICES}/base_environment.txt ${SERVICES}/environment
-  sed -i -e "s/%WS_URL%/${WS_URL//\//\\/}/g" ${SERVICES}/environment
-  sed -i -e "s/%WS_USER%/${WS_USER//\//\\/}/g" ${SERVICES}/environment
-  sed -i -e "s/%WS_PASSWORD%/${WS_PASSWORD//\//\\/}/g" ${SERVICES}/environment
   sed -i -e "s/%HCIDEVICE%/${HCIDEVICE//\//\\/}/g" ${SERVICES}/environment
-  sed -i -e "s/%ENOCEAN_PORT%/${ENOCEAN_PORT//\//\\/}/g" ${SERVICES}/environment
-  sed -i -e "s/%SERIAL_PORT%/${SERIAL_PORT//\//\\/}/g" ${SERVICES}/environment
+  sed -i -e "s/%NODE_OPTS%/${NODE_OPTS//\//\\/}/g" ${SERVICES}/environment
   
   _install_${SYSTEM_SERVICE_TYPE}
 }
@@ -147,6 +153,7 @@ function _install_systemd {
 
   cpf ${LOCAL_SYSTEMD}/${SERVICE_NAME}.service.txt ${LOCAL_SYSTEMD}/${SERVICE_NAME}.service
   sed -i -e "s/%SERVICE_HOME%/${ROOT//\//\\/}/g" ${LOCAL_SYSTEMD}/${SERVICE_NAME}.service
+  sed -i -e "s/%VERSION%/${VERSION//\//\\/}/g" ${LOCAL_SYSTEMD}/${SERVICE_NAME}.service
 
   cpf ${SERVICES}/environment ${LOCAL_SYSTEMD}/environment
 
@@ -155,12 +162,6 @@ function _install_systemd {
   systemctl enable ${SERVICE_NAME}
   systemctl start ${SERVICE_NAME}
   logger -s "${SERVICE_NAME} service has been installed."
-
-  if [ -z "${WS_URL}" ]; then
-    logger -s "[WARNING] Please manually modify [${LOCAL_SYSTEMD}/environment] in order to populate valid WebSocket server address."
-    logger -s "[WARNING] Then run 'systemctl start ${SERVICE_NAME}' again."
-    systemctl stop ${SERVICE_NAME}
-  fi
 }
 
 function _install_sysvinit {
@@ -169,6 +170,7 @@ function _install_sysvinit {
 
   cpf ${LOCAL_SYSVINIT}/${SERVICE_NAME}.sh ${INIT}
   sed -i -e "s/%SERVICE_HOME%/${ROOT//\//\\/}/g" ${INIT}
+  sed -i -e "s/%VERSION%/${VERSION//\//\\/}/g" ${INIT}
 
   cpf ${LOCAL_SYSVINIT}/_wrapper.sh ${LOCAL_SYSVINIT}/wrapper.sh
   sed -i -e "s/%SERVICE_HOME%/${ROOT//\//\\/}/g" ${LOCAL_SYSVINIT}/wrapper.sh
@@ -183,20 +185,16 @@ function _install_sysvinit {
 
   logger -s "${SERVICE_NAME} service has been installed."
 
-  if [ -z "${WS_URL}" ]; then
-    logger -s "[WARNING] Please manually modify [/etc/default/${SERVICE_NAME}] in order to populate valid WebSocket server address."
-    logger -s "[WARNING] Then run 'service ${SERVICE_NAME} start' again."
+  if which invoke-rc.d >/dev/null 2>&1; then
+    invoke-rc.d ${SERVICE_NAME} restart
   else
-    if which invoke-rc.d >/dev/null 2>&1; then
-      invoke-rc.d ${SERVICE_NAME} restart
-    else
-      ${INIT} restart
-    fi
+    ${INIT} restart
   fi
 }
 
 setup
 test_system_service_arg
 cd_module_root
+resolve_version
 npm_install
 system_service_install

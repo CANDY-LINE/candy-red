@@ -1,0 +1,36 @@
+{
+  "enocean" : {
+    "label" : {
+      "category" : "EnOcean",
+      "originatorId" : "Originator ID",
+      "eepType" : "EEP Type",
+      "addEepType" : "Add EEP Type to payload",
+      "enoceanPort" : "EnOcean Serial Port",
+      "useString" : "Use string payload",
+      "serialPort" : "Serial Port"
+    },
+    "eepType" : {
+      "f6-02-04" : "RPS/Rocker Switch, 2 Rocker/Light and blind control ERP2",
+      "d5-00-01" : "1BS/Contacts and Switches/Single Input Contact"
+    },
+    "placeholder" : {
+      "originatorId" : "8-digit hex string",
+      "serialPort" : "e.g. /dev/ttyMFD1"
+    },
+    "info" : {
+      "unsupportedPacketType" : "Unsupported Packet Type: __packetType__",
+      "serialPortClosed" : "The serial port [__portName__] is closed and removed from the port pool",
+      "serialPortAdded" : "The serial port [__portName__] is added to the port pool"
+    },
+    "warn" : {
+      "noNode" : "No node on the flow for the Originator ID:__originatorId__",
+      "noParser" : "Missing parser for Data:[__data__] (__error__)",
+      "noHandler" : "Missing handler for EEP Type:[__eepType__]"
+    },
+    "errors" : {
+      "serialPortError" : "Serial Port Error (__error__)",
+      "parseError" : "Data Parsing Error (__error__), Data:[__data__]",
+      "unknown" : "Unknown Error (__error__)"
+    }
+  }
+}

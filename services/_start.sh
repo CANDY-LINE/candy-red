@@ -15,4 +15,4 @@ if [ "${RET}" == "0" ]; then
 fi
 
 logger -s "Starting %SERVICE_NAME%..."
-/usr/bin/env node %SERVICE_HOME%/dist/index.js
+/usr/bin/env node ${NODE_OPTS} %SERVICE_HOME%/dist/index.js
