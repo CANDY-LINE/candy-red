@@ -245,7 +245,6 @@ The processed files are placed under `dist` diretory.
 ## Run on localhost for development use
 
 Try the following commands after `grunt build`:
-### without auth
 (Prepends `sudo` for Raspbian)
 
 ```
