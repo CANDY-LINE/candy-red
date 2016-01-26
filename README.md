@@ -3,6 +3,7 @@ CANDY RED
 
 **BETA Release**
 
+[![License MIT](https://img.shields.io/npm/l/express.svg)](http://opensource.org/licenses/MIT)
 [![master Build Status](https://travis-ci.org/dbaba/candy-red.svg?branch=master)](https://travis-ci.org/dbaba/candy-red/)
 
 CANDY RED is a gateway service working between local area wiress network devices and internet servers.
