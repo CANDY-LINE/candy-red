@@ -12,7 +12,7 @@ CANDY RED is a gateway service working between local area wiress network devices
 
 * Include Node-RED flow editor/flow execution runtime
 * BLE and EnOcean nodes (which will be published to npm in the future release)
-* Dedicated nodeds for CANDY EGG cloud services offering you to connect your server side flows with ease **1
+* Dedicated nodes for CANDY EGG cloud services offering you to connect your server side flows with ease **1
 * Flow file syncing (both to be delivered and to upload to the cloud) **1
 
 _**1 CANDY EGG cloud services are required_
