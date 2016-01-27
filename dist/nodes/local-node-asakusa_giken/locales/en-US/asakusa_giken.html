@@ -1,0 +1,93 @@
+<script type="text/x-red" data-help-name="BLECAST_BL in">
+   <p>BLE illuminance sensor</p>
+   <p>The lx data is emitted per second.</p>
+   <p>The <code>msg.payload</code> format is as follows.</p>
+<table>
+  <tr>
+    <th>type</th>
+    <td>Type of the sensor data, <code>lx</code> for illuminance</td>
+  </tr>
+  <tr>
+    <th>unit</th>
+    <td>The unit of the temperature value. <code>lx</code> for lux</td>
+  </tr>
+  <tr>
+    <th>val</th>
+    <td>The sensor data value</td>
+  </tr>
+  <tr>
+    <th>tstamp</th>
+    <td>Epoch time in milliseconds</td>
+  </tr>
+  <tr>
+    <th>rssi</th>
+    <td>The signal strength in dBm</td>
+  </tr>
+  <tr>
+    <th>address</th>
+    <td>The BLE address</td>
+  </tr>
+  <tr>
+    <th>uuid</th>
+    <td>The BLE UUID</td>
+  </tr>
+</table>
+   <p>The typical JSON payload is shown as below.
+<pre>{  
+  "type":"lx",
+  "unit":"lx",
+  "val":37
+  "tstamp":1448259848905,
+  "rssi":-59,
+  "address":"aa:bb:cc:99:99:99",
+  "uuid":"e23520e001714e99b8afc51fcee28b35"
+}</pre>
+    </p>
+</script>
+
+<script type="text/x-red" data-help-name="BLECAST_TM in">
+   <p>BLE temperature sensor</p>
+   <p>The temperature data is emitted per second.</p>
+   <p>The <code>msg.payload</code> format is as follows.</p>
+<table>
+  <tr>
+    <th>type</th>
+    <td>Type of the sensor data, <code>te</code> for temperature</td>
+  </tr>
+  <tr>
+    <th>unit</th>
+    <td>The unit of the temperature value. <code>C</code> for Celcius</td>
+  </tr>
+  <tr>
+    <th>val</th>
+    <td>The sensor data value</td>
+  </tr>
+  <tr>
+    <th>tstamp</th>
+    <td>Epoch time in milliseconds</td>
+  </tr>
+  <tr>
+    <th>rssi</th>
+    <td>The signal strength in dBm</td>
+  </tr>
+  <tr>
+    <th>address</th>
+    <td>The BLE address</td>
+  </tr>
+  <tr>
+    <th>uuid</th>
+    <td>The BLE UUID</td>
+  </tr>
+</table>
+   <p>The typical JSON payload is shown as below.
+<pre>{  
+  "type":"te",
+  "unit":"C",
+  "val":20,
+  "tstamp":1448259848905,
+  "rssi":-59,
+  "address":"33-22-11-99-88-77",
+  "uuid":"eb2b906bb56e4ddeb11000be1f4d6041"
+}</pre>
+    </p>
+</script>

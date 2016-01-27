@@ -27,7 +27,6 @@ build/Release
 node_modules
 
 *.tgz
-dist
 services/environment
 services/start_systemd.sh
 services/systemd/candy-red.service
