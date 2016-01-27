@@ -15,7 +15,7 @@ import RED from 'node-red';
 const REBOOT_DELAY_MS = 1000;
 const TRACE = process.env.DEBUG || false;
 
-const EDITON_YOCTO_SN_PATH = '/factory/serial_number';
+const EDISON_YOCTO_SN_PATH = '/factory/serial_number';
 const PROC_CPUINFO_PATH = '/proc/cpuinfo';
 
 export class DeviceIdResolver {
@@ -38,11 +38,11 @@ export class DeviceIdResolver {
 
   _resolveEdison(resolve, reject) {
     // Intel Edison Yocto
-    fs.stat(EDITON_YOCTO_SN_PATH, err => {
+    fs.stat(EDISON_YOCTO_SN_PATH, err => {
       if (err) {
         return this._resolveLTEPi(resolve, reject);
       }
-      fs.read(EDITON_YOCTO_SN_PATH, (err, data) => {
+      fs.read(EDISON_YOCTO_SN_PATH, (err, data) => {
         if (err) {
           return reject(err);
         }

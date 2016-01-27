@@ -1,7 +1,7 @@
 language: node_js
 
 matrix:
-  exclude:
+  include:
     - node_js: "0.12"
       env:
         - CC="" CXX=""
@@ -21,3 +21,4 @@ before_install:
 
 install:
   - npm install --unsafe-perm
+  - npm install
