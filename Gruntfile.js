@@ -54,6 +54,7 @@ module.exports = function (grunt) {
           dot: true,
           src: [
             './dist/*',
+            './dist',
             './test/**/*.map',
             './test/**/*.js',
             '!./test/**/*.es6.js',

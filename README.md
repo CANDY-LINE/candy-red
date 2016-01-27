@@ -3,6 +3,7 @@ CANDY RED
 
 **BETA Release**
 
+[![License MIT](https://img.shields.io/npm/l/express.svg)](http://opensource.org/licenses/MIT)
 [![master Build Status](https://travis-ci.org/dbaba/candy-red.svg?branch=master)](https://travis-ci.org/dbaba/candy-red/)
 
 CANDY RED is a gateway service working between local area wiress network devices and internet servers.
@@ -15,6 +16,12 @@ CANDY RED is a gateway service working between local area wiress network devices
 * Flow file syncing (both to be delivered and to upload to the cloud) **1
 
 _**1 CANDY EGG cloud services are required_
+
+
+## OS and Hardwares
+
+* [Intel Edison + Yocto](#intel-edison--yocto)
+* [Raspberry Pi + Raspbian](#raspberry-pi--raspbian)
 
 # Screenshots
 ## CANDY RED flow editor page on browser
@@ -83,7 +90,7 @@ $ rm -f "$(dirname $(dirname $(which systemctl)))/lib/systemd/system/candy-red.s
 
 ### Tested Node.js versions
 
-* 0.12.6
+* v0.12.6
 
 The preinstalled version of Node.js v0.10.29 won't work because of the [header file issue](http://dustinbolton.com/replace_invalid_utf8-is-not-a-member-of-v8string-installing-nodejs-packages-on-raspbian-debian-on-raspberry-pi-2-b/) appearing on installing native addons.
 
@@ -159,7 +166,8 @@ You can ignore `npm WARN`s, `gyp WARN`s, `gyp ERR!`s and `node-pre-gyp ERR!`s un
 Please refer to the following commands to isntall.
 
 ```
-$ sudo npm install -g --unsafe-perm dbaba/candy-red
+$ VERSION=2.0.0
+$ sudo npm install -g --unsafe-perm https://github.com/dbaba/candy-red/archive/${VERSION}.tar.gz
 $ sudo NODE_OPTS=--max-old-space-size=128 $(npm root -g)/candy-red/install.sh
 ```
 
@@ -239,7 +247,6 @@ The processed files are placed under `dist` diretory.
 ## Run on localhost for development use
 
 Try the following commands after `grunt build`:
-### without auth
 (Prepends `sudo` for Raspbian)
 
 ```
