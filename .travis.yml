@@ -5,11 +5,20 @@ matrix:
     - node_js: "0.12"
     - node_js: "4.2"
 
+addons:
+  apt:
+    sources:
+    - ubuntu-toolchain-r-test
+    packages:
+    - g++-4.8
+
 sudo: require
 
 before_install:
   - npm install -g grunt-cli babel mocha jshint
 
 install:
+  - if [[ $TRAVIS_OS_NAME == "linux" ]]; then export CXX=g++-4.8; fi
+  - $CXX --version
   - npm install --unsafe-perm
   - npm install
