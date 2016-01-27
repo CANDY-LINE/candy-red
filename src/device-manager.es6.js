@@ -64,6 +64,7 @@ export class DeviceIdResolver {
         return this._resolveMAC(resolve, reject);
       }
       let reader = readline.createInterface({
+        terminal: false,
         input: fs.createReadStream(PROC_CPUINFO_PATH)
       });
       let id = '';

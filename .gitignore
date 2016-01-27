@@ -36,5 +36,7 @@ services/sysvinit/environment
 services/sysvinit/wrapper.sh
 *.map
 *.js
+!dist/**/*.map
+!dist/**/*.js
 !*.es6.js
 !Gruntfile.js

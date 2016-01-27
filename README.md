@@ -218,6 +218,13 @@ The Node-RED home path, where flow files are placed, is found at `$(npm root -g)
 
 # Development
 
+## Prerequisites
+
+### Supported Node.js versions
+
+* v0.12
+* v4.2
+
 ## Setup for Building
 
 In order to install dependencies for development use.
