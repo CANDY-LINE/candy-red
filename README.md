@@ -166,7 +166,8 @@ You can ignore `npm WARN`s, `gyp WARN`s, `gyp ERR!`s and `node-pre-gyp ERR!`s un
 Please refer to the following commands to isntall.
 
 ```
-$ sudo npm install -g --unsafe-perm dbaba/candy-red
+$ VERSION=2.0.0
+$ sudo npm install -g --unsafe-perm https://github.com/dbaba/candy-red/archive/${VERSION}.tar.gz
 $ sudo NODE_OPTS=--max-old-space-size=128 $(npm root -g)/candy-red/install.sh
 ```
 
