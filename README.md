@@ -201,7 +201,7 @@ $ sudo rm -f "$(dirname $(dirname $(which systemctl)))/lib/systemd/system/candy-
 
 Since your RPi has the default hostname `raspberrypi`, you will get confused when you have 2 or more devices and they're online.
 
-You can change the host name by modifying `/etc/hosts`. Here is a brief instruction.
+You can change the host name by either `sudo raspi-config` or modifying `/etc/hosts`. Regarding the latter method, here is a brief instruction.
 
 ```
 $ export NEW_NAME="my-ltepi" # Modify my-ltepi as you like
