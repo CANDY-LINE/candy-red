@@ -1,12 +1,13 @@
 language: node_js
 
-env:
-  - CC="/usr/bin/gcc-4.8" CXX="/usr/bin/g++-4.8"
-
 matrix:
   include:
     - node_js: "0.12"
     - node_js: "4.2"
+      env:
+        - CC="/usr/bin/gcc-4.8" CXX="/usr/bin/g++-4.8"
+      before_install:
+        - sudo apt-get install -qq g++-4.8
 
 sudo: require
 
