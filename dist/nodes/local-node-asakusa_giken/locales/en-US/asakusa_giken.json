@@ -1,0 +1,26 @@
+{
+  "asakusa_giken" : {
+    "label" : {
+      "blecastBl" : "BLE Illuminance Sensor",
+      "blecastTm" : "BLE Temperature Sensor",
+      "useString" : "Use string payload",
+      "address" : "Address",
+      "uuid" : "UUID"
+    },
+    "placeholder" : {
+      "address" : "e.g. 99:ff:00:99:ff:ff",
+      "uuid" : "(optional)"
+    },
+    "message": {
+      "start-scanning": "[BLE] Start Scanning...",
+      "stop-scanning": "[BLE] Stop Scanning.",
+      "setup-done": "[BLE] Set up done"
+    },
+    "errors" : {
+      "unknown-peripheral": "[BLE] Unknown peripheral: category=[__categoryName__], peripheral.address=[__peripheralAddress__], peripheral.uuid=[__peripheralUuid__]",
+      "unknown-uuid": "[BLE] Unknown node: category=[__categoryName__], peripheral.uuid=[__peripheralUuid__]",
+      "unknown-address": "[BLE] Unknown node: category=[__categoryName__], peripheral.address=[__peripheralAddress__]",
+      "unknown" : "[BLE] Unknown Error (__error__)"
+    }
+  }
+}

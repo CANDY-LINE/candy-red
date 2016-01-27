@@ -1,0 +1,140 @@
+<!-- EnOcean in -->
+<script type='text/x-red' data-template-name='EnOcean in'>
+  <div class='form-row'>
+    <label for='node-input-name'>
+      <i class='fa fa-tag'></i>
+      <span data-i18n='node-red:common.label.name'></span>
+    </label>
+    <input type='text' id='node-input-name' data-i18n='[placeholder]node-red:common.label.name'>
+  </div>
+  <div class='form-row'>
+    <label for='node-input-originatorId'>
+      <i class='fa fa-paw'></i>
+      <span data-i18n='enocean.label.originatorId'></span>
+    </label>
+    <input type='text' id='node-input-originatorId' data-i18n='[placeholder]enocean.placeholder.originatorId'>
+  </div>
+  <div class='form-row'>
+    <label for='node-input-eepType'>
+      <i class='fa fa-simplybuilt'></i>
+      <span data-i18n='enocean.label.eepType'></span></label>
+    </label>
+    <select type='text' id='node-input-eepType' style='width: 72%;'>
+    </select>
+  </div>
+  <div class='form-row' id='node-addEepType'>
+    <label>&nbsp;</label>
+    <input type='checkbox' id='node-input-addEepType' style='display: inline-block; width: auto; vertical-align: top;'>
+    <label for='node-input-addEepType' style='width: 70%;' data-i18n='enocean.label.addEepType'></label>
+  </div>
+  <div class='form-row node-input-enoceanPort'>
+    <label for='node-input-enoceanPort'>
+      <i class='fa fa-random'></i>
+      <span data-i18n='enocean.label.enoceanPort'></span></label>
+    <input type='text' id='node-input-enoceanPort'>
+  </div>
+  <div class='form-row' id='node-useString'>
+    <label>&nbsp;</label>
+    <input type='checkbox' id='node-input-useString' style='display: inline-block; width: auto; vertical-align: top;'>
+    <label for='node-input-useString' style='width: 70%;' data-i18n='enocean.label.useString'></label>
+  </div>
+</script>
+
+<script type='text/javascript'>
+  RED.nodes.registerType('EnOcean in', {
+    category: 'input',
+    defaults: {
+      name: { name: '' },
+      originatorId: { value: '', required: true },
+      eepType: { value: '', requried: true },
+      addEepType: { value: false, required: false },
+      enoceanPort: { type: 'EnOcean Port', required: true },
+      useString: { value: false, required: false }
+    },
+    color: 'PaleGreen',
+    inputs: 0,
+    outputs: 1,
+    icon: 'enocean.png',
+    label: function() {
+      return this.name || this._('enocean.label.category');
+    },
+    labelStyle: function() {
+      return this.name ? 'node_label_italic' : '';
+    },
+    oneditprepare: function() {
+      $('#node-input-originatorId').blur(function() {
+        var text = $(this).val();
+        if (text && typeof(text) === 'string') {
+          $(this).val(text.toLowerCase().trim().substring(0, 8));
+        } else {
+          $(this).val('');
+        }
+      });
+
+      var that = this;
+      $.getJSON('eeps',function(profiles) {
+        $.each(profiles, function(i, v) {
+          var option = $('<option></option>').attr('value', v).text(that._('enocean.eepType.' + v));
+          $('#node-input-eepType').append(option);
+        });
+        
+        $('#node-input-eepType').val(profiles[0]); // default
+        if (profiles.length === 1) {
+          $('#node-input-eepType').prop('disabled', true);
+        }
+      });
+    }
+  });
+</script>
+
+<!-- EnOcean Port -->
+<script type='text/x-red' data-template-name='EnOcean Port'>
+  <div class='form-row'>
+    <label for='node-config-input-serialPort'>
+      <i class='fa fa-random'></i>
+      <span data-i18n='enocean.label.serialPort'></span>
+    </label>
+    <input type='text' id='node-config-input-serialPort' data-i18n='[placeholder]enocean.placeholder.serialPort' style='width:60%;'>
+    <a id='node-config-lookup-serial' class='btn'>
+      <i id='node-config-lookup-serial-icon' class='fa fa-search'></i>
+    </a>
+  </div>
+</script>
+
+<script type='text/javascript'>
+  RED.nodes.registerType('EnOcean Port', {
+    category: 'config',
+    defaults: {
+      serialPort: { value: '', required: true }
+    },
+    label: function() {
+      return this.serialPort;
+    },
+    oneditprepare: function() {
+      $('#node-config-input-serialPort').blur(function() {
+        var text = $(this).val();
+        if (text && typeof(text) === 'string') {
+          $(this).val(text.trim());
+        }
+      });
+
+      $('#node-config-lookup-serial').click(function() {
+        $('#node-config-lookup-serial').addClass('disabled');
+        $.getJSON('serialports',function(data) {
+          $('#node-config-lookup-serial').removeClass('disabled');
+          var ports = [];
+          $.each(data, function(i, port){
+            ports.push(port.comName);
+          });
+          $('#node-config-input-serialPort').autocomplete({
+            source: ports,
+            minLength: 0,
+            close: function( event, ui ) {
+              $('#node-config-input-serialPort').autocomplete('destroy');
+            }
+          }).autocomplete('search', '');
+        });
+      });
+    }
+  });
+</script>
