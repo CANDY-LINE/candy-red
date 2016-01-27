@@ -209,8 +209,13 @@ $ sudo sed -i -e "s/raspberrypi/${NEW_NAME//\//\\/}/g" /etc/hosts
 $ sudo sed -i -e "s/raspberrypi/${NEW_NAME//\//\\/}/g" /etc/hostname
 $ sudo /etc/init.d/hostname.sh && sudo reboot
 ```
-
 You can ignore `sudo: unable to resolve host raspberrypi` error message.
+
+### BLE USB adaptor/dongle
+
+CANDY RED service tries to activate the `hci0` device if it exists on boot so that you can use BLE devices on the flow editor. This is performed silently at backgound and you usually don't have to care of it.
+
+However, you need to tell the system to restart the CANDY RED service by performing `sudo systemctl restart candy-red` when you insert the dongle after boot. Or BLE is not available.
 
 ### Node-RED home
 
