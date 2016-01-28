@@ -108,9 +108,17 @@ export class DeviceManager {
     this.accountConfig = accountConfig;
     this.deviceState = deviceState;
     this.prefix = '[CANDY RED] {DeviceManager}:[' + accountConfig.accountFqn + '] ';
+    this.cmdQueue = [];
     this.events = new EventEmitter();
     this.events.on('opened', () => {
       this._warn('connected');
+      this._resume().then(empty => {
+        if (!empty) {
+          this._warn('flushed queued commands');
+        }
+      }).catch(err => {
+        this._error(err.stack);
+      });
     });
     this.events.on('closed', () => {
       this._warn('disconnected');
@@ -196,6 +204,24 @@ export class DeviceManager {
     RED.log.error(this.prefix  + msg);
   }
 
+  _resume() {
+    let current = this.cmdQueue;
+    if (current.length === 0) {
+      return new Promise(resolve => resolve(true));
+    }
+    this.cmdQueue = [];
+    current = current.map(c => {
+      return this.publish(c);
+    });
+    return Promise.all(current);
+  }
+
+  _enqueue(commands) {
+    if (commands) {
+      this.cmdQueue.push(commands);
+    }
+  }
+
   _reset() {
     this.cmdIdx = 0;
     this.commands = {};
@@ -218,7 +244,7 @@ export class DeviceManager {
   }
 
   _sendToServer(result) {
-    return new Promise((resolve, reject) => {
+    return new Promise(resolve => {
       if (!result || Array.isArray(result) && result.length === 0 || Object.keys(result) === 0) {
         // do nothing
         this._info('No commands to respond to');
@@ -230,7 +256,9 @@ export class DeviceManager {
         this._info('Sent!:' + JSON.stringify(result));
       }
       if (!sent) {
-        return reject(new Error('Failed to send' + JSON.stringify(result)));
+        this._info('Enqueue the commands in order to be sent later on');
+        this._enqueue(result);
+        return resolve();
       }
       if (!Array.isArray(result)) {
         result = [result];
@@ -528,7 +556,7 @@ export class DeviceManager {
         }
         this.deviceState.setFlowSignature(content);
         return resolve({data:content, done: () => {
-          this._warn('FLOW IS UPDATED! RELOAD THE PAGE NOW!!');
+          this._warn('FLOW IS UPDATED! RELOAD THE PAGE AFTER RECONNECTING SERVER!!');
           DeviceManager.restart();
         }});
       });

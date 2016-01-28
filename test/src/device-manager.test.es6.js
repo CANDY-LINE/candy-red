@@ -168,6 +168,60 @@ describe('DeviceState', () => {
   });
 });
 
+describe('DeviceManager', () => {
+  let sandbox, manager;
+  beforeEach(() => {
+    sandbox = sinon.sandbox.create();
+    let listenerConfig = sandbox.stub({
+      registerInputNode: () => {}
+    });
+    let accountConfig = {
+      accountFqn: 'TEST@localhost'
+    };
+    manager = new DeviceManager(false, listenerConfig, accountConfig, new DeviceState());
+  });
+  afterEach(() => {
+    sandbox.restore();
+  });
+
+  describe('#_enqueue()', () => {
+    it('should enqueue a command if valid', () => {
+      sandbox.stub(manager, 'publish').returns(new Promise(resolve => resolve()));
+      manager._enqueue({});
+      manager._enqueue(null);
+      manager._enqueue(undefined);
+      assert.equal(1, manager.cmdQueue.length);
+    });
+  });
+
+  describe('#_resume()', () => {
+    it('should resume queued commands', done => {
+      sandbox.stub(manager, 'publish').returns(new Promise(resolve => resolve()));
+      manager._enqueue({});
+      manager._enqueue(null);
+      manager._enqueue(undefined);
+      manager._resume().then(empty => {
+        assert.isNotTrue(empty);
+        done();
+      }).catch(err => {
+        done(err);
+      });
+    });
+
+    it('should terminate silently when there are not queued commands', done => {
+      sandbox.stub(manager, 'publish').returns(new Promise(resolve => resolve()));
+      manager._enqueue(null);
+      manager._enqueue(undefined);
+      manager._resume().then(empty => {
+        assert.isTrue(empty);
+        done();
+      }).catch(err => {
+        done(err);
+      });
+    });
+  });
+});
+
 describe('DeviceManagerStore', () => {
   let sandbox, store;
   beforeEach(() => {
