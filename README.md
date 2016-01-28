@@ -1,10 +1,9 @@
 CANDY RED
 ===
 
-**BETA Release**
-
-[![License MIT](https://img.shields.io/npm/l/express.svg)](http://opensource.org/licenses/MIT)
+[![GitHub release](https://img.shields.io/github/release/dbaba/candy-red.svg)](https://github.com/dbaba/candy-red/releases/latest)
 [![master Build Status](https://travis-ci.org/dbaba/candy-red.svg?branch=master)](https://travis-ci.org/dbaba/candy-red/)
+[![License MIT](https://img.shields.io/github/license/dbaba/candy-red.svg)](http://opensource.org/licenses/MIT)
 
 CANDY RED is a gateway service working between local area wiress network devices and internet servers.
 
@@ -12,16 +11,16 @@ CANDY RED is a gateway service working between local area wiress network devices
 
 * Include Node-RED flow editor/flow execution runtime
 * BLE and EnOcean nodes (which will be published to npm in the future release)
-* Dedicated nodeds for CANDY EGG cloud services offering you to connect your server side flows with ease **1
-* Flow file syncing (both to be delivered and to upload to the cloud) **1
+* Dedicated nodes for CANDY EGG cloud services offering you to connect your server side flows with ease\*
+* Flow file syncing (both to be delivered and to upload to the cloud)\*
 
-_**1 CANDY EGG cloud services are required_
-
+_\* CANDY EGG cloud services are required_
 
 ## OS and Hardwares
 
 * [Intel Edison + Yocto](#intel-edison--yocto)
 * [Raspberry Pi + Raspbian](#raspberry-pi--raspbian)
+* [OSX/Linux for Development](#development)
 
 # Screenshots
 ## CANDY RED flow editor page on browser
@@ -201,7 +200,7 @@ $ sudo rm -f "$(dirname $(dirname $(which systemctl)))/lib/systemd/system/candy-
 
 Since your RPi has the default hostname `raspberrypi`, you will get confused when you have 2 or more devices and they're online.
 
-You can change the host name by modifying `/etc/hosts`. Here is a brief instruction.
+You can change the host name by either `sudo raspi-config` or modifying `/etc/hosts`. Regarding the latter method, here is a brief instruction.
 
 ```
 $ export NEW_NAME="my-ltepi" # Modify my-ltepi as you like
@@ -209,12 +208,21 @@ $ sudo sed -i -e "s/raspberrypi/${NEW_NAME//\//\\/}/g" /etc/hosts
 $ sudo sed -i -e "s/raspberrypi/${NEW_NAME//\//\\/}/g" /etc/hostname
 $ sudo /etc/init.d/hostname.sh && sudo reboot
 ```
-
 You can ignore `sudo: unable to resolve host raspberrypi` error message.
+
+### BLE USB adaptor/dongle
+
+CANDY RED service tries to activate the `hci0` device if it exists on boot so that you can use BLE devices on the flow editor. This is performed silently at backgound and you usually don't have to care of it.
+
+However, you need to tell the system to restart the CANDY RED service by performing `sudo systemctl restart candy-red` when you insert the dongle after boot. Or BLE is not available.
 
 ### Node-RED home
 
 The Node-RED home path, where flow files are placed, is found at `$(npm root -g)/candy-red/.node-red/`.
+
+### Slow boot time
+
+It takes up to around a minute to boot up the service. Please be patient and wait until the service is online.
 
 # Development
 
@@ -263,11 +271,11 @@ $ node ./dist/index.js
 And you'll see the sensor info like this:
 
 		24 Jan 08:53:12 - [info] [CANDY RED] Deploying Flow Editor UI...
-		
-		
+
+
 		Welcome to Node-RED
 		===================
-		
+
 		24 Jan 08:53:15 - [info] Node-RED version: v0.13.1 [candy-red v2.0.0]
 		24 Jan 08:53:15 - [info] Node.js  version: v0.12.6
 		24 Jan 08:53:15 - [info] Loading palette nodes
@@ -293,7 +301,7 @@ $ npm pack
 
 ## Coding Styles
 
-1. Use ES6 (except Gruntfile.js and *.html)
+1. Use ES6 (except Gruntfile.js and \*.html)
 1. 2-space soft tabs
 1. Append .es6.js suffix to ES6 JS files
 1. See .jshintrc for detail
@@ -319,7 +327,7 @@ $ npm pack
   - Add EnOcean node
   - Add device management features provided with CANDY EGG cloud
      - This feature includes process restart which should work with system services like systemd/sysvinit
-  - Bump up Node.js version and Bluez version for RPi devices
+  - Bump up Node.js version and BlueZ version for RPi devices
 
 * 1.3.0
   - Add an option to enable to generate a list of copied files

@@ -79,7 +79,7 @@ class Utils {
 
 // EnOcean Radio Protocol 2 SPECIFICATION V1.0 September 26, 2013
 export class ERP2Parser {
-  
+
   parse(payload) {
     let len, dataPl, p, c;
     if (typeof(payload) === 'object' && payload.payload && ERP2Parser.isArray(payload.payload)) {
@@ -95,7 +95,7 @@ export class ERP2Parser {
       throw new Error('Unsupported ERP2 payload data type!');
     }
     len = dataPl.length;
-    
+
     if (len <= 6) {
       p = this._doParseShort(len, dataPl, c);
     } else {
@@ -103,11 +103,11 @@ export class ERP2Parser {
     }
     return p;
   }
-  
+
   static isArray(val) {
     return (val instanceof Array) || (val instanceof Uint8Array);
   }
-  
+
   _doParseShort(len, dataPl, c) {
     return new Promise((resolve, reject) => {
       try {
@@ -134,7 +134,7 @@ export class ERP2Parser {
       }
     });
   }
-  
+
   _doParseLong(len, dataPl, c) {
     return new Promise((resolve, reject) => {
       try {
@@ -168,7 +168,7 @@ export class ERP2Parser {
         ctx.telegramType = TELEGRAM_TYPES[telegramType][0];
         ctx.rorg = TELEGRAM_TYPES[telegramType][1];
         ctx.dataDl = dataPl.slice(idLen + destLen + 1, dataPl.length - 1);
-        
+
         // Compute CRC8 with DATA_PL except CRC
         let crc8 = 0;
         for (i = 0; i < dataPl.length - 1; i++) {
@@ -222,13 +222,13 @@ export class ESP3RadioERP2Parser {
         if (crc8 !== esp3[5]) {
           throw new Error('CRC8 for header value checksum failure');
         }
-    
+
         let ctx = { len: len };
         let dataLen = esp3[1] * 256 + esp3[2];
         ctx.payload = esp3.slice(6, 6 + dataLen);
         ctx.subTelNum = esp3[6 + dataLen];
         ctx.dBm = esp3[7 + dataLen];
-    
+
         crc8 = 0;
         for (i = 0; i < (dataLen + 2); i++) {
           crc8 = Utils.crc8(crc8, esp3[i + 6]);

@@ -7,5 +7,5 @@ export function parse(manufacturerData) {
     type: 'lx',
     unit: 'lx',
     val: lx
-  };  
+  };
 }

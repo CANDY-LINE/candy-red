@@ -23,7 +23,7 @@ class ESP3Parser {
   constructor(RED) {
     this.RED = RED;
   }
-  
+
   parse(data) {
     return new Promise((resolve, reject) => {
       let esp3PacketParser = ESP3_PACKET_PARSERS[data.packetType];
@@ -102,7 +102,7 @@ export class SerialPool {
     };
     that.RED.log.info(that.RED._('enocean.info.serialPortAdded',{ portName: portName }));
   }
-  
+
   get(portName) {
     let that = this;
     let enocean = that.pool[portName];
@@ -111,7 +111,7 @@ export class SerialPool {
     }
     return enocean;
   }
-  
+
   close(portName) {
     let that = this;
     let enocean = that.pool[portName];

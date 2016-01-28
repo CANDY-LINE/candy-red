@@ -31,7 +31,7 @@ function cpf {
 
 function assert_root {
   if [[ $EUID -ne 0 ]]; then
-     echo "This script must be run as root" 
+     echo "This script must be run as root"
      exit 1
   fi
 }
@@ -48,7 +48,7 @@ function test_system_service_arg {
     logger -s "Please provide the type of working system service. Either systemd or sysvinit is available"
     exit 1
   fi
-  
+
   _test_system_service_type
 }
 
@@ -139,7 +139,7 @@ function system_service_install {
   cp -f ${SERVICES}/base_environment.txt ${SERVICES}/environment
   sed -i -e "s/%HCIDEVICE%/${HCIDEVICE//\//\\/}/g" ${SERVICES}/environment
   sed -i -e "s/%NODE_OPTS%/${NODE_OPTS//\//\\/}/g" ${SERVICES}/environment
-  
+
   _install_${SYSTEM_SERVICE_TYPE}
 }
 

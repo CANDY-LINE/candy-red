@@ -77,7 +77,7 @@
           var option = $('<option></option>').attr('value', v).text(that._('enocean.eepType.' + v));
           $('#node-input-eepType').append(option);
         });
-        
+
         $('#node-input-eepType').val(profiles[0]); // default
         if (profiles.length === 1) {
           $('#node-input-eepType').prop('disabled', true);

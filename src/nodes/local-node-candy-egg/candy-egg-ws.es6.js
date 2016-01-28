@@ -21,7 +21,7 @@ import urllib from 'url';
 const TEST_SERVER_PING_TIMEOUT = false;
 
 export default function(RED) {
-  
+
   class WebSocketListener {
     constructor(accountConfig, account, path, webSocketListeners, options) {
       this.accountConfig = accountConfig;
@@ -57,7 +57,7 @@ export default function(RED) {
       } else {
         prefix += '/' + accountId[0] + '/api';
       }
-      
+
       if (path && path.length > 0 && path.charAt(0) !== '/') {
         prefix += '/';
       }
@@ -154,7 +154,7 @@ export default function(RED) {
         this.close();
       }
     }
-    
+
     registerInputNode(/*Node*/handler) {
       this._inputNodes.push(handler);
     }
@@ -247,7 +247,7 @@ export default function(RED) {
       let key = listener.account + ':' + listener.path;
       delete this.store[key];
     }
-    
+
     reset(nodeId) {
       let prefix = nodeId + ':';
       let keys = [];

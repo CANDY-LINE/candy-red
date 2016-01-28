@@ -24,10 +24,10 @@ exports['default'] = function (e) {
   var t = function r(t) {
     _classCallCheck(this, r), e.nodes.createNode(this, t), this.path = t.path;
     var n = -1 !== (this.path || '').indexOf('{{'),
-        i = t.method || 'GET';
+        s = t.method || 'GET';
     this.ret = t.ret || 'obj';
-    var s = this;
-    s.account = t.account, s.accountConfig = e.nodes.getNode(s.account);
+    var i = this;
+    i.account = t.account, i.accountConfig = e.nodes.getNode(i.account);
     var a = undefined,
         o = undefined;
     ['http_proxy', 'HTTP_PROXY'].forEach(function (e) {
@@ -36,19 +36,19 @@ exports['default'] = function (e) {
       process.env[e] && (o = process.env[e].split(','));
     }), this.on('input', function (r) {
       var u = process.hrtime();
-      s.status({
+      i.status({
         fill: 'blue',
         shape: 'dot',
         text: 'candy-box-httpreq.status.requesting'
       });
-      var c = s.accountConfig,
+      var c = i.accountConfig,
           d = (c.secure ? 'https' : 'http') + '://',
           l = c.accountFqn.split('@');
       d += l[1] + '/' + l[0] + '/api';
-      var f = r.path || s.path;
-      r.path && s.path && r.path !== s.path && s.warn(e._('common.errors.nooverride')), f && f.length > 0 && '/' !== f.charAt(0) && (d += '/'), f && (n && (f = _mustache2['default'].render(f, r)), d += f);
-      var h = i.toUpperCase() || 'GET';
-      r.method && t.method && 'use' !== t.method && (s.warn(e._('common.errors.nooverride')), h = r.method.toUpperCase());
+      var f = r.path || i.path;
+      r.path && i.path && r.path !== i.path && i.warn(e._('common.errors.nooverride')), f && f.length > 0 && '/' !== f.charAt(0) && (d += '/'), f && (n && (f = _mustache2['default'].render(f, r)), d += f);
+      var h = s.toUpperCase() || 'GET';
+      r.method && t.method && 'use' !== t.method && (i.warn(e._('common.errors.nooverride')), h = r.method.toUpperCase());
 
       var _ = _url2['default'].parse(d);
 
@@ -71,30 +71,30 @@ exports['default'] = function (e) {
           var C = _.headers,
               S = _.pathname = _.href;
           _ = _url2['default'].parse(a), _.path = _.pathname = S, _.headers = C, _.method = h, g = R[0];
-        } else s.warn('Bad proxy url: ' + a);
+        } else i.warn('Bad proxy url: ' + a);
       }
 
       var b = (/undefined/.test(g) ? _followRedirects.https : _followRedirects.http).request(_, function (t) {
-        'bin' === s.ret ? t.setEncoding('binary') : t.setEncoding('utf8'), r.statusCode = t.statusCode, r.headers = t.headers, r.payload = '', t.on('data', function (e) {
+        'bin' === i.ret ? t.setEncoding('binary') : t.setEncoding('utf8'), r.statusCode = t.statusCode, r.headers = t.headers, r.payload = '', t.on('data', function (e) {
           r.payload += e;
         }), t.on('end', function () {
-          if (s.metric()) {
+          if (i.metric()) {
             var n = process.hrtime(u),
-                i = 1000 * n[0] + 0.000001 * n[1],
-                a = i.toFixed(3);
-            s.metric('duration.millis', r, a), t.client && t.client.bytesRead && s.metric('size.bytes', r, t.client.bytesRead);
+                s = 1000 * n[0] + 0.000001 * n[1],
+                a = s.toFixed(3);
+            i.metric('duration.millis', r, a), t.client && t.client.bytesRead && i.metric('size.bytes', r, t.client.bytesRead);
           }
 
-          if ('bin' === s.ret) r.payload = new Buffer(r.payload, 'binary');else if ('obj' === s.ret) try {
+          if ('bin' === i.ret) r.payload = new Buffer(r.payload, 'binary');else if ('obj' === i.ret) try {
             r.payload = JSON.parse(r.payload);
           } catch (o) {
-            s.warn(e._('candy-box-httpreq.errors.json-error'));
+            i.warn(e._('candy-box-httpreq.errors.json-error'));
           }
-          s.send(r), s.status({});
+          i.send(r), i.status({});
         });
       });
       b.on('error', function (e) {
-        r.payload = e.toString() + ' : ' + d, r.statusCode = e.code, s.send(r), s.status({
+        r.payload = e.toString() + ' : ' + d, r.statusCode = e.code, i.send(r), i.status({
           fill: 'red',
           shape: 'ring',
           text: e.code

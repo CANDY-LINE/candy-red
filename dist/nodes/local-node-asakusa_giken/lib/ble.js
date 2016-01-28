@@ -4,19 +4,19 @@ function _interopRequireDefault(e) {
   };
 }
 
-function registerIn(e, t, r, n, i, s, a) {
-  if (!(e && t && r && i)) throw new Error('Invalid node!');
+function registerIn(e, t, n, r, i, s, a) {
+  if (!(e && t && n && i)) throw new Error('Invalid node!');
   if (!a) throw new Error('RED is required!!');
   var o = peripheralsIn[t];
   o || (o = {}, peripheralsIn[t] = o);
   var u = [];
-  r in o && (u = o[r], u = u.filter(function (t) {
+  n in o && (u = o[n], u = u.filter(function (t) {
     return a.nodes.getNode(t.id) ? t.id !== e.id : !1;
   })), u.push({
     id: e.id,
     parse: i,
     useString: s
-  }), o[r] = u, n ? (o[n] = o[r], a.log.info('[BLE] category=[' + t + '], address=[' + r + '], uuid=[' + n + '], node ID=[' + e.id + '] has been registered.')) : a.log.info('[BLE] category=[' + t + '], address=[' + r + '], node ID=[' + e.id + '] has been registered.');
+  }), o[n] = u, r ? (o[r] = o[n], a.log.info('[BLE] category=[' + t + '], address=[' + n + '], uuid=[' + r + '], node ID=[' + e.id + '] has been registered.')) : a.log.info('[BLE] category=[' + t + '], address=[' + n + '], node ID=[' + e.id + '] has been registered.');
 }
 
 function stop(e) {
@@ -33,16 +33,16 @@ function start(e) {
   }).then(function () {
     return new _es6Promises2['default'](function (t) {
       return isMonitoring ? t() : (isMonitoring = !0, _noble2['default'].on('discover', function (t) {
-        var r = t.advertisement;
+        var n = t.advertisement;
 
-        if (r.localName) {
-          var n = r.localName.replace(new RegExp('\u0000', 'g'), ''),
-              i = peripheralsIn[n];
+        if (n.localName) {
+          var r = n.localName.replace(new RegExp('\u0000', 'g'), ''),
+              i = peripheralsIn[r];
 
           if (!i) {
-            var s = n + ':' + t.address + ':' + t.uuid;
+            var s = r + ':' + t.address + ':' + t.uuid;
             return void (unknown.get(s) || (unknown.set(s, 1), e.log.warn(e._('asakusa_giken.errors.unknown-peripheral', {
-              categoryName: n,
+              categoryName: r,
               peripheralAddress: t.address,
               peripheralUuid: t.uuid
             }))));
@@ -53,27 +53,27 @@ function start(e) {
               u = null;
 
           if ('unknown' === a && (o = t.uuid, u = i[o], !u || 0 === u.length)) {
-            var s = n + ':' + o;
+            var s = r + ':' + o;
             return void (unknown.get(s) || (unknown.set(s, 1), e.log.warn(e._('asakusa_giken.errors.unknown-uuid', {
-              categoryName: n,
+              categoryName: r,
               peripheralUuid: o
             }))));
           }
 
           if (!o && (a.indexOf('-') >= 0 && (a = a.replace(new RegExp('-', 'g'), ':')), u = i[a], !u || 0 === u.length)) {
-            var s = n + ':' + a;
+            var s = r + ':' + a;
             return void (unknown.get(s) || (unknown.set(s, 1), e.log.warn(e._('asakusa_giken.errors.unknown-address', {
-              categoryName: n,
+              categoryName: r,
               peripheralAddress: a
             }))));
           }
 
           var c = !1;
-          u = u.filter(function (n) {
-            var i = e.nodes.getNode(n.id);
+          u = u.filter(function (r) {
+            var i = e.nodes.getNode(r.id);
             if (!i) return c = !0, !1;
-            var s = n.parse(r.manufacturerData);
-            return s.tstamp = Date.now(), s.rssi = t.rssi, s.address = a, o && (s.uuid = o), n.useString && (s = JSON.stringify(s)), i.send({
+            var s = r.parse(n.manufacturerData);
+            return s.tstamp = Date.now(), s.rssi = t.rssi, s.address = a, o && (s.uuid = o), r.useString && (s = JSON.stringify(s)), i.send({
               payload: s
             }), !0;
           }), c && (i[o] = u, 'unknown' !== a && (i[a] = u));

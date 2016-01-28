@@ -135,8 +135,12 @@ var DeviceManager = (function () {
   function e(t, r, n, i) {
     var s = this;
     if ((_classCallCheck(this, e), !n)) throw new Error('accountConfig is required');
-    this.primary = t, this.listenerConfig = r, this.accountConfig = n, this.deviceState = i, this.prefix = '[CANDY RED] {DeviceManager}:[' + n.accountFqn + '] ', this.events = new _events.EventEmitter(), this.events.on('opened', function () {
-      s._warn('connected');
+    this.primary = t, this.listenerConfig = r, this.accountConfig = n, this.deviceState = i, this.prefix = '[CANDY RED] {DeviceManager}:[' + n.accountFqn + '] ', this.cmdQueue = [], this.events = new _events.EventEmitter(), this.events.on('opened', function () {
+      s._warn('connected'), s._resume().then(function (e) {
+        e || s._warn('flushed queued commands');
+      })['catch'](function (e) {
+        s._error(e.stack);
+      });
     }), this.events.on('closed', function () {
       s._warn('disconnected'), s._reset();
     }), this.events.on('erro', function (e, t) {
@@ -189,6 +193,22 @@ var DeviceManager = (function () {
       _nodeRed2['default'].log.error(this.prefix + e);
     }
   }, {
+    key: '_resume',
+    value: function () {
+      var e = this,
+          t = this.cmdQueue;
+      return 0 === t.length ? new _es6Promises2['default'](function (e) {
+        return e(!0);
+      }) : (this.cmdQueue = [], t = t.map(function (t) {
+        return e.publish(t);
+      }), _es6Promises2['default'].all(t));
+    }
+  }, {
+    key: '_enqueue',
+    value: function (e) {
+      e && this.cmdQueue.push(e);
+    }
+  }, {
     key: '_reset',
     value: function () {
       this.cmdIdx = 0, this.commands = {}, this.enrolled = !1, this.pingTimeoutTimer && (clearTimeout(this.pingTimeoutTimer), delete this.pingTimeoutTimer);
@@ -202,13 +222,13 @@ var DeviceManager = (function () {
     key: '_sendToServer',
     value: function (t) {
       var r = this;
-      return new _es6Promises2['default'](function (n, i) {
+      return new _es6Promises2['default'](function (n) {
         if (!t || Array.isArray(t) && 0 === t.length || 0 === Object.keys(t)) return r._info('No commands to respond to'), n();
         t = r._numberResponseCommands(t);
-        var s = r.listenerConfig.send(t);
-        return TRACE && s && r._info('Sent!:' + JSON.stringify(t)), s ? (Array.isArray(t) || (t = [t]), t.reduce(function (e, t) {
+        var i = r.listenerConfig.send(t);
+        return TRACE && i && r._info('Sent!:' + JSON.stringify(t)), i ? (Array.isArray(t) || (t = [t]), t.reduce(function (e, t) {
           return e || t && t.restart;
-        }, !1) && (r._warn('Restarting this process!!'), e.restart()), void n()) : i(new Error('Failed to send' + JSON.stringify(t)));
+        }, !1) && (r._warn('Restarting this process!!'), e.restart()), void n()) : (r._info('Enqueue the commands in order to be sent later on'), r._enqueue(t), n());
       });
     }
   }, {
@@ -455,7 +475,7 @@ var DeviceManager = (function () {
           return t ? i(t) : (r.deviceState.setFlowSignature(o), n({
             data: o,
             done: function () {
-              r._warn('FLOW IS UPDATED! RELOAD THE PAGE NOW!!'), e.restart();
+              r._warn('FLOW IS UPDATED! RELOAD THE PAGE AFTER RECONNECTING SERVER!!'), e.restart();
             }
           }));
         });
