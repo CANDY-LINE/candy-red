@@ -105,7 +105,7 @@ function cd_module_root {
 
 function resolve_version {
   # https://gist.github.com/DarrenN/8c6a5b969481725a4413
-  PACKAGE_VERSION=$(cat ${ROOT}/package.json \
+  VERSION=$(cat ${ROOT}/package.json \
     | grep version \
     | head -1 \
     | awk -F: '{ print $2 }' \
