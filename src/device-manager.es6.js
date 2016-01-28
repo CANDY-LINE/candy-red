@@ -27,9 +27,9 @@ export class DeviceIdResolver {
   resolve() {
     return new Promise((resolve, reject) => {
       return this._resolveCANDYIoT(resolve, reject);
-    });    
+    });
   }
-  
+
   _resolveCANDYIoT(resolve, reject) {
     // CANDY IoT
     // TODO
@@ -50,13 +50,13 @@ export class DeviceIdResolver {
       });
     });
   }
-  
+
   _resolveLTEPi(resolve, reject) {
     // LTE Pi
     // TODO
     return this._resolveRPi(resolve, reject);
   }
-  
+
   _resolveRPi(resolve, reject) {
     // RPi
     fs.stat(PROC_CPUINFO_PATH, err => {
@@ -185,7 +185,7 @@ export class DeviceManager {
     };
     this._reset();
   }
-  
+
   _info(msg) {
     RED.log.info(this.prefix  + msg);
   }
@@ -205,18 +205,18 @@ export class DeviceManager {
       delete this.pingTimeoutTimer;
     }
   }
-  
+
   publish(commands) {
     return this._sendToServer(commands);
   }
-  
+
   static restart() {
     // systemctl shuould restart the service
     setTimeout(() => {
       process.exit(219);
     }, REBOOT_DELAY_MS);
   }
-  
+
   _sendToServer(result) {
     return new Promise((resolve, reject) => {
       if (!result || Array.isArray(result) && result.length === 0 || Object.keys(result) === 0) {
@@ -244,7 +244,7 @@ export class DeviceManager {
       resolve();
     });
   }
-  
+
   _nextCmdIdx() {
     this.cmdIdx = (this.cmdIdx + 1) % 65536;
     return this.cmdIdx;
@@ -264,7 +264,7 @@ export class DeviceManager {
     });
     return result;
   }
-  
+
   _numberRequestCommands(commands) {
     let processed = commands;
     if (!Array.isArray(commands)) {
@@ -401,7 +401,7 @@ export class DeviceManager {
             resolve(result);
           });
         });
-        
+
       default:
         throw new Error('unknown action:' + commands.act);
       }
@@ -410,7 +410,7 @@ export class DeviceManager {
     }
     return this._performCommand(commands);
   }
-  
+
   _buildErrResult(err, c) {
     if (err instanceof Error) {
       return { status: 500, message: err.toString(), stack: err.stack, id: c.id };
@@ -419,7 +419,7 @@ export class DeviceManager {
       return err;
     }
   }
-  
+
   _performCommand(c, result) {
     return new Promise((resolve, reject) => {
       try {
@@ -467,9 +467,9 @@ export class DeviceManager {
       return this._performRestart(c);
     default:
       throw new Error('Unsupported action:' + c.act);
-    }    
+    }
   }
-  
+
   _performInspect(c) {
     return new Promise((resolve, reject) => {
       if (!this.ciotSupported) {
@@ -481,7 +481,7 @@ export class DeviceManager {
       return reject({ status: 501, message: 'TODO!!' });
     });
   }
-  
+
   _performProvision(c) {
     this.hearbeatIntervalMs = c.args.hearbeatIntervalMs;
     return new Promise(resolve => {
@@ -489,7 +489,7 @@ export class DeviceManager {
       return resolve();
     });
   }
-  
+
   _updateLocalFlows(flows) {
     return new Promise((resolve, reject) => {
       if (!Array.isArray(flows)) {
@@ -534,7 +534,7 @@ export class DeviceManager {
       });
     });
   }
-  
+
   _performSyncFlows(c) {
     return new Promise((resolve, reject) => {
       try {
@@ -598,7 +598,7 @@ export class DeviceManager {
       });
     });
   }
-  
+
   _performUpdateFlows(c) {
     // non-primary accounts are allowed to upload flow files
     return new Promise((resolve, reject) => {
@@ -640,7 +640,7 @@ export class DeviceState {
     this.onFlowFileChanged = onFlowFileChanged;
     this.onFlowFileRemoved = onFlowFileRemoved;
   }
-  
+
   init() {
     return new Promise(resolve => {
       if (this.deviceId) {
@@ -691,7 +691,7 @@ export class DeviceState {
       });
     });
   }
-  
+
   loadAndSetFlowSignature() {
     return new Promise((resolve, reject) => {
       fs.readFile(this.flowFilePath, (err, data) => {
@@ -702,7 +702,7 @@ export class DeviceState {
       });
     });
   }
-  
+
   setFlowSignature(data) {
     let current = this.flowFileSignature;
     let sha1 = crypto.createHash('sha1');
@@ -711,7 +711,7 @@ export class DeviceState {
     // true for modified
     return (current !== this.flowFileSignature);
   }
-  
+
   testIfUIisEnabled(flowFilePath) {
     return this.init().then(() => {
       if (flowFilePath && this.flowFilePath !== flowFilePath) {
@@ -802,7 +802,7 @@ export class DeviceManagerStore {
       };
     }());
   }
-  
+
   _onFlowFileRemovedFunc() {
     return (() => {
       return () => {
@@ -833,15 +833,15 @@ export class DeviceManagerStore {
       };
     }());
   }
-    
+
   _get(accountFqn) {
     return this.store[accountFqn];
   }
-  
+
   _remove(accountFqn) {
     delete this.store[accountFqn];
   }
-  
+
   isWsClientInitialized(accountFqn) {
     return !!this._get(accountFqn);
   }
@@ -852,7 +852,7 @@ export class DeviceManagerStore {
     if (primary) {
       RED.log.error(`[CANDY RED] This account is PRIMARY: ${accountFqn}`);
     }
-    
+
     let listenerConfig = webSocketListeners.get({
       accountConfig: accountConfig,
       account: account,

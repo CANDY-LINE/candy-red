@@ -25,11 +25,11 @@ export class CandyRed {
     // Default Theme
     this.flowFile = this._createCandyRedFlowFile();
     this.editorTheme = this._createCandyRedEditorTheme();
-    
+
     // path to package.json
     this.packageJsonPath = packageJsonPath;
   }
-  
+
   start() {
     this.server.listen(PORT);
     this._setupExitHandler();
@@ -40,7 +40,7 @@ export class CandyRed {
       // Initialise the runtime with a server and settings
       RED.init(this.server, settings);
       settings.version += ` [candy-red v${versions.candyRedv}]`;
-      
+
       // Serve the http nodes from /api
       this.app.use(settings.httpNodeRoot, RED.httpNode);
 
@@ -116,7 +116,7 @@ export class CandyRed {
       }
     };
   }
-  
+
   _inspectBoardStatus(inputPackageJsonPath) {
     return this.deviceManagerStore.deviceState.testIfCANDYIoTInstalled().then(candyIotv => {
       if (candyIotv) {
@@ -149,7 +149,7 @@ export class CandyRed {
       });
     });
   }
-  
+
   _setupExitHandler() {
     // Exit handler
     process.stdin.resume();
@@ -178,7 +178,7 @@ export class CandyRed {
     process.on('SIGINT', exitHandler);
     process.on('uncaughtException', exitHandler);
   }
-  
+
   _createREDSettigngs(versions) {
     return {
       verbose: true,

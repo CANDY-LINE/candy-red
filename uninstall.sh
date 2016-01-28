@@ -4,7 +4,7 @@ SERVICE_NAME="candy-red"
 
 function assert_root {
   if [[ $EUID -ne 0 ]]; then
-     echo "This script must be run as root" 
+     echo "This script must be run as root"
      exit 1
   fi
 }
@@ -38,7 +38,7 @@ function system_service_uninstall {
 function _lookup_system_service_type {
   SERVICES="${ROOT}/services"
   START_SH="${SERVICES}/start_${SYSTEM_SERVICE_TYPE}.sh"
-  
+
   START_SH=`ls ${SERVICES}/start_*`
   RET=$?
   if [ "${RET}" != "0" ]; then
@@ -47,7 +47,7 @@ function _lookup_system_service_type {
   fi
   START_SH=$(basename ${START_SH})
   SYSTEM_SERVICE_TYPE=${START_SH:6:`expr length ${START_SH}`-9}
-  
+
   case "${SYSTEM_SERVICE_TYPE}" in
     systemd)
       ;;

@@ -47,7 +47,7 @@ module.exports = function (grunt) {
         args: [ 'install' ]
       }
     },
-    
+
     clean: {
       dist: {
         files: [{
@@ -88,9 +88,9 @@ module.exports = function (grunt) {
       }
     },
   };
-    
+
   grunt.initConfig(config);
-  
+
   grunt.loadNpmTasks('grunt-contrib-clean');
   grunt.loadNpmTasks('grunt-contrib-jshint');
   grunt.loadNpmTasks('grunt-contrib-copy');
