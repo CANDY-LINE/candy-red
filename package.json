@@ -15,14 +15,17 @@
   },
   "keywords": [
     "edison",
+    "yocto",
     "rpi",
     "raspberry-pi",
     "bluetooth",
+    "raspbian",
     "BLE",
     "bluetooth low energy",
     "bluetooth smart",
     "central",
-    "enocean"
+    "enocean",
+    "CANDY EGG"
   ],
   "author": "Daisuke Baba",
   "license": "MIT",
