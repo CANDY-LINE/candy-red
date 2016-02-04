@@ -63,8 +63,22 @@
     icon: 'candy-egg.png',
     label: function() {
       var accountNode = RED.nodes.node(this.account);
-      return (accountNode ? accountNode.label() +
-        (this.path ? ' ' + this.method + ' ' + this.path : '') :
+      var accountId = accountNode ? accountNode.label() : '';
+      var root = RED.settings.httpNodeRoot;
+      if (root.indexOf(accountId) < 0) {
+        root = '/' + accountId + root;
+      }
+      if (this.path) {
+        if (root.slice(-1) != "/") {
+          root = root+"/";
+        }
+        if (this.path.charAt(0) == "/") {
+          root += this.path.slice(1);
+        } else {
+          root += this.path;
+        }
+      }
+      return this.name || (accountNode ? (this.path ? '[' + this.method.toLowerCase() + '] ' + root : '') :
         this._('candy-egg-httpreq.label.category'));
     },
     labelStyle: function() {

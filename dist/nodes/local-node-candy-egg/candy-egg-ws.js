@@ -32,8 +32,8 @@ var _createClass = (function () {
 
 exports['default'] = function (e) {
   var t = (function () {
-    function t(e, n, r, s, o) {
-      _classCallCheck(this, t), this.accountConfig = e, this.account = n, this.path = r, this.webSocketListeners = s, this.server = null, this._inputNodes = [], this._outputNodes = [], this.closing = !1, this.options = o || {}, this.redirect = 0, this.authRetry = 0, this.startconn();
+    function t(e, n, r, s, i) {
+      _classCallCheck(this, t), this.accountConfig = e, this.account = n, this.path = r, this.webSocketListeners = s, this.server = null, this._inputNodes = [], this._outputNodes = [], this.closing = !1, this.options = i || {}, this.redirect = 0, this.authRetry = 0, this.startconn();
     }
 
     return _createClass(t, [{
@@ -47,14 +47,14 @@ exports['default'] = function (e) {
         var s = this.path;
 
         if (e) {
-          var o = _url2['default'].parse(e);
+          var i = _url2['default'].parse(e);
 
-          o.host ? (n = o.href, s = null) : s = o.href;
+          i.host ? (n = i.href, s = null) : s = i.href;
         } else n += '/' + r[0] + '/api';
 
         s && s.length > 0 && '/' !== s.charAt(0) && (n += '/'), s && (n += s);
-        var i = new _ws2['default'](n, this.options);
-        this.server = i, this.handleConnection(i);
+        var o = new _ws2['default'](n, this.options);
+        this.server = o, this.handleConnection(o);
       }
     }, {
       key: 'handleConnection',
@@ -128,8 +128,8 @@ exports['default'] = function (e) {
       }
     }, {
       key: 'handleEvent',
-      value: function (t, n, r, s, o) {
-        var i = undefined,
+      value: function (t, n, r, s, i) {
+        var o = undefined,
             a = undefined;
 
         try {
@@ -140,17 +140,17 @@ exports['default'] = function (e) {
           };
         }
 
-        i = {
+        o = {
           payload: s,
           _session: {
             type: 'candy-egg-ws',
             id: t
           }
-        }, a._session = i._session;
+        }, a._session = o._session;
 
-        for (var c = 0; c < this._inputNodes.length; c++) this._inputNodes[c].wholemsg ? this._inputNodes[c].send(a) : this._inputNodes[c].send(i);
+        for (var c = 0; c < this._inputNodes.length; c++) this._inputNodes[c].wholemsg ? this._inputNodes[c].send(a) : this._inputNodes[c].send(o);
 
-        e.log.debug('flags:' + o);
+        e.log.debug('flags:' + i);
       }
     }, {
       key: 'emit2all',
@@ -197,8 +197,8 @@ exports['default'] = function (e) {
         var r = arguments.length <= 1 || undefined === arguments[1] ? null : arguments[1];
         if (!n.accountConfig) throw new Error(e._('candy-egg-ws.errors.missing-conf'));
         var s = n.account + ':' + n.path,
-            o = this.store[s];
-        return o || (o = new t(n.accountConfig, n.account, n.path, this, r), this.store[s] = o), o;
+            i = this.store[s];
+        return i || (i = new t(n.accountConfig, n.account, n.path, this, r), this.store[s] = i), i;
       }
     }, {
       key: 'remove',
@@ -230,64 +230,62 @@ exports['default'] = function (e) {
 
   e.nodes.registerType('CANDY EGG account', s);
 
-  var o = function u(t) {
-    _classCallCheck(this, u), e.nodes.createNode(this, t);
+  var i = function u(t) {
     var n = this;
-    n.account = t.account, n.accountConfig = e.nodes.getNode(n.account), n.path = t.path, n.wholemsg = t.wholemsg, n.accountConfig ? (n.listenerConfig = r.get(n), n.listenerConfig.registerInputNode(n), n.on('opened', function () {
+    _classCallCheck(this, u), e.nodes.createNode(this, t), this.account = t.account, this.accountConfig = e.nodes.getNode(this.account), this.path = t.path, this.wholemsg = t.wholemsg, this.accountConfig ? (this.listenerConfig = r.get(this), this.listenerConfig.registerInputNode(this), this.on('opened', function () {
       n.status({
         fill: 'green',
         shape: 'dot',
         text: 'candy-egg-ws.status.connected'
       });
-    }), n.on('erro', function () {
+    }), this.on('erro', function () {
       n.status({
         fill: 'red',
         shape: 'ring',
         text: 'candy-egg-ws.status.error'
       });
-    }), n.on('closed', function () {
+    }), this.on('closed', function () {
       n.status({
         fill: 'red',
         shape: 'ring',
         text: 'candy-egg-ws.status.disconnected'
       });
-    })) : n.error(e._('candy-egg-ws.errors.missing-conf')), n.on('close', function () {
+    })) : this.error(e._('candy-egg-ws.errors.missing-conf')), this.on('close', function () {
       n.listenerConfig.removeInputNode(n);
     });
   };
 
-  e.nodes.registerType('CANDY EGG websocket in', o);
+  e.nodes.registerType('CANDY EGG websocket in', i);
 
-  var i = function c(t) {
-    _classCallCheck(this, c), e.nodes.createNode(this, t);
+  var o = function c(t) {
     var n = this;
-    n.account = t.account, n.accountConfig = e.nodes.getNode(n.account), n.path = t.path, n.wholemsg = t.wholemsg, n.accountConfig ? (n.listenerConfig = r.get(n), n.listenerConfig.registerOutputNode(n), n.on('opened', function () {
+    _classCallCheck(this, c), e.nodes.createNode(this, t), this.account = t.account, this.accountConfig = e.nodes.getNode(this.account), this.path = t.path, this.wholemsg = t.wholemsg, this.accountConfig ? (this.listenerConfig = r.get(this), this.listenerConfig.registerOutputNode(this), this.on('opened', function () {
       n.status({
         fill: 'green',
         shape: 'dot',
         text: 'candy-egg-ws.status.connected'
       });
-    }), n.on('erro', function () {
+    }), this.on('erro', function () {
       n.status({
         fill: 'red',
         shape: 'ring',
         text: 'candy-egg-ws.status.error'
       });
-    }), n.on('closed', function () {
+    }), this.on('closed', function () {
       n.status({
         fill: 'red',
         shape: 'ring',
         text: 'candy-egg-ws.status.disconnected'
       });
-    })) : n.error(e._('candy-egg-ws.errors.missing-conf')), n.on('close', function () {
+    })) : this.error(e._('candy-egg-ws.errors.missing-conf')), this.on('close', function () {
       n.listenerConfig.removeOutputNode(n);
-    }), n.on('input', function (t) {
+    }), this.on('input', function (t) {
       var r = undefined;
       n.wholemsg ? (delete t._session, r = JSON.stringify(t)) : t.hasOwnProperty('payload') && (r = Buffer.isBuffer(t.payload) ? t.payload : e.util.ensureString(t.payload)), r && n.listenerConfig.broadcast(r);
     });
   };
 
-  e.nodes.registerType('CANDY EGG websocket out', i);
+  e.nodes.registerType('CANDY EGG websocket out', o);
 }, module.exports = exports['default'];
 
 /**
@@ -308,7 +306,7 @@ exports['default'] = function (e) {
 
 // socket for server connection
 
-// collection of thats that want to receive events
+// collection of input nodes want to receive events
 // node status event listeners
 // start outbound connection
 // Connect to remote endpoint

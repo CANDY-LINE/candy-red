@@ -12,9 +12,9 @@ exports['default'] = function (e) {
 
     try {
       r.serialPort = n.serialPort, t.pool.add(r);
-    } catch (o) {
+    } catch (s) {
       e.log.warn(e._('enocean.errors.serialPortError', {
-        error: o
+        error: s
       }));
     }
   }
@@ -29,32 +29,32 @@ exports['default'] = function (e) {
     });
 
     try {
-      var o = t.pool.get(r.enoceanPortNode.serialPort);
-      o.port.on('ctx-' + r.originatorId, function (t) {
+      var s = t.pool.get(r.enoceanPortNode.serialPort);
+      s.port.on('ctx-' + r.originatorId, function (t) {
         var n = _libEep_handlers.ERP2_HANDLERS[r.eepType];
         if (!n) return void e.log.warn(e._('enocean.warn.noHandler', {
           eepType: r.eepType
         }));
-        var o = n(t);
-        o.tstamp = Date.now(), o.rssi = t.container.dBm, o.id = t.originatorId, r.addEepType && (o.eep = r.eepType), r.useString && (o = JSON.stringify(o)), r.send({
-          payload: o
+        var s = n(t);
+        s.tstamp = Date.now(), s.rssi = t.container.dBm, s.id = t.originatorId, r.addEepType && (s.eep = r.eepType), r.useString && (s = JSON.stringify(s)), r.send({
+          payload: s
         });
-      }), o.port.on('ready', function () {
+      }), s.port.on('ready', function () {
         r.status({
           fill: 'green',
           shape: 'dot',
           text: 'node-red:common.status.connected'
         });
-      }), o.port.on('closed', function () {
+      }), s.port.on('closed', function () {
         r.status({
           fill: 'red',
           shape: 'ring',
           text: 'node-red:common.status.not-connected'
         });
       });
-    } catch (s) {
+    } catch (o) {
       e.log.warn(e._('enocean.errors.serialPortError', {
-        error: s
+        error: o
       }));
     }
   }

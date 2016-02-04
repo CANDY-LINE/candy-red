@@ -90,19 +90,19 @@ var Utils = (function () {
       return new _es6Promises2['default'](function (n, o) {
         try {
           var s = undefined,
-              a = {
+              i = {
             len: e,
             payload: t,
             originatorId: ''
           },
-              i = e - 1,
+              a = e - 1,
               u = 1;
 
-          for (1 === e ? (a.originatorId = Utils.pad(t[0].toString(16), 2), u = 0) : e >= 6 && (i = 4, u = 2), s = 0; i > s; s++) a.originatorId += Utils.pad(t[s].toString(16), 2);
+          for (1 === e ? (i.originatorId = Utils.pad(t[0].toString(16), 2), u = 0) : e >= 6 && (a = 4, u = 2), s = 0; a > s; s++) i.originatorId += Utils.pad(t[s].toString(16), 2);
 
-          for (s = 0; u > s; s++) a.dataDl += Utils.pad(t[s + i].toString(16), 2);
+          for (s = 0; u > s; s++) i.dataDl += Utils.pad(t[s + a].toString(16), 2);
 
-          r && (a.container = r), n(a);
+          r && (i.container = r), n(i);
         } catch (c) {
           o(c);
         }
@@ -115,8 +115,8 @@ var Utils = (function () {
         try {
           var s = t[0] >> 5;
           if (!LONG_DATA_ID_IDX[s]) throw new Error('Reserved address is unsupported');
-          var a = undefined,
-              i = {
+          var i = undefined,
+              a = {
             len: e,
             payload: t,
             originatorId: '',
@@ -125,21 +125,21 @@ var Utils = (function () {
               u = LONG_DATA_ID_IDX[s][0],
               c = LONG_DATA_ID_IDX[s][1];
 
-          for (a = 0; u > a; a++) i.originatorId += Utils.pad(t[a + 1].toString(16), 2);
+          for (i = 0; u > i; i++) a.originatorId += Utils.pad(t[i + 1].toString(16), 2);
 
-          for (a = 0; c > a; a++) i.destinationId += Utils.pad(t[a + u + 1].toString(16), 2);
+          for (i = 0; c > i; i++) a.destinationId += Utils.pad(t[i + u + 1].toString(16), 2);
 
           var l = (16 & t[0]) >> 4;
           if (l > 0) throw new Error('Extended header is unsuported');
           var d = 15 & t[0];
           if (15 === d) throw new Error('Extended Telegram type is unsuported');
-          i.telegramType = TELEGRAM_TYPES[d][0], i.rorg = TELEGRAM_TYPES[d][1], i.dataDl = t.slice(u + c + 1, t.length - 1);
+          a.telegramType = TELEGRAM_TYPES[d][0], a.rorg = TELEGRAM_TYPES[d][1], a.dataDl = t.slice(u + c + 1, t.length - 1);
           var f = 0;
 
-          for (a = 0; a < t.length - 1; a++) f = Utils.crc8(f, t[a]);
+          for (i = 0; i < t.length - 1; i++) f = Utils.crc8(f, t[i]);
 
           if (f !== t[t.length - 1]) throw new Error('CRC8 checksum failure');
-          r && (i.container = r), n(i);
+          r && (a.container = r), n(a);
         } catch (h) {
           o(h);
         }
@@ -176,20 +176,20 @@ var ESP3RadioERP2Parser = (function () {
           if (2 !== r[3]) throw new Error('Invalid optinal size');
           var o = 0,
               s = undefined,
-              a = r.slice(1, 5);
+              i = r.slice(1, 5);
 
-          for (s = 0; s < a.length; s++) o = Utils.crc8(o, a[s]);
+          for (s = 0; s < i.length; s++) o = Utils.crc8(o, i[s]);
 
           if (o !== r[5]) throw new Error('CRC8 for header value checksum failure');
-          var i = {
+          var a = {
             len: t
           },
               u = 256 * r[1] + r[2];
 
-          for (i.payload = r.slice(6, 6 + u), i.subTelNum = r[6 + u], i.dBm = r[7 + u], o = 0, s = 0; u + 2 > s; s++) o = Utils.crc8(o, r[s + 6]);
+          for (a.payload = r.slice(6, 6 + u), a.subTelNum = r[6 + u], a.dBm = r[7 + u], o = 0, s = 0; u + 2 > s; s++) o = Utils.crc8(o, r[s + 6]);
 
           if (o !== r[r.length - 1]) throw new Error('CRC8 for data value checksum failure');
-          e(i);
+          e(a);
         } catch (c) {
           n(c);
         }

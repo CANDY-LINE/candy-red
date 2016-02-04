@@ -4,10 +4,6 @@ function _interopRequireDefault(e) {
   };
 }
 
-function _classCallCheck(e, t) {
-  if (!(e instanceof t)) throw new TypeError('Cannot call a class as a function');
-}
-
 Object.defineProperty(exports, '__esModule', {
   value: !0
 });
@@ -21,89 +17,98 @@ var _followRedirects = require('follow-redirects'),
     _querystring2 = _interopRequireDefault(_querystring);
 
 exports['default'] = function (e) {
-  var t = function r(t) {
-    _classCallCheck(this, r), e.nodes.createNode(this, t), this.path = t.path;
-    var n = -1 !== (this.path || '').indexOf('{{'),
-        s = t.method || 'GET';
+  function t(t) {
+    e.nodes.createNode(this, t), this.path = t.path;
+    var r = -1 !== (this.path || '').indexOf('{{'),
+        n = t.method || 'GET';
     this.ret = t.ret || 'obj';
-    var i = this;
-    i.account = t.account, i.accountConfig = e.nodes.getNode(i.account);
-    var a = undefined,
-        o = undefined;
+    var s = this;
+    s.account = t.account, s.accountConfig = e.nodes.getNode(s.account);
+    var i = undefined,
+        a = undefined;
     ['http_proxy', 'HTTP_PROXY'].forEach(function (e) {
-      process.env[e] && (a = process.env[e]);
+      process.env[e] && (i = process.env[e]);
     }), ['no_proxy', 'NO_PROXY'].forEach(function (e) {
-      process.env[e] && (o = process.env[e].split(','));
-    }), this.on('input', function (r) {
+      process.env[e] && (a = process.env[e].split(','));
+    }), this.on('input', function (o) {
       var u = process.hrtime();
-      i.status({
+      s.status({
         fill: 'blue',
         shape: 'dot',
         text: 'candy-box-httpreq.status.requesting'
       });
-      var c = i.accountConfig,
+      var c = s.accountConfig,
           d = (c.secure ? 'https' : 'http') + '://',
           l = c.accountFqn.split('@');
       d += l[1] + '/' + l[0] + '/api';
-      var f = r.path || i.path;
-      r.path && i.path && r.path !== i.path && i.warn(e._('common.errors.nooverride')), f && f.length > 0 && '/' !== f.charAt(0) && (d += '/'), f && (n && (f = _mustache2['default'].render(f, r)), d += f);
-      var h = s.toUpperCase() || 'GET';
-      r.method && t.method && 'use' !== t.method && (i.warn(e._('common.errors.nooverride')), h = r.method.toUpperCase());
+      var f = o.path || s.path;
+      o.path && s.path && o.path !== s.path && s.warn(e._('common.errors.nooverride')), f && f.length > 0 && '/' !== f.charAt(0) && (d += '/'), f && (r && (f = _mustache2['default'].render(f, o)), d += f);
+      var h = n.toUpperCase() || 'GET';
+      o.method && t.method && 'use' !== t.method && (s.warn(e._('common.errors.nooverride')), h = o.method.toUpperCase());
 
       var _ = _url2['default'].parse(d);
 
-      if ((_.method = h, _.headers = {}, r.headers)) for (var p in r.headers) if (r.headers.hasOwnProperty(p)) {
+      if ((_.method = h, _.headers = {}, o.headers)) for (var p in o.headers) if (o.headers.hasOwnProperty(p)) {
         var v = p.toLowerCase();
-        'content-type' !== v && 'content-length' !== v && (v = p), _.headers[v] = r.headers[p];
+        'content-type' !== v && 'content-length' !== v && (v = p), _.headers[v] = o.headers[p];
       }
       _.auth = c.loginUser + ':' + c.loginPassword;
       var m = null;
-      !r.payload || 'POST' !== h && 'PUT' !== h && 'PATCH' !== h || ('string' == typeof r.payload || Buffer.isBuffer(r.payload) ? m = r.payload : 'number' == typeof r.payload ? m = r.payload + '' : 'application/x-www-form-urlencoded' === _.headers['content-type'] ? m = _querystring2['default'].stringify(r.payload) : (m = JSON.stringify(r.payload), null === _.headers['content-type'] && (_.headers['content-type'] = 'application/json')), null === _.headers['content-length'] && (Buffer.isBuffer(m) ? _.headers['content-length'] = m.length : _.headers['content-length'] = Buffer.byteLength(m)));
+      !o.payload || 'POST' !== h && 'PUT' !== h && 'PATCH' !== h || ('string' == typeof o.payload || Buffer.isBuffer(o.payload) ? m = o.payload : 'number' == typeof o.payload ? m = o.payload + '' : 'application/x-www-form-urlencoded' === _.headers['content-type'] ? m = _querystring2['default'].stringify(o.payload) : (m = JSON.stringify(o.payload), null === _.headers['content-type'] && (_.headers['content-type'] = 'application/json')), null === _.headers['content-length'] && (Buffer.isBuffer(m) ? _.headers['content-length'] = m.length : _.headers['content-length'] = Buffer.byteLength(m)));
       var g = d,
           y = undefined;
-      if (o) for (var w in o) -1 !== d.indexOf(o[w]) && (y = !0);
+      if (a) for (var w in a) -1 !== d.indexOf(a[w]) && (y = !0);
 
-      if (a && !y) {
-        var R = a.match(/undefined/i);
+      if (i && !y) {
+        var R = i.match(/undefined/i);
 
         if (R) {
           _.headers.Host = _.host;
           var C = _.headers,
               S = _.pathname = _.href;
-          _ = _url2['default'].parse(a), _.path = _.pathname = S, _.headers = C, _.method = h, g = R[0];
-        } else i.warn('Bad proxy url: ' + a);
+          _ = _url2['default'].parse(i), _.path = _.pathname = S, _.headers = C, _.method = h, g = R[0];
+        } else s.warn('Bad proxy url: ' + i);
       }
 
       var b = (/undefined/.test(g) ? _followRedirects.https : _followRedirects.http).request(_, function (t) {
-        'bin' === i.ret ? t.setEncoding('binary') : t.setEncoding('utf8'), r.statusCode = t.statusCode, r.headers = t.headers, r.payload = '', t.on('data', function (e) {
-          r.payload += e;
+        'bin' === s.ret ? t.setEncoding('binary') : t.setEncoding('utf8'), o.statusCode = t.statusCode, o.headers = t.headers, o.payload = '', t.on('data', function (e) {
+          o.payload += e;
         }), t.on('end', function () {
-          if (i.metric()) {
-            var n = process.hrtime(u),
-                s = 1000 * n[0] + 0.000001 * n[1],
-                a = s.toFixed(3);
-            i.metric('duration.millis', r, a), t.client && t.client.bytesRead && i.metric('size.bytes', r, t.client.bytesRead);
+          if (s.metric()) {
+            var r = process.hrtime(u),
+                n = 1000 * r[0] + 0.000001 * r[1],
+                i = n.toFixed(3);
+            s.metric('duration.millis', o, i), t.client && t.client.bytesRead && s.metric('size.bytes', o, t.client.bytesRead);
           }
 
-          if ('bin' === i.ret) r.payload = new Buffer(r.payload, 'binary');else if ('obj' === i.ret) try {
-            r.payload = JSON.parse(r.payload);
-          } catch (o) {
-            i.warn(e._('candy-box-httpreq.errors.json-error'));
+          if ('bin' === s.ret) o.payload = new Buffer(o.payload, 'binary');else if ('obj' === s.ret) try {
+            o.payload = JSON.parse(o.payload);
+          } catch (a) {
+            s.warn(e._('candy-box-httpreq.errors.json-error'));
           }
-          i.send(r), i.status({});
+          s.send(o), s.status({});
         });
       });
       b.on('error', function (e) {
-        r.payload = e.toString() + ' : ' + d, r.statusCode = e.code, i.send(r), i.status({
+        o.payload = e.toString() + ' : ' + d, o.statusCode = e.code, s.send(o), s.status({
           fill: 'red',
           shape: 'ring',
           text: e.code
         });
       }), m && b.write(m), b.end();
     });
-  };
+  }
 
-  e.nodes.registerType('CANDY EGG http request', t);
+  e.nodes.registerType('CANDY EGG http request', t, {
+    credentials: {
+      user: {
+        type: 'text'
+      },
+      password: {
+        type: 'password'
+      }
+    }
+  });
 }, module.exports = exports['default'];
 
 /**
