@@ -232,7 +232,7 @@ exports['default'] = function (e) {
 
   var i = function u(t) {
     var n = this;
-    _classCallCheck(this, u), e.nodes.createNode(this, t), this.account = t.account, this.accountConfig = e.nodes.getNode(this.account), this.path = t.path, this.wholemsg = t.wholemsg, this.accountConfig ? (this.listenerConfig = r.get(this), this.listenerConfig.registerInputNode(this), this.on('opened', function () {
+    _classCallCheck(this, u), e.nodes.createNode(this, t), this.account = t.account, this.accountConfig = e.nodes.getNode(this.account), this.path = t.path, this.wholemsg = 'true' === t.wholemsg, this.accountConfig ? (this.listenerConfig = r.get(this), this.listenerConfig.registerInputNode(this), this.on('opened', function () {
       n.status({
         fill: 'green',
         shape: 'dot',
@@ -259,7 +259,7 @@ exports['default'] = function (e) {
 
   var o = function c(t) {
     var n = this;
-    _classCallCheck(this, c), e.nodes.createNode(this, t), this.account = t.account, this.accountConfig = e.nodes.getNode(this.account), this.path = t.path, this.wholemsg = t.wholemsg, this.accountConfig ? (this.listenerConfig = r.get(this), this.listenerConfig.registerOutputNode(this), this.on('opened', function () {
+    _classCallCheck(this, c), e.nodes.createNode(this, t), this.account = t.account, this.accountConfig = e.nodes.getNode(this.account), this.path = t.path, this.wholemsg = 'true' === t.wholemsg, this.accountConfig ? (this.listenerConfig = r.get(this), this.listenerConfig.registerOutputNode(this), this.on('opened', function () {
       n.status({
         fill: 'green',
         shape: 'dot',
