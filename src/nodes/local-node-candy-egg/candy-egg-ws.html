@@ -121,7 +121,7 @@
       return this.accountFqn ? this.accountFqn.split('@')[0] : this._('candy-egg-ws.label.category-acc');
     },
     oneditprepare: function() {
-      if (RED.settings.version.indexOf('[CANDY RED]') >= 0) {
+      if (RED.settings.version.indexOf('[candy-red v') >= 0) {
         $('.form-row-managed').show();
         if (this.managed) {
           $('.form-row-device-managed').show();
