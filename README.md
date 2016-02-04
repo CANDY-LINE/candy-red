@@ -50,7 +50,7 @@ The installation will take a couple of minutes.
 You can ignore `npm WARN`s, `gyp WARN`s, `gyp ERR!`s and `node-pre-gyp ERR!`s unless the installation terminates normally. You can check if the installation is successful by `systemctl status candy-red` command.
 
 ```
-$ VERSION=2.0.0
+$ VERSION=2.0.1
 $ npm install -g --unsafe-perm https://github.com/dbaba/candy-red/archive/${VERSION}.tar.gz
 $ $(npm root -g)/candy-red/install.sh
 ```
@@ -165,7 +165,7 @@ You can ignore `npm WARN`s, `gyp WARN`s, `gyp ERR!`s and `node-pre-gyp ERR!`s un
 Please refer to the following commands to install.
 
 ```
-$ VERSION=2.0.0
+$ VERSION=2.0.1
 $ sudo npm install -g --unsafe-perm https://github.com/dbaba/candy-red/archive/${VERSION}.tar.gz
 $ sudo NODE_OPTS=--max-old-space-size=128 $(npm root -g)/candy-red/install.sh
 ```
@@ -276,7 +276,7 @@ And you'll see the sensor info like this:
 		Welcome to Node-RED
 		===================
 
-		24 Jan 08:53:15 - [info] Node-RED version: v0.13.1 [candy-red v2.0.0]
+		24 Jan 08:53:15 - [info] Node-RED version: v0.13.1 [candy-red v2.0.1]
 		24 Jan 08:53:15 - [info] Node.js  version: v0.12.6
 		24 Jan 08:53:15 - [info] Loading palette nodes
 		24 Jan 08:53:44 - [info] [BLE] Set up done
