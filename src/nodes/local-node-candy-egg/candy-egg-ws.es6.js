@@ -291,7 +291,7 @@ export default function(RED) {
       this.account = n.account;
       this.accountConfig = RED.nodes.getNode(this.account);
       this.path = n.path;
-      this.wholemsg = n.wholemsg;
+      this.wholemsg = (n.wholemsg === 'true');
 
       if (this.accountConfig) {
         this.listenerConfig = webSocketListeners.get(this);
@@ -317,7 +317,7 @@ export default function(RED) {
       this.account = n.account;
       this.accountConfig = RED.nodes.getNode(this.account);
       this.path = n.path;
-      this.wholemsg = n.wholemsg;
+      this.wholemsg = (n.wholemsg === 'true');
 
       if (this.accountConfig) {
         this.listenerConfig = webSocketListeners.get(this);
