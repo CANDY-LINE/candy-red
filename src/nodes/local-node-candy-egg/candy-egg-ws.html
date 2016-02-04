@@ -24,8 +24,8 @@
     <input type='text' id='node-input-path'>
   </div>
   <div class='form-row'>
-    <label for='node-config-input-wholemsg'>&nbsp;</label>
-    <select type='text' id='node-config-input-wholemsg' style='width: 70%;'>
+    <label for='node-input-wholemsg'>&nbsp;</label>
+    <select type='text' id='node-input-wholemsg' style='width: 70%;'>
       <option value='false' data-i18n='candy-egg-ws.payload'></option>
       <option value='true' data-i18n='candy-egg-ws.message'></option>
     </select>
@@ -39,6 +39,24 @@
 <script type='text/javascript'>
 
 (function() {
+
+  function resolveApiPath(accountId, path) {
+    var root = RED.settings.httpNodeRoot;
+    if (root.indexOf(accountId) < 0) {
+      root = '/' + accountId + root;
+    }
+    if (path) {
+      if (root.slice(-1) != "/") {
+        root = root+"/";
+      }
+      if (path.charAt(0) == "/") {
+        root += path.slice(1);
+      } else {
+        root += path;
+      }
+    }
+    return root;
+  }
 
   RED.nodes.registerType('CANDY EGG websocket in',{
     category: 'input',
@@ -57,7 +75,7 @@
     },
     label: function() {
       var accountNode = RED.nodes.node(this.account);
-      return this.name||(accountNode ? accountNode.label() + (this.path ? ' [ws] ' + this.path : '') :
+      return this.name||(accountNode ? '[ws] ' + resolveApiPath(accountNode.label(), this.path) :
         this._('candy-egg-ws.label.category-IN'));
     }
   });
@@ -80,7 +98,7 @@
     },
     label: function() {
       var accountNode = RED.nodes.node(this.account);
-      return this.name||(accountNode ? accountNode.label() + (this.path ? ' [ws] ' + this.path : '') :
+      return this.name||(accountNode ? '[ws] ' + resolveApiPath(accountNode.label(), this.path) :
         this._('candy-egg-ws.label.category-OUT'));
     }
   });
@@ -103,7 +121,7 @@
       return this.accountFqn ? this.accountFqn.split('@')[0] : this._('candy-egg-ws.label.category-acc');
     },
     oneditprepare: function() {
-      if (RED.settings.version.indexOf('[candy-red v') >= 0) {
+      if (RED.settings.version.indexOf('[CANDY RED]') >= 0) {
         $('.form-row-managed').show();
         if (this.managed) {
           $('.form-row-device-managed').show();
@@ -133,8 +151,8 @@
     <input type='text' id='node-input-path'>
   </div>
   <div class='form-row'>
-    <label for='node-config-input-wholemsg'>&nbsp;</label>
-    <select type='text' id='node-config-input-wholemsg' style='width: 70%;'>
+    <label for='node-input-wholemsg'>&nbsp;</label>
+    <select type='text' id='node-input-wholemsg' style='width: 70%;'>
       <option value='false' data-i18n='candy-egg-ws.payload'></option>
       <option value='true' data-i18n='candy-egg-ws.message'></option>
     </select>
