@@ -30,7 +30,7 @@ export default function(RED) {
       this.webSocketListeners = webSocketListeners;
       this.server = null; // socket for server connection
 
-      this._inputNodes = [];  // collection of thats that want to receive events
+      this._inputNodes = [];  // collection of input nodes want to receive events
       this._outputNodes = []; // node status event listeners
       this.closing = false;
       this.options = options || {};
@@ -288,24 +288,23 @@ export default function(RED) {
     constructor(n) {
       RED.nodes.createNode(this, n);
 
-      let that = this;
-      that.account = n.account;
-      that.accountConfig = RED.nodes.getNode(that.account);
-      that.path = n.path;
-      that.wholemsg = n.wholemsg;
+      this.account = n.account;
+      this.accountConfig = RED.nodes.getNode(this.account);
+      this.path = n.path;
+      this.wholemsg = (n.wholemsg === 'true');
 
-      if (that.accountConfig) {
-        that.listenerConfig = webSocketListeners.get(that);
-        that.listenerConfig.registerInputNode(that);
-        that.on('opened', () => { that.status({fill:'green',shape:'dot',text:'candy-egg-ws.status.connected'}); });
-        that.on('erro',  () => { that.status({fill:'red',shape:'ring',text:'candy-egg-ws.status.error'}); });
-        that.on('closed',  () => { that.status({fill:'red',shape:'ring',text:'candy-egg-ws.status.disconnected'}); });
+      if (this.accountConfig) {
+        this.listenerConfig = webSocketListeners.get(this);
+        this.listenerConfig.registerInputNode(this);
+        this.on('opened', () => { this.status({fill:'green',shape:'dot',text:'candy-egg-ws.status.connected'}); });
+        this.on('erro',  () => { this.status({fill:'red',shape:'ring',text:'candy-egg-ws.status.error'}); });
+        this.on('closed',  () => { this.status({fill:'red',shape:'ring',text:'candy-egg-ws.status.disconnected'}); });
       } else {
-        that.error(RED._('candy-egg-ws.errors.missing-conf'));
+        this.error(RED._('candy-egg-ws.errors.missing-conf'));
       }
 
-      that.on('close', () => {
-        that.listenerConfig.removeInputNode(that);
+      this.on('close', () => {
+        this.listenerConfig.removeInputNode(this);
       });
     }
   }
@@ -315,29 +314,28 @@ export default function(RED) {
     constructor(n) {
       RED.nodes.createNode(this, n);
 
-      let that = this;
-      that.account = n.account;
-      that.accountConfig = RED.nodes.getNode(that.account);
-      that.path = n.path;
-      that.wholemsg = n.wholemsg;
+      this.account = n.account;
+      this.accountConfig = RED.nodes.getNode(this.account);
+      this.path = n.path;
+      this.wholemsg = (n.wholemsg === 'true');
 
-      if (that.accountConfig) {
-        that.listenerConfig = webSocketListeners.get(that);
-        that.listenerConfig.registerOutputNode(that);
-        that.on('opened', () => { that.status({fill:'green',shape:'dot',text:'candy-egg-ws.status.connected'}); });
-        that.on('erro',  () => { that.status({fill:'red',shape:'ring',text:'candy-egg-ws.status.error'}); });
-        that.on('closed',  () => { that.status({fill:'red',shape:'ring',text:'candy-egg-ws.status.disconnected'}); });
+      if (this.accountConfig) {
+        this.listenerConfig = webSocketListeners.get(this);
+        this.listenerConfig.registerOutputNode(this);
+        this.on('opened', () => { this.status({fill:'green',shape:'dot',text:'candy-egg-ws.status.connected'}); });
+        this.on('erro',  () => { this.status({fill:'red',shape:'ring',text:'candy-egg-ws.status.error'}); });
+        this.on('closed',  () => { this.status({fill:'red',shape:'ring',text:'candy-egg-ws.status.disconnected'}); });
       } else {
-        that.error(RED._('candy-egg-ws.errors.missing-conf'));
+        this.error(RED._('candy-egg-ws.errors.missing-conf'));
       }
 
-      that.on('close', () => {
-        that.listenerConfig.removeOutputNode(that);
+      this.on('close', () => {
+        this.listenerConfig.removeOutputNode(this);
       });
 
-      that.on('input', msg => {
+      this.on('input', msg => {
         let payload;
-        if (that.wholemsg) {
+        if (this.wholemsg) {
           delete msg._session;
           payload = JSON.stringify(msg);
         } else if (msg.hasOwnProperty('payload')) {
@@ -349,7 +347,7 @@ export default function(RED) {
           }
         }
         if (payload) {
-          that.listenerConfig.broadcast(payload);
+          this.listenerConfig.broadcast(payload);
         }
       });
     }
