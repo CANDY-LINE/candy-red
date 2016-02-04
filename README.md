@@ -319,6 +319,8 @@ $ npm pack
 * [LTEPi Board for Raspberry Pi](https://translate.google.co.jp/translate?sl=auto&tl=en&js=y&prev=_t&hl=en&ie=UTF-8&u=http%3A%2F%2Flte4iot.com%2Fproducts%2Fltepi%2F&edit-text=&act=url) with LTE module support
 
 ## Revison History
+* 2.0.1
+  - Fix CANDY EGG nodes issues
 
 * 2.0.0
   - Node-RED integration
