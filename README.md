@@ -5,7 +5,7 @@ CANDY RED
 [![master Build Status](https://travis-ci.org/dbaba/candy-red.svg?branch=master)](https://travis-ci.org/dbaba/candy-red/)
 [![License MIT](https://img.shields.io/github/license/dbaba/candy-red.svg)](http://opensource.org/licenses/MIT)
 
-CANDY RED is a gateway service working between local area wiress network devices and internet servers.
+CANDY RED is a gateway service working between local area wireless network devices and internet servers.
 
 ## Features
 
@@ -50,7 +50,7 @@ The installation will take a couple of minutes.
 You can ignore `npm WARN`s, `gyp WARN`s, `gyp ERR!`s and `node-pre-gyp ERR!`s unless the installation terminates normally. You can check if the installation is successful by `systemctl status candy-red` command.
 
 ```
-$ VERSION=2.0.0
+$ VERSION=2.0.1
 $ npm install -g --unsafe-perm https://github.com/dbaba/candy-red/archive/${VERSION}.tar.gz
 $ $(npm root -g)/candy-red/install.sh
 ```
@@ -140,7 +140,7 @@ BlueZ is required for managing BLE devices.
 
 You can find the installation instruction in the [article](http://www.elinux.org/RPi_Bluetooth_LE). The compilation takes around 40 minutes (RPi B+).
 
-Here is a brief instruction. (Check the latest version of Bluez at www.bluez.org)
+Here is a brief instruction. (Check the latest version of BlueZ at www.bluez.org)
 ```
 $ BLUEZ_VER=5.37
 $ sudo apt-get install -y libdbus-1-dev \
@@ -162,10 +162,10 @@ The module installation will take a couple of minutes.
 
 You can ignore `npm WARN`s, `gyp WARN`s, `gyp ERR!`s and `node-pre-gyp ERR!`s unless the installation terminates normally. You can check if the installation is successful by `sudo service candy-red status` command after running `install.sh` script as well as `npm install`.
 
-Please refer to the following commands to isntall.
+Please refer to the following commands to install.
 
 ```
-$ VERSION=2.0.0
+$ VERSION=2.0.1
 $ sudo npm install -g --unsafe-perm https://github.com/dbaba/candy-red/archive/${VERSION}.tar.gz
 $ sudo NODE_OPTS=--max-old-space-size=128 $(npm root -g)/candy-red/install.sh
 ```
@@ -212,7 +212,7 @@ You can ignore `sudo: unable to resolve host raspberrypi` error message.
 
 ### BLE USB adaptor/dongle
 
-CANDY RED service tries to activate the `hci0` device if it exists on boot so that you can use BLE devices on the flow editor. This is performed silently at backgound and you usually don't have to care of it.
+CANDY RED service tries to activate the `hci0` device if it exists on boot so that you can use BLE devices on the flow editor. This is performed silently at background and you usually don't have to care of it.
 
 However, you need to tell the system to restart the CANDY RED service by performing `sudo systemctl restart candy-red` when you insert the dongle after boot. Or BLE is not available.
 
@@ -257,7 +257,7 @@ $ npm install
 $ grunt build
 ```
 
-The processed files are placed under `dist` diretory.
+The processed files are placed under `dist` directory.
 
 ## Run on localhost for development use
 
@@ -276,7 +276,7 @@ And you'll see the sensor info like this:
 		Welcome to Node-RED
 		===================
 
-		24 Jan 08:53:15 - [info] Node-RED version: v0.13.1 [candy-red v2.0.0]
+		24 Jan 08:53:15 - [info] Node-RED version: v0.13.1 [candy-red v2.0.1]
 		24 Jan 08:53:15 - [info] Node.js  version: v0.12.6
 		24 Jan 08:53:15 - [info] Loading palette nodes
 		24 Jan 08:53:44 - [info] [BLE] Set up done
@@ -318,7 +318,10 @@ $ npm pack
 * [CANDY IoT Board for Intel® Edison](https://translate.googleusercontent.com/translate_c?act=url&depth=1&hl=en&ie=UTF8&prev=_t&rurl=translate.google.com&sl=ja&tl=en&u=https://github.com/Robotma-com/candy-iot-service&usg=ALkJrhgViBgwht0t9vgBvmuJNkJb_kjoJg) with 3G/LTE module support
 * [LTEPi Board for Raspberry Pi](https://translate.google.co.jp/translate?sl=auto&tl=en&js=y&prev=_t&hl=en&ie=UTF-8&u=http%3A%2F%2Flte4iot.com%2Fproducts%2Fltepi%2F&edit-text=&act=url) with LTE module support
 
-## Revison History
+## Revision History
+
+* 2.0.1
+  - Fix CANDY EGG nodes issues
 
 * 2.0.0
   - Node-RED integration
@@ -331,7 +334,7 @@ $ npm pack
 
 * 1.3.0
   - Add an option to enable to generate a list of copied files
-  - [Edison (Yocto)] Fix an isuse where npm install with a gihub repo id didn't work
+  - [Edison (Yocto)] Fix an issue where npm install with a github repo id didn't work
   - `npm test` now works
 
 * 1.2.0
