@@ -39,7 +39,7 @@ function cpf {
 
 function assert_root {
   if [[ $EUID -ne 0 ]]; then
-     echo "This script must be run as root"
+     err "This script must be run as root"
      exit 1
   fi
 }
@@ -53,7 +53,7 @@ function test_system_service_arg {
   fi
 
   if [ "${SYSTEM_SERVICE_TYPE}" == "" ]; then
-    logger -s "Please provide the type of working system service. Either systemd or sysvinit is available"
+    err "Please provide the type of working system service. Either systemd or sysvinit is available"
     exit 1
   fi
 
@@ -89,7 +89,7 @@ function _test_system_service_type {
     sysvinit)
       ;;
     *)
-    logger -s "${SYSTEM_SERVICE_TYPE} is unsupported. Either systemd or sysvinit is available"
+    err "${SYSTEM_SERVICE_TYPE} is unsupported. Either systemd or sysvinit is available"
     exit 1
   esac
 }
@@ -106,7 +106,7 @@ function cd_module_root {
   pushd ${ROOT}
 
   if [ ! -f "./package.json" ]; then
-    logger -s "install.sh is placed on a wrong place. Make sure 'npm install' is successful."
+    err "install.sh is placed on a wrong place. Make sure 'npm install' is successful."
     exit 2
   fi
 }
@@ -125,11 +125,11 @@ function npm_install {
   RET=`npm ls | grep candy-red`
   RET=$?
   if [ "${RET}" != "0" ]; then
-    logger -s "Installing ${SERVICE_NAME}..."
+    info "Installing ${SERVICE_NAME}..."
     install=`npm install .`
     RET=$?
     if [ ${RET} != 0 ]; then
-      logger -s "npm install failed: code [${RET}]"
+      err "npm install failed: code [${RET}]"
       exit ${RET}
     fi
   fi
