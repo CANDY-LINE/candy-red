@@ -55,7 +55,6 @@ function assert_node_npm {
 function test_system_service_arg {
   if [ "$1" == "" ]; then
     _try_systemd
-    _try_sysvinit
   else
     SYSTEM_SERVICE_TYPE="$1"
   fi
@@ -79,22 +78,9 @@ function _try_systemd {
   SYSTEM_SERVICE_TYPE="systemd"
 }
 
-function _try_sysvinit {
-  if [ "${SYSTEM_SERVICE_TYPE}" != "" ]; then
-    return
-  fi
-  RET=`which init`
-  if [ "$?" != 0 ]; then
-    return
-  fi
-  SYSTEM_SERVICE_TYPE="sysvinit"
-}
-
 function _test_system_service_type {
   case "${SYSTEM_SERVICE_TYPE}" in
     systemd)
-      ;;
-    sysvinit)
       ;;
     *)
     err "${SYSTEM_SERVICE_TYPE} is unsupported. Either systemd or sysvinit is available"
@@ -111,7 +97,7 @@ function cd_module_root {
     REALPATH=`readlink -f -- "$0"`
   fi
   ROOT=`dirname ${REALPATH}`
-  pushd ${ROOT}
+  cd ${ROOT}
 
   if [ ! -f "./package.json" ]; then
     err "install.sh is placed on a wrong place. Make sure 'npm install' is successful."
@@ -177,35 +163,7 @@ function _install_systemd {
   cpf ${LOCAL_SYSTEMD}/${SERVICE_NAME}.service "${LIB_SYSTEMD}/system/"
   systemctl enable ${SERVICE_NAME}
   systemctl start ${SERVICE_NAME}
-  logger -s "${SERVICE_NAME} service has been installed."
-}
-
-function _install_sysvinit {
-  LOCAL_SYSVINIT="${SERVICES}/sysvinit"
-  INIT=/etc/init.d/${SERVICE_NAME}
-
-  cpf ${LOCAL_SYSVINIT}/${SERVICE_NAME}.sh ${INIT}
-  sed -i -e "s/%SERVICE_HOME%/${ROOT//\//\\/}/g" ${INIT}
-  sed -i -e "s/%VERSION%/${VERSION//\//\\/}/g" ${INIT}
-
-  cpf ${LOCAL_SYSVINIT}/_wrapper.sh ${LOCAL_SYSVINIT}/wrapper.sh
-  sed -i -e "s/%SERVICE_HOME%/${ROOT//\//\\/}/g" ${LOCAL_SYSVINIT}/wrapper.sh
-
-  cpf ${SERVICES}/environment /etc/default/${SERVICE_NAME}
-
-  if which insserv >/dev/null 2>&1; then
-    insserv ${SERVICE_NAME}
-  else
-    update-rc.d ${SERVICE_NAME} defaults > /dev/null
-  fi
-
-  logger -s "${SERVICE_NAME} service has been installed."
-
-  if which invoke-rc.d >/dev/null 2>&1; then
-    invoke-rc.d ${SERVICE_NAME} restart
-  else
-    ${INIT} restart
-  fi
+  info "${SERVICE_NAME} service has been installed."
 }
 
 setup
