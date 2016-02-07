@@ -353,6 +353,45 @@ $ npm pack
 (varant)$ sudo TARBALL=/tmp/candy-red-<version>.tgz ./install.sh
 ```
 
+## Docker
+
+### Image Building
+
+```
+$ cd candy-red
+$ docker build -t candy-red .
+```
+
+### Run CANDY RED container
+
+Run in foreground:
+```
+$ docker run -ti --rm candy-red
+```
+
+`Ctrl+C` to exit.
+
+Run in background:
+```
+$ docker run -tid --name candy-red candy-red
+```
+
+Run `docker rm -f candy-red` to stop (and remove) the container.
+
+### Run CANDY RED container with manually built code
+
+Run in foreground:
+```
+$ grunt build
+$ docker run -ti --rm -v ./dist:/candy-red-dist candy-red
+```
+
+Run in background:
+```
+$ grunt build
+$ docker run -tid -v ./dist:/candy-red-dist candy-red
+```
+
 ## Coding Styles
 
 1. Use ES6 (except Gruntfile.js and \*.html)
