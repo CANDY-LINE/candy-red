@@ -43,6 +43,16 @@ This theme appears when CANDY IoT Board is available on a device.
 
 * v0.10.38 (preinstalled)
 
+## Version up
+
+Go to [Install](#install) if you've never installed the project.
+
+```
+$ $(npm root -g)/candy-red/install.sh
+```
+
+This will install the latest version of CANDY RED.
+
 ## Install
 
 The installation will take a couple of minutes.
@@ -154,6 +164,16 @@ $ make
 $ sudo make install
 ```
 
+## Version up
+
+Go to [Install](#install-1) if you've never installed the project.
+
+```
+$ sudo $(npm root -g)/candy-red/install.sh
+```
+
+This will install the latest version of CANDY RED.
+
 ## Install
 
 The module installation will take a couple of minutes.
@@ -258,6 +278,16 @@ $ grunt build
 ```
 
 The processed files are placed under `dist` directory.
+
+## Version up
+
+Just pull the update on the `candy-red` directory and perform `npm install`.
+
+```
+$ cd candy-red
+$ git pull
+$ npm install
+```
 
 ## Run on localhost for development use
 
