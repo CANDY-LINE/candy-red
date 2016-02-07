@@ -299,6 +299,33 @@ $ npm test
 $ npm pack
 ```
 
+## Vagrant
+
+### Version
+
+ * v1.8.1+
+
+### Run on Vagrant Instance
+
+```
+(host)  $ vagrant up
+(host)  $ vagrant ssh
+(varant)$ npm install
+(varant)$ node dist/index.js
+```
+
+### Local Installation Test
+
+```
+(host)  $ vagrant up
+(host)  $ vagrant ssh
+(varant)$ cd /vagrant
+(varant)$ npm pack
+(varant)$ mv *.tgz /tmp
+(varant)$ cd /tmp
+(varant)$ sudo TARBALL=/tmp/candy-red-<version>.tgz ./install.sh
+```
+
 ## Coding Styles
 
 1. Use ES6 (except Gruntfile.js and \*.html)
