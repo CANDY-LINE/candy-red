@@ -60,9 +60,7 @@ The installation will take a couple of minutes.
 You can ignore `npm WARN`s, `gyp WARN`s, `gyp ERR!`s and `node-pre-gyp ERR!`s unless the installation terminates normally. You can check if the installation is successful by `systemctl status candy-red` command.
 
 ```
-$ VERSION=2.0.1
-$ npm install -g --unsafe-perm https://github.com/dbaba/candy-red/archive/${VERSION}.tar.gz
-$ $(npm root -g)/candy-red/install.sh
+$ curl -L https://github.com/dbaba/candy-red/raw/master/install.sh | bash
 ```
 
 ## Stop/Start/Status Service
@@ -138,8 +136,8 @@ v0.12.6
 ```
 $ sudo apt-get update
 $ sudo apt-get upgrade
-curl -sL https://deb.nodesource.com/setup_0.12 | sudo bash -
-sudo apt-get install -y build-essential python-dev python-rpi.gpio nodejs
+$ curl -sL https://deb.nodesource.com/setup_0.12 | sudo bash -
+$ sudo apt-get install -y build-essential python-dev python-rpi.gpio nodejs
 ```
 
 You can try another version as well. See the [instruction in Node-RED document](http://nodered.org/docs/hardware/raspberrypi.html) for detail.
@@ -185,9 +183,8 @@ You can ignore `npm WARN`s, `gyp WARN`s, `gyp ERR!`s and `node-pre-gyp ERR!`s un
 Please refer to the following commands to install.
 
 ```
-$ VERSION=2.0.1
-$ sudo npm install -g --unsafe-perm https://github.com/dbaba/candy-red/archive/${VERSION}.tar.gz
-$ sudo NODE_OPTS=--max-old-space-size=128 $(npm root -g)/candy-red/install.sh
+$ curl -L https://github.com/dbaba/candy-red/raw/master/install.sh | \
+    sudo NODE_OPTS=--max-old-space-size=128 bash
 ```
 
 ## Stop/Start/Status Service
