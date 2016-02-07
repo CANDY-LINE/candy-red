@@ -41,3 +41,4 @@ services/sysvinit/wrapper.sh
 !*.es6.js
 !Gruntfile.js
 .vagrant
+.node-red
