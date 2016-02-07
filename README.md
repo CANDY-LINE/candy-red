@@ -305,7 +305,7 @@ $ npm pack
 
 ```
 $ cd candy-red
-$ docker build -t candy-red docker
+$ docker build -t candy-red .
 ```
 
 ### Run CANDY RED container
