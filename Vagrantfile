@@ -12,7 +12,7 @@ Vagrant.configure(2) do |config|
 
   # Every Vagrant development environment requires a box. You can search for
   # boxes at https://atlas.hashicorp.com/search.
-  config.vm.box = "bento/ubuntu-14.04"
+  config.vm.box = "bento/ubuntu-15.04"
 
   # Disable automatic box update checking. If you disable this, then
   # boxes will only be checked for updates when the user runs
@@ -22,7 +22,7 @@ Vagrant.configure(2) do |config|
   # Create a forwarded port mapping which allows access to a specific port
   # within the machine from a port on the host machine. In the example below,
   # accessing "localhost:8080" will access port 80 on the guest machine.
-  # config.vm.network "forwarded_port", guest: 80, host: 8080
+  config.vm.network "candy-red", guest: 8100, host: 8100
 
   # Create a private network, which allows host-only access to the machine
   # using a specific IP.
@@ -49,7 +49,7 @@ Vagrant.configure(2) do |config|
     # vb.gui = true
 
     # Customize the amount of memory on the VM:
-    vb.memory = "512"
+    vb.memory = "1024"
     # Customize the cpu size on the VM:
     vb.cpus = 1
   end
@@ -67,15 +67,30 @@ Vagrant.configure(2) do |config|
   # Enable provisioning with a shell script. Additional provisioners such as
   # Puppet, Chef, Ansible, Salt, and Docker are also available. Please see the
   # documentation for more information about their specific syntax and use.
-  NVM_VERSION="v0.30.2"
-  NODE_JS_VERSION="v0.12.7"
+  BLUEZ_VER="5.37"
   config.vm.provision "shell", privileged: false, inline: <<-SH
     sudo apt-get -qq update
+    sudo apt-get -qq install libdbus-1-dev \
+        libdbus-glib-1-dev libglib2.0-dev libical-dev \
+        libreadline-dev libudev-dev libusb-dev make
+    cd /tmp
+    wget https://www.kernel.org/pub/linux/bluetooth/bluez-#{BLUEZ_VER}.tar.xz
+    tar xvf bluez-#{BLUEZ_VER}.tar.xz
+    cd bluez-#{BLUEZ_VER}
+    ./configure --disable-systemd
+    make
+    sudo make install
     sudo apt-get -qq install curl build-essential libssl-dev
-    curl https://raw.githubusercontent.com/creationix/nvm/#{NVM_VERSION}/install.sh | sh
-    . /home/vagrant/.nvm/nvm.sh
-    nvm install #{NODE_JS_VERSION}
-    nvm alias default #{NODE_JS_VERSION}
-    nvm use default
+    curl -sL https://deb.nodesource.com/setup_0.12 | sudo bash -
+    sudo apt-get -qq install nodejs
+    cd ~
+    ln -sn /vagrant/dist dist
+    ln -sn /vagrant/services services
+    ln -sn /vagrant/src src
+    ln -sn /vagrant/test test
+    ln -sn /vagrant/package.json package.json
+    ln -sn /vagrant/install.sh install.sh
+    ln -sn /vagrant/uninstall.sh uninstall.sh
+    npm install
   SH
 end
