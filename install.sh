@@ -115,7 +115,26 @@ function resolve_version {
       | awk -F: '{ print $2 }' \
       | sed 's/[",]//g' \
       | tr -d '[[:space:]]')
-  else
+    LATEST=$(curl -L https://github.com/dbaba/candy-red/raw/master/package.json \
+      | grep version \
+      | head -1 \
+      | awk -F: '{ print $2 }' \
+      | sed 's/[",]//g' \
+      | tr -d '[[:space:]]')
+    if [ -z "${VERSION}" ]; then
+      if [ -z "${LATEST}" ]; then
+        err "Failed to resolve the latest version"
+        exit 4
+      fi
+      info "Installing the latest version of CANDY RED..."
+    elif [ -z "${LATEST}" ]; then
+      info "Re-installing CANDY RED..."
+    elif [ "${VERSION}" != "${LATEST}" ]; then
+      info "Upgrading CANDY RED: ${VERSION} => ${LATEST}..."
+      unset VERSION
+    fi
+  fi
+  if [ -z "${VERSION}" ]; then
     VERSION="master"
     download_and_npm_install
     $(npm root -g)/candy-red/install.sh
