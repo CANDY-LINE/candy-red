@@ -212,5 +212,6 @@ setup
 test_system_service_arg
 cd_module_root
 resolve_version
+${ROOT}/uninstall.sh system_service
 npm_install
 system_service_install
