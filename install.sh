@@ -2,6 +2,14 @@
 
 SERVICE_NAME="candy-red"
 
+function err {
+  echo -e "\033[91m[ERROR] $1\033[0m"
+}
+
+function info {
+  echo -e "\033[92m[INFO] $1\033[0m"
+}
+
 function setup {
   assert_root
   if [ "${CP_DESTS}" != "" ]; then
