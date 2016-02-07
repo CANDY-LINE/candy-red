@@ -7,7 +7,7 @@
     "pretest": "grunt build",
     "test": "grunt test",
     "postinstall": "if [ -d \"./dist\" ]; then cp -r ./dist/nodes/local-node-* node_modules/; fi",
-    "prepublish": "grunt build"
+    "prepublish": "which grunt;if [ \"$?\" -eq \"0\" ]; then grunt build; fi"
   },
   "repository": {
     "type": "git",
