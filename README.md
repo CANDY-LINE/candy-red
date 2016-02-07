@@ -43,6 +43,16 @@ This theme appears when CANDY IoT Board is available on a device.
 
 * v0.10.38 (preinstalled)
 
+## Version up
+
+Go to [Install](#install) if you've never installed the project.
+
+```
+$ $(npm root -g)/candy-red/install.sh
+```
+
+This will install the latest version of CANDY RED.
+
 ## Install
 
 The installation will take a couple of minutes.
@@ -50,9 +60,7 @@ The installation will take a couple of minutes.
 You can ignore `npm WARN`s, `gyp WARN`s, `gyp ERR!`s and `node-pre-gyp ERR!`s unless the installation terminates normally. You can check if the installation is successful by `systemctl status candy-red` command.
 
 ```
-$ VERSION=2.0.1
-$ npm install -g --unsafe-perm https://github.com/dbaba/candy-red/archive/${VERSION}.tar.gz
-$ $(npm root -g)/candy-red/install.sh
+$ curl -L https://github.com/dbaba/candy-red/raw/master/install.sh | bash
 ```
 
 ## Stop/Start/Status Service
@@ -128,8 +136,8 @@ v0.12.6
 ```
 $ sudo apt-get update
 $ sudo apt-get upgrade
-curl -sL https://deb.nodesource.com/setup_0.12 | sudo bash -
-sudo apt-get install -y build-essential python-dev python-rpi.gpio nodejs
+$ curl -sL https://deb.nodesource.com/setup_0.12 | sudo bash -
+$ sudo apt-get install -y build-essential python-dev python-rpi.gpio nodejs
 ```
 
 You can try another version as well. See the [instruction in Node-RED document](http://nodered.org/docs/hardware/raspberrypi.html) for detail.
@@ -154,6 +162,16 @@ $ make
 $ sudo make install
 ```
 
+## Version up
+
+Go to [Install](#install-1) if you've never installed the project.
+
+```
+$ sudo $(npm root -g)/candy-red/install.sh
+```
+
+This will install the latest version of CANDY RED.
+
 ## Install
 
 The module installation will take a couple of minutes.
@@ -165,9 +183,8 @@ You can ignore `npm WARN`s, `gyp WARN`s, `gyp ERR!`s and `node-pre-gyp ERR!`s un
 Please refer to the following commands to install.
 
 ```
-$ VERSION=2.0.1
-$ sudo npm install -g --unsafe-perm https://github.com/dbaba/candy-red/archive/${VERSION}.tar.gz
-$ sudo NODE_OPTS=--max-old-space-size=128 $(npm root -g)/candy-red/install.sh
+$ curl -L https://github.com/dbaba/candy-red/raw/master/install.sh | \
+    sudo NODE_OPTS=--max-old-space-size=128 bash
 ```
 
 ## Stop/Start/Status Service
@@ -259,6 +276,16 @@ $ grunt build
 
 The processed files are placed under `dist` directory.
 
+## Version up
+
+Just pull the update on the `candy-red` directory and perform `npm install`.
+
+```
+$ cd candy-red
+$ git pull
+$ npm install
+```
+
 ## Run on localhost for development use
 
 Try the following commands after `grunt build`:
@@ -297,6 +324,33 @@ $ npm test
 
 ```
 $ npm pack
+```
+
+## Vagrant
+
+### Version
+
+ * v1.8.1+
+
+### Run on Vagrant Instance
+
+```
+(host)  $ vagrant up
+(host)  $ vagrant ssh
+(varant)$ npm install
+(varant)$ node dist/index.js
+```
+
+### Local Installation Test
+
+```
+(host)  $ vagrant up
+(host)  $ vagrant ssh
+(varant)$ cd /vagrant
+(varant)$ npm pack
+(varant)$ mv *.tgz /tmp
+(varant)$ cd /tmp
+(varant)$ sudo TARBALL=/tmp/candy-red-<version>.tgz ./install.sh
 ```
 
 ## Coding Styles
