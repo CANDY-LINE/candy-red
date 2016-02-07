@@ -10,6 +10,12 @@ function info {
   echo -e "\033[92m[INFO] $1\033[0m"
 }
 
+function download_and_npm_install {
+  TARBALL=${TARBALL:-https://github.com/dbaba/archive/${VERSION}.tar.gz}
+  info "Performing npm install ${TARBALL}..."
+  npm install -g ${TARBALL}
+}
+
 function setup {
   assert_root
   assert_node_npm
@@ -98,21 +104,23 @@ function cd_module_root {
   fi
   ROOT=`dirname ${REALPATH}`
   cd ${ROOT}
-
-  if [ ! -f "./package.json" ]; then
-    err "install.sh is placed on a wrong place. Make sure 'npm install' is successful."
-    exit 2
-  fi
 }
 
 function resolve_version {
-  # https://gist.github.com/DarrenN/8c6a5b969481725a4413
-  VERSION=$(cat ${ROOT}/package.json \
-    | grep version \
-    | head -1 \
-    | awk -F: '{ print $2 }' \
-    | sed 's/[",]//g' \
-    | tr -d '[[:space:]]')
+  if [ -f "${ROOT}/package.json" ]; then
+    # https://gist.github.com/DarrenN/8c6a5b969481725a4413
+    VERSION=$(cat ${ROOT}/package.json \
+      | grep version \
+      | head -1 \
+      | awk -F: '{ print $2 }' \
+      | sed 's/[",]//g' \
+      | tr -d '[[:space:]]')
+  else
+    VERSION="master"
+    download_and_npm_install
+    $(npm root -g)/candy-red/install.sh
+    exit $?
+  fi
 }
 
 function npm_install {
