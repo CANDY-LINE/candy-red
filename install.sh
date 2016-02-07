@@ -12,6 +12,7 @@ function info {
 
 function setup {
   assert_root
+  assert_node_npm
   if [ "${CP_DESTS}" != "" ]; then
     rm -f "${CP_DESTS}"
     touch "${CP_DESTS}"
@@ -40,6 +41,13 @@ function cpf {
 function assert_root {
   if [[ $EUID -ne 0 ]]; then
      err "This script must be run as root"
+     exit 1
+  fi
+}
+
+function assert_node_npm {
+  if [ `which node>/dev/null && which npm>/dev/null;echo $?` != "0" ]; then
+     err "Please install Node.js and npm"
      exit 1
   fi
 }
