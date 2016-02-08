@@ -22,6 +22,10 @@ function setup {
     rm -f "${CP_DESTS}"
     touch "${CP_DESTS}"
   fi
+  if [ "$1" == "test" ]; then
+    info "Ready for installation!"
+    exit 0
+  fi
 }
 
 function cpf {
