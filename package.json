@@ -4,6 +4,7 @@
   "description": "Gateway Service",
   "main": "./dist/index.js",
   "scripts": {
+    "start": "node ./dist/index.js",
     "pretest": "grunt build",
     "test": "grunt test",
     "postinstall": "if [ -d \"./dist\" ]; then cp -r ./dist/nodes/local-node-* node_modules/; fi",
