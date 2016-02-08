@@ -63,13 +63,6 @@ function test_system_service_arg {
   else
     SYSTEM_SERVICE_TYPE="$1"
   fi
-
-  if [ "${SYSTEM_SERVICE_TYPE}" == "" ]; then
-    err "Please provide the type of working system service. Either systemd or sysvinit is available"
-    exit 1
-  fi
-
-  _test_system_service_type
 }
 
 function _try_systemd {
@@ -81,16 +74,6 @@ function _try_systemd {
     return
   fi
   SYSTEM_SERVICE_TYPE="systemd"
-}
-
-function _test_system_service_type {
-  case "${SYSTEM_SERVICE_TYPE}" in
-    systemd)
-      ;;
-    *)
-    err "${SYSTEM_SERVICE_TYPE} is unsupported. Either systemd or sysvinit is available"
-    exit 1
-  esac
 }
 
 function cd_module_root {
@@ -141,17 +124,9 @@ function resolve_version {
   fi
 }
 
-function npm_install {
-  RET=`npm ls | grep candy-red`
-  RET=$?
-  if [ "${RET}" != "0" ]; then
-    info "Installing ${SERVICE_NAME}..."
-    install=`npm install .`
-    RET=$?
-    if [ ${RET} != 0 ]; then
-      err "npm install failed: code [${RET}]"
-      exit ${RET}
-    fi
+function npm_local_install {
+  if [ -d "./dist" ]; then
+    cp -r ./dist/nodes/local-node-* node_modules/
   fi
 }
 
@@ -196,6 +171,12 @@ setup
 test_system_service_arg
 cd_module_root
 resolve_version
-${ROOT}/uninstall.sh system_service
-npm_install
-system_service_install
+if [ "${SYSTEM_SERVICE_TYPE}" != "" ]; then
+  ${ROOT}/uninstall.sh system_service
+  npm_local_install
+  system_service_install
+else
+  info "Won't install a SystemD service as it isn't supported on the system"
+  npm_local_install
+  info "Run 'npm run start' to start CANDY RED!"
+fi
