@@ -11,9 +11,8 @@ function info {
 }
 
 function download_and_npm_install {
-  TARBALL=${TARBALL:-https://github.com/dbaba/archive/${VERSION}.tar.gz}
-  info "Performing npm install ${TARBALL}..."
-  npm install -g --unsafe-perm ${TARBALL}
+  info "Performing npm install ${SERVICE_NAME}@${VERSION}..."
+  npm install -g --unsafe-perm ${SERVICE_NAME}
 }
 
 function setup {
