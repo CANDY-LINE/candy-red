@@ -32,8 +32,6 @@ services/start_systemd.sh
 services/systemd/candy-red.service
 services/systemd/environment
 services/start_sysvinit.sh
-services/sysvinit/environment
-services/sysvinit/wrapper.sh
 *.map
 *.js
 !dist/**/*.map
@@ -42,3 +40,4 @@ services/sysvinit/wrapper.sh
 !Gruntfile.js
 .vagrant
 .node-red
+dist
