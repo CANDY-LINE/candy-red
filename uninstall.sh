@@ -58,18 +58,6 @@ function _lookup_system_service_type {
     fi
     exit 3
   fi
-  START_SH=$(basename ${START_SH})
-  SYSTEM_SERVICE_TYPE=${START_SH:6:`expr length ${START_SH}`-9}
-
-  case "${SYSTEM_SERVICE_TYPE}" in
-    systemd)
-      ;;
-    sysvinit)
-      ;;
-    *)
-    err "${SYSTEM_SERVICE_TYPE} is unsupported. Either systemd or sysvinit is available"
-    exit 3
-  esac
 }
 
 function _uninstall_systemd {
@@ -80,21 +68,6 @@ function _uninstall_systemd {
   systemctl disable ${SERVICE_NAME}
   set +e
   rm -f "${LIB_SYSTEMD}/system/${SERVICE_NAME}.service"
-}
-
-function _uninstall_sysvinit {
-  INIT=/etc/init.d/${SERVICE_NAME}
-
-  if [ -x ${INIT} ]; then
-    if [ -x /usr/sbin/invoke-rc.d ]; then
-      invoke-rc.d ${SERVICE_NAME} stop
-    else
-      ${INIT} stop
-    fi
-  fi
-  rm -f /etc/default/${SERVICE_NAME}
-  rm -f ${INIT}
-  rm -f /var/run/${SERVICE_NAME}.pid
 }
 
 assert_root
