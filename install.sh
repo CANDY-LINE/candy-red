@@ -113,7 +113,7 @@ function resolve_version {
 
 function npm_local_install {
   if [ -d "${PROJECT_ROOT}/dist" ]; then
-    cp -r ./dist/nodes/local-node-* node_modules/
+    cp -r ${PROJECT_ROOT}/dist/nodes/local-node-* node_modules/
   fi
 }
 
