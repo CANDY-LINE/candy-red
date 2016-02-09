@@ -43,24 +43,16 @@ This theme appears when CANDY IoT Board is available on a device.
 
 * v0.10.38 (preinstalled)
 
-## Version up
-
-Go to [Install](#install) if you've never installed the project.
-
-```
-$ $(npm root -g)/candy-red/install.sh
-```
-
 This will install the latest version of CANDY RED.
 
-## Install
+## Install/Version-up
 
 The installation will take a couple of minutes.
 
 You can ignore `npm WARN`s, `gyp WARN`s, `gyp ERR!`s and `node-pre-gyp ERR!`s unless the installation terminates normally. You can check if the installation is successful by `systemctl status candy-red` command.
 
 ```
-$ curl -L https://github.com/dbaba/candy-red/raw/master/install.sh | bash
+$ npm install -g --unsafe-perm candy-red
 ```
 
 ## Stop/Start/Status Service
@@ -76,10 +68,10 @@ $ systemctl status candy-red
 ## Uninstall
 
 ```
-$ $(npm root -g)/candy-red/uninstall.sh
+$ npm uninstall -g --unsafe-perm candy-red
 ```
 
-If you run `npm uninstall -g candy-red` prior to run the `uninstall.sh`, please run the following commands in order to reset systemd configurations.
+If you run `npm uninstall -g candy-red` (without `--unsafe-perm`) and see `[ERROR] This script must be run as root` message, please run the following commands in order to reset systemd configurations.
 
 ```
 $ systemctl stop candy-red
@@ -93,7 +85,7 @@ $ rm -f "$(dirname $(dirname $(which systemctl)))/lib/systemd/system/candy-red.s
 
 ### Raspbian version
 
- * 4.1 (2015-11-21)
+ * JESSIE/JESSIE LITE 4.1 (2016-02-03)
 
 ### Tested Node.js versions
 
@@ -116,7 +108,7 @@ $ sudo apt-get update -y
 $ sudo apt-get upgrade -y
 $ wget http://node-arm.herokuapp.com/node_archive_armhf.deb
 $ sudo dpkg -i node_archive_armhf.deb
-$ sudo apt-get install -y build-essential python-dev python-rpi.gpio
+$ sudo apt-get install -y python-dev python-rpi.gpio bluez
 ```
 
 You can check the installed Node.js version by the following command.
@@ -137,44 +129,14 @@ v0.12.6
 $ sudo apt-get update
 $ sudo apt-get upgrade
 $ curl -sL https://deb.nodesource.com/setup_0.12 | sudo bash -
-$ sudo apt-get install -y build-essential python-dev python-rpi.gpio nodejs
+$ sudo apt-get install -y python-dev python-rpi.gpio bluez nodejs
 ```
 
 You can try another version as well. See the [instruction in Node-RED document](http://nodered.org/docs/hardware/raspberrypi.html) for detail.
 
-### BlueZ (for BLE on RPi)
+## Install/Version-up
 
-BlueZ is required for managing BLE devices.
-
-You can find the installation instruction in the [article](http://www.elinux.org/RPi_Bluetooth_LE). The compilation takes around 40 minutes (RPi B+).
-
-Here is a brief instruction. (Check the latest version of BlueZ at www.bluez.org)
-```
-$ BLUEZ_VER=5.37
-$ sudo apt-get install -y libdbus-1-dev \
-    libdbus-glib-1-dev libglib2.0-dev libical-dev \
-    libreadline-dev libudev-dev libusb-dev make
-$ wget https://www.kernel.org/pub/linux/bluetooth/bluez-${BLUEZ_VER}.tar.xz
-$ tar xvf bluez-${BLUEZ_VER}.tar.xz
-$ cd bluez-${BLUEZ_VER}
-$ ./configure --disable-systemd
-$ make
-$ sudo make install
-```
-
-## Version up
-
-Go to [Install](#install-1) if you've never installed the project.
-
-```
-$ sudo $(npm root -g)/candy-red/install.sh
-```
-
-This will install the latest version of CANDY RED.
-
-## Install
-
-The module installation will take a couple of minutes.
+The module installation will take a couple of minutes. Please consider to change your hostname as [described below](#change-hostname) prior to installing CANDY RED.
 
 `--unsafe-perm` flag is required for installing this project module since npm performs privileged actions during the installation. This is discussed in the [issue](https://github.com/voodootikigod/node-serialport/issues/535).
 
@@ -183,8 +145,7 @@ You can ignore `npm WARN`s, `gyp WARN`s, `gyp ERR!`s and `node-pre-gyp ERR!`s un
 Please refer to the following commands to install.
 
 ```
-$ curl -L https://github.com/dbaba/candy-red/raw/master/install.sh | \
-    sudo NODE_OPTS=--max-old-space-size=128 bash
+$ sudo NODE_OPTS=--max-old-space-size=128 npm install -g --unsafe-perm candy-red
 ```
 
 ## Stop/Start/Status Service
@@ -200,10 +161,10 @@ $ sudo systemctl status candy-red
 ## Uninstall
 
 ```
-$ sudo $(npm root -g)/candy-red/uninstall.sh
+$ sudo npm uninstall -g --unsafe-perm candy-red
 ```
 
-If you run `sudo npm uninstall -g candy-red` prior to run the `uninstall.sh`, please run the following commands in order to reset systemd configurations.
+If you run `sudo npm uninstall -g candy-red` (without `--unsafe-perm`) and see `[ERROR] This script must be run as root` message, please run the following commands in order to reset systemd configurations.
 
 ```
 $ sudo systemctl stop candy-red
