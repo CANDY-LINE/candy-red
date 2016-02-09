@@ -395,6 +395,14 @@ $ docker run -tid -v ./dist:/candy-red-dist candy-red
 
 ## Revision History
 
+* 2.1.0
+  - SysVinit is no longer supported
+  - npm installation/uninstallation/version-up support
+  - Publish the asakusa_giken local nodes as [node-red-contrib-asakusa_giken](https://github.com/Robotma-com/node-red-contrib-asakusa_giken) and separate the repo
+  - Publish to npm
+  - Add Dockerfile for development and testing
+  - Add Vagrantfile for development and testing
+
 * 2.0.1
   - Fix CANDY EGG nodes issues
 
