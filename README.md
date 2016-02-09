@@ -202,6 +202,27 @@ The Node-RED home path, where flow files are placed, is found at `$(npm root -g)
 
 It takes up to around a minute to boot up the service. Please be patient and wait until the service is online.
 
+### BlueZ source code build
+
+The latest Raspbian offers you to install BlueZ with `apt-get` command as described above.
+However, you can still use the latest version of BlueZ if you want.
+
+You can find the installation instruction in the [article](http://www.elinux.org/RPi_Bluetooth_LE). The compilation takes around 40 minutes (RPi B+).
+
+Here is a brief instruction. (Check the latest version of BlueZ at www.bluez.org)
+```
+$ BLUEZ_VER=5.37
+$ sudo apt-get install -y build-essential libdbus-1-dev \
+    libdbus-glib-1-dev libglib2.0-dev libical-dev \
+    libreadline-dev libudev-dev libusb-dev make
+$ wget https://www.kernel.org/pub/linux/bluetooth/bluez-${BLUEZ_VER}.tar.xz
+$ tar xvf bluez-${BLUEZ_VER}.tar.xz
+$ cd bluez-${BLUEZ_VER}
+$ ./configure --disable-systemd
+$ make
+$ sudo make install
+```
+
 # Development
 
 ## Prerequisites
