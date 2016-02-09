@@ -36,14 +36,10 @@ function cd_module_root {
 
 function system_service_uninstall {
   _lookup_system_service_type
-  _uninstall_${SYSTEM_SERVICE_TYPE}
-  info "${SERVICE_NAME} service has been uninstalled."
-}
-
-function npm_uninstall {
-  pushd ${ROOT}/../..
-  npm uninstall ${SERVICE_NAME}
-  info "${SERVICE_NAME} module has been uninstalled."
+  if [ -n "${SYSTEM_SERVICE_TYPE}" ]; then
+    _uninstall_${SYSTEM_SERVICE_TYPE}
+    info "${SERVICE_NAME} service has been uninstalled."
+  fi
 }
 
 function _lookup_system_service_type {
@@ -53,10 +49,10 @@ function _lookup_system_service_type {
   START_SH=`ls ${SERVICES}/start_*`
   RET=$?
   if [ "${RET}" != "0" ]; then
-    if [ "$1" != "system_service" ]; then
-      err "The service ${SERVICE_NAME} isn't installed yet."
-    fi
-    exit 3
+    err "The service ${SERVICE_NAME} isn't installed yet."
+  else
+    START_SH=$(basename ${START_SH})
+    SYSTEM_SERVICE_TYPE=${START_SH:6:`expr length ${START_SH}`-9}
   fi
 }
 
@@ -73,6 +69,3 @@ function _uninstall_systemd {
 assert_root
 cd_module_root
 system_service_uninstall
-if [ "$1" != "system_service" ]; then
-  npm_uninstall
-fi
