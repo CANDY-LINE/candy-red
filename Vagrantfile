@@ -70,27 +70,12 @@ Vagrant.configure(2) do |config|
   BLUEZ_VER="5.37"
   config.vm.provision "shell", privileged: false, inline: <<-SH
     sudo apt-get -qq update
-    sudo apt-get -qq install libdbus-1-dev \
-        libdbus-glib-1-dev libglib2.0-dev libical-dev \
-        libreadline-dev libudev-dev libusb-dev make
-    cd /tmp
-    wget https://www.kernel.org/pub/linux/bluetooth/bluez-#{BLUEZ_VER}.tar.xz
-    tar xvf bluez-#{BLUEZ_VER}.tar.xz
-    cd bluez-#{BLUEZ_VER}
-    ./configure --disable-systemd
-    make
-    sudo make install
-    sudo apt-get -qq install curl build-essential libssl-dev
+    sudo apt-get -qq install curl bluez
     curl -sL https://deb.nodesource.com/setup_0.12 | sudo bash -
     sudo apt-get -qq install nodejs
-    cd ~
-    ln -sn /vagrant/dist dist
-    ln -sn /vagrant/services services
-    ln -sn /vagrant/src src
-    ln -sn /vagrant/test test
-    ln -sn /vagrant/package.json package.json
-    ln -sn /vagrant/install.sh install.sh
-    ln -sn /vagrant/uninstall.sh uninstall.sh
+    cd /vagrant
+    rm -fr node_modules
+    sudo npm install -g grunt-cli babel mocha jshint
     npm install
   SH
 end
