@@ -1,6 +1,6 @@
 {
   "name": "candy-red",
-  "version": "2.1.0",
+  "version": "2.1.1",
   "description": "Gateway Service",
   "main": "./dist/index.js",
   "scripts": {
