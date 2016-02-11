@@ -96,13 +96,7 @@ function resolve_version {
   if [ "$1" == "update" ]; then
     unset VERSON
   elif [ -f "${PPOJECT_ROOT}/package.json" ]; then
-    # https://gist.github.com/DarrenN/8c6a5b969481725a4413
-    VERSION=$(cat ${PPOJECT_ROOT}/package.json \
-      | grep version \
-      | head -1 \
-      | awk -F: '{ print $2 }' \
-      | sed 's/[",]//g' \
-      | tr -d '[[:space:]]')
+    VERSION=$(node -e "console.log(require('${PPOJECT_ROOT}/package.json').version)")
   fi
   if [ -z "${VERSION}" ]; then
     VERSION="master"
