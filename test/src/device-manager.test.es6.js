@@ -52,7 +52,7 @@ describe('DeviceIdResolver', () => {
   it('should return the serial number', done => {
     let resolver = new DeviceIdResolver();
     sandbox.stub(fs, 'stat').yields();
-    sandbox.stub(fs, 'read').yields(null, 'my-serial-number');
+    sandbox.stub(fs, 'readFile').yields(null, 'my-serial-number\n');
     resolver.resolve().then(id => {
       assert.equal('EDN:my-serial-number', id);
       done();

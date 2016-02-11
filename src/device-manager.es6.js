@@ -42,11 +42,11 @@ export class DeviceIdResolver {
       if (err) {
         return this._resolveLTEPi(resolve, reject);
       }
-      fs.read(EDISON_YOCTO_SN_PATH, (err, data) => {
+      fs.readFile(EDISON_YOCTO_SN_PATH, (err, data) => {
         if (err) {
           return reject(err);
         }
-        resolve('EDN:' + data);
+        resolve('EDN:' + data.toString().trim());
       });
     });
   }
