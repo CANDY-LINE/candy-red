@@ -230,7 +230,7 @@ $ sudo make install
 ### Supported Node.js versions
 
 * v0.12
-* v4.2
+* v4.3
 
 ## Setup for Building
 
