@@ -138,6 +138,7 @@ describe('DeviceState', () => {
         on: () => {}
       });
       stubCproc.spawn.onSecondCall().returns(ciot);
+      ciot.on.yields();
 
       state.testIfCANDYIoTInstalled().then(version => {
         assert.equal('1234', version);

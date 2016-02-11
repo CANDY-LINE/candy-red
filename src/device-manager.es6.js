@@ -704,7 +704,8 @@ export class DeviceState {
                 let ret = JSON.parse(data);
                 version = ret.version;
               } catch (e) {
-                RED.log.info(e);
+                RED.log.error('** CANDY IoT Service isn\'t running');
+                RED.log.info(e.stack);
               }
             });
             ciot.on('close', () => {
@@ -713,8 +714,9 @@ export class DeviceState {
             ciot.on('error', err => {
               reject(err);
             });
+          } else {
+            resolve(version);
           }
-          resolve(version);
         });
       });
     });
