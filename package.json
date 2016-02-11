@@ -10,7 +10,7 @@
     "preinstall": "./install.sh test",
     "postinstall": "./install.sh",
     "preuninstall": "./uninstall.sh",
-    "prepublish": "which grunt;if [ \"$?\" -eq \"0\" ]; then grunt test build; fi"
+    "prepublish": "which grunt;if [ \"$?\" -eq \"0\" ] && [ -d \"./src\" ] ; then grunt test build; fi"
   },
   "repository": {
     "type": "git",
