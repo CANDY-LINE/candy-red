@@ -27,13 +27,13 @@ _\* CANDY EGG cloud services are required_
 
 This is the default screen theme.
 
-![CANDY RED Screenshot](images/screenshot-candy-red.png "CANDY RED Screenshot")
+![CANDY RED Screenshot](https://raw.githubusercontent.com/dbaba/candy-red/master/images/screenshot-candy-red.png "CANDY RED Screenshot")
 
 ## CANDY BOX flow editor page on browser
 
 This theme appears when CANDY IoT Board is available on a device.
 
-![CANDY BOX Screenshot](images/screenshot-candy-box.png "CANDY BOX Screenshot")
+![CANDY BOX Screenshot](https://raw.githubusercontent.com/dbaba/candy-red/master/images/screenshot-candy-box.png "CANDY BOX Screenshot")
 
 # Intel Edison + Yocto
 
@@ -43,25 +43,19 @@ This theme appears when CANDY IoT Board is available on a device.
 
 * v0.10.38 (preinstalled)
 
-## Version up
-
-Go to [Install](#install) if you've never installed the project.
-
-```
-$ $(npm root -g)/candy-red/install.sh
-```
-
 This will install the latest version of CANDY RED.
 
-## Install
+## Install/Version-up
 
-The installation will take a couple of minutes.
+The installation will take about 5 minutes.
 
 You can ignore `npm WARN`s, `gyp WARN`s, `gyp ERR!`s and `node-pre-gyp ERR!`s unless the installation terminates normally. You can check if the installation is successful by `systemctl status candy-red` command.
 
 ```
-$ curl -L https://github.com/dbaba/candy-red/raw/master/install.sh | bash
+$ npm install -g --unsafe-perm candy-red
 ```
+
+You can access `http://<hostname.local or ip address>:8100` with your browser on the same LAN where `<hostname.local or ip address>` is a host name with `.local` suffix or IP address.
 
 ## Stop/Start/Status Service
 
@@ -76,10 +70,10 @@ $ systemctl status candy-red
 ## Uninstall
 
 ```
-$ $(npm root -g)/candy-red/uninstall.sh
+$ npm uninstall -g --unsafe-perm candy-red
 ```
 
-If you run `npm uninstall -g candy-red` prior to run the `uninstall.sh`, please run the following commands in order to reset systemd configurations.
+If you run `npm uninstall -g candy-red` (without `--unsafe-perm`) and see `[ERROR] This script must be run as root` message, please run the following commands in order to reset systemd configurations.
 
 ```
 $ systemctl stop candy-red
@@ -93,7 +87,7 @@ $ rm -f "$(dirname $(dirname $(which systemctl)))/lib/systemd/system/candy-red.s
 
 ### Raspbian version
 
- * 4.1 (2015-11-21)
+ * JESSIE/JESSIE LITE 4.1 (2016-02-03)
 
 ### Tested Node.js versions
 
@@ -116,7 +110,7 @@ $ sudo apt-get update -y
 $ sudo apt-get upgrade -y
 $ wget http://node-arm.herokuapp.com/node_archive_armhf.deb
 $ sudo dpkg -i node_archive_armhf.deb
-$ sudo apt-get install -y build-essential python-dev python-rpi.gpio
+$ sudo apt-get install -y python-dev python-rpi.gpio bluez
 ```
 
 You can check the installed Node.js version by the following command.
@@ -137,44 +131,16 @@ v0.12.6
 $ sudo apt-get update
 $ sudo apt-get upgrade
 $ curl -sL https://deb.nodesource.com/setup_0.12 | sudo bash -
-$ sudo apt-get install -y build-essential python-dev python-rpi.gpio nodejs
+$ sudo apt-get install -y python-dev python-rpi.gpio bluez nodejs
 ```
 
 You can try another version as well. See the [instruction in Node-RED document](http://nodered.org/docs/hardware/raspberrypi.html) for detail.
 
-### BlueZ (for BLE on RPi)
+## Install/Version-up
 
-BlueZ is required for managing BLE devices.
+The module installation will take around 30 minutes on RPi1. On RPi2, the installation time will be shorter.
 
-You can find the installation instruction in the [article](http://www.elinux.org/RPi_Bluetooth_LE). The compilation takes around 40 minutes (RPi B+).
-
-Here is a brief instruction. (Check the latest version of BlueZ at www.bluez.org)
-```
-$ BLUEZ_VER=5.37
-$ sudo apt-get install -y libdbus-1-dev \
-    libdbus-glib-1-dev libglib2.0-dev libical-dev \
-    libreadline-dev libudev-dev libusb-dev make
-$ wget https://www.kernel.org/pub/linux/bluetooth/bluez-${BLUEZ_VER}.tar.xz
-$ tar xvf bluez-${BLUEZ_VER}.tar.xz
-$ cd bluez-${BLUEZ_VER}
-$ ./configure --disable-systemd
-$ make
-$ sudo make install
-```
-
-## Version up
-
-Go to [Install](#install-1) if you've never installed the project.
-
-```
-$ sudo $(npm root -g)/candy-red/install.sh
-```
-
-This will install the latest version of CANDY RED.
-
-## Install
-
-The module installation will take a couple of minutes.
+Please consider to change your hostname as [described below](#change-hostname) prior to installing CANDY RED.
 
 `--unsafe-perm` flag is required for installing this project module since npm performs privileged actions during the installation. This is discussed in the [issue](https://github.com/voodootikigod/node-serialport/issues/535).
 
@@ -183,9 +149,10 @@ You can ignore `npm WARN`s, `gyp WARN`s, `gyp ERR!`s and `node-pre-gyp ERR!`s un
 Please refer to the following commands to install.
 
 ```
-$ curl -L https://github.com/dbaba/candy-red/raw/master/install.sh | \
-    sudo NODE_OPTS=--max-old-space-size=128 bash
+$ sudo NODE_OPTS=--max-old-space-size=128 npm install -g --unsafe-perm candy-red
 ```
+
+You can access `http://<hostname.local or ip address>:8100` with your browser on the same LAN where `<hostname.local or ip address>` is a host name with `.local` suffix or IP address.
 
 ## Stop/Start/Status Service
 
@@ -200,10 +167,10 @@ $ sudo systemctl status candy-red
 ## Uninstall
 
 ```
-$ sudo $(npm root -g)/candy-red/uninstall.sh
+$ sudo npm uninstall -g --unsafe-perm candy-red
 ```
 
-If you run `sudo npm uninstall -g candy-red` prior to run the `uninstall.sh`, please run the following commands in order to reset systemd configurations.
+If you run `sudo npm uninstall -g candy-red` (without `--unsafe-perm`) and see `[ERROR] This script must be run as root` message, please run the following commands in order to reset systemd configurations.
 
 ```
 $ sudo systemctl stop candy-red
@@ -241,6 +208,27 @@ The Node-RED home path, where flow files are placed, is found at `$(npm root -g)
 
 It takes up to around a minute to boot up the service. Please be patient and wait until the service is online.
 
+### BlueZ source code build
+
+The latest Raspbian offers you to install BlueZ with `apt-get` command as described above.
+However, you can still use the latest version of BlueZ if you want.
+
+You can find the installation instruction in the [article](http://www.elinux.org/RPi_Bluetooth_LE). The compilation takes around 40 minutes (RPi B+).
+
+Here is a brief instruction. (Check the latest version of BlueZ at www.bluez.org)
+```
+$ BLUEZ_VER=5.37
+$ sudo apt-get install -y build-essential libdbus-1-dev \
+    libdbus-glib-1-dev libglib2.0-dev libical-dev \
+    libreadline-dev libudev-dev libusb-dev make
+$ wget https://www.kernel.org/pub/linux/bluetooth/bluez-${BLUEZ_VER}.tar.xz
+$ tar xvf bluez-${BLUEZ_VER}.tar.xz
+$ cd bluez-${BLUEZ_VER}
+$ ./configure --disable-systemd
+$ make
+$ sudo make install
+```
+
 # Development
 
 ## Prerequisites
@@ -248,7 +236,7 @@ It takes up to around a minute to boot up the service. Please be patient and wai
 ### Supported Node.js versions
 
 * v0.12
-* v4.2
+* v4.3
 
 ## Setup for Building
 
@@ -412,6 +400,16 @@ $ docker run -tid -v ./dist:/candy-red-dist candy-red
 * [LTEPi Board for Raspberry Pi](https://translate.google.co.jp/translate?sl=auto&tl=en&js=y&prev=_t&hl=en&ie=UTF-8&u=http%3A%2F%2Flte4iot.com%2Fproducts%2Fltepi%2F&edit-text=&act=url) with LTE module support
 
 ## Revision History
+
+* 2.1.1
+  - Publish to npm
+  - npm installation/uninstallation/version-up support
+
+* 2.1.0
+  - SysVinit is no longer supported
+  - Publish the asakusa_giken local nodes as [node-red-contrib-asakusa_giken](https://github.com/Robotma-com/node-red-contrib-asakusa_giken) and separate the repo
+  - Add Dockerfile for development and testing
+  - Add Vagrantfile for development and testing
 
 * 2.0.1
   - Fix CANDY EGG nodes issues

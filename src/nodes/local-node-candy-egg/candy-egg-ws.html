@@ -58,6 +58,33 @@
     return root;
   }
 
+  function trasnlateIntoFqn(text) {
+    text = text.trim();
+    var i = -1;
+    if (text.indexOf('https://') === 0) {
+      i = 'https://'.length;
+    }
+    if (text.indexOf('http://') === 0) {
+      i = 'http://'.length;
+    }
+    if (i >= 0) {
+      var e = text.indexOf('/', i);
+      if (e < 0) {
+        return text;
+      }
+      var f = text.indexOf('/', e + 1);
+      if (f < 0) {
+        f = text.length;
+      }
+      var hostAndPort = text.substring(i, e);
+      var account = text.substring(e + 1, f);
+      if (account && hostAndPort) {
+        text = account + '@' + hostAndPort;
+      }
+    }
+    return text;
+  }
+
   RED.nodes.registerType('CANDY EGG websocket in',{
     category: 'input',
     defaults: {
@@ -134,6 +161,14 @@
       } else {
         $('.form-row-managed').hide();
       }
+      $('#node-config-input-accountFqn').blur(function() {
+        var text = $(this).val();
+        if (text && typeof(text) === 'string') {
+          $(this).val(trasnlateIntoFqn(text));
+        } else {
+          $(this).val('');
+        }
+      });
     }
   });
 
