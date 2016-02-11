@@ -1,6 +1,7 @@
 'use strict';
 
 import 'source-map-support/register';
+import Promise from 'es6-promises';
 import http from 'http';
 import express from 'express';
 import RED from 'node-red';
