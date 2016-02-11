@@ -4,6 +4,7 @@
 node_modules
 docker
 images
+!dist/public/images
 src
 test
 .gitignore
