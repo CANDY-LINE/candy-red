@@ -549,6 +549,7 @@ export class DeviceManager {
         }
         a.originator = this.deviceState.deviceId;
       });
+      let content = '';
       if (RED.settings.flowFilePretty) {
         content = JSON.stringify(flows, null, 4);
       } else {
