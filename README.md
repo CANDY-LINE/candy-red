@@ -47,7 +47,7 @@ This will install the latest version of CANDY RED.
 
 ## Install/Version-up
 
-The installation will take a couple of minutes.
+The installation will take about 5 minutes.
 
 You can ignore `npm WARN`s, `gyp WARN`s, `gyp ERR!`s and `node-pre-gyp ERR!`s unless the installation terminates normally. You can check if the installation is successful by `systemctl status candy-red` command.
 
@@ -138,7 +138,9 @@ You can try another version as well. See the [instruction in Node-RED document](
 
 ## Install/Version-up
 
-The module installation will take a couple of minutes. Please consider to change your hostname as [described below](#change-hostname) prior to installing CANDY RED.
+The module installation will take around 30 minutes on RPi1. On RPi2, the installation time will be shorter.
+
+Please consider to change your hostname as [described below](#change-hostname) prior to installing CANDY RED.
 
 `--unsafe-perm` flag is required for installing this project module since npm performs privileged actions during the installation. This is discussed in the [issue](https://github.com/voodootikigod/node-serialport/issues/535).
 
