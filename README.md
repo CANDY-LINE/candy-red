@@ -55,6 +55,8 @@ You can ignore `npm WARN`s, `gyp WARN`s, `gyp ERR!`s and `node-pre-gyp ERR!`s un
 $ npm install -g --unsafe-perm candy-red
 ```
 
+You can access `http://<hostname.local or ip address>:8100` with your browser on the same LAN where `<hostname.local or ip address>` is a host name with `.local` suffix or IP address.
+
 ## Stop/Start/Status Service
 
 The service name is `candy-red`.
@@ -147,6 +149,8 @@ Please refer to the following commands to install.
 ```
 $ sudo NODE_OPTS=--max-old-space-size=128 npm install -g --unsafe-perm candy-red
 ```
+
+You can access `http://<hostname.local or ip address>:8100` with your browser on the same LAN where `<hostname.local or ip address>` is a host name with `.local` suffix or IP address.
 
 ## Stop/Start/Status Service
 
