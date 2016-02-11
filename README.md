@@ -401,6 +401,9 @@ $ docker run -tid -v ./dist:/candy-red-dist candy-red
 
 ## Revision History
 
+* 2.1.2
+  - Fix jshint error
+
 * 2.1.1
   - Publish to npm
   - npm installation/uninstallation/version-up support
