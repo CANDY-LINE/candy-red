@@ -52,7 +52,7 @@ describe('DeviceIdResolver', () => {
   it('should return the serial number', done => {
     let resolver = new DeviceIdResolver();
     sandbox.stub(fs, 'stat').yields();
-    sandbox.stub(fs, 'read').yields(null, 'my-serial-number');
+    sandbox.stub(fs, 'readFile').yields(null, 'my-serial-number\n');
     resolver.resolve().then(id => {
       assert.equal('EDN:my-serial-number', id);
       done();
@@ -138,6 +138,7 @@ describe('DeviceState', () => {
         on: () => {}
       });
       stubCproc.spawn.onSecondCall().returns(ciot);
+      ciot.on.yields();
 
       state.testIfCANDYIoTInstalled().then(version => {
         assert.equal('1234', version);

@@ -182,10 +182,5 @@ export default function(RED) {
     });
   }
 
-  RED.nodes.registerType('CANDY EGG http request',HTTPRequest,{
-    credentials: {
-      user: {type:'text'},
-      password: {type: 'password'}
-    }
-  });
+  RED.nodes.registerType('CANDY EGG http request',HTTPRequest);
 }

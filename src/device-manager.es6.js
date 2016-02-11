@@ -42,11 +42,11 @@ export class DeviceIdResolver {
       if (err) {
         return this._resolveLTEPi(resolve, reject);
       }
-      fs.read(EDISON_YOCTO_SN_PATH, (err, data) => {
+      fs.readFile(EDISON_YOCTO_SN_PATH, (err, data) => {
         if (err) {
           return reject(err);
         }
-        resolve('EDN:' + data);
+        resolve('EDN:' + data.toString().trim());
       });
     });
   }
@@ -549,7 +549,11 @@ export class DeviceManager {
         }
         a.originator = this.deviceState.deviceId;
       });
-      let content = JSON.stringify(flows);
+      if (RED.settings.flowFilePretty) {
+        content = JSON.stringify(flows, null, 4);
+      } else {
+        content = JSON.stringify(flows);
+      }
       fs.writeFile(this.deviceState.flowFilePath, content, err => {
         if (err) {
           return reject(err);
@@ -704,7 +708,8 @@ export class DeviceState {
                 let ret = JSON.parse(data);
                 version = ret.version;
               } catch (e) {
-                RED.log.info(e);
+                RED.log.error('** CANDY IoT Service isn\'t running');
+                RED.log.info(e.stack);
               }
             });
             ciot.on('close', () => {
@@ -713,8 +718,9 @@ export class DeviceState {
             ciot.on('error', err => {
               reject(err);
             });
+          } else {
+            resolve(version);
           }
-          resolve(version);
         });
       });
     });
