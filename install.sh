@@ -48,7 +48,7 @@ function cpf {
 }
 
 function assert_root {
-  if [ ! -d "${PPOJECT_ROOT}/src" ]; then
+  if [ ! -d "${PROJECT_ROOT}/src" ]; then
     if [[ $EUID -ne 0 ]]; then
        err "This script must be run as root"
        exit 1
@@ -64,7 +64,7 @@ function assert_node_npm {
 }
 
 function test_system_service {
-  if [ ! -d "${PPOJECT_ROOT}/src" ]; then
+  if [ ! -d "${PROJECT_ROOT}/src" ]; then
     _try_systemd
   fi
 }
@@ -88,15 +88,15 @@ function cd_module_root {
   else
     REALPATH=`readlink -f -- "$0"`
   fi
-  PPOJECT_ROOT=`dirname ${REALPATH}`
-  cd ${PPOJECT_ROOT}
+  PROJECT_ROOT=`dirname ${REALPATH}`
+  cd ${PROJECT_ROOT}
 }
 
 function resolve_version {
   if [ "$1" == "update" ]; then
     unset VERSON
-  elif [ -f "${PPOJECT_ROOT}/package.json" ]; then
-    VERSION=$(node -e "console.log(require('${PPOJECT_ROOT}/package.json').version)")
+  elif [ -f "${PROJECT_ROOT}/package.json" ]; then
+    VERSION=$(node -e "console.log(require('${PROJECT_ROOT}/package.json').version)")
   fi
   if [ -z "${VERSION}" ]; then
     VERSION="master"
@@ -112,13 +112,13 @@ function npm_local_install {
 }
 
 function system_service_install {
-  SERVICES="${PPOJECT_ROOT}/services"
+  SERVICES="${PROJECT_ROOT}/services"
   START_SH="${SERVICES}/start_${SYSTEM_SERVICE_TYPE}.sh"
 
   rm -f ${SERVICES}/start_*
   cpf ${SERVICES}/_start.sh ${START_SH}
   sed -i -e "s/%SERVICE_NAME%/${SERVICE_NAME//\//\\/}/g" ${START_SH}
-  sed -i -e "s/%SERVICE_HOME%/${PPOJECT_ROOT//\//\\/}/g" ${START_SH}
+  sed -i -e "s/%SERVICE_HOME%/${PROJECT_ROOT//\//\\/}/g" ${START_SH}
 
   cp -f ${SERVICES}/base_environment.txt ${SERVICES}/environment
   sed -i -e "s/%HCIDEVICE%/${HCIDEVICE//\//\\/}/g" ${SERVICES}/environment
@@ -136,7 +136,7 @@ function _install_systemd {
   LIB_SYSTEMD="${LIB_SYSTEMD}/lib/systemd"
 
   cpf ${LOCAL_SYSTEMD}/${SERVICE_NAME}.service.txt ${LOCAL_SYSTEMD}/${SERVICE_NAME}.service
-  sed -i -e "s/%SERVICE_HOME%/${PPOJECT_ROOT//\//\\/}/g" ${LOCAL_SYSTEMD}/${SERVICE_NAME}.service
+  sed -i -e "s/%SERVICE_HOME%/${PROJECT_ROOT//\//\\/}/g" ${LOCAL_SYSTEMD}/${SERVICE_NAME}.service
   sed -i -e "s/%VERSION%/${VERSION//\//\\/}/g" ${LOCAL_SYSTEMD}/${SERVICE_NAME}.service
 
   cpf ${SERVICES}/environment ${LOCAL_SYSTEMD}/environment
@@ -153,10 +153,10 @@ setup $1
 resolve_version
 test_system_service
 if [ -n "${SYSTEM_SERVICE_TYPE}" ]; then
-  ${PPOJECT_ROOT}/uninstall.sh
+  ${PROJECT_ROOT}/uninstall.sh
   npm_local_install
   system_service_install
-elif [ -d "${PPOJECT_ROOT}/src" ]; then
+elif [ -d "${PROJECT_ROOT}/src" ]; then
   info "Skip to setup a SystemD service"
 else
   info "Won't install a SystemD service as it isn't supported on the system"
