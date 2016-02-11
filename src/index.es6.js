@@ -182,6 +182,7 @@ export class CandyRed {
 
   _createREDSettigngs(versions) {
     return {
+      flowFilePretty: false,
       verbose: true,
       disableEditor: false,
       httpAdminRoot: '/red',

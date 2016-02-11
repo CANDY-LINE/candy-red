@@ -549,7 +549,11 @@ export class DeviceManager {
         }
         a.originator = this.deviceState.deviceId;
       });
-      let content = JSON.stringify(flows);
+      if (RED.settings.flowFilePretty) {
+        content = JSON.stringify(flows, null, 4);
+      } else {
+        content = JSON.stringify(flows);
+      }
       fs.writeFile(this.deviceState.flowFilePath, content, err => {
         if (err) {
           return reject(err);
