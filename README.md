@@ -27,13 +27,13 @@ _\* CANDY EGG cloud services are required_
 
 This is the default screen theme.
 
-![CANDY RED Screenshot](images/screenshot-candy-red.png "CANDY RED Screenshot")
+![CANDY RED Screenshot](https://raw.githubusercontent.com/dbaba/candy-red/master/images/screenshot-candy-red.png "CANDY RED Screenshot")
 
 ## CANDY BOX flow editor page on browser
 
 This theme appears when CANDY IoT Board is available on a device.
 
-![CANDY BOX Screenshot](images/screenshot-candy-box.png "CANDY BOX Screenshot")
+![CANDY BOX Screenshot](https://raw.githubusercontent.com/dbaba/candy-red/master/images/screenshot-candy-box.png "CANDY BOX Screenshot")
 
 # Intel Edison + Yocto
 
