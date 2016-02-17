@@ -554,13 +554,7 @@ export class DeviceManager {
         }
         a.originator = this.deviceState.deviceId;
       });
-      let content = '';
-      if (RED.settings.flowFilePretty) {
-        content = JSON.stringify(flows, null, 4);
-      } else {
-        content = JSON.stringify(flows);
-      }
-      this.deviceState.updateFlow(content).then(() => {
+      this.deviceState.updateFlow(flows).then(content => {
         resolve({data:content, done: () => {
           this._warn('FLOW IS UPDATED! RELOAD THE PAGE AFTER RECONNECTING SERVER!!');
           DeviceManager.restart();
@@ -746,13 +740,37 @@ export class DeviceState {
     return (current !== this.flowFileSignature);
   }
 
-  updateFlow(content) {
+  static flowsToString(flows, content=null) {
+    if (typeof(flows) === 'string') {
+      return flows;
+    }
+    if (RED.settings.flowFilePretty) {
+      return JSON.stringify(flows, null, 4);
+    } else if (!content) {
+      return JSON.stringify(flows);
+    } else {
+      return content;
+    }
+  }
+
+  updateFlow(flows) {
     return new Promise((resolve, reject) => {
-      try {
-        JSON.parse(content);
-      } catch (err) {
-        return reject(err);
+      let content;
+      if (typeof(flows) === 'string') {
+        content = flows;
+        try {
+          flows = JSON.parse(content);
+        } catch (err) {
+          return reject(err);
+        }
       }
+      if (!Array.isArray(flows)) {
+        flows = [flows];
+        if (!content) {
+          content = null;
+        }
+      }
+      content = DeviceState.flowsToString(flows, content);
       this._unwatchFlowFilePath();
       fs.writeFile(this.flowFilePath, content, err => {
         this._watchFlowFilePath();
