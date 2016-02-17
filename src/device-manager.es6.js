@@ -747,6 +747,15 @@ export class DeviceState {
     return (current !== this.flowFileSignature);
   }
 
+  _watchFlowFilePath() {
+    if (this.watcher || !this.flowFileSignature) {
+      return;
+    }
+    this.watcher = chokidar.watch(this.flowFilePath);
+    this.watcher.on('change', this.onFlowFileChanged);
+    this.watcher.on('unlink', this.onFlowFileRemoved);
+  }
+
   testIfUIisEnabled(flowFilePath) {
     return this.init().then(() => {
       if (flowFilePath && this.flowFilePath !== flowFilePath) {
@@ -780,12 +789,7 @@ export class DeviceState {
     }).then(enabled => {
       return new Promise((resolve, reject) => {
         try {
-          if (this.watcher || !this.flowFileSignature) {
-            return resolve(enabled);
-          }
-          this.watcher = chokidar.watch(this.flowFilePath);
-          this.watcher.on('change', this.onFlowFileChanged);
-          this.watcher.on('unlink', this.onFlowFileRemoved);
+          this._watchFlowFilePath();
           return resolve(enabled);
         } catch (err) {
           return reject(err);
