@@ -555,15 +555,13 @@ export class DeviceManager {
       } else {
         content = JSON.stringify(flows);
       }
-      fs.writeFile(this.deviceState.flowFilePath, content, err => {
-        if (err) {
-          return reject(err);
-        }
-        this.deviceState.setFlowSignature(content);
-        return resolve({data:content, done: () => {
+      this.deviceState.updateFlow(content).then(() => {
+        resolve({data:content, done: () => {
           this._warn('FLOW IS UPDATED! RELOAD THE PAGE AFTER RECONNECTING SERVER!!');
           DeviceManager.restart();
         }});
+      }).catch(err => {
+        reject(err);
       });
     });
   }
@@ -639,12 +637,10 @@ export class DeviceManager {
         if (!c.args.content) {
           return reject({ status: 400 });
         }
-        fs.writeFile(this.deviceState.flowFilePath, c.args.content, err => {
-          if (err) {
-            return reject(err);
-          }
-          this.deviceState.setFlowSignature(c.args.content);
-          return resolve({ status: 200, restart: true });
+        this.deviceState.updateFlow(c.args.content).then(() => {
+          resolve({ status: 200, restart: true });
+        }).catch(err => {
+          return reject(err);
         });
       } catch (err) {
         return reject(err);
@@ -745,6 +741,27 @@ export class DeviceState {
     this.flowFileSignature = sha1.digest('hex');
     // true for modified
     return (current !== this.flowFileSignature);
+  }
+
+  updateFlow(content) {
+    return new Promise((resolve, reject) => {
+      this._unwatchFlowFilePath();
+      fs.writeFile(this.flowFilePath, content, err => {
+        this._watchFlowFilePath();
+        if (err) {
+          return reject(err);
+        }
+        this.setFlowSignature(content);
+        return resolve(content);
+      });
+    });
+  }
+
+  _unwatchFlowFilePath() {
+    if (!this.watcher || !this.flowFileSignature) {
+      return;
+    }
+    this.watcher.close();
   }
 
   _watchFlowFilePath() {
