@@ -518,26 +518,31 @@ export class DeviceManager {
     });
   }
 
+  static listAccounts(flows) {
+    if (!Array.isArray(flows)) {
+      flows = [flows];
+    }
+    let accounts = flows.filter(f => {
+      if (f.type !== 'CANDY EGG account') {
+        return false;
+      }
+      if (!f.managed) {
+        return false;
+      }
+      if (!f.accountFqn) {
+        return false;
+      }
+      if (!f.loginUser) {
+        return false;
+      }
+      return true;
+    });
+    return accounts;
+  }
+
   _updateLocalFlows(flows) {
     return new Promise((resolve, reject) => {
-      if (!Array.isArray(flows)) {
-        flows = [flows];
-      }
-      let accounts = flows.filter(f => {
-        if (f.type !== 'CANDY EGG account') {
-          return false;
-        }
-        if (!f.managed) {
-          return false;
-        }
-        if (!f.accountFqn) {
-          return false;
-        }
-        if (!f.loginUser) {
-          return false;
-        }
-        return true;
-      });
+      let accounts = DeviceManager.listAccounts(flows);
       if (accounts.length === 0) {
         return reject({ status: 400, message: 'invalid flow content' });
       }
