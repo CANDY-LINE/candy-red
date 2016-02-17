@@ -593,8 +593,6 @@ export class DeviceManager {
                   return reject(err);
                 });
               } else {
-                data = data.toString('utf-8');
-                this.deviceState.setFlowSignature(data);
                 return resolve({data: data});
               }
             });
