@@ -805,7 +805,7 @@ export class DeviceManagerStore {
     return (() => {
       let wip = false;
       return () => {
-        return new Promise((resovle, reject) => {
+        return new Promise((resolve, reject) => {
           if (wip) {
             return;
           }
@@ -813,7 +813,7 @@ export class DeviceManagerStore {
           this.deviceState.loadAndSetFlowSignature().then(modified => {
             if (!modified) {
               wip = false;
-              return resovle();
+              return resolve();
             }
             let promises = Object.keys(this.store).map(accountFqn => {
               return this.store[accountFqn].publish({
@@ -827,7 +827,7 @@ export class DeviceManagerStore {
             return Promise.all(promises);
           }).then(() => {
             wip = false;
-            return resovle();
+            return resolve();
           }).catch(err => {
             RED.log.warn(err.stack);
             wip = false;
