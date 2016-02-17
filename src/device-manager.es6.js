@@ -732,6 +732,19 @@ export class DeviceState {
   }
 
   setFlowSignature(data) {
+    let flows;
+    if (typeof(data) === 'string') {
+      flows = JSON.parse(data);
+    } else {
+      flows = data;
+    }
+    let accounts = DeviceManager.listAccounts(flows);
+    if (accounts.length > 0) {
+      accounts.forEach(a => {
+        delete a.lastDeliveredAt;
+      });
+      data = JSON.stringify(flows);
+    }
     let current = this.flowFileSignature;
     let sha1 = crypto.createHash('sha1');
     sha1.update(data);
@@ -777,7 +790,7 @@ export class DeviceState {
         if (err) {
           return reject(err);
         }
-        this.setFlowSignature(content);
+        this.setFlowSignature(flows);
         return resolve(content);
       });
     });
