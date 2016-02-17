@@ -745,6 +745,11 @@ export class DeviceState {
 
   updateFlow(content) {
     return new Promise((resolve, reject) => {
+      try {
+        JSON.parse(content);
+      } catch (err) {
+        return reject(err);
+      }
       this._unwatchFlowFilePath();
       fs.writeFile(this.flowFilePath, content, err => {
         this._watchFlowFilePath();
