@@ -6,7 +6,7 @@ import stream from 'stream';
 import cproc from 'child_process';
 import RED from 'node-red';
 import Promise from 'es6-promises';
-import { DeviceIdResolver, DeviceState, DeviceManager, DeviceManagerStore } from '../../dist/device-manager';
+import { DeviceIdResolver, DeviceState, DeviceManager, DeviceManagerStore } from '../dist/device-manager';
 
 const PROC_CPUINFO = [
   'processor	: 0\n',
