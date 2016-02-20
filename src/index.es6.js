@@ -24,19 +24,54 @@ export class CandyRed {
     this.deviceManagerStore = new DeviceManagerStore(RED);
 
     // Default Theme
-    this.flowFile = this._createCandyRedFlowFile();
     this.editorTheme = this._createCandyRedEditorTheme();
 
     // path to package.json
     this.packageJsonPath = packageJsonPath;
+
+    // Flow file name
+    this.flowFile = 'flows_candy-red.json';
+  }
+
+  _migrateFlowFile(userDir) {
+    return new Promise((resolve, reject) => {
+      if (!this.flowFile) {
+        return reject(new Error('Missing this.flowFile!'));
+      }
+      let newPath = `${userDir}/${this.flowFile}`;
+      let oldPath = `${userDir}/flows_candy-red_${os.hostname()}.json`;
+      fs.rename(oldPath, newPath, err => {
+        if (err) {
+          let oldPath = `${userDir}/flows_candy-box_${os.hostname()}.json`;
+          fs.rename(oldPath, newPath, () => {
+            RED.log.info(`[MIGRATED] ${oldPath} => ${newPath}`);
+            resolve();
+          });
+        } else {
+          RED.log.info(`[MIGRATED] ${oldPath} => ${newPath}`);
+          resolve();
+        }
+      });
+    });
   }
 
   start() {
     this.server.listen(PORT);
     this._setupExitHandler();
     return this._inspectBoardStatus(this.packageJsonPath).then(versions => {
-      // Create the settings object - see default settings.js file for other options
-      let settings = this._createREDSettigngs(versions);
+      return new Promise((resolve, reject) => {
+        // Create the settings object - see default settings.js file for other options
+        let settings = this._createREDSettigngs(versions);
+        // Flow File Name Spec. Change Migration
+        this._migrateFlowFile(settings.userDir).then(() => {
+          resolve([settings, versions]);
+        }).catch(err => {
+          reject(err);
+        });
+      });
+    }).then(args => {
+      let settings = args[0];
+      let versions = args[1];
 
       // Initialise the runtime with a server and settings
       RED.init(this.server, settings);
@@ -68,10 +103,6 @@ export class CandyRed {
     });
   }
 
-  _createCandyRedFlowFile() {
-    return 'flows_candy-red_' + os.hostname() + '.json';
-  }
-
   _createCandyRedEditorTheme() {
     return {
       page: {
@@ -91,10 +122,6 @@ export class CandyRed {
         'menu-item-keyboard-shortcuts': true
       }
     };
-  }
-
-  _createCandyBoxFlowFile() {
-    return 'flows_candy-box_' + os.hostname() + '.json';
   }
 
   _createCandyBoxEditorTheme() {
@@ -121,7 +148,6 @@ export class CandyRed {
   _inspectBoardStatus(inputPackageJsonPath) {
     return this.deviceManagerStore.deviceState.testIfCANDYIoTInstalled().then(candyIotv => {
       if (candyIotv) {
-        this.flowFile = this._createCandyBoxFlowFile();
         this.editorTheme = this._createCandyBoxEditorTheme();
       }
       return new Promise((resolve, reject) => {
