@@ -138,8 +138,7 @@ export class DeviceManager {
       }
       this.pingTimeoutTimer = setTimeout(() => {
         this._warn(`ping has not come for more than ${this.hearbeatIntervalMs * 1.5 / 1000} seconds`);
-        this._reset();
-        this.listenerConfig.server.close(); // close event will start a new connection after 3+ seconds
+        this.listenerConfig.server.close(); // close event will perform _reset() and start a new connection after 3+ seconds
       }, this.hearbeatIntervalMs * 1.5);
     });
     // receiving an incoming message (sent from a source)
