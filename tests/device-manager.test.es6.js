@@ -109,7 +109,7 @@ describe('DeviceState', () => {
     sandbox.restore();
   });
 
-  describe('#testIfUIisEnabled()', () => {
+  describe('#testIfCANDYIoTInstalled()', () => {
     it('should return whether or not CANDY IoT board is installed', done => {
       state.testIfCANDYIoTInstalled().then(version => {
         console.log(`installed version? => [${version}]`);
