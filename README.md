@@ -400,7 +400,9 @@ $ docker run -tid -v ./dist:/candy-red-dist candy-red
 * [LTEPi Board for Raspberry Pi](https://translate.google.co.jp/translate?sl=auto&tl=en&js=y&prev=_t&hl=en&ie=UTF-8&u=http%3A%2F%2Flte4iot.com%2Fproducts%2Fltepi%2F&edit-text=&act=url) with LTE module support
 
 ## Revision History
-
+* ?.?.?
+  - Bump up Node-RED version to v0.13.2
+  - Modify the flow file name definition (not depending on hostname but always `flows_candy-red.json`)
 * 2.1.2
   - Fix jshint error
 
