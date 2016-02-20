@@ -564,6 +564,19 @@ export class DeviceManager {
     });
   }
 
+  static flowsToString(flows, content=null) {
+    if (typeof(flows) === 'string') {
+      return flows;
+    }
+    if (RED.settings.flowFilePretty) {
+      return JSON.stringify(flows, null, 4);
+    } else if (!content) {
+      return JSON.stringify(flows);
+    } else {
+      return content;
+    }
+  }
+
   _performSyncFlows(c) {
     return new Promise((resolve, reject) => {
       try {
@@ -752,19 +765,6 @@ export class DeviceState {
     return (current !== this.flowFileSignature);
   }
 
-  static flowsToString(flows, content=null) {
-    if (typeof(flows) === 'string') {
-      return flows;
-    }
-    if (RED.settings.flowFilePretty) {
-      return JSON.stringify(flows, null, 4);
-    } else if (!content) {
-      return JSON.stringify(flows);
-    } else {
-      return content;
-    }
-  }
-
   updateFlow(flows) {
     return new Promise((resolve, reject) => {
       let content;
@@ -782,7 +782,7 @@ export class DeviceState {
           content = null;
         }
       }
-      content = DeviceState.flowsToString(flows, content);
+      content = DeviceManager.flowsToString(flows, content);
       this._unwatchFlowFilePath();
       fs.writeFile(this.flowFilePath, content, err => {
         this._watchFlowFilePath();
