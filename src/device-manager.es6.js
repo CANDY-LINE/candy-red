@@ -599,7 +599,7 @@ export class DeviceManager {
                   return reject(err);
                 });
               } else {
-                return resolve({data: data});
+                return resolve({data: DeviceManager.flowsToString(flows)});
               }
             });
           }
