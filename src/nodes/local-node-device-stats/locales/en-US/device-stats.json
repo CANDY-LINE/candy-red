@@ -1,0 +1,15 @@
+{
+  "device-stats" : {
+    "label" : {
+      "category" : "DeviceStats",
+      "mem" : "Memory Stats",
+      "nw" : "Network Tx/Rx Stats",
+      "load" : "Load Averages",
+      "hostname" : "Hostname",
+      "useString": "Use string payload"
+    },
+    "errors" : {
+      "unknown" : "Unknown Error (__error__)"
+    }
+  }
+}
