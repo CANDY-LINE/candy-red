@@ -228,6 +228,7 @@ export class CandyRed {
       deviceManagerStore: this.deviceManagerStore,
       editorTheme: this.editorTheme,
       candyIotVersion: versions.candyIotv,
+      ltepiVersion: versions.ltepiv,
       candyRedVersion: versions.candyRedv,
     };
   }

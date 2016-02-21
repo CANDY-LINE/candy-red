@@ -397,12 +397,13 @@ $ docker run -tid -v ./dist:/candy-red-dist candy-red
 
 * publish local Node-RED nodes in this project to npm repository
 * [CANDY IoT Board for Intel® Edison](https://translate.googleusercontent.com/translate_c?act=url&depth=1&hl=en&ie=UTF8&prev=_t&rurl=translate.google.com&sl=ja&tl=en&u=https://github.com/Robotma-com/candy-iot-service&usg=ALkJrhgViBgwht0t9vgBvmuJNkJb_kjoJg) with 3G/LTE module support
-* [LTEPi Board for Raspberry Pi](https://translate.google.co.jp/translate?sl=auto&tl=en&js=y&prev=_t&hl=en&ie=UTF-8&u=http%3A%2F%2Flte4iot.com%2Fproducts%2Fltepi%2F&edit-text=&act=url) with LTE module support
 
 ## Revision History
 * ?.?.?
   - Bump up Node-RED version to v0.13.2
   - Modify the flow file name definition (not depending on hostname but always `flows_candy-red.json`)
+  - [LTEPi Board for Raspberry Pi](https://translate.google.co.jp/translate?sl=auto&tl=en&js=y&prev=_t&hl=en&ie=UTF-8&u=http%3A%2F%2Flte4iot.com%2Fproducts%2Fltepi%2F&edit-text=&act=url) is now automatically detected and `RED.settings.ltepiVersion` will be set if LTEPi is available
+
 * 2.1.2
   - Fix jshint error
 
