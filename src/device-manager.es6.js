@@ -42,7 +42,7 @@ export class DeviceIdResolver {
     // Intel Edison Yocto
     fs.stat(EDISON_YOCTO_SN_PATH, err => {
       if (err) {
-        return this._resolveLTEPi(resolve, reject);
+        return this._resolveRPi(resolve, reject);
       }
       fs.readFile(EDISON_YOCTO_SN_PATH, (err, data) => {
         if (err) {
@@ -51,12 +51,6 @@ export class DeviceIdResolver {
         resolve('EDN:' + data.toString().trim());
       });
     });
-  }
-
-  _resolveLTEPi(resolve, reject) {
-    // LTE Pi
-    // TODO
-    return this._resolveRPi(resolve, reject);
   }
 
   _resolveRPi(resolve, reject) {
