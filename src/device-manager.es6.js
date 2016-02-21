@@ -18,6 +18,8 @@ const TRACE = process.env.DEBUG || false;
 const EDISON_YOCTO_SN_PATH = '/factory/serial_number';
 const PROC_CPUINFO_PATH = '/proc/cpuinfo';
 
+const LTEPI_VERSION_FILE_PATH = '/opt/inn-farm/ltepi/bin/version.txt';
+
 export class DeviceIdResolver {
   constructor() {
     this.hearbeatIntervalMs = -1;
@@ -694,14 +696,14 @@ export class DeviceState {
 
   testIfCANDYIoTInstalled() {
     return this.init().then(() => {
-      return new Promise((resolve, reject) => {
+      return new Promise(resolve => {
         let which = cproc.spawn('which', ['ciot'], { timeout: 1000 });
         which.on('close', code => {
           let ciotSupported = (code === 0);
           resolve(ciotSupported);
         });
-        which.on('error', err => {
-          reject(err);
+        which.on('error', () => {
+          resolve(false);
         });
       }).then(ciotSupported => {
         this.ciotSupported = ciotSupported;
@@ -723,6 +725,36 @@ export class DeviceState {
             });
             ciot.on('error', err => {
               reject(err);
+            });
+          } else {
+            resolve(version);
+          }
+        });
+      });
+    });
+  }
+
+  testIfLTEPiInstalled() {
+    return this.init().then(() => {
+      return new Promise(resolve => {
+        let systemctl = cproc.spawn('systemctl', ['status', 'ltepi'], { timeout: 1000 });
+        systemctl.on('close', code => {
+          let ltepiSupported = (code === 0);
+          resolve(ltepiSupported);
+        });
+        systemctl.on('error', () => {
+          resolve(false);
+        });
+      }).then(ltepiSupported => {
+        this.ltepiSupported = ltepiSupported;
+        return new Promise(resolve => {
+          let version = process.env.DEBUG_CIOTV || '';
+          if (ltepiSupported) {
+            fs.readFile(LTEPI_VERSION_FILE_PATH, (err, data) => {
+              if (err) {
+                return resolve(version);
+              }
+              resolve(data.toString());
             });
           } else {
             resolve(version);

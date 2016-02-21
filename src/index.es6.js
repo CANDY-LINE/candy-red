@@ -146,7 +146,12 @@ export class CandyRed {
   }
 
   _inspectBoardStatus(inputPackageJsonPath) {
-    return this.deviceManagerStore.deviceState.testIfCANDYIoTInstalled().then(candyIotv => {
+    return Promise.all([
+      this.deviceManagerStore.deviceState.testIfCANDYIoTInstalled(),
+      this.deviceManagerStore.deviceState.testIfLTEPiInstalled()
+    ]).then(results => {
+      let candyIotv = results[0];
+      let ltepiv = results[1];
       if (candyIotv) {
         this.editorTheme = this._createCandyBoxEditorTheme();
       }
@@ -163,12 +168,14 @@ export class CandyRed {
             if (err) {
               return resolve({
                 candyIotv: candyIotv,
+                ltepiv: ltepiv,
                 candyRedv: 'N/A'
               });
             }
             let packageJson = JSON.parse(data);
             return resolve({
               candyIotv: candyIotv,
+              ltepiv: ltepiv,
               candyRedv: packageJson.version || 'N/A'
             });
           });
