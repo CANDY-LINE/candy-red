@@ -25,10 +25,10 @@ function cd_module_root {
   else
     REALPATH=`readlink -f -- "$0"`
   fi
-  ROOT=`dirname ${REALPATH}`
-  cd ${ROOT}
+  PROJECT_ROOT=`dirname ${REALPATH}`
+  cd ${PROJECT_ROOT}
 
-  if [ ! -f "./package.json" ]; then
+  if [ ! -f "${PROJECT_ROOT}/package.json" ]; then
     err "uninstall.sh is placed on a wrong place. Make sure 'npm install' is successful."
     exit 2
   fi
@@ -43,7 +43,7 @@ function system_service_uninstall {
 }
 
 function _lookup_system_service_type {
-  SERVICES="${ROOT}/services"
+  SERVICES="${PROJECT_ROOT}/services"
   START_SH="${SERVICES}/start_${SYSTEM_SERVICE_TYPE}.sh"
 
   START_SH=`ls ${SERVICES}/start_*`

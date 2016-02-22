@@ -51,6 +51,8 @@ The installation will take about 5 minutes.
 
 You can ignore `npm WARN`s, `gyp WARN`s, `gyp ERR!`s and `node-pre-gyp ERR!`s unless the installation terminates normally. You can check if the installation is successful by `systemctl status candy-red` command.
 
+** Please export your flow data prior to performing version-up **
+
 ```
 $ npm install -g --unsafe-perm candy-red
 ```
@@ -145,6 +147,8 @@ Please consider to change your hostname as [described below](#change-hostname) p
 `--unsafe-perm` flag is required for installing this project module since npm performs privileged actions during the installation. This is discussed in the [issue](https://github.com/voodootikigod/node-serialport/issues/535).
 
 You can ignore `npm WARN`s, `gyp WARN`s, `gyp ERR!`s and `node-pre-gyp ERR!`s unless the installation terminates normally. You can check if the installation is successful by `sudo service candy-red status` command after running `install.sh` script as well as `npm install`.
+
+** Please export your flow data prior to performing version-up **
 
 Please refer to the following commands to install.
 
@@ -399,10 +403,13 @@ $ docker run -tid -v ./dist:/candy-red-dist candy-red
 * [CANDY IoT Board for Intel® Edison](https://translate.googleusercontent.com/translate_c?act=url&depth=1&hl=en&ie=UTF8&prev=_t&rurl=translate.google.com&sl=ja&tl=en&u=https://github.com/Robotma-com/candy-iot-service&usg=ALkJrhgViBgwht0t9vgBvmuJNkJb_kjoJg) with 3G/LTE module support
 
 ## Revision History
-* ?.?.?
+* 2.2.0
+  - Create a dedicated user data directory on `/opt/candy-red`, where flow files are stored so that they're left on performing version up
+  - Add a new experimental local node for collecting device statistics
   - Bump up Node-RED version to v0.13.2
   - Modify the flow file name definition (not depending on hostname but always `flows_candy-red.json`)
   - [LTEPi Board for Raspberry Pi](https://translate.google.co.jp/translate?sl=auto&tl=en&js=y&prev=_t&hl=en&ie=UTF-8&u=http%3A%2F%2Flte4iot.com%2Fproducts%2Fltepi%2F&edit-text=&act=url) is now automatically detected and `RED.settings.ltepiVersion` will be set if LTEPi is available
+  - Improve device management connection stability
 
 * 2.1.2
   - Fix jshint error

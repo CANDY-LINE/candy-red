@@ -14,5 +14,7 @@ if [ "${RET}" == "0" ]; then
   hciconfig ${HCIDEVICE} up
 fi
 
+mkdir -p /opt/candy-red
+
 logger -s "Starting %SERVICE_NAME%..."
-/usr/bin/env node ${NODE_OPTS} %SERVICE_HOME%/dist/index.js
+HOME=/opt/candy-red /usr/bin/env node ${NODE_OPTS} %SERVICE_HOME%/dist/index.js
