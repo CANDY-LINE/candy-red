@@ -1,0 +1,16 @@
+{
+  "name": "local-node-device-stats",
+  "version": "1.0.0",
+  "description": "Node-RED nodes for Device Statistics",
+  "private": "true",
+  "os": [
+    "!win32"
+  ],
+  "dependencies": {
+  },
+  "node-red": {
+    "nodes": {
+      "device-stats": "device-stats.js"
+    }
+  }
+}

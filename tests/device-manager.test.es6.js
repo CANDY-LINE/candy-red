@@ -6,7 +6,7 @@ import stream from 'stream';
 import cproc from 'child_process';
 import RED from 'node-red';
 import Promise from 'es6-promises';
-import { DeviceIdResolver, DeviceState, DeviceManager, DeviceManagerStore } from '../../dist/device-manager';
+import { DeviceIdResolver, DeviceState, DeviceManager, DeviceManagerStore } from '../dist/device-manager';
 
 const PROC_CPUINFO = [
   'processor	: 0\n',
@@ -109,7 +109,7 @@ describe('DeviceState', () => {
     sandbox.restore();
   });
 
-  describe('#testIfUIisEnabled()', () => {
+  describe('#testIfCANDYIoTInstalled()', () => {
     it('should return whether or not CANDY IoT board is installed', done => {
       state.testIfCANDYIoTInstalled().then(version => {
         console.log(`installed version? => [${version}]`);
@@ -141,6 +141,36 @@ describe('DeviceState', () => {
       ciot.on.yields();
 
       state.testIfCANDYIoTInstalled().then(version => {
+        assert.equal('1234', version);
+        done();
+      }).catch(err => {
+        done(err);
+      });
+    });
+  });
+
+  describe('#testIfLTEPiInstalled()', () => {
+    it('should return whether or not LTEPi board is installed', done => {
+      state.testIfLTEPiInstalled().then(version => {
+        console.log(`installed version? => [${version}]`);
+        done();
+      }).catch(err => {
+        done(err);
+      });
+    });
+
+    it('should return the installed LTEPi Board version', done => {
+      let stubCproc = sandbox.stub(cproc);
+      let systemctl = sandbox.stub({
+        on: () => {}
+      });
+      systemctl.on.onFirstCall().yields(0);
+      stubCproc.spawn.onFirstCall().returns(systemctl);
+
+      let readFileStub = sandbox.stub(fs, 'readFile');
+      readFileStub.onFirstCall().yields(null, '1234');
+
+      state.testIfLTEPiInstalled().then(version => {
         assert.equal('1234', version);
         done();
       }).catch(err => {

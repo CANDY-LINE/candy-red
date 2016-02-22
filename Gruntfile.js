@@ -20,9 +20,9 @@ module.exports = function (grunt) {
           ext: '.js'
         },{
           expand: true,
-          cwd: './test',
+          cwd: './tests',
           src: '**/*.es6.js',
-          dest: './test',
+          dest: './tests',
           ext: '.js'
         }]
       }
@@ -55,9 +55,9 @@ module.exports = function (grunt) {
           src: [
             './dist/*',
             './dist',
-            './test/**/*.map',
-            './test/**/*.js',
-            '!./test/**/*.es6.js',
+            './tests/**/*.map',
+            './tests/**/*.js',
+            '!./tests/**/*.es6.js',
             './*.tgz',
             './node_modules/local-node-*',
             './services/environment',
@@ -78,13 +78,13 @@ module.exports = function (grunt) {
         reporter: require('jshint-stylish')
       },
       all: [
-        './test/src/**/*.es6.js',
+        './tests/**/*.es6.js',
         './src/**/*.es6.js'
       ]
     },
     mochaTest: {
       all: {
-        src: ['./test/src/**/*.js', '!./test/src/**/*.es6.js']
+        src: ['./tests/**/*.js', '!./tests/**/*.es6.js']
       }
     },
   };
@@ -109,8 +109,8 @@ module.exports = function (grunt) {
 
   grunt.registerTask('test', [
     'babel',
-    'copy',
     'jshint',
+    'copy',
     'mochaTest'
   ]);
 

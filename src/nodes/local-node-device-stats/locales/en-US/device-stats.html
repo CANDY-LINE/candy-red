@@ -1,0 +1,56 @@
+<script type="text/x-red" data-help-name="DeviceStats">
+  <p>Device Statistics</p>
+  <h3>Message Input</h3>
+  <p>
+  This node emits statistics information according to the node settings.
+  The statistics will be populated into <code>msg.payload</code> and published to the output port.
+  </p>
+  <p>
+  Beside the node settings, you can pass a <code>msg</code> object containg the following object as <code>msg.payload</code> property as well
+  so that you can manage the output dynamically.
+  </p>
+  <ul>
+    <dt>•<code>mem</code></dt>
+    <dd><code>true</code> for includng memory statistics in KiB, <code>false</code> otherwise (default)</dd>
+    <dt>•<code>nw</code></dt>
+    <dd>
+      <b>Linux ONLY</b><br />
+      Whther or not to include the tx/rx statistics in bytes for active (tx/rx > 0) network intefaces.
+      <code>true</code> for includng them, <code>false</code> otherwise (default).
+    </dd>
+    <dt>•<code>load</code></dt>
+    <dd><code>true</code> for includng network tx/rx statistics, <code>false</code> otherwise (default)</dd>
+    <dt>•<code>hostname</code></dt>
+    <dd><code>true</code> for includng hostname, <code>false</code> otherwise (default)</dd>
+    <dt>•<code>useString</code></dt>
+    <dd><code>true</code> for stringifying the output, <code>false</code> otherwise, i.e. JSON object (default)</dd>
+  </ul>
+  <h3><code>msg.payload</code> Example Output</h3>
+  <pre>
+  {
+    "tstamp": 1448259848905,
+    "uptime": 12345,
+    "mem": {
+      "free": 925524,
+      "used": 316420,
+      "swapused": 0, # for Linux
+      "swapfree": 1048572 # for Linux
+    },
+    "nw": { # for Linux
+      "eth0": {
+        "rx": 1234567,
+        "tx": 1234567
+      },
+      "wlan0": {
+        "rx": 1234567,
+        "tx": 1234567
+      }
+    },
+    "load": [
+      1.18, # 1-min avg.
+      1.18, # 5-min avg.
+      1.18  # 15-min avg.
+    ],
+    "hostname": "my-ltepi"
+  }</pre>
+</script>

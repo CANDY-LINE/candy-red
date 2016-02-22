@@ -1,0 +1,5 @@
+Inter-|   Receive                                                |  Transmit
+ face |bytes    packets errs drop fifo frame compressed multicast|bytes    packets errs drop fifo colls carrier compressed
+veth60d2548:     648       8    0    0    0     0          0         0    10350     239    0    0    0     0       0          0
+br-2b6e43be63d8:    2256      36    0    0    0     0          0         0      648       8    0    0    0     0       0          0
+veth88c9988:    8724     158    0    0    0     0          0         0   103723    1443    0    0    0     0       0          0

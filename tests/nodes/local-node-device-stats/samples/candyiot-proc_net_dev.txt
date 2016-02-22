@@ -1,0 +1,7 @@
+Inter-|   Receive                                                |  Transmit
+ face |bytes    packets errs drop fifo frame compressed multicast|bytes    packets errs drop fifo colls carrier compressed
+ wlan0: 5574847   63233    0    0    0     0          0      5929 11530077   53236    0    0    0     0       0          0
+  sit0:       0       0    0    0    0     0          0         0        0       0    0    0    0     0       0          0
+enp0s17u1: 2917067   45210    0    0    0     0          0         0  3496197   45102    0    0    0     0       0          0
+    lo:     336       4    0    0    0     0          0         0      336       4    0    0    0     0       0          0
+  usb0:       0       0    0    0    0     0          0         0        0       0    0    0    0     0       0          0

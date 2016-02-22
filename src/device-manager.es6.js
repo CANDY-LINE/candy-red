@@ -18,6 +18,8 @@ const TRACE = process.env.DEBUG || false;
 const EDISON_YOCTO_SN_PATH = '/factory/serial_number';
 const PROC_CPUINFO_PATH = '/proc/cpuinfo';
 
+const LTEPI_VERSION_FILE_PATH = '/opt/inn-farm/ltepi/bin/version.txt';
+
 export class DeviceIdResolver {
   constructor() {
     this.hearbeatIntervalMs = -1;
@@ -40,7 +42,7 @@ export class DeviceIdResolver {
     // Intel Edison Yocto
     fs.stat(EDISON_YOCTO_SN_PATH, err => {
       if (err) {
-        return this._resolveLTEPi(resolve, reject);
+        return this._resolveRPi(resolve, reject);
       }
       fs.readFile(EDISON_YOCTO_SN_PATH, (err, data) => {
         if (err) {
@@ -49,12 +51,6 @@ export class DeviceIdResolver {
         resolve('EDN:' + data.toString().trim());
       });
     });
-  }
-
-  _resolveLTEPi(resolve, reject) {
-    // LTE Pi
-    // TODO
-    return this._resolveRPi(resolve, reject);
   }
 
   _resolveRPi(resolve, reject) {
@@ -138,8 +134,7 @@ export class DeviceManager {
       }
       this.pingTimeoutTimer = setTimeout(() => {
         this._warn(`ping has not come for more than ${this.hearbeatIntervalMs * 1.5 / 1000} seconds`);
-        this._reset();
-        this.listenerConfig.server.close(); // close event will start a new connection after 3+ seconds
+        this.listenerConfig.server.close(); // close event will perform _reset() and start a new connection after 3+ seconds
       }, this.hearbeatIntervalMs * 1.5);
     });
     // receiving an incoming message (sent from a source)
@@ -518,26 +513,31 @@ export class DeviceManager {
     });
   }
 
+  static listAccounts(flows) {
+    if (!Array.isArray(flows)) {
+      flows = [flows];
+    }
+    let accounts = flows.filter(f => {
+      if (f.type !== 'CANDY EGG account') {
+        return false;
+      }
+      if (!f.managed) {
+        return false;
+      }
+      if (!f.accountFqn) {
+        return false;
+      }
+      if (!f.loginUser) {
+        return false;
+      }
+      return true;
+    });
+    return accounts;
+  }
+
   _updateLocalFlows(flows) {
     return new Promise((resolve, reject) => {
-      if (!Array.isArray(flows)) {
-        flows = [flows];
-      }
-      let accounts = flows.filter(f => {
-        if (f.type !== 'CANDY EGG account') {
-          return false;
-        }
-        if (!f.managed) {
-          return false;
-        }
-        if (!f.accountFqn) {
-          return false;
-        }
-        if (!f.loginUser) {
-          return false;
-        }
-        return true;
-      });
+      let accounts = DeviceManager.listAccounts(flows);
       if (accounts.length === 0) {
         return reject({ status: 400, message: 'invalid flow content' });
       }
@@ -549,23 +549,28 @@ export class DeviceManager {
         }
         a.originator = this.deviceState.deviceId;
       });
-      let content = '';
-      if (RED.settings.flowFilePretty) {
-        content = JSON.stringify(flows, null, 4);
-      } else {
-        content = JSON.stringify(flows);
-      }
-      fs.writeFile(this.deviceState.flowFilePath, content, err => {
-        if (err) {
-          return reject(err);
-        }
-        this.deviceState.setFlowSignature(content);
-        return resolve({data:content, done: () => {
+      this.deviceState.updateFlow(flows).then(content => {
+        resolve({data:content, done: () => {
           this._warn('FLOW IS UPDATED! RELOAD THE PAGE AFTER RECONNECTING SERVER!!');
           DeviceManager.restart();
         }});
+      }).catch(err => {
+        reject(err);
       });
     });
+  }
+
+  static flowsToString(flows, content=null) {
+    if (typeof(flows) === 'string') {
+      return flows;
+    }
+    if (RED.settings.flowFilePretty) {
+      return JSON.stringify(flows, null, 4);
+    } else if (!content) {
+      return JSON.stringify(flows);
+    } else {
+      return content;
+    }
   }
 
   _performSyncFlows(c) {
@@ -590,9 +595,7 @@ export class DeviceManager {
                   return reject(err);
                 });
               } else {
-                data = data.toString('utf-8');
-                this.deviceState.setFlowSignature(data);
-                return resolve({data: data});
+                return resolve({data: DeviceManager.flowsToString(flows)});
               }
             });
           }
@@ -639,12 +642,10 @@ export class DeviceManager {
         if (!c.args.content) {
           return reject({ status: 400 });
         }
-        fs.writeFile(this.deviceState.flowFilePath, c.args.content, err => {
-          if (err) {
-            return reject(err);
-          }
-          this.deviceState.setFlowSignature(c.args.content);
-          return resolve({ status: 200, restart: true });
+        this.deviceState.updateFlow(c.args.content).then(() => {
+          resolve({ status: 200, restart: true });
+        }).catch(err => {
+          return reject(err);
         });
       } catch (err) {
         return reject(err);
@@ -689,14 +690,14 @@ export class DeviceState {
 
   testIfCANDYIoTInstalled() {
     return this.init().then(() => {
-      return new Promise((resolve, reject) => {
+      return new Promise(resolve => {
         let which = cproc.spawn('which', ['ciot'], { timeout: 1000 });
         which.on('close', code => {
           let ciotSupported = (code === 0);
           resolve(ciotSupported);
         });
-        which.on('error', err => {
-          reject(err);
+        which.on('error', () => {
+          resolve(false);
         });
       }).then(ciotSupported => {
         this.ciotSupported = ciotSupported;
@@ -727,6 +728,36 @@ export class DeviceState {
     });
   }
 
+  testIfLTEPiInstalled() {
+    return this.init().then(() => {
+      return new Promise(resolve => {
+        let systemctl = cproc.spawn('systemctl', ['status', 'ltepi'], { timeout: 1000 });
+        systemctl.on('close', code => {
+          let ltepiSupported = (code === 0);
+          resolve(ltepiSupported);
+        });
+        systemctl.on('error', () => {
+          resolve(false);
+        });
+      }).then(ltepiSupported => {
+        this.ltepiSupported = ltepiSupported;
+        return new Promise(resolve => {
+          let version = process.env.DEBUG_CIOTV || '';
+          if (ltepiSupported) {
+            fs.readFile(LTEPI_VERSION_FILE_PATH, (err, data) => {
+              if (err) {
+                return resolve(version);
+              }
+              resolve(data.toString());
+            });
+          } else {
+            resolve(version);
+          }
+        });
+      });
+    });
+  }
+
   loadAndSetFlowSignature() {
     return new Promise((resolve, reject) => {
       fs.readFile(this.flowFilePath, (err, data) => {
@@ -739,12 +770,71 @@ export class DeviceState {
   }
 
   setFlowSignature(data) {
+    let flows;
+    if (typeof(data) === 'string') {
+      flows = JSON.parse(data);
+    } else {
+      flows = data;
+    }
+    let accounts = DeviceManager.listAccounts(flows);
+    if (accounts.length > 0) {
+      accounts.forEach(a => {
+        delete a.lastDeliveredAt;
+      });
+      data = JSON.stringify(flows);
+    }
     let current = this.flowFileSignature;
     let sha1 = crypto.createHash('sha1');
     sha1.update(data);
     this.flowFileSignature = sha1.digest('hex');
     // true for modified
     return (current !== this.flowFileSignature);
+  }
+
+  updateFlow(flows) {
+    return new Promise((resolve, reject) => {
+      let content;
+      if (typeof(flows) === 'string') {
+        content = flows;
+        try {
+          flows = JSON.parse(content);
+        } catch (err) {
+          return reject(err);
+        }
+      }
+      if (!Array.isArray(flows)) {
+        flows = [flows];
+        if (!content) {
+          content = null;
+        }
+      }
+      content = DeviceManager.flowsToString(flows, content);
+      this._unwatchFlowFilePath();
+      fs.writeFile(this.flowFilePath, content, err => {
+        this._watchFlowFilePath();
+        if (err) {
+          return reject(err);
+        }
+        this.setFlowSignature(flows);
+        return resolve(content);
+      });
+    });
+  }
+
+  _unwatchFlowFilePath() {
+    if (!this.watcher || !this.flowFileSignature) {
+      return;
+    }
+    this.watcher.close();
+  }
+
+  _watchFlowFilePath() {
+    if (this.watcher || !this.flowFileSignature) {
+      return;
+    }
+    this.watcher = chokidar.watch(this.flowFilePath);
+    this.watcher.on('change', this.onFlowFileChanged);
+    this.watcher.on('unlink', this.onFlowFileRemoved);
   }
 
   testIfUIisEnabled(flowFilePath) {
@@ -780,12 +870,7 @@ export class DeviceState {
     }).then(enabled => {
       return new Promise((resolve, reject) => {
         try {
-          if (this.watcher || !this.flowFileSignature) {
-            return resolve(enabled);
-          }
-          this.watcher = chokidar.watch(this.flowFilePath);
-          this.watcher.on('change', this.onFlowFileChanged);
-          this.watcher.on('unlink', this.onFlowFileRemoved);
+          this._watchFlowFilePath();
           return resolve(enabled);
         } catch (err) {
           return reject(err);
@@ -805,7 +890,7 @@ export class DeviceManagerStore {
     return (() => {
       let wip = false;
       return () => {
-        return new Promise((resovle, reject) => {
+        return new Promise((resolve, reject) => {
           if (wip) {
             return;
           }
@@ -813,7 +898,7 @@ export class DeviceManagerStore {
           this.deviceState.loadAndSetFlowSignature().then(modified => {
             if (!modified) {
               wip = false;
-              return resovle();
+              return resolve();
             }
             let promises = Object.keys(this.store).map(accountFqn => {
               return this.store[accountFqn].publish({
@@ -827,7 +912,7 @@ export class DeviceManagerStore {
             return Promise.all(promises);
           }).then(() => {
             wip = false;
-            return resovle();
+            return resolve();
           }).catch(err => {
             RED.log.warn(err.stack);
             wip = false;
