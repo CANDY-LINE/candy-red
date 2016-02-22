@@ -51,6 +51,8 @@ The installation will take about 5 minutes.
 
 You can ignore `npm WARN`s, `gyp WARN`s, `gyp ERR!`s and `node-pre-gyp ERR!`s unless the installation terminates normally. You can check if the installation is successful by `systemctl status candy-red` command.
 
+** Please export your flow data prior to performing version-up **
+
 ```
 $ npm install -g --unsafe-perm candy-red
 ```
@@ -145,6 +147,8 @@ Please consider to change your hostname as [described below](#change-hostname) p
 `--unsafe-perm` flag is required for installing this project module since npm performs privileged actions during the installation. This is discussed in the [issue](https://github.com/voodootikigod/node-serialport/issues/535).
 
 You can ignore `npm WARN`s, `gyp WARN`s, `gyp ERR!`s and `node-pre-gyp ERR!`s unless the installation terminates normally. You can check if the installation is successful by `sudo service candy-red status` command after running `install.sh` script as well as `npm install`.
+
+** Please export your flow data prior to performing version-up **
 
 Please refer to the following commands to install.
 
