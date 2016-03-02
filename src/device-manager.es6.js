@@ -715,13 +715,13 @@ export class DeviceState {
               }
             });
             ciot.on('close', () => {
-              resolve(version);
+              resolve([this.deviceId, version]);
             });
             ciot.on('error', err => {
               reject(err);
             });
           } else {
-            resolve(version);
+            resolve([this.deviceId, version]);
           }
         });
       });
@@ -746,12 +746,12 @@ export class DeviceState {
           if (ltepiSupported) {
             fs.readFile(LTEPI_VERSION_FILE_PATH, (err, data) => {
               if (err) {
-                return resolve(version);
+                resolve([this.deviceId, version]);
               }
-              resolve(data.toString());
+              resolve([this.deviceId, data.toString()]);
             });
           } else {
-            resolve(version);
+            resolve([this.deviceId, version]);
           }
         });
       });

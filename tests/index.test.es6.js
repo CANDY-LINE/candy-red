@@ -1,5 +1,8 @@
+import * as sinon from 'sinon';
 import { assert } from 'chai';
 import { spawn } from 'child_process';
+import os from 'os';
+import { CandyRed } from '../dist';
 
 describe('index.js executable script', () => {
   let candyred = null;
@@ -26,6 +29,41 @@ describe('index.js executable script', () => {
       console.log(`Exit Code => ${code}`);
       assert.isNull(code);
       done();
+    });
+  });
+});
+
+describe('CandyRed', () => {
+  let sandbox;
+  let cr = new CandyRed();
+  beforeEach(() => {
+    sandbox = sinon.sandbox.create();
+  });
+  afterEach(() => {
+    sandbox.restore();
+  });
+  describe('#_createCandyRedEditorTheme()', () => {
+    it('should return titles containing hostname', () => {
+      let theme = cr._createCandyRedEditorTheme();
+      assert.equal('CANDY RED@' + os.hostname(), theme.page.title);
+      assert.equal(' ** ' + os.hostname() + ' **', theme.header.title);
+    });
+    it('should return titles containing deviceId as well as hostname', () => {
+      let theme = cr._createCandyRedEditorTheme('my:deviceId');
+      assert.equal('CANDY RED@my:deviceId', theme.page.title);
+      assert.equal(' ** ' + os.hostname() + ' (my:deviceId) **', theme.header.title);
+    });
+  });
+  describe('#_createCandyBoxEditorTheme()', () => {
+    it('should return titles containing hostname', () => {
+      let theme = cr._createCandyBoxEditorTheme();
+      assert.equal('CANDY BOX@' + os.hostname(), theme.page.title);
+      assert.equal(' ** ' + os.hostname() + ' **', theme.header.title);
+    });
+    it('should return titles containing deviceId as well as hostname', () => {
+      let theme = cr._createCandyBoxEditorTheme('my:deviceId');
+      assert.equal('CANDY BOX@my:deviceId', theme.page.title);
+      assert.equal(' ** ' + os.hostname() + ' (my:deviceId) **', theme.header.title);
     });
   });
 });

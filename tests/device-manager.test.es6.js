@@ -140,8 +140,9 @@ describe('DeviceState', () => {
       stubCproc.spawn.onSecondCall().returns(ciot);
       ciot.on.yields();
 
+      state.deviceId = 'my:deviceId';
       state.testIfCANDYIoTInstalled().then(version => {
-        assert.equal('1234', version);
+        assert.deepEqual(['my:deviceId', '1234'], version);
         done();
       }).catch(err => {
         done(err);
@@ -170,8 +171,9 @@ describe('DeviceState', () => {
       let readFileStub = sandbox.stub(fs, 'readFile');
       readFileStub.onFirstCall().yields(null, '1234');
 
+      state.deviceId = 'my:deviceId';
       state.testIfLTEPiInstalled().then(version => {
-        assert.equal('1234', version);
+        assert.deepEqual(['my:deviceId', '1234'], version);
         done();
       }).catch(err => {
         done(err);
