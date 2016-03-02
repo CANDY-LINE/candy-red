@@ -162,16 +162,17 @@ export class CandyRed {
       let candyIotv;
       let ltepiv;
       let deviceId;
-      if (results[0]) {
-        candyIotv = results[0][0];
+      if (results[0][0]) {
         deviceId = results[0][0];
+      }
+      if (results[0][1]) {
+        candyIotv = results[0][1];
         this.editorTheme = this._createCandyBoxEditorTheme(deviceId);
-      } else if (results[1]) {
-        ltepiv = results[1][0];
-        deviceId = results[1][1];
+      } else if (results[1][1]) {
+        ltepiv = results[1][1];
         this.editorTheme = this._createCandyRedEditorTheme(deviceId);
       } else {
-        this.editorTheme = this._createCandyRedEditorTheme();
+        this.editorTheme = this._createCandyRedEditorTheme(deviceId);
       }
       return new Promise((resolve, reject) => {
         fs.stat(inputPackageJsonPath, err => {
