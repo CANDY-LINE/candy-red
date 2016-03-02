@@ -244,15 +244,7 @@ $ sudo make install
 
 ## Setup for Building
 
-In order to install dependencies for development use.
-
-Install the global dependencies at first (`sudo` is required for Raspbian).
-
-```
-$ npm install -g grunt-cli babel mocha jshint
-```
-
-Then install the local dependencies.
+Install the local dependencies.
 
 ```
 $ git clone https://github.com/dbaba/candy-red.git
@@ -263,7 +255,7 @@ $ npm install
 ## Build
 
 ```
-$ grunt build
+$ npm run build
 ```
 
 The processed files are placed under `dist` directory.
@@ -280,7 +272,7 @@ $ npm install
 
 ## Run on localhost for development use
 
-Try the following commands after `grunt build`:
+Try the following commands after `npm run build`:
 (Prepends `sudo` for Raspbian)
 
 ```
@@ -374,13 +366,13 @@ Run `docker rm -f candy-red` to stop (and remove) the container.
 
 Run in foreground:
 ```
-$ grunt build
+$ npm run build
 $ docker run -ti --rm -v ./dist:/candy-red-dist candy-red
 ```
 
 Run in background:
 ```
-$ grunt build
+$ npm run build
 $ docker run -tid -v ./dist:/candy-red-dist candy-red
 ```
 
