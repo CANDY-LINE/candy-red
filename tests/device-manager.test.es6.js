@@ -148,6 +148,33 @@ describe('DeviceState', () => {
         done(err);
       });
     });
+
+    it('should return the empty version', done => {
+      let stubCproc = sandbox.stub(cproc);
+      let which = sandbox.stub({
+        on: () => {}
+      });
+      which.on.onFirstCall().yields(0);
+      stubCproc.spawn.onFirstCall().returns(which);
+
+      let stdout = sandbox.stub({
+        on: () => {}
+      });
+      let ciot = sandbox.stub({
+        stdout: stdout,
+        on: () => {}
+      });
+      stubCproc.spawn.onSecondCall().returns(ciot);
+      ciot.on.yields(1);
+
+      state.deviceId = 'my:deviceId';
+      state.testIfCANDYIoTInstalled().then(version => {
+        assert.deepEqual(['my:deviceId', undefined], version);
+        done();
+      }).catch(err => {
+        done(err);
+      });
+    });
   });
 
   describe('#testIfLTEPiInstalled()', () => {

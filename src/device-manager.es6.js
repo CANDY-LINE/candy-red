@@ -710,8 +710,11 @@ export class DeviceState {
           RED.log.info(e.stack);
         }
       });
-      ciot.on('close', () => {
-        resolve(ret);
+      ciot.on('close', code => {
+        if (ret) {
+          return resolve(ret);
+        }
+        resolve({ code: code });
       });
       ciot.on('error', err => {
         reject(err);
