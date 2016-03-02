@@ -698,8 +698,7 @@ export class DeviceState {
       if (!args) {
         args = [];
       }
-      args.unshift(0, act);
-      args.unshift(0, cat);
+      args.unshift(cat, act);
       let ciot = cproc.spawn('ciot', args, { timeout: 1000 });
       let ret;
       ciot.stdout.on('data', data => {

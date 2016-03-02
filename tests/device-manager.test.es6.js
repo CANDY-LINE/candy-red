@@ -164,7 +164,7 @@ describe('DeviceState', () => {
         stdout: stdout,
         on: () => {}
       });
-      stubCproc.spawn.onSecondCall().returns(ciot);
+      stubCproc.spawn.withArgs('ciot', ['info', 'version'], { timeout: 1000 }).returns(ciot);
       ciot.on.yields(1);
 
       state.deviceId = 'my:deviceId';
