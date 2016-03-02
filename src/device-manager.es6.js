@@ -688,6 +688,32 @@ export class DeviceState {
     });
   }
 
+  _ciotRun(cat, act, ...args) {
+    return new Promise((resolve, reject) => {
+      if (!args) {
+        args = [];
+      }
+      args.unshift(0, act);
+      args.unshift(0, cat);
+      let ciot = cproc.spawn('ciot', args, { timeout: 1000 });
+      let ret;
+      ciot.stdout.on('data', data => {
+        try {
+          ret = JSON.parse(data);
+        } catch (e) {
+          RED.log.error('** CANDY IoT Service isn\'t running');
+          RED.log.info(e.stack);
+        }
+      });
+      ciot.on('close', () => {
+        resolve(ret);
+      });
+      ciot.on('error', err => {
+        reject(err);
+      });
+    });
+  }
+
   testIfCANDYIoTInstalled() {
     return this.init().then(() => {
       return new Promise(resolve => {
@@ -704,20 +730,9 @@ export class DeviceState {
         return new Promise((resolve, reject) => {
           let version = process.env.DEBUG_CIOTV || '';
           if (ciotSupported) {
-            let ciot = cproc.spawn('ciot', ['info','version'], { timeout: 1000 });
-            ciot.stdout.on('data', data => {
-              try {
-                let ret = JSON.parse(data);
-                version = ret.version;
-              } catch (e) {
-                RED.log.error('** CANDY IoT Service isn\'t running');
-                RED.log.info(e.stack);
-              }
-            });
-            ciot.on('close', () => {
-              resolve([this.deviceId, version]);
-            });
-            ciot.on('error', err => {
+            this._ciotRun('info', 'version').then(versions => {
+              resolve([this.deviceId, versions.version]);
+            }).catch(err => {
               reject(err);
             });
           } else {
