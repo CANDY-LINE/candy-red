@@ -349,7 +349,7 @@ export class DeviceManager {
           if (Math.floor(command.status / 100) !== 2) {
             RED.log.info(`Not-OK status to command: ${JSON.stringify(c)}, status:${JSON.stringify(command)}`);
             try {
-              done(command.status);
+              done(command.status, command.results);
             } catch (_) {
             }
           } else if (done) {
