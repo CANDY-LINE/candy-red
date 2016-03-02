@@ -501,7 +501,11 @@ export class DeviceManager {
       if (!c) {
         return reject({ status: 400 });
       }
-      return reject({ status: 501, message: 'TODO!!' });
+      this.deviceState._ciotRun('modem', 'show').then(output => {
+        resolve({ status: 200, result: output });
+      }).catch(err => {
+        reject(err);
+      });
     });
   }
 

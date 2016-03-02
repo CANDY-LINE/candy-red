@@ -253,6 +253,42 @@ describe('DeviceManager', () => {
       });
     });
   });
+
+  describe('#_performInspect()', () => {
+    it('should return the installed CANDY IoT Board version', done => {
+      let stubCproc = sandbox.stub(cproc);
+      let stdout = sandbox.stub({
+        on: () => {}
+      });
+      stdout.on.onFirstCall().yields(JSON.stringify({
+        'imei': '352339000000000',
+        'model': 'AMP5200',
+        'manufacturer': 'AM Telecom',
+        'revision': '14-01'
+      }));
+      let ciot = sandbox.stub({
+        stdout: stdout,
+        on: () => {}
+      });
+      stubCproc.spawn.onFirstCall().returns(ciot);
+      ciot.on.yields();
+
+      manager.ciotSupported = true;
+      manager._performInspect({
+        cat: 'sys',
+        act: 'inspect'
+      }).then(res => {
+        assert.equal(200, res.status);
+        assert.equal('352339000000000', res.result.imei);
+        assert.equal('AMP5200', res.result.model);
+        assert.equal('AM Telecom', res.result.manufacturer);
+        assert.equal('14-01', res.result.revision);
+        done();
+      }).catch(err => {
+        done(err);
+      });
+    });
+  });
 });
 
 describe('DeviceManagerStore', () => {
