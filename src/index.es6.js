@@ -174,6 +174,9 @@ export class CandyRed {
       } else {
         this.editorTheme = this._createCandyRedEditorTheme(deviceId);
       }
+      deviceId = deviceId || 'N/A';
+      candyIotv = candyIotv || 'N/A';
+      ltepiv = ltepiv || 'N/A';
       return new Promise((resolve, reject) => {
         fs.stat(inputPackageJsonPath, err => {
           if (err) {
