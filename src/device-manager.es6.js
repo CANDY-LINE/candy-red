@@ -336,19 +336,20 @@ export class DeviceManager {
       });
     }
 
-    if (commands.status) {
+    let command = commands;
+    if (command.status) {
       // response to the issued command
-      if (commands.id) {
-        let c = this.commands[commands.id];
+      if (command.id) {
+        let c = this.commands[command.id];
         if (c) {
           let done;
-          if (this.done && this.done[commands.id]) {
-            done = this.done[commands.id];
+          if (this.done && this.done[command.id]) {
+            done = this.done[command.id];
           }
-          if (Math.floor(commands.status / 100) !== 2) {
-            RED.log.info(`Not-OK status to command: ${JSON.stringify(c)}, status:${JSON.stringify(commands)}`);
+          if (Math.floor(command.status / 100) !== 2) {
+            RED.log.info(`Not-OK status to command: ${JSON.stringify(c)}, status:${JSON.stringify(command)}`);
             try {
-              done(commands.status);
+              done(command.status);
             } catch (_) {
             }
           } else if (done) {
@@ -358,34 +359,34 @@ export class DeviceManager {
             }
           }
           if (done) {
-            delete this.done[commands.id];
+            delete this.done[command.id];
           }
-          delete this.commands[commands.id];
+          delete this.commands[command.id];
         }
       }
-      if (commands.commands) {
-        return this._performCommands(commands.commands);
+      if (command.commands) {
+        return this._performCommands(command.commands);
       }
-      if (Math.floor(commands.status / 100) !== 2) {
+      if (Math.floor(command.status / 100) !== 2) {
         this._info(`Server returned Not-OK, status:${JSON.stringify(commands)}`);
       }
       return new Promise(resolve => resolve()); // do nothing
     }
 
-    if (!commands.id) {
+    if (!command.id) {
       return new Promise(resolve => resolve({ status: 400, message: 'id missing' }));
     }
-    if (!commands.cat) {
+    if (!command.cat) {
       return new Promise(resolve => resolve({ status: 400, message: 'category missing' }));
     }
 
-    if (commands.cat === 'ctrl') {
-      let children = commands.args || [];
+    if (command.cat === 'ctrl') {
+      let children = command.args || [];
       if (!Array.isArray(children)) {
         children = [children];
       }
       let promises;
-      switch(commands.act) {
+      switch(command.act) {
       case 'sequence':
         promises = children.reduce((p, c) => {
           if (!c) {
@@ -398,10 +399,10 @@ export class DeviceManager {
         }, new Promise(resolve => resolve())).then(result => {
           return new Promise(resolve => {
             if (result) {
-              result.push({ status: 200, id: commands.id });
+              result.push({ status: 200, id: command.id });
               return resolve(result);
             }
-            return resolve({ status: 400, id: commands.id });
+            return resolve({ status: 400, id: command.id });
           });
         });
         return promises;
@@ -420,18 +421,18 @@ export class DeviceManager {
             return a;
           }, []);
           return new Promise(resolve => {
-            result.push({ status: 200, id: commands.id });
+            result.push({ status: 200, id: command.id });
             resolve(result);
           });
         });
 
       default:
-        throw new Error('unknown action:' + commands.act);
+        throw new Error('unknown action:' + command.act);
       }
 
-      return new Promise(resolve => resolve({ status: 400, errCommands: commands }));
+      return new Promise(resolve => resolve({ status: 400, errCommands: command }));
     }
-    return this._performCommand(commands);
+    return this._performCommand(command);
   }
 
   _buildErrResult(err, c) {
