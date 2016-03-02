@@ -503,7 +503,7 @@ export class DeviceManager {
         return reject({ status: 400 });
       }
       this.deviceState._ciotRun('modem', 'show').then(output => {
-        resolve({ status: 200, result: output });
+        resolve({ status: 200, results: output });
       }).catch(err => {
         reject(err);
       });

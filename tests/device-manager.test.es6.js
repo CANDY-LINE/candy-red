@@ -279,10 +279,10 @@ describe('DeviceManager', () => {
         act: 'inspect'
       }).then(res => {
         assert.equal(200, res.status);
-        assert.equal('352339000000000', res.result.imei);
-        assert.equal('AMP5200', res.result.model);
-        assert.equal('AM Telecom', res.result.manufacturer);
-        assert.equal('14-01', res.result.revision);
+        assert.equal('352339000000000', res.results.imei);
+        assert.equal('AMP5200', res.results.model);
+        assert.equal('AM Telecom', res.results.manufacturer);
+        assert.equal('14-01', res.results.revision);
         done();
       }).catch(err => {
         done(err);
