@@ -14,6 +14,7 @@ export default function(RED) {
       this.hostname = n.hostname;
       this.useString = n.useString;
       this.collector = new StatsCollector(this);
+      this.status({});
 
       this.on('input', msg => {
         clearTimeout(this.timeout);
