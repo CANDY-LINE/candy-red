@@ -1,0 +1,13 @@
+{
+  "name": "local-node-ltepi-gps",
+  "version": "1.0.0",
+  "description": "Node-RED node for providing GPS location on LTEPi board",
+  "private": "true",
+  "dependencies": {
+  },
+  "node-red": {
+    "nodes": {
+      "ltepi-gps": "ltepi-gps.js"
+    }
+  }
+}
