@@ -398,6 +398,7 @@ $ docker run -tid -v ./dist:/candy-red-dist candy-red
   - Show device ID on the editor header
   - Bump up Node-RED version to v0.13.3
   - Interact with a service for [CANDY IoT Board for Intel® Edison](https://translate.googleusercontent.com/translate_c?act=url&depth=1&hl=en&ie=UTF8&prev=_t&rurl=translate.google.com&sl=ja&tl=en&u=https://github.com/Robotma-com/candy-iot-service&usg=ALkJrhgViBgwht0t9vgBvmuJNkJb_kjoJg) in order to collect the modem information
+  - Add a new node for providing GPS location with LTEPi board (RPi/RPi2 only)
 
 * 2.2.0
   - Create a dedicated user data directory on `/opt/candy-red`, where flow files are stored so that they're left on performing version up
