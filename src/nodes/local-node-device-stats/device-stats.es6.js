@@ -27,7 +27,7 @@ export default function(RED) {
           this.send({ payload: stats });
           this.timeout = setTimeout(() => {
             this.status({});
-          }, 500);
+          }, 750);
         }).catch(err => {
           RED.log.warn(RED._('device-stats.errors.unknown', { error: err }));
           this.status({});
