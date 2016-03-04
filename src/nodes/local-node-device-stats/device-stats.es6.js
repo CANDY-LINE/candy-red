@@ -18,6 +18,7 @@ export default function(RED) {
 
       this.on('input', msg => {
         clearTimeout(this.timeout);
+        delete this.timeout;
         this.status({ fill: 'red', shape: 'dot', text: 'device-stats.status.heartbeat' });
         let opts = msg ? msg.payload : null;
         this.collector.collect(opts).then(stats => {
@@ -26,7 +27,9 @@ export default function(RED) {
           }
           this.send({ payload: stats });
           this.timeout = setTimeout(() => {
-            this.status({});
+            if (this.timeout) {
+              this.status({});
+            }
           }, 750);
         }).catch(err => {
           RED.log.warn(RED._('device-stats.errors.unknown', { error: err }));
