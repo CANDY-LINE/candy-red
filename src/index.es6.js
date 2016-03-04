@@ -23,9 +23,6 @@ export class CandyRed {
     // Device Management
     this.deviceManagerStore = new DeviceManagerStore(RED);
 
-    // Default Theme
-    this.editorTheme = this._createCandyRedEditorTheme();
-
     // path to package.json
     this.packageJsonPath = packageJsonPath;
 
@@ -103,15 +100,21 @@ export class CandyRed {
     });
   }
 
-  _createCandyRedEditorTheme() {
+  _createCandyRedEditorTheme(deviceId) {
+    let name = os.hostname();
+    let longname = name;
+    if (deviceId) {
+      name = deviceId;
+      longname = `${os.hostname()} (${name})`;
+    }
     return {
       page: {
-        title: 'CANDY RED@' + os.hostname(),
+        title: 'CANDY RED@' + name,
         favicon: __dirname + '/public/images/candy-red.ico',
         css: __dirname + '/public/css/candy-red.css'
       },
       header: {
-        title: ' ** ' + os.hostname() + ' **',
+        title: ' ** ' + longname + ' **',
         image: __dirname + '/public/images/candy-red.png'
       },
       menu: {
@@ -124,15 +127,21 @@ export class CandyRed {
     };
   }
 
-  _createCandyBoxEditorTheme() {
+  _createCandyBoxEditorTheme(deviceId) {
+    let name = os.hostname();
+    let longname = name;
+    if (deviceId) {
+      name = deviceId;
+      longname = `${os.hostname()} (${name})`;
+    }
     return {
       page: {
-        title: 'CANDY BOX@' + os.hostname(),
+        title: 'CANDY BOX@' + name,
         favicon: __dirname + '/public/images/candy-box.ico',
         css: __dirname + '/public/css/candy-box.css'
       },
       header: {
-        title: ' ** ' + os.hostname() + ' **',
+        title: ' ** ' + longname + ' **',
         image: __dirname + '/public/images/candy-box.png'
       },
       menu: {
@@ -150,11 +159,24 @@ export class CandyRed {
       this.deviceManagerStore.deviceState.testIfCANDYIoTInstalled(),
       this.deviceManagerStore.deviceState.testIfLTEPiInstalled()
     ]).then(results => {
-      let candyIotv = results[0];
-      let ltepiv = results[1];
-      if (candyIotv) {
-        this.editorTheme = this._createCandyBoxEditorTheme();
+      let candyIotv;
+      let ltepiv;
+      let deviceId;
+      if (results[0][0]) {
+        deviceId = results[0][0];
       }
+      if (results[0][1]) {
+        candyIotv = results[0][1];
+        this.editorTheme = this._createCandyBoxEditorTheme(deviceId);
+      } else if (results[1][1]) {
+        ltepiv = results[1][1];
+        this.editorTheme = this._createCandyRedEditorTheme(deviceId);
+      } else {
+        this.editorTheme = this._createCandyRedEditorTheme(deviceId);
+      }
+      deviceId = deviceId || 'N/A';
+      candyIotv = candyIotv || 'N/A';
+      ltepiv = ltepiv || 'N/A';
       return new Promise((resolve, reject) => {
         fs.stat(inputPackageJsonPath, err => {
           if (err) {
@@ -174,6 +196,7 @@ export class CandyRed {
             }
             let packageJson = JSON.parse(data);
             return resolve({
+              deviceId: deviceId,
               candyIotv: candyIotv,
               ltepiv: ltepiv,
               candyRedv: packageJson.version || 'N/A'
@@ -230,6 +253,7 @@ export class CandyRed {
       candyIotVersion: versions.candyIotv,
       ltepiVersion: versions.ltepiv,
       candyRedVersion: versions.candyRedv,
+      deviceId: versions.deviceId
     };
   }
 

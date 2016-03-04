@@ -8,6 +8,9 @@
       "hostname" : "Hostname",
       "useString": "Use string payload"
     },
+    "status" : {
+      "heartbeat" : "dup"
+    },
     "errors" : {
       "unknown" : "Unknown Error (__error__)"
     }

@@ -140,8 +140,36 @@ describe('DeviceState', () => {
       stubCproc.spawn.onSecondCall().returns(ciot);
       ciot.on.yields();
 
+      state.deviceId = 'my:deviceId';
       state.testIfCANDYIoTInstalled().then(version => {
-        assert.equal('1234', version);
+        assert.deepEqual(['my:deviceId', '1234'], version);
+        done();
+      }).catch(err => {
+        done(err);
+      });
+    });
+
+    it('should return the empty version', done => {
+      let stubCproc = sandbox.stub(cproc);
+      let which = sandbox.stub({
+        on: () => {}
+      });
+      which.on.onFirstCall().yields(0);
+      stubCproc.spawn.onFirstCall().returns(which);
+
+      let stdout = sandbox.stub({
+        on: () => {}
+      });
+      let ciot = sandbox.stub({
+        stdout: stdout,
+        on: () => {}
+      });
+      stubCproc.spawn.withArgs('ciot', ['info', 'version'], { timeout: 1000 }).returns(ciot);
+      ciot.on.yields(1);
+
+      state.deviceId = 'my:deviceId';
+      state.testIfCANDYIoTInstalled().then(version => {
+        assert.deepEqual(['my:deviceId', undefined], version);
         done();
       }).catch(err => {
         done(err);
@@ -170,8 +198,9 @@ describe('DeviceState', () => {
       let readFileStub = sandbox.stub(fs, 'readFile');
       readFileStub.onFirstCall().yields(null, '1234');
 
+      state.deviceId = 'my:deviceId';
       state.testIfLTEPiInstalled().then(version => {
-        assert.equal('1234', version);
+        assert.deepEqual(['my:deviceId', '1234'], version);
         done();
       }).catch(err => {
         done(err);
@@ -245,6 +274,42 @@ describe('DeviceManager', () => {
       manager._enqueue(undefined);
       manager._resume().then(empty => {
         assert.isTrue(empty);
+        done();
+      }).catch(err => {
+        done(err);
+      });
+    });
+  });
+
+  describe('#_performInspect()', () => {
+    it('should return the installed CANDY IoT Board version', done => {
+      let stubCproc = sandbox.stub(cproc);
+      let stdout = sandbox.stub({
+        on: () => {}
+      });
+      stdout.on.onFirstCall().yields(JSON.stringify({
+        'imei': '352339000000000',
+        'model': 'AMP5200',
+        'manufacturer': 'AM Telecom',
+        'revision': '14-01'
+      }));
+      let ciot = sandbox.stub({
+        stdout: stdout,
+        on: () => {}
+      });
+      stubCproc.spawn.onFirstCall().returns(ciot);
+      ciot.on.yields();
+
+      manager.ciotSupported = true;
+      manager._performInspect({
+        cat: 'sys',
+        act: 'inspect'
+      }).then(res => {
+        assert.equal(200, res.status);
+        assert.equal('352339000000000', res.results.imei);
+        assert.equal('AMP5200', res.results.model);
+        assert.equal('AM Telecom', res.results.manufacturer);
+        assert.equal('14-01', res.results.revision);
         done();
       }).catch(err => {
         done(err);

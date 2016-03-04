@@ -1,11 +1,12 @@
 {
   "name": "candy-red",
-  "version": "2.2.0",
+  "version": "2.3.0",
   "description": "CANDY RED Device Gateway Service powered by Node-RED",
   "main": "./dist/index.js",
   "scripts": {
     "start": "node ./dist/index.js",
     "pretest": "grunt build",
+    "build": "grunt build",
     "test": "grunt test",
     "preinstall": "./install.sh test",
     "postinstall": "./install.sh",
@@ -43,18 +44,20 @@
   "devDependencies": {
     "babel": "^5.8.34",
     "babel-plugin-uglify": "^1.0.2",
-    "uglify-js": "^2.6.1",
     "chai": "^3.3.0",
     "grunt-babel": "^5.0.3",
+    "grunt-cli": "^0.1.13",
     "grunt-contrib-clean": "^0.6.0",
     "grunt-contrib-copy": "^0.8.2",
     "grunt-contrib-jshint": "^0.11.3",
     "grunt-mocha-test": "^0.12.7",
     "grunt-run": "^0.5.2",
+    "jshint": "^2.9.1",
     "jshint-stylish": "^2.0.1",
     "mocha": "^2.3.3",
     "sinon": "^1.17.1",
-    "time-grunt": "^1.2.2"
+    "time-grunt": "^1.2.2",
+    "uglify-js": "^2.6.1"
   },
   "dependencies": {
     "chokidar": "^1.4.2",
@@ -64,7 +67,7 @@
     "lru-cache": "^4.0.0",
     "mustache": "^2.2.1",
     "node-enocean": "^1.0.1",
-    "node-red": "^0.13.2",
+    "node-red": "^0.13.3",
     "node-red-contrib-asakusa_giken": "^1.0.1",
     "serialport": "^2.0.6",
     "source-map-support": "^0.3.3",

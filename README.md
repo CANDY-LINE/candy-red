@@ -244,15 +244,7 @@ $ sudo make install
 
 ## Setup for Building
 
-In order to install dependencies for development use.
-
-Install the global dependencies at first (`sudo` is required for Raspbian).
-
-```
-$ npm install -g grunt-cli babel mocha jshint
-```
-
-Then install the local dependencies.
+Install the local dependencies.
 
 ```
 $ git clone https://github.com/dbaba/candy-red.git
@@ -263,7 +255,7 @@ $ npm install
 ## Build
 
 ```
-$ grunt build
+$ npm run build
 ```
 
 The processed files are placed under `dist` directory.
@@ -280,7 +272,7 @@ $ npm install
 
 ## Run on localhost for development use
 
-Try the following commands after `grunt build`:
+Try the following commands after `npm run build`:
 (Prepends `sudo` for Raspbian)
 
 ```
@@ -374,13 +366,13 @@ Run `docker rm -f candy-red` to stop (and remove) the container.
 
 Run in foreground:
 ```
-$ grunt build
+$ npm run build
 $ docker run -ti --rm -v ./dist:/candy-red-dist candy-red
 ```
 
 Run in background:
 ```
-$ grunt build
+$ npm run build
 $ docker run -tid -v ./dist:/candy-red-dist candy-red
 ```
 
@@ -398,11 +390,16 @@ $ docker run -tid -v ./dist:/candy-red-dist candy-red
   - In this version, CANDY EGG credentials are stored into the flow file rather than the dedicated [credentials file](http://nodered.org/docs/creating-nodes/credentials.html) which Node-RED offers. This behavior can be modified in the future release.
 
 ## TODO
-
 * publish local Node-RED nodes in this project to npm repository
-* [CANDY IoT Board for Intel® Edison](https://translate.googleusercontent.com/translate_c?act=url&depth=1&hl=en&ie=UTF8&prev=_t&rurl=translate.google.com&sl=ja&tl=en&u=https://github.com/Robotma-com/candy-iot-service&usg=ALkJrhgViBgwht0t9vgBvmuJNkJb_kjoJg) with 3G/LTE module support
 
 ## Revision History
+* 2.3.0
+  - Remove global dependencies (`npm install -g ...` is no longer required to build the project)
+  - Show device ID on the editor header
+  - Bump up Node-RED version to v0.13.3
+  - Interact with a service for [CANDY IoT Board for Intel® Edison](https://translate.googleusercontent.com/translate_c?act=url&depth=1&hl=en&ie=UTF8&prev=_t&rurl=translate.google.com&sl=ja&tl=en&u=https://github.com/Robotma-com/candy-iot-service&usg=ALkJrhgViBgwht0t9vgBvmuJNkJb_kjoJg) in order to collect the modem information
+  - Add a new node for providing GPS location with LTEPi board (RPi/RPi2 only)
+
 * 2.2.0
   - Create a dedicated user data directory on `/opt/candy-red`, where flow files are stored so that they're left on performing version up
   - Add a new experimental local node for collecting device statistics
