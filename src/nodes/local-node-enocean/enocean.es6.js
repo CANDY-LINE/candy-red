@@ -37,6 +37,7 @@ export default function(RED) {
       this.useString = n.useString;
       this.enoceanPortNodeId = n.enoceanPort;
       this.enoceanPortNode = RED.nodes.getNode(this.enoceanPortNodeId);
+      this.status({});
       this.on('close', done => {
         if (this.enoceanPortNode) {
           EnOceanPortNode.pool.close(this.enoceanPortNode.serialPort).then(() => {

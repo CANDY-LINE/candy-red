@@ -27,6 +27,7 @@ export default function(RED) {
     let isTemplatedPath = (this.path||'').indexOf('{{') !== -1;
     let nodeMethod = n.method || 'GET';
     this.ret = n.ret || 'obj';
+    this.status({});
     let node = this;
 
     node.account = n.account;

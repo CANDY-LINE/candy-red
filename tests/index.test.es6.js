@@ -36,12 +36,15 @@ describe('index.js executable script', () => {
 describe('CandyRed', () => {
   let sandbox;
   let cr = new CandyRed();
+
   beforeEach(() => {
     sandbox = sinon.sandbox.create();
   });
+
   afterEach(() => {
     sandbox.restore();
   });
+
   describe('#_createCandyRedEditorTheme()', () => {
     it('should return titles containing hostname', () => {
       let theme = cr._createCandyRedEditorTheme();
@@ -54,6 +57,7 @@ describe('CandyRed', () => {
       assert.equal(' ** ' + os.hostname() + ' (my:deviceId) **', theme.header.title);
     });
   });
+
   describe('#_createCandyBoxEditorTheme()', () => {
     it('should return titles containing hostname', () => {
       let theme = cr._createCandyBoxEditorTheme();
@@ -64,6 +68,19 @@ describe('CandyRed', () => {
       let theme = cr._createCandyBoxEditorTheme('my:deviceId');
       assert.equal('CANDY BOX@my:deviceId', theme.page.title);
       assert.equal(' ** ' + os.hostname() + ' (my:deviceId) **', theme.header.title);
+    });
+  });
+
+  describe('#_inspectBoardStatus()', () => {
+    it('should not return any undefined values', done => {
+      cr._inspectBoardStatus(__dirname + '/../package.json').then(versions => {
+        assert.equal('N/A', versions.candyIotv);
+        assert.equal('N/A', versions.ltepiv);
+        assert.isDefined(versions.candyRedv);
+        done();
+      }).catch(err => {
+        done(err);
+      });
     });
   });
 });
