@@ -334,6 +334,7 @@ $ npm pack
 (varant)$ cd /vagrant
 (varant)$ npm pack
 (varant)$ mv *.tgz /tmp
+(varant)$ cp ./install.sh /tmp
 (varant)$ cd /tmp
 (varant)$ sudo TARBALL=/tmp/candy-red-<version>.tgz ./install.sh
 ```
