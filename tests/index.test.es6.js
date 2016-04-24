@@ -11,7 +11,7 @@ describe('index.js executable script', () => {
       candyred.kill('SIGKILL');
     }
   });
-  it('should start Node-RED properly', done => {
+  it('should start Node-RED properly', function(done) {
     let stdout = '';
     let env = Object.create(process.env);
     env.HOME = __dirname;
@@ -30,6 +30,7 @@ describe('index.js executable script', () => {
       assert.isNull(code);
       done();
     });
+    this.timeout(30000);
   });
 });
 
