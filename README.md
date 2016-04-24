@@ -321,6 +321,7 @@ $ npm pack
 ```
 (host)  $ vagrant up
 (host)  $ vagrant ssh
+(varant)$ cd /vagrant
 (varant)$ npm install
 (varant)$ node dist/index.js
 ```
