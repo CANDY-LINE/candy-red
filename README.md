@@ -127,7 +127,7 @@ This command shows the following text.
 v0.12.6
 ```
 
-### Using Node.js.0.12.x (RPi2)
+### Using Node.js.0.12.x (RPi2+)
 
 ```
 $ sudo apt-get update
@@ -140,7 +140,7 @@ You can try another version as well. See the [instruction in Node-RED document](
 
 ## Install/Version-up
 
-The module installation will take around 30 minutes on RPi1. On RPi2, the installation time will be shorter.
+The module installation will take around 30 minutes on RPi1. On RPi2+, the installation time will be shorter.
 
 Please consider to change your hostname as [described below](#change-hostname) prior to installing CANDY RED.
 
@@ -321,6 +321,7 @@ $ npm pack
 ```
 (host)  $ vagrant up
 (host)  $ vagrant ssh
+(varant)$ cd /vagrant
 (varant)$ npm install
 (varant)$ node dist/index.js
 ```
@@ -333,9 +334,12 @@ $ npm pack
 (varant)$ cd /vagrant
 (varant)$ npm pack
 (varant)$ mv *.tgz /tmp
+(varant)$ cp ./install.sh /tmp
 (varant)$ cd /tmp
 (varant)$ sudo TARBALL=/tmp/candy-red-<version>.tgz ./install.sh
 ```
+
+Then access to `http://localhost:8100/red/` with a browser on the host OS.
 
 ## Docker
 
@@ -393,12 +397,15 @@ $ docker run -tid -v ./dist:/candy-red-dist candy-red
 * publish local Node-RED nodes in this project to npm repository
 
 ## Revision History
+* 2.4.0
+  - Bump up Node-RED version to v0.13.4
+
 * 2.3.0
   - Remove global dependencies (`npm install -g ...` is no longer required to build the project)
   - Show device ID on the editor header
   - Bump up Node-RED version to v0.13.3
   - Interact with a service for [CANDY IoT Board for Intel® Edison](https://translate.googleusercontent.com/translate_c?act=url&depth=1&hl=en&ie=UTF8&prev=_t&rurl=translate.google.com&sl=ja&tl=en&u=https://github.com/Robotma-com/candy-iot-service&usg=ALkJrhgViBgwht0t9vgBvmuJNkJb_kjoJg) in order to collect the modem information
-  - Add a new node for providing GPS location with LTEPi board (RPi/RPi2 only)
+  - Add a new node for providing GPS location with LTEPi board (RPi series only)
 
 * 2.2.0
   - Create a dedicated user data directory on `/opt/candy-red`, where flow files are stored so that they're left on performing version up
