@@ -7,6 +7,7 @@
     "start": "node ./dist/index.js",
     "pretest": "grunt build",
     "build": "grunt build",
+    "clean": "grunt clean",
     "test": "grunt test",
     "preinstall": "./install.sh test",
     "postinstall": "./install.sh",
