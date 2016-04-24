@@ -397,6 +397,9 @@ $ docker run -tid -v ./dist:/candy-red-dist candy-red
 * publish local Node-RED nodes in this project to npm repository
 
 ## Revision History
+* 2.4.0
+  - Bump up Node-RED version to v0.13.4
+
 * 2.3.0
   - Remove global dependencies (`npm install -g ...` is no longer required to build the project)
   - Show device ID on the editor header
