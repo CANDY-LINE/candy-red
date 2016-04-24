@@ -339,6 +339,8 @@ $ npm pack
 (varant)$ sudo TARBALL=/tmp/candy-red-<version>.tgz ./install.sh
 ```
 
+Then access to `http://localhost:8100/red/` with a browser on the host OS.
+
 ## Docker
 
 ### Image Building
