@@ -249,7 +249,7 @@ Install the local dependencies.
 ```
 $ git clone https://github.com/dbaba/candy-red.git
 $ cd candy-red
-$ npm install
+$ DEVEL=true npm install
 ```
 
 ## Build

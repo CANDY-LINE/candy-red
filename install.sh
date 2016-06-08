@@ -16,6 +16,10 @@ function download_and_npm_install {
 }
 
 function setup {
+  if [ "${DEVEL}" == "true" ]; then
+    info "Skip to perform install.sh!"
+    exit 0
+  fi
   assert_root
   assert_node_npm
   if [ "${CP_DESTS}" != "" ]; then
