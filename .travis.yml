@@ -19,3 +19,6 @@ install:
   - $CXX --version
   - npm install --unsafe-perm
   - npm install
+
+notifications:
+  slack: '$SLACK_ACCOUNT:$SLACK_TOKEN'
