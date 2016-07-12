@@ -68,12 +68,14 @@ Vagrant.configure(2) do |config|
   # Puppet, Chef, Ansible, Salt, and Docker are also available. Please see the
   # documentation for more information about their specific syntax and use.
   BLUEZ_VER="5.37"
-  config.vm.provision "shell", privileged: false, inline: <<-SH
+  config.vm.provision "shell", privileged: true, inline: <<-SH
     apt-get -qq update
     apt-get -qq install curl bluez
-    apt-get -qq install nodejs npm nodejs-legacy
+    curl -sL https://deb.nodesource.com/setup_4.x | bash -
+    apt-get -qq install nodejs
+    npm install -g npm
     cd /vagrant
     rm -fr node_modules
-    npm install --unsafe-perm
+    DEVEL=true npm install
   SH
 end
