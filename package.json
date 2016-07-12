@@ -64,7 +64,7 @@
   "dependencies": {
     "chokidar": "^1.4.2",
     "es6-promises": "^1.0.10",
-    "express": "^4.13.4",
+    "express": "^4.14.4",
     "follow-redirects": "^0.0.7",
     "lru-cache": "^4.0.0",
     "mustache": "^2.2.1",
@@ -74,6 +74,6 @@
     "node-red-contrib-device-stats": "^1.0.2",
     "serialport": "^2.0.6",
     "source-map-support": "^0.3.3",
-    "ws": "^1.0.1"
+    "ws": "^1.1.1"
   }
 }
