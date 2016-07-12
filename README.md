@@ -314,7 +314,7 @@ $ npm pack
 
 ### Version
 
- * v1.8.1+
+ * v1.8.4+
 
 ### Run on Vagrant Instance
 
