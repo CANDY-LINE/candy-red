@@ -1,6 +1,8 @@
 #!/usr/bin/env bash
 
 SERVICE_NAME="candy-red"
+# 1 for disabling service installation & uninstallation, 0 for enabling them (default)
+DISABLE_SERVICE_INSTALL=${DISABLE_SERVICE_INSTALL:-0}
 
 function err {
   echo -e "\033[91m[ERROR] $1\033[0m"
@@ -35,6 +37,10 @@ function cd_module_root {
 }
 
 function system_service_uninstall {
+  if [ "${DISABLE_SERVICE_INSTALL}" == "1" ]; then
+    info "Skip to uninstall the SystemD service (DISABLE_SERVICE_INSTALL is 1)"
+    return
+  fi
   _lookup_system_service_type
   if [ -n "${SYSTEM_SERVICE_TYPE}" ]; then
     _uninstall_${SYSTEM_SERVICE_TYPE}
