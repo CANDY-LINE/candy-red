@@ -38,3 +38,13 @@ span.logo span {
   font-weight: bold;
   font-size: 14px !important;
 }
+.editor-tray-toolbar button.primary {
+    border-color: #710f3c;
+    color: #eee;
+    background: #b41861;
+}
+.editor-tray-toolbar:hover button.primary {
+    border-color: #710f3c;
+    color: #eee;
+    background: #710f3c;
+}
