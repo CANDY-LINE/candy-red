@@ -43,7 +43,7 @@ span.logo span {
     color: #eee;
     background: #b41861;
 }
-.editor-tray-toolbar:hover button.primary {
+.editor-tray-toolbar button.primary:hover:not(.disabled):not(.ui-button-disabled) {
     border-color: #710f3c;
     color: #eee;
     background: #710f3c;
