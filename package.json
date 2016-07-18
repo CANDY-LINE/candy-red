@@ -70,7 +70,7 @@
     "node-red": "^0.14.4",
     "node-red-contrib-asakusa_giken": "^1.0.1",
     "serialport": "^2.0.6",
-    "source-map-support": "^0.3.3",
+    "source-map-support": "^0.4.2",
     "ws": "^1.0.1"
   }
 }
