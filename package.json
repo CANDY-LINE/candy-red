@@ -67,7 +67,7 @@
     "lru-cache": "^4.0.0",
     "mustache": "^2.2.1",
     "node-enocean": "^1.0.1",
-    "node-red": "^0.13.4",
+    "node-red": "^0.14.4",
     "node-red-contrib-asakusa_giken": "^1.0.1",
     "serialport": "^2.0.6",
     "source-map-support": "^0.3.3",
