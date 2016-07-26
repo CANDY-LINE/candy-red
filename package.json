@@ -72,6 +72,7 @@
     "node-red": "^0.14.5",
     "node-red-contrib-asakusa_giken": "^1.1.0",
     "node-red-contrib-device-stats": "^1.0.2",
+    "node-red-dashboard": "^2.0.0",
     "serialport": "^4.0.1",
     "source-map-support": "^0.4.2",
     "ws": "^1.1.1"
