@@ -305,7 +305,9 @@ export default function(RED) {
       }
 
       this.on('close', () => {
-        this.listenerConfig.removeInputNode(this);
+        if (this.listenerConfig) {
+          this.listenerConfig.removeInputNode(this);
+        }
       });
     }
   }
