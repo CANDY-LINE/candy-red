@@ -240,7 +240,7 @@ $ sudo make install
 ### Supported Node.js versions
 
 * v0.12
-* v4.3
+* v4.4
 
 ## Setup for Building
 
@@ -249,7 +249,7 @@ Install the local dependencies.
 ```
 $ git clone https://github.com/dbaba/candy-red.git
 $ cd candy-red
-$ npm install
+$ DEVEL=true npm install
 ```
 
 ## Build
@@ -314,7 +314,7 @@ $ npm pack
 
 ### Version
 
- * v1.8.1+
+ * v1.8.4+
 
 ### Run on Vagrant Instance
 
@@ -397,6 +397,12 @@ $ docker run -tid -v ./dist:/candy-red-dist candy-red
 * publish local Node-RED nodes in this project to npm repository
 
 ## Revision History
+* 2.5.0
+  - Bump up Node-RED version to v0.14.5
+  - Enable node-red-dashboard v2.0.0 by default
+  - Bump up asakusa_giken node version to v1.1.0
+  - Fix CSS
+
 * 2.4.0
   - Bump up Node-RED version to v0.13.4
 

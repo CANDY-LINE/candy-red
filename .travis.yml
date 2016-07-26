@@ -3,7 +3,7 @@ language: node_js
 matrix:
   include:
     - node_js: "0.12"
-    - node_js: "4.3"
+    - node_js: "4.4"
 
 addons:
   apt:
@@ -19,3 +19,8 @@ install:
   - $CXX --version
   - npm install --unsafe-perm
   - npm install
+
+notifications:
+  slack:
+    secure: YLa2vYsbfHUpLkBxqYrD1W4WiP9hvFKvte9imGgSbC1aZsjT//poSHRX505taxsyb1JbXGpQ+cwE4S7Mw7DfGRWhqOBuSZds+U109H5fHUN0ea3rkDBrENTRQNoVUbjps9lMS3qVadx5UzBIDavKb4QfYwRO7VfLQwxTVXU6dvyJSyesdsmf6KI/JJmS0b3a0fLqZcPzR/yGv9OmOntPJN/ZPnGmGc227oxFBFy1k5qGKxXDbf8F2wH+ZaK9mRir1n1QU5QGDJtDI9J7WXsepBnkAQa9UG4FeZ/mGgMvCM3cPDftKs67xo9Q3ohiSqZbYDqFy5FIcMOld//JtAn3UlPjOiAiuA37BZ1Cjpl+ahTyEMQseMDtN3G2Gzq4TfXlaEu5NkKU306juCMAJRokihYroUvaSFfiQRWkEz6wPc7dVOdoWpEw4ZlBhFPEUk2rtlJnNlgpFK7QVB9R5fFnpWDpDtgf97v6/i6KdcSCs68NqOPX7+CD+NjPcrbNFDZ2pzMdwjIqp6w/GXZ22Nco8n9FzyGvEnVGzY1AgaMaNvgaiVZxMuMw7MUuDs2bi9ce3tUfmx/TdHDaKc/0RMoPsy1h3V94YIIeQ+Iz5vp4IolBlxY2GIzumCgsJCl9a+V9QUflkSByNL568dsEkfrvb0KPhJpHq4JEtc/2aLhnyoM=
+    on_success: always

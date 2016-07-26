@@ -1,6 +1,8 @@
 #!/usr/bin/env bash
 
 SERVICE_NAME="candy-red"
+# 1 for disabling service installation & uninstallation, 0 for enabling them (default)
+DISABLE_SERVICE_INSTALL=${DISABLE_SERVICE_INSTALL:-0}
 
 function err {
   echo -e "\033[91m[ERROR] $1\033[0m"
@@ -16,6 +18,10 @@ function download_and_npm_install {
 }
 
 function setup {
+  if [ "${DEVEL}" == "true" ]; then
+    info "Skip to perform install.sh!"
+    exit 0
+  fi
   assert_root
   assert_node_npm
   if [ "${CP_DESTS}" != "" ]; then
@@ -112,6 +118,11 @@ function npm_local_install {
 }
 
 function system_service_install {
+  if [ "${DISABLE_SERVICE_INSTALL}" == "1" ]; then
+    info "Skip to setup a SystemD service (DISABLE_SERVICE_INSTALL is 1)"
+    return
+  fi
+
   SERVICES="${PROJECT_ROOT}/services"
   START_SH="${SERVICES}/start_${SYSTEM_SERVICE_TYPE}.sh"
 
@@ -153,7 +164,7 @@ setup $1
 resolve_version
 test_system_service
 if [ -n "${SYSTEM_SERVICE_TYPE}" ]; then
-  ${PROJECT_ROOT}/uninstall.sh
+  DISABLE_SERVICE_INSTALL=${DISABLE_SERVICE_INSTALL} ${PROJECT_ROOT}/uninstall.sh
   npm_local_install
   system_service_install
 elif [ -d "${PROJECT_ROOT}/src" ]; then

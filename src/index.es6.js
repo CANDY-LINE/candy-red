@@ -241,8 +241,8 @@ export class CandyRed {
       flowFilePretty: false,
       verbose: true,
       disableEditor: false,
-      httpAdminRoot: '/red',
-      httpNodeRoot: '/api',
+      httpAdminRoot: '/red/',
+      httpNodeRoot: '/api/',
       userDir: (process.env.HOME || process.env.USERPROFILE) + '/.node-red',
       flowFile: this.flowFile,
       functionGlobalContext: {

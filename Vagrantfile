@@ -12,7 +12,7 @@ Vagrant.configure(2) do |config|
 
   # Every Vagrant development environment requires a box. You can search for
   # boxes at https://atlas.hashicorp.com/search.
-  config.vm.box = "bento/ubuntu-15.04"
+  config.vm.box = "bento/ubuntu-16.04"
 
   # Disable automatic box update checking. If you disable this, then
   # boxes will only be checked for updates when the user runs
@@ -68,14 +68,14 @@ Vagrant.configure(2) do |config|
   # Puppet, Chef, Ansible, Salt, and Docker are also available. Please see the
   # documentation for more information about their specific syntax and use.
   BLUEZ_VER="5.37"
-  config.vm.provision "shell", privileged: false, inline: <<-SH
-    sudo apt-get -qq update
-    sudo apt-get -qq install curl bluez
-    curl -sL https://deb.nodesource.com/setup_0.12 | sudo bash -
-    sudo apt-get -qq install nodejs
+  config.vm.provision "shell", privileged: true, inline: <<-SH
+    apt-get -qq update
+    apt-get -qq install curl bluez
+    curl -sL https://deb.nodesource.com/setup_4.x | bash -
+    apt-get -qq install nodejs
+    npm install -g npm
     cd /vagrant
     rm -fr node_modules
-    sudo npm install -g grunt-cli babel mocha jshint
-    npm install
+    DEVEL=true npm install
   SH
 end
