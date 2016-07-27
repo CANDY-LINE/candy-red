@@ -133,7 +133,7 @@ v0.12.6
 $ sudo apt-get update
 $ sudo apt-get upgrade
 $ curl -sL https://deb.nodesource.com/setup_0.12 | sudo bash -
-$ sudo apt-get install -y python-dev python-rpi.gpio bluez nodejs
+$ sudo apt-get install -y python-dev python-rpi.gpio bluez nodejs libudev-dev
 ```
 
 You can try another version as well. See the [instruction in Node-RED document](http://nodered.org/docs/hardware/raspberrypi.html) for detail.
