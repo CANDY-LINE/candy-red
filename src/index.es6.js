@@ -248,6 +248,9 @@ export class CandyRed {
       functionGlobalContext: {
       },
       exitHandlers: [],
+      nodesExcludes: [
+        'local-node-ltepi-gps',
+      ],
       deviceManagerStore: this.deviceManagerStore,
       editorTheme: this.editorTheme,
       candyIotVersion: versions.candyIotv,
