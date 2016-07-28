@@ -7,11 +7,13 @@ import express from 'express';
 import RED from 'node-red';
 import os from 'os';
 import fs from 'fs';
+import mkdirp from 'mkdirp';
 import { DeviceManagerStore } from './device-manager';
 
 // Listen port
 const PORT = process.env.PORT || 8100;
 const DEFAULT_PACKAGE_JSON = __dirname + '/../package.json';
+const DEFAULT_WELCOME_FLOW = __dirname + '/welcome-flow.json';
 
 export class CandyRed {
   constructor(packageJsonPath) {
@@ -40,14 +42,51 @@ export class CandyRed {
       fs.rename(oldPath, newPath, err => {
         if (err) {
           let oldPath = `${userDir}/flows_candy-box_${os.hostname()}.json`;
-          fs.rename(oldPath, newPath, () => {
-            RED.log.info(`[MIGRATED] ${oldPath} => ${newPath}`);
+          fs.rename(oldPath, newPath, err => {
+            if (!err) {
+              console.log(`[MIGRATED] ${oldPath} => ${newPath}`);
+            }
             resolve();
           });
         } else {
-          RED.log.info(`[MIGRATED] ${oldPath} => ${newPath}`);
+          console.log(`[MIGRATED] ${oldPath} => ${newPath}`);
           resolve();
         }
+      });
+    });
+  }
+
+  _prepareDefaultFlowFile(userDir) {
+    return new Promise((resolve, reject) => {
+      fs.stat(userDir, err => {
+        if (err) {
+          mkdirp(userDir, err => {
+            if (err) {
+              return reject(err);
+            }
+            return resolve();
+          });
+        }
+        return resolve();
+      });
+    }).then(() => {
+      return new Promise((resolve, reject) => {
+        let flowFile = `${userDir}/${this.flowFile}`;
+        fs.stat(flowFile, err => {
+          if (err) {
+            try {
+              let reader = fs.createReadStream(DEFAULT_WELCOME_FLOW);
+              reader.pipe(fs.createWriteStream(flowFile));
+              reader.on('end', () => {
+                console.log('[CREATED] Default welcome flow has been created');
+                resolve();
+              });
+            } catch (e) {
+              reject(e);
+            }
+          }
+          return resolve();
+        });
       });
     });
   }
@@ -61,6 +100,8 @@ export class CandyRed {
         let settings = this._createREDSettigngs(versions);
         // Flow File Name Spec. Change Migration
         this._migrateFlowFile(settings.userDir).then(() => {
+          return this._prepareDefaultFlowFile(settings.userDir);
+        }).then(() => {
           resolve([settings, versions]);
         }).catch(err => {
           reject(err);
