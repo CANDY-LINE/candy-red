@@ -45,6 +45,12 @@ This theme appears when CANDY IoT Board is available on a device.
 
 This will install the latest version of CANDY RED.
 
+### Supported npm version
+
+* v2.x (v2.0.0 or above but less than v3.0.0)
+
+Don't use npm v3.x as v3.x of npm failed to resolve the collision between different version of moment-timezone (older version was always chosen).
+
 ## Install/Version-up
 
 The installation will take about 5 minutes.
@@ -98,6 +104,12 @@ $ rm -f "$(dirname $(dirname $(which systemctl)))/lib/systemd/system/candy-red.s
 The preinstalled version of Node.js v0.10.29 won't work because of the [header file issue](http://dustinbolton.com/replace_invalid_utf8-is-not-a-member-of-v8string-installing-nodejs-packages-on-raspbian-debian-on-raspberry-pi-2-b/) appearing on installing native addons.
 
 I highly recommend you to uninstall the preinstalled version of Node.js, Node-RED (which depends on `nodejs` and `nodejs-legacy` packages) and npm by the following command, and to install another version instead.
+
+### Supported npm version
+
+* v2.x (v2.0.0 or above but less than v3.0.0)
+
+Don't use npm v3.x as v3.x of npm failed to resolve the collision between different version of moment-timezone (older version was always chosen).
 
 ```
 $ sudo apt-get remove -y nodered nodejs nodejs-legacy npm
@@ -254,6 +266,12 @@ Note that the downloaded flow file will be discarded if it is not a valid JSON d
 * v0.12
 * v4.4
 
+### Supported npm version
+
+* v2.x (run `(sudo) npm install -g npm@latest-2`)
+
+v3.x of npm failed to resolve the collision between different version of moment-timezone (older version was always chosen).
+
 ## Setup for Building
 
 Install the local dependencies.
@@ -299,22 +317,30 @@ $ WELCOME_FLOW_URL=https://git.io/vKx5r node ./dist/index.js
 
 And you'll see the sensor info like this:
 
-		24 Jan 08:53:12 - [info] [CANDY RED] Deploying Flow Editor UI...
+    [INFO] Default welcome flow has been created
+    29 Jul 21:52:35 - [info] [CANDY RED] flowFileSignature: 6cbf44cb244f38acf29d2ef061aabc4ac70e991a
+    29 Jul 21:52:35 - [info] [CANDY RED] Deploying Flow Editor UI...
 
 
-		Welcome to Node-RED
-		===================
+    Welcome to Node-RED
+    ===================
 
-		24 Jan 08:53:15 - [info] Node-RED version: v0.13.1 [candy-red v2.0.1]
-		24 Jan 08:53:15 - [info] Node.js  version: v0.12.6
-		24 Jan 08:53:15 - [info] Loading palette nodes
-		24 Jan 08:53:44 - [info] [BLE] Set up done
-		24 Jan 08:53:44 - [info] User directory : /root/.node-red
-		24 Jan 08:53:44 - [info] Flows file : /root/.node-red/flows_candy-red_my-ltepi.json
-		24 Jan 08:53:44 - [info] Creating new flow file
-		24 Jan 08:53:44 - [info] Starting flows
-		24 Jan 08:53:44 - [info] Started flows
-		24 Jan 08:53:44 - [info] Listen port=8100
+    29 Jul 21:52:35 - [info] Node-RED version: v0.14.6 [candy-red v2.6.3]
+    29 Jul 21:52:35 - [info] Node.js  version: v4.4.7
+    29 Jul 21:52:35 - [info] Darwin 15.6.0 x64 LE
+    29 Jul 21:52:35 - [info] Loading palette nodes
+    29 Jul 21:52:36 - [info] UI started at /api/ui
+    29 Jul 21:52:36 - [warn] ------------------------------------------------------
+    29 Jul 21:52:36 - [warn] [rpi-gpio] Info : Ignoring Raspberry Pi specific node
+    29 Jul 21:52:36 - [warn] [ltepi-gps] Info : LTEPiGPS isn't supported on this device
+    29 Jul 21:52:36 - [warn] ------------------------------------------------------
+    29 Jul 21:52:36 - [info] User directory : /Users/guest/.node-red
+    29 Jul 21:52:36 - [info] Flows file     : /Users/guest/.node-red/flows_candy-red.json
+    29 Jul 21:52:36 - [info] [BLE] Set up done
+    29 Jul 21:52:36 - [info] Listen port=8100
+    29 Jul 21:52:36 - [info] Starting flows
+    29 Jul 21:52:36 - [info] [inject:89c364b0.763c98] repeat = 1000
+    29 Jul 21:52:36 - [info] Started flows
 
 ## Test
 
@@ -415,6 +441,10 @@ $ docker run -tid -v ./dist:/candy-red-dist candy-red
 * publish local Node-RED nodes in this project to npm repository
 
 ## Revision History
+* 2.6.3
+  - Bump up Node-RED version to v0.14.6
+  - Bump up Dashboard UI version to v2.0.1
+
 * 2.6.2
   - Fix welcome flow download error
 
