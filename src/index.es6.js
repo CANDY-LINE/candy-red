@@ -3,15 +3,18 @@
 import 'source-map-support/register';
 import Promise from 'es6-promises';
 import http from 'http';
+import request from 'request';
 import express from 'express';
 import RED from 'node-red';
 import os from 'os';
 import fs from 'fs';
+import mkdirp from 'mkdirp';
 import { DeviceManagerStore } from './device-manager';
 
 // Listen port
 const PORT = process.env.PORT || 8100;
 const DEFAULT_PACKAGE_JSON = __dirname + '/../package.json';
+const DEFAULT_WELCOME_FLOW = __dirname + '/welcome-flow.json';
 
 export class CandyRed {
   constructor(packageJsonPath) {
@@ -40,14 +43,86 @@ export class CandyRed {
       fs.rename(oldPath, newPath, err => {
         if (err) {
           let oldPath = `${userDir}/flows_candy-box_${os.hostname()}.json`;
-          fs.rename(oldPath, newPath, () => {
-            RED.log.info(`[MIGRATED] ${oldPath} => ${newPath}`);
+          fs.rename(oldPath, newPath, err => {
+            if (!err) {
+              console.log(`[MIGRATED] ${oldPath} => ${newPath}`);
+            }
             resolve();
           });
         } else {
-          RED.log.info(`[MIGRATED] ${oldPath} => ${newPath}`);
+          console.log(`[MIGRATED] ${oldPath} => ${newPath}`);
           resolve();
         }
+      });
+    });
+  }
+
+  _prepareWelcomeFlowFileReadStream() {
+    return new Promise((resolve, reject) => {
+      let url = process.env.WELCOME_FLOW_URL;
+      if (url && (url.indexOf('http://') || url.indexOf('https://'))) {
+        let req = request.get(url);
+        req.on('error', err => {
+          return reject(err);
+        });
+        return resolve(req);
+      } else {
+        try {
+          return resolve(fs.createReadStream(DEFAULT_WELCOME_FLOW));
+        } catch (err) {
+          return reject(err);
+        }
+      }
+    });
+  }
+
+  _prepareDefaultFlowFile(userDir) {
+    return new Promise((resolve, reject) => {
+      fs.stat(userDir, err => {
+        if (err) {
+          mkdirp(userDir, err => {
+            if (err) {
+              return reject(err);
+            }
+            return resolve();
+          });
+        }
+        return resolve();
+      });
+    }).then(() => {
+      return new Promise((resolve, reject) => {
+        let flowFile = `${userDir}/${this.flowFile}`;
+        fs.stat(flowFile, err => {
+          if (err) {
+            this._prepareWelcomeFlowFileReadStream().then(reader => {
+              reader.pipe(fs.createWriteStream(flowFile));
+              reader.on('end', () => {
+                fs.readFile(flowFile, (err, data) => {
+                  if (err) {
+                    return reject(err);
+                  }
+                  try {
+                    JSON.parse(data);
+                    console.log('[CREATED] Default welcome flow has been created');
+                    resolve();
+                  } catch (_) {
+                    fs.writeFile(flowFile, '[]', err => {
+                      if (err) {
+                        return reject(err);
+                      }
+                      console.log('[WARN] Wrong JSON format in thhe welcome flow');
+                      resolve();
+                    });
+                  }
+                });
+              });
+            }).catch(err => {
+              reject(err);
+            });
+          } else {
+            return resolve();
+          }
+        });
       });
     });
   }
@@ -61,6 +136,8 @@ export class CandyRed {
         let settings = this._createREDSettigngs(versions);
         // Flow File Name Spec. Change Migration
         this._migrateFlowFile(settings.userDir).then(() => {
+          return this._prepareDefaultFlowFile(settings.userDir);
+        }).then(() => {
           resolve([settings, versions]);
         }).catch(err => {
           reject(err);
@@ -238,7 +315,7 @@ export class CandyRed {
 
   _createREDSettigngs(versions) {
     return {
-      flowFilePretty: false,
+      flowFilePretty: true,
       verbose: true,
       disableEditor: false,
       httpAdminRoot: '/red/',
@@ -248,6 +325,8 @@ export class CandyRed {
       functionGlobalContext: {
       },
       exitHandlers: [],
+      nodesExcludes: [
+      ],
       deviceManagerStore: this.deviceManagerStore,
       editorTheme: this.editorTheme,
       candyIotVersion: versions.candyIotv,

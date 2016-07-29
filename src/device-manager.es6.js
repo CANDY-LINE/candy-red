@@ -870,15 +870,22 @@ export class DeviceState {
       } else {
         flowFilePath = this.flowFilePath;
       }
-      return new Promise(resolve => {
+      return new Promise((resolve, reject) => {
         fs.readFile(flowFilePath, (err, data) => {
           if (err) {
             return resolve(true);
           }
+          let flows;
+          try {
+            flows = JSON.parse(data);
+          } catch (e) {
+            RED.log.error(`[CANDY RED] Wrong JSON format => ${flowFilePath}. Correct the error or remove it`);
+            return reject(e);
+          }
+
           this.setFlowSignature(data);
           RED.log.info(`[CANDY RED] flowFileSignature: ${this.flowFileSignature}`);
 
-          let flows = JSON.parse(data);
           if (!Array.isArray(flows)) {
             return resolve(true);
           }

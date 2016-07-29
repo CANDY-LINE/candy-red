@@ -133,7 +133,7 @@ v0.12.6
 $ sudo apt-get update
 $ sudo apt-get upgrade
 $ curl -sL https://deb.nodesource.com/setup_0.12 | sudo bash -
-$ sudo apt-get install -y python-dev python-rpi.gpio bluez nodejs
+$ sudo apt-get install -y python-dev python-rpi.gpio bluez nodejs libudev-dev
 ```
 
 You can try another version as well. See the [instruction in Node-RED document](http://nodered.org/docs/hardware/raspberrypi.html) for detail.
@@ -233,6 +233,18 @@ $ make
 $ sudo make install
 ```
 
+# Configuration
+
+## Initial Welcome Flow
+
+Welcome flow is a sample flow for helping users to understand the flow editor, which is created by CANDY RED when user's flow is missing.
+
+`WELCOME_FLOW_URL` environmental variable allows users to specify the initial welcome flow file in URL form. You can set it on installation by, for example, `WELCOME_FLOW_URL=http://... npm install -g ....`.
+
+By default, [`welcome-flow.json`](src/welcome-flow.json) is used as the initial flow.
+
+Note that the downloaded flow file will be discarded if it is not a valid JSON data.
+
 # Development
 
 ## Prerequisites
@@ -277,6 +289,12 @@ Try the following commands after `npm run build`:
 
 ```
 $ node ./dist/index.js
+```
+
+With a remote welcome flow file:
+
+```
+$ WELCOME_FLOW_URL=https://git.io/vKx5r node ./dist/index.js
 ```
 
 And you'll see the sensor info like this:
@@ -397,6 +415,12 @@ $ docker run -tid -v ./dist:/candy-red-dist candy-red
 * publish local Node-RED nodes in this project to npm repository
 
 ## Revision History
+* 2.6.0
+  - Add a new feature to setup the default flow when user flow file is missing
+  - Enable to pretty flow file format by default
+  - Enable node-red-contrib-moment v2.0.0 by default for better date/time operation
+  - Disable LTEPiGPS on unsupported device
+
 * 2.5.0
   - Bump up Node-RED version to v0.14.5
   - Enable node-red-dashboard v2.0.0 by default

@@ -1,6 +1,6 @@
 {
   "name": "candy-red",
-  "version": "2.5.0",
+  "version": "2.6.0",
   "description": "CANDY RED Device Gateway Service powered by Node-RED",
   "main": "./dist/index.js",
   "scripts": {
@@ -73,8 +73,11 @@
     "node-red-contrib-asakusa_giken": "^1.1.0",
     "node-red-contrib-device-stats": "^1.0.2",
     "node-red-dashboard": "^2.0.0",
+    "node-red-contrib-moment": "^2.0.0",
     "serialport": "^4.0.1",
     "source-map-support": "^0.4.2",
+    "mkdirp": "^0.5.1",
+    "request": "^2.74.0",
     "ws": "^1.1.1"
   }
 }
