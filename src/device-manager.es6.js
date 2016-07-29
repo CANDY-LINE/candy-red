@@ -870,7 +870,7 @@ export class DeviceState {
       } else {
         flowFilePath = this.flowFilePath;
       }
-      return new Promise(resolve => {
+      return new Promise((resolve, reject) => {
         fs.readFile(flowFilePath, (err, data) => {
           if (err) {
             return resolve(true);
