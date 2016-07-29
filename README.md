@@ -233,6 +233,16 @@ $ make
 $ sudo make install
 ```
 
+# Configuration
+
+## Initial Welcome Flow
+
+Welcome flow is a sample flow for helping users to understand the flow editor, which is created by CANDY RED when user's flow is missing.
+
+`WELCOME_FLOW_URL` environmental variable allows users to specify the initial welcome flow file in URL form. You can set it on installation by, for example, `WELCOME_FLOW_URL=http://... npm install -g ....`.
+
+By default, [`welcome-flow.json`](src/welcome-flow.json) is used as the initial flow.
+
 # Development
 
 ## Prerequisites

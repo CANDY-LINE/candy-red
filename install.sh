@@ -134,6 +134,7 @@ function system_service_install {
   cp -f ${SERVICES}/base_environment.txt ${SERVICES}/environment
   sed -i -e "s/%HCIDEVICE%/${HCIDEVICE//\//\\/}/g" ${SERVICES}/environment
   sed -i -e "s/%NODE_OPTS%/${NODE_OPTS//\//\\/}/g" ${SERVICES}/environment
+  sed -i -e "s/%WELCOME_FLOW_URL%/${WELCOME_FLOW_URL//\//\\/}/g" ${SERVICES}/environment
 
   _install_${SYSTEM_SERVICE_TYPE}
 }
