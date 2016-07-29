@@ -13,9 +13,11 @@ describe('ltepi-gps module', () => {
   let sandbox;
   beforeEach(() => {
     sandbox = sinon.sandbox.create();
+    RED.settings.ltepiGpsTest = true;
   });
   afterEach(() => {
     sandbox.restore();
+    delete process.env.LTEPiGPSTEST;
   });
 
   it('should be successfully initialized', () => {
