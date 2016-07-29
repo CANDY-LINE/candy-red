@@ -56,6 +56,26 @@ export class CandyRed {
     });
   }
 
+  _prepareWelcomeFlowFileReadStream() {
+    return new Promise((resolve, reject) => {
+      let url = process.env.WELCOME_FLOW_URL;
+      if (url && (url.indexOf('http://') || url.indexOf('https://'))) {
+        let request = http.get(url, resp => {
+          return resolve(resp);
+        });
+        request.on('error', err => {
+          return reject(err);
+        });
+      } else {
+        try {
+          return resolve(fs.createReadStream(DEFAULT_WELCOME_FLOW));
+        } catch (err) {
+          return reject(err);
+        }
+      }
+    });
+  }
+
   _prepareDefaultFlowFile(userDir) {
     return new Promise((resolve, reject) => {
       fs.stat(userDir, err => {
@@ -74,18 +94,18 @@ export class CandyRed {
         let flowFile = `${userDir}/${this.flowFile}`;
         fs.stat(flowFile, err => {
           if (err) {
-            try {
-              let reader = fs.createReadStream(DEFAULT_WELCOME_FLOW);
+            this._prepareWelcomeFlowFileReadStream().then(reader => {
               reader.pipe(fs.createWriteStream(flowFile));
               reader.on('end', () => {
                 console.log('[CREATED] Default welcome flow has been created');
                 resolve();
               });
-            } catch (e) {
-              reject(e);
-            }
+            }).catch(err => {
+              reject(err);
+            });
+          } else {
+            return resolve();
           }
-          return resolve();
         });
       });
     });
