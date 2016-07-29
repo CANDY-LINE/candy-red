@@ -415,6 +415,9 @@ $ docker run -tid -v ./dist:/candy-red-dist candy-red
 * publish local Node-RED nodes in this project to npm repository
 
 ## Revision History
+* 2.6.2
+  - Fix welcome flow download error
+
 * 2.6.1
   - Fix publish error
 
