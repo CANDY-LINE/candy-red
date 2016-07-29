@@ -415,6 +415,9 @@ $ docker run -tid -v ./dist:/candy-red-dist candy-red
 * publish local Node-RED nodes in this project to npm repository
 
 ## Revision History
+* 2.6.1
+  - Fix publish error
+
 * 2.6.0
   - Add a new feature to setup the default flow when user flow file is missing
   - Enable to pretty flow file format by default
