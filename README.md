@@ -419,6 +419,7 @@ $ docker run -tid -v ./dist:/candy-red-dist candy-red
   - Add a new feature to setup the default flow when user flow file is missing
   - Enable to pretty flow file format by default
   - Enable node-red-contrib-moment v2.0.0 by default for better date/time operation
+  - Disable LTEPiGPS on unsupported device
 
 * 2.5.0
   - Bump up Node-RED version to v0.14.5
