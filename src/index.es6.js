@@ -95,18 +95,19 @@ export class CandyRed {
         fs.stat(flowFile, err => {
           if (err) {
             this._prepareWelcomeFlowFileReadStream().then(reader => {
-              reader.pipe(fs.createWriteStream(flowFile));
-              reader.on('end', () => {
+              let writer = fs.createWriteStream(flowFile);
+              reader.pipe(writer);
+              writer.on('close', () => {
                 fs.readFile(flowFile, (err, data) => {
                   if (err) {
                     return reject(err);
                   }
                   try {
                     JSON.parse(data);
-                    console.log('[CREATED] Default welcome flow has been created');
+                    console.log('[INFO] Default welcome flow has been created');
                     resolve();
                   } catch (_) {
-                    fs.writeFile(flowFile, '[]', err => {
+                    fs.writeFile(flowFile, '[]', { flag : 'w' }, err => {
                       if (err) {
                         return reject(err);
                       }
