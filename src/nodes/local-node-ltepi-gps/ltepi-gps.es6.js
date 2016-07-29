@@ -8,6 +8,11 @@ import cproc from 'child_process';
 
 export default function(RED) {
 
+  let which = cproc.spawnSync('which', ['ltepi_get_gps'], { timeout: 1000 });
+  if (which.status != 0) {
+    throw `Info : LTEPiGPS isn't supported on this device`;
+  }
+
   class LTEPiGPSInNode {
     constructor(n) {
       RED.nodes.createNode(this, n);

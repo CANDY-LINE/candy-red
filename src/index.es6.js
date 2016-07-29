@@ -326,7 +326,6 @@ export class CandyRed {
       },
       exitHandlers: [],
       nodesExcludes: [
-        'local-node-ltepi-gps',
       ],
       deviceManagerStore: this.deviceManagerStore,
       editorTheme: this.editorTheme,
