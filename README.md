@@ -45,6 +45,12 @@ This theme appears when CANDY IoT Board is available on a device.
 
 This will install the latest version of CANDY RED.
 
+### Supported npm version
+
+* v2.x (v2.0.0 or above but less than v3.0.0)
+
+Don't use npm v3.x as v3.x of npm failed to resolve the collision between different version of moment-timezone (older version was always chosen).
+
 ## Install/Version-up
 
 The installation will take about 5 minutes.
@@ -98,6 +104,12 @@ $ rm -f "$(dirname $(dirname $(which systemctl)))/lib/systemd/system/candy-red.s
 The preinstalled version of Node.js v0.10.29 won't work because of the [header file issue](http://dustinbolton.com/replace_invalid_utf8-is-not-a-member-of-v8string-installing-nodejs-packages-on-raspbian-debian-on-raspberry-pi-2-b/) appearing on installing native addons.
 
 I highly recommend you to uninstall the preinstalled version of Node.js, Node-RED (which depends on `nodejs` and `nodejs-legacy` packages) and npm by the following command, and to install another version instead.
+
+### Supported npm version
+
+* v2.x (v2.0.0 or above but less than v3.0.0)
+
+Don't use npm v3.x as v3.x of npm failed to resolve the collision between different version of moment-timezone (older version was always chosen).
 
 ```
 $ sudo apt-get remove -y nodered nodejs nodejs-legacy npm
@@ -253,6 +265,12 @@ Note that the downloaded flow file will be discarded if it is not a valid JSON d
 
 * v0.12
 * v4.4
+
+### Supported npm version
+
+* v2.x (run `(sudo) npm install -g npm@latest-2`)
+
+v3.x of npm failed to resolve the collision between different version of moment-timezone (older version was always chosen).
 
 ## Setup for Building
 
