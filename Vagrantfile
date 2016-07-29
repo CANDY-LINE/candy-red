@@ -70,10 +70,10 @@ Vagrant.configure(2) do |config|
   BLUEZ_VER="5.37"
   config.vm.provision "shell", privileged: true, inline: <<-SH
     apt-get -qq update
-    apt-get -qq install curl bluez
+    apt-get -qq install curl bluez libudev-dev git
     curl -sL https://deb.nodesource.com/setup_4.x | bash -
     apt-get -qq install nodejs
-    npm install -g npm
+    npm install -g npm@latest-2
     cd /vagrant
     rm -fr node_modules
     DEVEL=true npm install
