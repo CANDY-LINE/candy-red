@@ -317,22 +317,30 @@ $ WELCOME_FLOW_URL=https://git.io/vKx5r node ./dist/index.js
 
 And you'll see the sensor info like this:
 
-		24 Jan 08:53:12 - [info] [CANDY RED] Deploying Flow Editor UI...
+    [INFO] Default welcome flow has been created
+    29 Jul 21:52:35 - [info] [CANDY RED] flowFileSignature: 6cbf44cb244f38acf29d2ef061aabc4ac70e991a
+    29 Jul 21:52:35 - [info] [CANDY RED] Deploying Flow Editor UI...
 
 
-		Welcome to Node-RED
-		===================
+    Welcome to Node-RED
+    ===================
 
-		24 Jan 08:53:15 - [info] Node-RED version: v0.13.1 [candy-red v2.0.1]
-		24 Jan 08:53:15 - [info] Node.js  version: v0.12.6
-		24 Jan 08:53:15 - [info] Loading palette nodes
-		24 Jan 08:53:44 - [info] [BLE] Set up done
-		24 Jan 08:53:44 - [info] User directory : /root/.node-red
-		24 Jan 08:53:44 - [info] Flows file : /root/.node-red/flows_candy-red_my-ltepi.json
-		24 Jan 08:53:44 - [info] Creating new flow file
-		24 Jan 08:53:44 - [info] Starting flows
-		24 Jan 08:53:44 - [info] Started flows
-		24 Jan 08:53:44 - [info] Listen port=8100
+    29 Jul 21:52:35 - [info] Node-RED version: v0.14.6 [candy-red v2.6.3]
+    29 Jul 21:52:35 - [info] Node.js  version: v4.4.7
+    29 Jul 21:52:35 - [info] Darwin 15.6.0 x64 LE
+    29 Jul 21:52:35 - [info] Loading palette nodes
+    29 Jul 21:52:36 - [info] UI started at /api/ui
+    29 Jul 21:52:36 - [warn] ------------------------------------------------------
+    29 Jul 21:52:36 - [warn] [rpi-gpio] Info : Ignoring Raspberry Pi specific node
+    29 Jul 21:52:36 - [warn] [ltepi-gps] Info : LTEPiGPS isn't supported on this device
+    29 Jul 21:52:36 - [warn] ------------------------------------------------------
+    29 Jul 21:52:36 - [info] User directory : /Users/guest/.node-red
+    29 Jul 21:52:36 - [info] Flows file     : /Users/guest/.node-red/flows_candy-red.json
+    29 Jul 21:52:36 - [info] [BLE] Set up done
+    29 Jul 21:52:36 - [info] Listen port=8100
+    29 Jul 21:52:36 - [info] Starting flows
+    29 Jul 21:52:36 - [info] [inject:89c364b0.763c98] repeat = 1000
+    29 Jul 21:52:36 - [info] Started flows
 
 ## Test
 
