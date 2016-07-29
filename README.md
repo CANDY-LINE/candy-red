@@ -243,6 +243,8 @@ Welcome flow is a sample flow for helping users to understand the flow editor, w
 
 By default, [`welcome-flow.json`](src/welcome-flow.json) is used as the initial flow.
 
+Note that the downloaded flow file will be discarded if it is not a valid JSON data.
+
 # Development
 
 ## Prerequisites
@@ -287,6 +289,12 @@ Try the following commands after `npm run build`:
 
 ```
 $ node ./dist/index.js
+```
+
+With a remote welcome flow file:
+
+```
+$ WELCOME_FLOW_URL=https://git.io/vKx5r node ./dist/index.js
 ```
 
 And you'll see the sensor info like this:

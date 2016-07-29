@@ -3,6 +3,7 @@
 import 'source-map-support/register';
 import Promise from 'es6-promises';
 import http from 'http';
+import request from 'request';
 import express from 'express';
 import RED from 'node-red';
 import os from 'os';
@@ -96,8 +97,24 @@ export class CandyRed {
             this._prepareWelcomeFlowFileReadStream().then(reader => {
               reader.pipe(fs.createWriteStream(flowFile));
               reader.on('end', () => {
-                console.log('[CREATED] Default welcome flow has been created');
-                resolve();
+                fs.readFile(flowFile, (err, data) => {
+                  if (err) {
+                    return reject(err);
+                  }
+                  try {
+                    JSON.parse(data);
+                    console.log('[CREATED] Default welcome flow has been created');
+                    resolve();
+                  } catch (_) {
+                    fs.writeFile(flowFile, '[]', err => {
+                      if (err) {
+                        return reject(err);
+                      }
+                      console.log('[WARN] Wrong JSON format in thhe welcome flow');
+                      resolve();
+                    });
+                  }
+                });
               });
             }).catch(err => {
               reject(err);
