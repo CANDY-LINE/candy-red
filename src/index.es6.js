@@ -60,12 +60,11 @@ export class CandyRed {
     return new Promise((resolve, reject) => {
       let url = process.env.WELCOME_FLOW_URL;
       if (url && (url.indexOf('http://') || url.indexOf('https://'))) {
-        let request = http.get(url, resp => {
-          return resolve(resp);
-        });
-        request.on('error', err => {
+        let req = request.get(url);
+        req.on('error', err => {
           return reject(err);
         });
+        return resolve(req);
       } else {
         try {
           return resolve(fs.createReadStream(DEFAULT_WELCOME_FLOW));
