@@ -724,23 +724,24 @@ export class DeviceState {
   testIfCANDYIoTInstalled() {
     return this.init().then(() => {
       return new Promise(resolve => {
-        let which = cproc.spawn('which', ['ciot'], { timeout: 1000 });
-        which.on('close', code => {
+        let systemctl = cproc.spawn('systemctl', ['is-enabled', 'candy-iot'], { timeout: 1000 });
+        systemctl.on('close', code => {
           let ciotSupported = (code === 0);
           resolve(ciotSupported);
         });
-        which.on('error', () => {
+        systemctl.on('error', () => {
           resolve(false);
         });
       }).then(ciotSupported => {
         this.ciotSupported = ciotSupported;
-        return new Promise((resolve, reject) => {
+        return new Promise((resolve) => {
           let version = process.env.DEBUG_CIOTV || '';
           if (ciotSupported) {
             this._ciotRun('info', 'version').then(versions => {
               resolve([this.deviceId, versions.version]);
-            }).catch(err => {
-              reject(err);
+            }).catch(() => {
+              // installed but offline
+              resolve([this.deviceId, version]);
             });
           } else {
             resolve([this.deviceId, version]);
@@ -753,7 +754,7 @@ export class DeviceState {
   testIfLTEPiInstalled() {
     return this.init().then(() => {
       return new Promise(resolve => {
-        let systemctl = cproc.spawn('systemctl', ['status', 'ltepi'], { timeout: 1000 });
+        let systemctl = cproc.spawn('systemctl', ['is-enabled', 'ltepi'], { timeout: 1000 });
         systemctl.on('close', code => {
           let ltepiSupported = (code === 0);
           resolve(ltepiSupported);

@@ -121,11 +121,11 @@ describe('DeviceState', () => {
 
     it('should return the installed CANDY IoT Board version', done => {
       let stubCproc = sandbox.stub(cproc);
-      let which = sandbox.stub({
+      let systemctl = sandbox.stub({
         on: () => {}
       });
-      which.on.onFirstCall().yields(0);
-      stubCproc.spawn.onFirstCall().returns(which);
+      systemctl.on.onFirstCall().yields(0);
+      stubCproc.spawn.onFirstCall().returns(systemctl);
 
       let stdout = sandbox.stub({
         on: () => {}
@@ -138,7 +138,7 @@ describe('DeviceState', () => {
         on: () => {}
       });
       stubCproc.spawn.onSecondCall().returns(ciot);
-      ciot.on.yields();
+      ciot.on.onFirstCall().yields(0);
 
       state.deviceId = 'my:deviceId';
       state.testIfCANDYIoTInstalled().then(version => {
@@ -149,13 +149,13 @@ describe('DeviceState', () => {
       });
     });
 
-    it('should return the empty version', done => {
+    it('should return the empty version as ciot info version command fails', done => {
       let stubCproc = sandbox.stub(cproc);
-      let which = sandbox.stub({
+      let systemctl = sandbox.stub({
         on: () => {}
       });
-      which.on.onFirstCall().yields(0);
-      stubCproc.spawn.onFirstCall().returns(which);
+      systemctl.on.onFirstCall().yields(0);
+      stubCproc.spawn.onFirstCall().returns(systemctl);
 
       let stdout = sandbox.stub({
         on: () => {}
@@ -165,11 +165,11 @@ describe('DeviceState', () => {
         on: () => {}
       });
       stubCproc.spawn.withArgs('ciot', ['info', 'version'], { timeout: 1000 }).returns(ciot);
-      ciot.on.yields(1);
+      ciot.on.onSecondCall().yields(new Error());
 
       state.deviceId = 'my:deviceId';
       state.testIfCANDYIoTInstalled().then(version => {
-        assert.deepEqual(['my:deviceId', undefined], version);
+        assert.deepEqual(['my:deviceId', ''], version);
         done();
       }).catch(err => {
         done(err);
