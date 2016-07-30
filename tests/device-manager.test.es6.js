@@ -143,6 +143,7 @@ describe('DeviceState', () => {
       state.deviceId = 'my:deviceId';
       state.testIfCANDYIoTInstalled().then(version => {
         assert.deepEqual(['my:deviceId', '1234'], version);
+        assert.isTrue(ciot.on.called);
         done();
       }).catch(err => {
         done(err);
@@ -170,6 +171,7 @@ describe('DeviceState', () => {
       state.deviceId = 'my:deviceId';
       state.testIfCANDYIoTInstalled().then(version => {
         assert.deepEqual(['my:deviceId', ''], version);
+        assert.isTrue(ciot.on.called);
         done();
       }).catch(err => {
         done(err);
