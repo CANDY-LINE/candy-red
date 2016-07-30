@@ -721,6 +721,34 @@ export class DeviceState {
     });
   }
 
+  _candyRun(cat, act, ...args) {
+    return new Promise((resolve, reject) => {
+      if (!args) {
+        args = [];
+      }
+      args.unshift(cat, act);
+      let candy = cproc.spawn('candy', args, { timeout: 1000 });
+      let ret;
+      candy.stdout.on('data', data => {
+        try {
+          ret = JSON.parse(data);
+        } catch (e) {
+          RED.log.error('** CANDY Board Service isn\'t running');
+          RED.log.info(e.stack);
+        }
+      });
+      candy.on('close', code => {
+        if (ret) {
+          return resolve(ret);
+        }
+        resolve({ code: code });
+      });
+      candy.on('error', err => {
+        reject(err);
+      });
+    });
+  }
+
   testIfCANDYIoTInstalled() {
     return this.init().then(() => {
       return new Promise(resolve => {
@@ -772,6 +800,36 @@ export class DeviceState {
                 resolve([this.deviceId, version]);
               }
               resolve([this.deviceId, data.toString()]);
+            });
+          } else {
+            resolve([this.deviceId, version]);
+          }
+        });
+      });
+    });
+  }
+
+  testIfLTEPi2Installed() {
+    return this.init().then(() => {
+      return new Promise(resolve => {
+        let systemctl = cproc.spawn('systemctl', ['is-enabled', 'ltepi2'], { timeout: 1000 });
+        systemctl.on('close', code => {
+          let ltepi2Supported = (code === 0);
+          resolve(ltepi2Supported);
+        });
+        systemctl.on('error', () => {
+          resolve(false);
+        });
+      }).then(ltepi2Supported => {
+        this.ltepi2Supported = ltepi2Supported;
+        return new Promise((resolve) => {
+          let version = process.env.DEBUG_CANDYV || '';
+          if (ltepi2Supported) {
+            this._candyRun('service', 'version').then(versions => {
+              resolve([this.deviceId, versions.version]);
+            }).catch(() => {
+              // installed but offline
+              resolve([this.deviceId, version]);
             });
           } else {
             resolve([this.deviceId, version]);

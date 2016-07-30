@@ -210,6 +210,76 @@ describe('DeviceState', () => {
     });
   });
 
+  describe('#testIfLTEPi2Installed()', () => {
+    it('should return whether or not LTEPi2 board is installed', done => {
+      state.testIfLTEPi2Installed().then(version => {
+        console.log(`installed version? => [${version}]`);
+        done();
+      }).catch(err => {
+        done(err);
+      });
+    });
+
+    it('should return the installed LTEPi2 Board version', done => {
+      let stubCproc = sandbox.stub(cproc);
+      let systemctl = sandbox.stub({
+        on: () => {}
+      });
+      systemctl.on.onFirstCall().yields(0);
+      stubCproc.spawn.onFirstCall().returns(systemctl);
+
+      let stdout = sandbox.stub({
+        on: () => {}
+      });
+      stdout.on.onFirstCall().yields(JSON.stringify({
+        version: '1234'
+      }));
+      let candy = sandbox.stub({
+        stdout: stdout,
+        on: () => {}
+      });
+      stubCproc.spawn.onSecondCall().returns(candy);
+      candy.on.onFirstCall().yields(0);
+
+      state.deviceId = 'my:deviceId';
+      state.testIfLTEPi2Installed().then(version => {
+        assert.deepEqual(['my:deviceId', '1234'], version);
+        assert.isTrue(candy.on.called);
+        done();
+      }).catch(err => {
+        done(err);
+      });
+    });
+
+    it('should return the empty version as candy service version command fails', done => {
+      let stubCproc = sandbox.stub(cproc);
+      let systemctl = sandbox.stub({
+        on: () => {}
+      });
+      systemctl.on.onFirstCall().yields(0);
+      stubCproc.spawn.onFirstCall().returns(systemctl);
+
+      let stdout = sandbox.stub({
+        on: () => {}
+      });
+      let candy = sandbox.stub({
+        stdout: stdout,
+        on: () => {}
+      });
+      stubCproc.spawn.withArgs('candy', ['service', 'version'], { timeout: 1000 }).returns(candy);
+      candy.on.onSecondCall().yields(new Error());
+
+      state.deviceId = 'my:deviceId';
+      state.testIfLTEPi2Installed().then(version => {
+        assert.deepEqual(['my:deviceId', ''], version);
+        assert.isTrue(candy.on.called);
+        done();
+      }).catch(err => {
+        done(err);
+      });
+    });
+  });
+
   describe('#testIfUIisEnabled()', () => {
     it('should tell the UI is enabled', done => {
       state.testIfUIisEnabled(__dirname + '/test-flow-enabled.json').then(enabled => {
