@@ -47,7 +47,7 @@ This will install the latest version of CANDY RED.
 
 ### Supported npm version
 
-* v2.x (v2.0.0 or above but less than v3.0.0)
+* v1.4.28 (preinstalled)
 
 Don't use npm v3.x as v3.x of npm failed to resolve the collision between different version of moment-timezone (older version was always chosen).
 
