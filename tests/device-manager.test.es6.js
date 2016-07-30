@@ -170,7 +170,7 @@ describe('DeviceState', () => {
 
       state.deviceId = 'my:deviceId';
       state.testIfCANDYIoTInstalled().then(version => {
-        assert.deepEqual(['my:deviceId', ''], version);
+        assert.deepEqual(['my:deviceId', 'N/A'], version);
         assert.isTrue(ciot.on.called);
         done();
       }).catch(err => {
@@ -271,7 +271,7 @@ describe('DeviceState', () => {
 
       state.deviceId = 'my:deviceId';
       state.testIfLTEPi2Installed().then(version => {
-        assert.deepEqual(['my:deviceId', ''], version);
+        assert.deepEqual(['my:deviceId', 'N/A'], version);
         assert.isTrue(candy.on.called);
         done();
       }).catch(err => {

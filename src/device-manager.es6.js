@@ -763,7 +763,7 @@ export class DeviceState {
       }).then(ciotSupported => {
         this.ciotSupported = ciotSupported;
         return new Promise((resolve) => {
-          let version = process.env.DEBUG_CIOTV || '';
+          let version = process.env.DEBUG_CIOTV || 'N/A';
           if (ciotSupported) {
             this._ciotRun('info', 'version').then(versions => {
               resolve([this.deviceId, versions.version]);
@@ -772,7 +772,7 @@ export class DeviceState {
               resolve([this.deviceId, version]);
             });
           } else {
-            resolve([this.deviceId, version]);
+            resolve([this.deviceId, null]);
           }
         });
       });
@@ -793,7 +793,7 @@ export class DeviceState {
       }).then(ltepiSupported => {
         this.ltepiSupported = ltepiSupported;
         return new Promise(resolve => {
-          let version = process.env.DEBUG_CIOTV || '';
+          let version = process.env.DEBUG_CIOTV || 'N/A';
           if (ltepiSupported) {
             fs.readFile(LTEPI_VERSION_FILE_PATH, (err, data) => {
               if (err) {
@@ -802,7 +802,7 @@ export class DeviceState {
               resolve([this.deviceId, data.toString()]);
             });
           } else {
-            resolve([this.deviceId, version]);
+            resolve([this.deviceId, null]);
           }
         });
       });
@@ -823,7 +823,7 @@ export class DeviceState {
       }).then(ltepi2Supported => {
         this.ltepi2Supported = ltepi2Supported;
         return new Promise((resolve) => {
-          let version = process.env.DEBUG_CANDYV || '';
+          let version = process.env.DEBUG_CIOTV || 'N/A';
           if (ltepi2Supported) {
             this._candyRun('service', 'version').then(versions => {
               resolve([this.deviceId, versions.version]);
@@ -832,7 +832,7 @@ export class DeviceState {
               resolve([this.deviceId, version]);
             });
           } else {
-            resolve([this.deviceId, version]);
+            resolve([this.deviceId, null]);
           }
         });
       });
