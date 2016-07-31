@@ -150,7 +150,7 @@ describe('DeviceState', () => {
       });
     });
 
-    it('should return the empty version as ciot info version command fails', done => {
+    it('should return the empty version as ciot info version command fails but the board is detected', done => {
       let stubCproc = sandbox.stub(cproc);
       let systemctl = sandbox.stub({
         on: () => {}
@@ -170,7 +170,7 @@ describe('DeviceState', () => {
 
       state.deviceId = 'my:deviceId';
       state.testIfCANDYIoTInstalled().then(version => {
-        assert.deepEqual(['my:deviceId', 'N/A'], version);
+        assert.deepEqual(['my:deviceId', 'offline'], version);
         assert.isTrue(ciot.on.called);
         done();
       }).catch(err => {
@@ -270,7 +270,7 @@ describe('DeviceState', () => {
       });
     });
 
-    it('should return the empty version as candy service version command fails', done => {
+    it('should return the empty version as candy service version command fails but the board is dtected', done => {
       let stubCproc = sandbox.stub(cproc);
       let systemctl = sandbox.stub({
         on: () => {}
@@ -290,7 +290,7 @@ describe('DeviceState', () => {
 
       state.deviceId = 'my:deviceId';
       state.testIfLTEPi2Installed().then(version => {
-        assert.deepEqual(['my:deviceId', 'N/A'], version);
+        assert.deepEqual(['my:deviceId', 'offline'], version);
         assert.isTrue(candy.on.called);
         done();
       }).catch(err => {

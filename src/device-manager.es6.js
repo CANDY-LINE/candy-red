@@ -19,6 +19,7 @@ const EDISON_YOCTO_SN_PATH = '/factory/serial_number';
 const PROC_CPUINFO_PATH = '/proc/cpuinfo';
 
 const LTEPI_VERSION_FILE_PATH = '/opt/inn-farm/ltepi/bin/version.txt';
+const MODEM_OFFLINE = 'offline';
 
 export class DeviceIdResolver {
   constructor() {
@@ -763,7 +764,7 @@ export class DeviceState {
       }).then(ciotSupported => {
         this.ciotSupported = ciotSupported;
         return new Promise((resolve) => {
-          let version = process.env.DEBUG_CIOTV || 'N/A';
+          let version = process.env.DEBUG_CIOTV || MODEM_OFFLINE;
           if (ciotSupported) {
             this._ciotRun('info', 'version').then(versions => {
               resolve([this.deviceId, versions.version]);
@@ -793,7 +794,7 @@ export class DeviceState {
       }).then(ltepiSupported => {
         this.ltepiSupported = ltepiSupported;
         return new Promise(resolve => {
-          let version = process.env.DEBUG_CIOTV || 'N/A';
+          let version = process.env.DEBUG_CIOTV || MODEM_OFFLINE;
           if (ltepiSupported) {
             fs.readFile(LTEPI_VERSION_FILE_PATH, (err, data) => {
               if (err) {
@@ -823,7 +824,7 @@ export class DeviceState {
       }).then(ltepi2Supported => {
         this.ltepi2Supported = ltepi2Supported;
         return new Promise((resolve) => {
-          let version = process.env.DEBUG_CIOTV || 'N/A';
+          let version = process.env.DEBUG_CIOTV || MODEM_OFFLINE;
           if (ltepi2Supported) {
             this._candyRun('service', 'version').then(versions => {
               resolve([this.deviceId, versions.version]);
