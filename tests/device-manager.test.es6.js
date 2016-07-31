@@ -121,11 +121,11 @@ describe('DeviceState', () => {
 
     it('should return the installed CANDY IoT Board version', done => {
       let stubCproc = sandbox.stub(cproc);
-      let which = sandbox.stub({
+      let systemctl = sandbox.stub({
         on: () => {}
       });
-      which.on.onFirstCall().yields(0);
-      stubCproc.spawn.onFirstCall().returns(which);
+      systemctl.on.onFirstCall().yields(0);
+      stubCproc.spawn.onFirstCall().returns(systemctl);
 
       let stdout = sandbox.stub({
         on: () => {}
@@ -138,24 +138,25 @@ describe('DeviceState', () => {
         on: () => {}
       });
       stubCproc.spawn.onSecondCall().returns(ciot);
-      ciot.on.yields();
+      ciot.on.onFirstCall().yields(0);
 
       state.deviceId = 'my:deviceId';
       state.testIfCANDYIoTInstalled().then(version => {
         assert.deepEqual(['my:deviceId', '1234'], version);
+        assert.isTrue(ciot.on.called);
         done();
       }).catch(err => {
         done(err);
       });
     });
 
-    it('should return the empty version', done => {
+    it('should return the empty version as ciot info version command fails but the board is detected', done => {
       let stubCproc = sandbox.stub(cproc);
-      let which = sandbox.stub({
+      let systemctl = sandbox.stub({
         on: () => {}
       });
-      which.on.onFirstCall().yields(0);
-      stubCproc.spawn.onFirstCall().returns(which);
+      systemctl.on.onFirstCall().yields(0);
+      stubCproc.spawn.onFirstCall().returns(systemctl);
 
       let stdout = sandbox.stub({
         on: () => {}
@@ -165,16 +166,36 @@ describe('DeviceState', () => {
         on: () => {}
       });
       stubCproc.spawn.withArgs('ciot', ['info', 'version'], { timeout: 1000 }).returns(ciot);
-      ciot.on.yields(1);
+      ciot.on.onFirstCall().yields(1);
 
       state.deviceId = 'my:deviceId';
       state.testIfCANDYIoTInstalled().then(version => {
-        assert.deepEqual(['my:deviceId', undefined], version);
+        assert.deepEqual(['my:deviceId', 'offline'], version);
+        assert.isTrue(ciot.on.called);
         done();
       }).catch(err => {
         done(err);
       });
     });
+
+    it('should return the empty version as systemctl is-enabled candy-iot fails', done => {
+      let stubCproc = sandbox.stub(cproc);
+      let systemctl = sandbox.stub({
+        on: () => {}
+      });
+      systemctl.on.onFirstCall().yields(1);
+      stubCproc.spawn.onFirstCall().returns(systemctl);
+
+      state.deviceId = 'my:deviceId';
+      state.testIfCANDYIoTInstalled().then(version => {
+        assert.deepEqual(['my:deviceId', null], version);
+        assert.isTrue(systemctl.on.called);
+        done();
+      }).catch(err => {
+        done(err);
+      });
+    });
+
   });
 
   describe('#testIfLTEPiInstalled()', () => {
@@ -201,6 +222,94 @@ describe('DeviceState', () => {
       state.deviceId = 'my:deviceId';
       state.testIfLTEPiInstalled().then(version => {
         assert.deepEqual(['my:deviceId', '1234'], version);
+        done();
+      }).catch(err => {
+        done(err);
+      });
+    });
+  });
+
+  describe('#testIfLTEPi2Installed()', () => {
+    it('should return whether or not LTEPi2 board is installed', done => {
+      state.testIfLTEPi2Installed().then(version => {
+        console.log(`installed version? => [${version}]`);
+        done();
+      }).catch(err => {
+        done(err);
+      });
+    });
+
+    it('should return the installed LTEPi2 Board version', done => {
+      let stubCproc = sandbox.stub(cproc);
+      let systemctl = sandbox.stub({
+        on: () => {}
+      });
+      systemctl.on.onFirstCall().yields(0);
+      stubCproc.spawn.onFirstCall().returns(systemctl);
+
+      let stdout = sandbox.stub({
+        on: () => {}
+      });
+      stdout.on.onFirstCall().yields(JSON.stringify({
+        version: '1234'
+      }));
+      let candy = sandbox.stub({
+        stdout: stdout,
+        on: () => {}
+      });
+      stubCproc.spawn.onSecondCall().returns(candy);
+      candy.on.onFirstCall().yields(0);
+
+      state.deviceId = 'my:deviceId';
+      state.testIfLTEPi2Installed().then(version => {
+        assert.deepEqual(['my:deviceId', '1234'], version);
+        assert.isTrue(candy.on.called);
+        done();
+      }).catch(err => {
+        done(err);
+      });
+    });
+
+    it('should return the empty version as candy service version command fails but the board is dtected', done => {
+      let stubCproc = sandbox.stub(cproc);
+      let systemctl = sandbox.stub({
+        on: () => {}
+      });
+      systemctl.on.onFirstCall().yields(0);
+      stubCproc.spawn.onFirstCall().returns(systemctl);
+
+      let stdout = sandbox.stub({
+        on: () => {}
+      });
+      let candy = sandbox.stub({
+        stdout: stdout,
+        on: () => {}
+      });
+      stubCproc.spawn.withArgs('candy', ['service', 'version'], { timeout: 1000 }).returns(candy);
+      candy.on.onFirstCall().yields(1);
+
+      state.deviceId = 'my:deviceId';
+      state.testIfLTEPi2Installed().then(version => {
+        assert.deepEqual(['my:deviceId', 'offline'], version);
+        assert.isTrue(candy.on.called);
+        done();
+      }).catch(err => {
+        done(err);
+      });
+    });
+
+    it('should return the empty version as systemctl is-enabled ltepi2 fails', done => {
+      let stubCproc = sandbox.stub(cproc);
+      let systemctl = sandbox.stub({
+        on: () => {}
+      });
+      systemctl.on.onFirstCall().yields(1);
+      stubCproc.spawn.onFirstCall().returns(systemctl);
+
+      state.deviceId = 'my:deviceId';
+      state.testIfCANDYIoTInstalled().then(version => {
+        assert.deepEqual(['my:deviceId', null], version);
+        assert.isTrue(systemctl.on.called);
         done();
       }).catch(err => {
         done(err);

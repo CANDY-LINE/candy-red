@@ -9,6 +9,9 @@ import cproc from 'child_process';
 export default function(RED) {
 
   if (RED.settings.ltepiGpsTest !== true) {
+    if (!cproc.spawnSync) {
+      throw `Info : LTEPiGPS isn't supported on this device`;
+    }
     let which = cproc.spawnSync('which', ['ltepi_get_gps'], { timeout: 1000 });
     if (which.status !== 0) {
       throw `Info : LTEPiGPS isn't supported on this device`;
