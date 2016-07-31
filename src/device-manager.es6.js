@@ -713,7 +713,7 @@ export class DeviceState {
         if (ret) {
           return resolve(ret);
         }
-        resolve({ code: code });
+        reject({ code: code });
       });
       ciot.on('error', err => {
         reject(err);
@@ -741,7 +741,7 @@ export class DeviceState {
         if (ret) {
           return resolve(ret);
         }
-        resolve({ code: code });
+        reject({ code: code });
       });
       candy.on('error', err => {
         reject(err);

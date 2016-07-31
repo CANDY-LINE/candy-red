@@ -166,7 +166,7 @@ describe('DeviceState', () => {
         on: () => {}
       });
       stubCproc.spawn.withArgs('ciot', ['info', 'version'], { timeout: 1000 }).returns(ciot);
-      ciot.on.onSecondCall().yields(new Error());
+      ciot.on.onFirstCall().yields(1);
 
       state.deviceId = 'my:deviceId';
       state.testIfCANDYIoTInstalled().then(version => {
@@ -286,7 +286,7 @@ describe('DeviceState', () => {
         on: () => {}
       });
       stubCproc.spawn.withArgs('candy', ['service', 'version'], { timeout: 1000 }).returns(candy);
-      candy.on.onSecondCall().yields(new Error());
+      candy.on.onFirstCall().yields(1);
 
       state.deviceId = 'my:deviceId';
       state.testIfLTEPi2Installed().then(version => {
