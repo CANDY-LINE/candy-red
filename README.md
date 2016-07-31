@@ -441,6 +441,10 @@ $ docker run -tid -v ./dist:/candy-red-dist candy-red
 * publish local Node-RED nodes in this project to npm repository
 
 ## Revision History
+* 2.7.0
+  - Modify the way to detect if candy-iot board is installed so that the valid UI theme is chosen even when the modem is offline
+  - Add new functions for detecting LTEPi-II board
+
 * 2.6.3
   - Bump up Node-RED version to v0.14.6
   - Bump up Dashboard UI version to v2.0.1
