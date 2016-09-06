@@ -171,16 +171,18 @@ export default function(RED) {
     }
 
     handleEvent(id,/*socket*/socket,/*String*/event,/*Object*/data,/*Object*/flags) {
-      let msg, wholemsg;
+      let msg, wholemsg, obj;
       try {
         wholemsg = JSON.parse(data);
+        obj = JSON.parse(data);
       }
       catch(err) {
         wholemsg = { payload:data };
+        obj = data;
       }
       msg = {
-        payload: data,
-        _session: {type:'candy-egg-ws',id:id}
+        payload: obj,
+        _session: {type:'candy-box-ws',id:id}
       };
       wholemsg._session = msg._session;
       for (let i = 0; i < this._inputNodes.length; i++) {

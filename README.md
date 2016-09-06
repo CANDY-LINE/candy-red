@@ -441,6 +441,11 @@ $ docker run -tid -v ./dist:/candy-red-dist candy-red
 * publish local Node-RED nodes in this project to npm repository
 
 ## Revision History
+* 2.8.0
+  - Accept the latest version of node-red-contrib-asakusa_giken and node-red-contrib-device-stats packages
+  - Fix validation rules (local-nodecandy-egg)
+  - Parse JSON string when the incoming message is a JSON string (local-nodecandy-egg)
+
 * 2.7.0
   - Modify the way to detect if candy-iot board is installed so that the valid UI theme is chosen even when the modem is offline
   - Add new functions for detecting LTEPi-II board
