@@ -441,6 +441,8 @@ $ docker run -tid -v ./dist:/candy-red-dist candy-red
 * publish local Node-RED nodes in this project to npm repository
 
 ## Revision History
+* 2.8.1
+  - Fix an issue where the process will exit on the flow file being empty
 * 2.8.0
   - Accept the latest version of node-red-contrib-asakusa_giken and node-red-contrib-device-stats packages
   - Fix validation rules (local-nodecandy-egg)

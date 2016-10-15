@@ -936,6 +936,10 @@ export class DeviceState {
             return resolve(true);
           }
           let flows;
+          data = String(data);
+          if (!data || !data.trim()) {
+            data = '[]';
+          }
           try {
             flows = JSON.parse(data);
           } catch (e) {
