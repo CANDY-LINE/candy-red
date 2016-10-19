@@ -41,7 +41,8 @@ This theme appears when CANDY IoT Board is available on a device.
 
 ### Tested Node.js versions
 
-* v0.10.38 (preinstalled)
+* v4.4.3   (preinstalled in v3.5 firmware)
+* v0.10.38 (preinstalled in v2.1 firmware)
 
 This will install the latest version of CANDY RED.
 
