@@ -64,6 +64,9 @@ export default function(RED) {
       if (path) {
         prefix += path;
       }
+      if (this.server) {
+        this.server.close();
+      }
       let socket = new WebSocket(prefix, this.options);
       this.server = socket; // keep for closing
       this.handleConnection(socket);
