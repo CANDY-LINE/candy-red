@@ -257,6 +257,9 @@ export class CandyRed {
       } else {
         this.editorTheme = this._createCandyRedEditorTheme(deviceId);
       }
+      this.editorTheme.palette = {
+        editable: false
+      };
       deviceId = deviceId || 'N/A';
       candyIotv = candyIotv || 'N/A';
       ltepiv = ltepiv || 'N/A';
