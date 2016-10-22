@@ -86,7 +86,7 @@ export class SerialPool {
       });
     });
     port.on('error', e => {
-      that.RED.log.error(that.RED._('enocean.errors.serialPortError',{ error: e }));
+      that.RED.log.warn(that.RED._('enocean.errors.serialPortError',{ error: e }));
       delete that.pool[portName];
     });
     port.on('close', () => {
