@@ -53,7 +53,7 @@ export class SerialPool {
     let that = this;
     let portName = enOceanPortNode.serialPort;
     if (!portName) {
-      throw new Error('serialPort proeprty is missing!');
+      throw new Error('serialPort property is missing!');
     }
     if (!fs.existsSync(portName)) {
       throw new Error(`The port [${portName}] is NOT ready!`);
