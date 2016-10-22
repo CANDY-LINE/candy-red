@@ -14,7 +14,7 @@
       "d5-00-01" : "1BS/Contacts and Switches/Single Input Contact"
     },
     "placeholder" : {
-      "originatorId" : "8-digit hex string",
+      "originatorId" : "6(24bit), 8(32bit) or 12-digit(48bit) hex string",
       "serialPort" : "e.g. /dev/ttyMFD1"
     },
     "info" : {

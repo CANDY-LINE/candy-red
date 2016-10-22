@@ -122,6 +122,7 @@ export class ERP2Parser {
         for (i = 0; i < idLen; i++) {
           ctx.originatorId += Utils.pad(dataPl[i].toString(16), 2);
         }
+        ctx.originatorIdInt = parseInt(ctx.originatorId, 16);
         for (i = 0; i < dlLen; i++) {
           ctx.dataDl += Utils.pad(dataPl[i + idLen].toString(16), 2);
         }
@@ -152,6 +153,7 @@ export class ERP2Parser {
         for (i = 0; i < destLen; i++) {
           ctx.destinationId += Utils.pad(dataPl[i + idLen + 1].toString(16), 2);
         }
+        ctx.originatorIdInt = parseInt(ctx.originatorId, 16);
 
         // Bit4 Extended header available
         let extendedHeader = (dataPl[0] & 0x10) >> 4;

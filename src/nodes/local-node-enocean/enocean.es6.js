@@ -32,6 +32,7 @@ export default function(RED) {
       RED.nodes.createNode(this, n);
       this.name = n.name;
       this.originatorId = n.originatorId;
+      this.originatorIdInt = parseInt(this.originatorId, 16);
       this.eepType = n.eepType;
       this.addEepType = n.addEepType;
       this.useString = n.useString;
@@ -49,7 +50,7 @@ export default function(RED) {
       });
       try {
         let enocean = EnOceanPortNode.pool.get(this.enoceanPortNode.serialPort);
-        enocean.port.on(`ctx-${this.originatorId}`, ctx => {
+        enocean.port.on(`ctx-${this.originatorIdInt}`, ctx => {
           let handleIt = ERP2_HANDLERS[this.eepType];
           if (!handleIt) {
             RED.log.warn(RED._('enocean.warn.noHandler', { eepType: this.eepType }));
@@ -58,7 +59,7 @@ export default function(RED) {
           let payload = handleIt(ctx);
           payload.tstamp = Date.now();
           payload.rssi = ctx.container.dBm;
-          payload.id = ctx.originatorId;
+          payload.id = ctx.originatorId; // hex string
           if (this.addEepType) {
             payload.eep = this.eepType;
           }

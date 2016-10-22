@@ -67,11 +67,11 @@ export class SerialPool {
       that.esp3Parser.parse(data).then(result => {
         result.parser.parse(result.payload).then(ctx => {
           that.erp2Parser.parse(ctx).then(ctx => {
-            let originatorId = ctx.originatorId;
-            if (!port.emit(`ctx-${originatorId}`, ctx)) {
-              if (!unknown.get(originatorId)) {
-                unknown.set(originatorId, 1);
-                that.RED.log.warn(that.RED._('enocean.warn.noNode', { originatorId: originatorId }));
+            let originatorIdInt = ctx.originatorIdInt;
+            if (!port.emit(`ctx-${originatorIdInt}`, ctx)) {
+              if (!unknown.get(originatorIdInt)) {
+                unknown.set(originatorIdInt, 1);
+                that.RED.log.warn(that.RED._('enocean.warn.noNode', { originatorId: ctx.originatorId }));
               }
             }
           }).catch(e => {
