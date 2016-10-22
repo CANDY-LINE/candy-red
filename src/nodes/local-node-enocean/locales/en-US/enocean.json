@@ -11,7 +11,8 @@
     },
     "eepType" : {
       "f6-02-04" : "RPS/Rocker Switch, 2 Rocker/Light and blind control ERP2",
-      "d5-00-01" : "1BS/Contacts and Switches/Single Input Contact"
+      "d5-00-01" : "1BS/Contacts and Switches/Single Input Contact",
+      "a5-07-01" : "4BS/Occupancy with Supply voltage monitor"
     },
     "placeholder" : {
       "originatorId" : "6(24bit), 8(32bit) or 12-digit(48bit) hex string",

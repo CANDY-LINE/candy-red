@@ -42,5 +42,17 @@ export const ERP2_HANDLERS = {
       data.co = true;
     }
     return data;
-  }
+  },
+  'a5-07-01' : function(ctx) {
+    let data = {
+      svc: null,     // null if supply voltage is unsupported
+      rips: false,   // false = RIP off, true = RIP on
+    };
+    let voltageSupported = ctx.dataDl[3] & 0x01;
+    if (voltageSupported) {
+      data.svc = ctx.dataDl[0]; // 0 - 250
+    }
+    data.rips = (ctx.dataDl[2] > 127); // PIR on when RIPS > 127
+    return data;
+  },
 };
