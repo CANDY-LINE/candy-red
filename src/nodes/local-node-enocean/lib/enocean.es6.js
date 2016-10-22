@@ -8,12 +8,6 @@ import setUpEnocean from 'node-enocean';
 import { ESP3RadioERP2Parser, ERP2Parser } from './esp3_erp2_parser';
 import Promise from 'es6-promises';
 import fs from 'fs';
-import LRU from 'lru-cache';
-
-let unknown = LRU({
-  max: 100,
-  maxAge: 1000 * 60 * 60
-});
 
 const ESP3_PACKET_PARSERS = {
   10: new ESP3RadioERP2Parser() // Packet Type 10: RADIO_ERP2
