@@ -65,7 +65,7 @@
       $('#node-input-originatorId').blur(function() {
         var text = $(this).val();
         if (text && typeof(text) === 'string') {
-          $(this).val(text.toLowerCase().trim().substring(0, 8));
+          $(this).val(text.toLowerCase().trim().substring(0, 12));
         } else {
           $(this).val('');
         }
