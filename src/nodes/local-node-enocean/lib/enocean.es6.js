@@ -70,6 +70,7 @@ export class SerialPool {
             let originatorIdInt = ctx.originatorIdInt;
             if (!port.emit(`ctx-${originatorIdInt}`, ctx)) {
               that.RED.log.warn(that.RED._('enocean.warn.noNode', { originatorId: ctx.originatorId }));
+              port.emit('learn', ctx);
             }
           }).catch(e => {
             that.RED.log.error(that.RED._('enocean.errors.parseError', { error: e, data: JSON.stringify(ctx) }));

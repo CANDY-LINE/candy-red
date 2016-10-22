@@ -18,6 +18,10 @@
       "originatorId" : "6(24bit), 8(32bit) or 12-digit(48bit) hex string",
       "serialPort" : "e.g. /dev/ttyMFD1"
     },
+    "status" : {
+      "learning" : "learning",
+      "timeout" : "timeout"
+    },
     "info" : {
       "unsupportedPacketType" : "Unsupported Packet Type: __packetType__",
       "serialPortClosed" : "The serial port [__portName__] is closed and removed from the port pool",

@@ -12,7 +12,47 @@
 import { SerialPool } from './lib/enocean';
 import { ERP2_HANDLERS } from './lib/eep_handlers';
 
+const ENOCEAN_LEARN_MODE_TIMEOUT = parseInt(process.env.ENOCEAN_LEARN_MODE_TIMEOUT) || (30 * 60 * 1000);
+
 export default function(RED) {
+
+  function addEventListener(node) {
+    let enocean = EnOceanPortNode.pool.get(node.enoceanPortNode.serialPort);
+    if (isNaN(node.originatorIdInt)) {
+      node.learning = true;
+      enocean.port.on('learn', (ctx) => {
+        if (node.learning) {
+          node.originatorId = ctx.originatorId;
+          node.originatorIdInt = ctx.originatorIdInt;
+          if (!isNaN(node.originatorIdInt)) {
+            addEventListener(node);
+          }
+        }
+      });
+    } else {
+      node.learning = false;
+      enocean.port.on(`ctx-${node.originatorIdInt}`, ctx => {
+        let handleIt = ERP2_HANDLERS[node.eepType];
+        if (!handleIt) {
+          RED.log.warn(RED._('enocean.warn.noHandler', { eepType: node.eepType }));
+          return;
+        }
+        let payload = handleIt(ctx);
+        payload.tstamp = Date.now();
+        payload.rssi = ctx.container.dBm;
+        payload.id = ctx.originatorId; // hex string
+        if (node.addEepType) {
+          payload.eep = node.eepType;
+        }
+        if (node.useString) {
+          payload = JSON.stringify(payload);
+        }
+        node.send({ payload: payload });
+      });
+      node.emit('learned');
+    }
+  }
+
   class EnOceanPortNode {
     constructor(n) {
       RED.nodes.createNode(this, n);
@@ -38,8 +78,17 @@ export default function(RED) {
       this.useString = n.useString;
       this.enoceanPortNodeId = n.enoceanPort;
       this.enoceanPortNode = RED.nodes.getNode(this.enoceanPortNodeId);
+      this.learning = false;
       this.status({});
-      this.on('close', done => {
+      this.on('learned', () => {
+        this.learning = false;
+        this.status({ fill: 'green', shape: 'dot', text: 'node-red:common.status.connected'});
+      });
+      this.on('timeout', () => {
+        this.learning = false;
+        this.status({ fill: 'red', shape: 'ring', text: 'enocean.status.timeout'});
+      });
+      this.on('close', (done) => {
         if (this.enoceanPortNode) {
           EnOceanPortNode.pool.close(this.enoceanPortNode.serialPort).then(() => {
             done();
@@ -50,26 +99,16 @@ export default function(RED) {
       });
       try {
         let enocean = EnOceanPortNode.pool.get(this.enoceanPortNode.serialPort);
-        enocean.port.on(`ctx-${this.originatorIdInt}`, ctx => {
-          let handleIt = ERP2_HANDLERS[this.eepType];
-          if (!handleIt) {
-            RED.log.warn(RED._('enocean.warn.noHandler', { eepType: this.eepType }));
-            return;
-          }
-          let payload = handleIt(ctx);
-          payload.tstamp = Date.now();
-          payload.rssi = ctx.container.dBm;
-          payload.id = ctx.originatorId; // hex string
-          if (this.addEepType) {
-            payload.eep = this.eepType;
-          }
-          if (this.useString) {
-            payload = JSON.stringify(payload);
-          }
-          this.send({ payload: payload });
-        });
         enocean.port.on('ready', () => {
-          this.status({ fill: 'green', shape: 'dot', text: 'node-red:common.status.connected'});
+          addEventListener(this);
+          if (this.learning) {
+            this.status({ fill: 'blue', shape: 'dot', text: 'enocean.status.learning'});
+            setTimeout(() => {
+              if (this.learning) {
+                this.emit('timeout');
+              }
+            }, ENOCEAN_LEARN_MODE_TIMEOUT);
+          }
         });
         enocean.port.on('closed', () => {
           this.status({ fill: 'red', shape: 'ring', text: 'node-red:common.status.not-connected'});
