@@ -78,7 +78,7 @@
           $('#node-input-eepType').append(option);
         });
 
-        $('#node-input-eepType').val(profiles[0]); // default
+        $('#node-input-eepType').val(that.eepType || profiles[0]);
         if (profiles.length === 1) {
           $('#node-input-eepType').prop('disabled', true);
         }
