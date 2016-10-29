@@ -83,6 +83,7 @@ export default function(RED) {
       this.on('learned', () => {
         this.learning = false;
         this.status({ fill: 'green', shape: 'dot', text: 'node-red:common.status.connected'});
+        RED.log.info(RED._('enocean.info.learned', { name: this.name, originatorId: this.originatorId }));
       });
       this.on('timeout', () => {
         this.learning = false;
