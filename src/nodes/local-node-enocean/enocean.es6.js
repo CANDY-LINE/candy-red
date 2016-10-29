@@ -9,6 +9,9 @@
  * on the editor in order to use its `/serialports` endpoint.
  */
 
+import fs from 'fs';
+import path from 'path';
+
 import { SerialPool } from './lib/enocean';
 import { ERP2_TEACH_IN_HANDLERS, ERP2_HANDLERS } from './lib/eep_handlers';
 
@@ -16,7 +19,37 @@ const ENOCEAN_LEARN_MODE_TIMEOUT = parseInt(process.env.ENOCEAN_LEARN_MODE_TIMEO
 const ENOCEAN_LEARN_MODE_THRESHOLD_MS = parseInt(process.env.ENOCEAN_LEARN_MODE_THRESHOLD_MS) || (2 * 1000);
 const ENOCEAN_LEARN_MODE_THRESHOLD_RSSI = parseInt(process.env.ENOCEAN_LEARN_MODE_THRESHOLD_RSSI) || (47);
 
+let learnedIDs = null;
+
 export default function(RED) {
+
+  function createIDfilePath() {
+    return path.join(RED.settings.userDir, 'enocean-ids.json');
+  }
+
+  function saveLearnedIDs(id, originatorId) {
+    if (!learnedIDs) {
+      learnedIDs = {};
+    }
+    learnedIDs[id] = originatorId;
+    fs.writeFile(createIDfilePath(), JSON.stringify(learnedIDs), (err) => {
+      if (err) {
+        RED.log.error('Failed to write detected OriginatorID!', err);
+      }
+    });
+  }
+
+  function loadLearnedIDs(id) {
+    if (!learnedIDs) {
+      try {
+        let data = fs.readFileSync(createIDfilePath());
+        learnedIDs = JSON.parse(data);
+      } catch (_) {
+        learnedIDs = {};
+      }
+    }
+    return learnedIDs[id];
+  }
 
   function addEventListener(node) {
     let enocean = EnOceanPortNode.pool.get(node.enoceanPortNode.serialPort);
@@ -35,6 +68,7 @@ export default function(RED) {
               node.originatorId = ctx.originatorId;
               node.originatorIdInt = ctx.originatorIdInt;
               if (!isNaN(node.originatorIdInt)) {
+                saveLearnedIDs(node.id, node.originatorId);
                 addEventListener(node);
               }
             }
@@ -87,7 +121,7 @@ export default function(RED) {
     constructor(n) {
       RED.nodes.createNode(this, n);
       this.name = n.name;
-      this.originatorId = n.originatorId;
+      this.originatorId = n.originatorId || loadLearnedIDs(this.id);
       this.originatorIdInt = parseInt(this.originatorId, 16);
       this.eepType = n.eepType;
       this.addEepType = n.addEepType;
