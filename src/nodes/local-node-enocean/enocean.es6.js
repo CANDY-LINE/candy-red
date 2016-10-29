@@ -10,9 +10,11 @@
  */
 
 import { SerialPool } from './lib/enocean';
-import { ERP2_HANDLERS } from './lib/eep_handlers';
+import { ERP2_TEACH_IN_HANDLERS, ERP2_HANDLERS } from './lib/eep_handlers';
 
 const ENOCEAN_LEARN_MODE_TIMEOUT = parseInt(process.env.ENOCEAN_LEARN_MODE_TIMEOUT) || (30 * 60 * 1000);
+const ENOCEAN_LEARN_MODE_THRESHOLD_MS = parseInt(process.env.ENOCEAN_LEARN_MODE_THRESHOLD_MS) || (2 * 1000);
+const ENOCEAN_LEARN_MODE_THRESHOLD_RSSI = parseInt(process.env.ENOCEAN_LEARN_MODE_THRESHOLD_RSSI) || (47);
 
 export default function(RED) {
 
@@ -20,13 +22,27 @@ export default function(RED) {
     let enocean = EnOceanPortNode.pool.get(node.enoceanPortNode.serialPort);
     if (isNaN(node.originatorIdInt)) {
       node.learning = true;
+      node.learningCount = 0;
+      node.learnEventAt = 0;
       enocean.port.on('learn', (ctx) => {
-        if (node.learning) {
-          node.originatorId = ctx.originatorId;
-          node.originatorIdInt = ctx.originatorIdInt;
-          if (!isNaN(node.originatorIdInt)) {
-            addEventListener(node);
+        if (node.learning && ctx.container.dBm <= ENOCEAN_LEARN_MODE_THRESHOLD_RSSI && node.isValidLearnPacket(ctx)) {
+          if (node.learningCount === 0) {
+            node.learnEventAt = Date.now();
           }
+          if (Date.now() - node.learnEventAt <= ENOCEAN_LEARN_MODE_THRESHOLD_MS) {
+            ++node.learningCount;
+            if (node.learningCount >= node.learningThresholdCount) {
+              node.originatorId = ctx.originatorId;
+              node.originatorIdInt = ctx.originatorIdInt;
+              if (!isNaN(node.originatorIdInt)) {
+                addEventListener(node);
+              }
+            }
+          } else {
+            node.learningCount = 0;
+            node.learnEventAt = 0;
+          }
+
         }
       });
     } else {
@@ -79,11 +95,27 @@ export default function(RED) {
       this.enoceanPortNodeId = n.enoceanPort;
       this.enoceanPortNode = RED.nodes.getNode(this.enoceanPortNodeId);
       this.learning = false;
+      if (this.eepType) {
+        let rorg = this.eepType.substring(0, 2);
+        switch (rorg) {
+          case 'f6': // RPS
+            this.learningThresholdCount = 2;
+            break;
+          case 'd5': // 1BS
+            this.learningThresholdCount = 1;
+            break;
+          case 'a5': // 4BS
+          default:
+            this.learningThresholdCount = 1;
+            break;
+        }
+        this.isValidLearnPacket = ERP2_TEACH_IN_HANDLERS[rorg];
+      }
       this.status({});
       this.on('learned', () => {
         this.learning = false;
         this.status({ fill: 'green', shape: 'dot', text: 'node-red:common.status.connected'});
-        RED.log.info(RED._('enocean.info.learned', { name: this.name, originatorId: this.originatorId }));
+        RED.log.warn(RED._('enocean.info.learned', { name: (this.name || this.id), originatorId: this.originatorId }));
       });
       this.on('timeout', () => {
         this.learning = false;
