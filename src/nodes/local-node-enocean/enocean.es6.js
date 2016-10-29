@@ -139,9 +139,10 @@ export default function(RED) {
             this.learningThresholdCount = 1;
             break;
           case 'a5': // 4BS
-          default:
             this.learningThresholdCount = 1;
             break;
+          default:
+            this.learningThresholdCount = 1;
         }
         this.isValidLearnPacket = ERP2_TEACH_IN_HANDLERS[rorg];
       }
