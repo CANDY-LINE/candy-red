@@ -38,6 +38,9 @@ export class CandyRed {
       if (!this.flowFile) {
         return reject(new Error('Missing this.flowFile!'));
       }
+      if (os.hostname() === 'cred') {
+        return resolve();
+      }
       let newPath = `${userDir}/${this.flowFile}`;
       let oldPath = `${userDir}/flows_candy-red_${os.hostname()}.json`;
       fs.rename(oldPath, newPath, err => {
