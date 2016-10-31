@@ -23,7 +23,7 @@
       "timeout" : "timeout"
     },
     "info" : {
-      "learned" : "The node [__name__] has learnt Originator ID:__originatorId__",
+      "learned" : "The node [__name__] has learned Originator ID:__originatorId__",
       "unsupportedPacketType" : "Unsupported Packet Type: __packetType__",
       "serialPortClosed" : "The serial port [__portName__] is closed and removed from the port pool",
       "serialPortAdded" : "The serial port [__portName__] is added to the port pool"
