@@ -57,6 +57,12 @@ export default function(RED) {
       node.learning = true;
       node.learningCount = 0;
       node.learnEventAt = 0;
+      if (node.learningTimeout) {
+        clearTimeout(node.learningTimeout);
+      }
+      node.learningTimeout = setTimeout(() => {
+        node.emit('timeout');
+      }, ENOCEAN_LEARN_MODE_TIMEOUT);
       enocean.port.on('learn', (ctx) => {
         if (node.learning && ctx.container.dBm <= ENOCEAN_LEARN_MODE_THRESHOLD_RSSI && node.isValidLearnPacket(ctx)) {
           if (node.learningCount === 0) {
@@ -76,7 +82,6 @@ export default function(RED) {
             node.learningCount = 0;
             node.learnEventAt = 0;
           }
-
         }
       });
     } else {
@@ -99,6 +104,10 @@ export default function(RED) {
         }
         node.send({ payload: payload });
       });
+      if (node.learningTimeout) {
+        clearTimeout(node.learningTimeout);
+        delete node.learningTimeout;
+      }
       node.emit('learned');
     }
   }
@@ -171,11 +180,6 @@ export default function(RED) {
           addEventListener(this);
           if (this.learning) {
             this.status({ fill: 'blue', shape: 'dot', text: 'enocean.status.learning'});
-            setTimeout(() => {
-              if (this.learning) {
-                this.emit('timeout');
-              }
-            }, ENOCEAN_LEARN_MODE_TIMEOUT);
           }
         });
         enocean.port.on('closed', () => {
