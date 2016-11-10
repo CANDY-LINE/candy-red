@@ -65,7 +65,7 @@
     "chokidar": "^1.4.2",
     "es6-promises": "^1.0.10",
     "express": "^4.14.0",
-    "follow-redirects": "^0.2.0",
+    "follow-redirects": "^1.1.0",
     "lru-cache": "^4.0.0",
     "mustache": "^2.2.1",
     "node-enocean": "^1.0.1",
