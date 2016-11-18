@@ -15,6 +15,7 @@ import { DeviceManagerStore } from './device-manager';
 const PORT = process.env.PORT || 8100;
 const DEFAULT_PACKAGE_JSON = __dirname + '/../package.json';
 const DEFAULT_WELCOME_FLOW = __dirname + '/welcome-flow.json';
+const NODE_PALETTE_ENABLED = process.env.NODE_PALETTE_ENABLED || false;
 
 export class CandyRed {
   constructor(packageJsonPath) {
@@ -37,6 +38,9 @@ export class CandyRed {
     return new Promise((resolve, reject) => {
       if (!this.flowFile) {
         return reject(new Error('Missing this.flowFile!'));
+      }
+      if (os.hostname() === 'cred') {
+        return resolve();
       }
       let newPath = `${userDir}/${this.flowFile}`;
       let oldPath = `${userDir}/flows_candy-red_${os.hostname()}.json`;
@@ -257,6 +261,9 @@ export class CandyRed {
       } else {
         this.editorTheme = this._createCandyRedEditorTheme(deviceId);
       }
+      this.editorTheme.palette = {
+        editable: NODE_PALETTE_ENABLED
+      };
       deviceId = deviceId || 'N/A';
       candyIotv = candyIotv || 'N/A';
       ltepiv = ltepiv || 'N/A';

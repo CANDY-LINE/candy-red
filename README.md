@@ -41,7 +41,8 @@ This theme appears when CANDY IoT Board is available on a device.
 
 ### Tested Node.js versions
 
-* v0.10.38 (preinstalled)
+* v4.4.3   (preinstalled in v3.5 firmware)
+* v0.10.38 (preinstalled in v2.1 firmware)
 
 This will install the latest version of CANDY RED.
 
@@ -441,10 +442,18 @@ $ docker run -tid -v ./dist:/candy-red-dist candy-red
 * publish local Node-RED nodes in this project to npm repository
 
 ## Revision History
+* 2.9.0
+  - Bump up Node-RED version to v0.15.2 (NOTE: Node-RED Node Palette is disabled by default, set NODE_PALETTE_ENABLED=true for enabling the palette UI)
+  - Bump up Dashboard UI version to v2.1.0
+  - Add a new EnOcean device support for A5-07-01(4BS/Occupancy with Supply voltage monitor)
+  - Add teach-in feature to EnOcean node
+
 * 2.8.2
   - Fix an issue where a socket wasn't closed when WebSocketListener handled redirect response
+
 * 2.8.1
   - Fix an issue where the process will exit on the flow file being empty
+
 * 2.8.0
   - Accept the latest version of node-red-contrib-asakusa_giken and node-red-contrib-device-stats packages
   - Fix validation rules (local-nodecandy-egg)

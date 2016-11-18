@@ -4,7 +4,6 @@
   "description": "Node-RED nodes for EnOcean Devices",
   "private": "true",
   "dependencies": {
-    "lru-cache": "^4.0.0"
   },
   "node-red": {
     "nodes": {

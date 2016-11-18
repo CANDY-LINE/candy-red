@@ -8,12 +8,6 @@ import setUpEnocean from 'node-enocean';
 import { ESP3RadioERP2Parser, ERP2Parser } from './esp3_erp2_parser';
 import Promise from 'es6-promises';
 import fs from 'fs';
-import LRU from 'lru-cache';
-
-let unknown = LRU({
-  max: 100,
-  maxAge: 1000 * 60 * 60
-});
 
 const ESP3_PACKET_PARSERS = {
   10: new ESP3RadioERP2Parser() // Packet Type 10: RADIO_ERP2
@@ -53,7 +47,7 @@ export class SerialPool {
     let that = this;
     let portName = enOceanPortNode.serialPort;
     if (!portName) {
-      throw new Error('serialPort proeprty is missing!');
+      throw new Error('serialPort property is missing!');
     }
     if (!fs.existsSync(portName)) {
       throw new Error(`The port [${portName}] is NOT ready!`);
@@ -67,12 +61,10 @@ export class SerialPool {
       that.esp3Parser.parse(data).then(result => {
         result.parser.parse(result.payload).then(ctx => {
           that.erp2Parser.parse(ctx).then(ctx => {
-            let originatorId = ctx.originatorId;
-            if (!port.emit(`ctx-${originatorId}`, ctx)) {
-              if (!unknown.get(originatorId)) {
-                unknown.set(originatorId, 1);
-                that.RED.log.warn(that.RED._('enocean.warn.noNode', { originatorId: originatorId }));
-              }
+            let originatorIdInt = ctx.originatorIdInt;
+            if (!port.emit(`ctx-${originatorIdInt}`, ctx)) {
+              that.RED.log.warn(that.RED._('enocean.warn.noNode', { originatorId: ctx.originatorId }));
+              port.emit('learn', ctx);
             }
           }).catch(e => {
             that.RED.log.error(that.RED._('enocean.errors.parseError', { error: e, data: JSON.stringify(ctx) }));
@@ -89,7 +81,7 @@ export class SerialPool {
       });
     });
     port.on('error', e => {
-      that.RED.log.error(that.RED._('enocean.errors.serialPortError',{ error: e }));
+      that.RED.log.warn(that.RED._('enocean.errors.serialPortError',{ error: e }));
       delete that.pool[portName];
     });
     port.on('close', () => {

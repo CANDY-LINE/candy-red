@@ -61,6 +61,8 @@ const TELEGRAM_TYPES = {
   0x0f: ['Extended Telegram type available']
 };
 
+const ESP3_DUMP = process.env.ESP3_DUMP || false;
+
 if (!Uint8Array.prototype.slice) {
   Uint8Array.prototype.slice = Array.prototype.slice;
 }
@@ -122,6 +124,7 @@ export class ERP2Parser {
         for (i = 0; i < idLen; i++) {
           ctx.originatorId += Utils.pad(dataPl[i].toString(16), 2);
         }
+        ctx.originatorIdInt = parseInt(ctx.originatorId, 16);
         for (i = 0; i < dlLen; i++) {
           ctx.dataDl += Utils.pad(dataPl[i + idLen].toString(16), 2);
         }
@@ -152,6 +155,7 @@ export class ERP2Parser {
         for (i = 0; i < destLen; i++) {
           ctx.destinationId += Utils.pad(dataPl[i + idLen + 1].toString(16), 2);
         }
+        ctx.originatorIdInt = parseInt(ctx.originatorId, 16);
 
         // Bit4 Extended header available
         let extendedHeader = (dataPl[0] & 0x10) >> 4;
@@ -204,6 +208,9 @@ export class ESP3RadioERP2Parser {
       throw new Error('Unsupported ESP3 payload data type!');
     }
     len = esp3.length;
+    if (ESP3_DUMP) {
+      console.log(`ENOCEAN LEN[${len}] RAW[${new Buffer(esp3).toString('hex')}]`);
+    }
     return new Promise((resolve, reject) => {
       try {
         if (esp3[0] !== 0x55) {
