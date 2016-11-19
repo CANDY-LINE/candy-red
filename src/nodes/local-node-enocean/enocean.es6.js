@@ -130,7 +130,13 @@ export default function(RED) {
     constructor(n) {
       RED.nodes.createNode(this, n);
       this.name = n.name;
-      this.originatorId = n.originatorId || loadLearnedIDs(this.id);
+      this.alwaysStartAsLearningMode = n.alwaysStartAsLearningMode || false;
+      this.originatorId = n.originatorId;
+      if (!n.originatorId) {
+        if (!n.alwaysStartAsLearningMode) {
+          this.originatorId = loadLearnedIDs(this.id);
+        }
+      }
       this.originatorIdInt = parseInt(this.originatorId, 16);
       this.eepType = n.eepType;
       this.addEepType = n.addEepType;

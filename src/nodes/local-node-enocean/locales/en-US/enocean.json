@@ -3,6 +3,7 @@
     "label" : {
       "category" : "EnOcean",
       "originatorId" : "Originator ID",
+      "alwaysStartAsLearningMode" : "Always start as Learning mode (for Test Use)",
       "eepType" : "EEP Type",
       "addEepType" : "Add EEP Type to payload",
       "enoceanPort" : "EnOcean Serial Port",
