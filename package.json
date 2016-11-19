@@ -1,6 +1,6 @@
 {
   "name": "candy-red",
-  "version": "2.9.0",
+  "version": "2.9.1",
   "description": "CANDY RED Device Gateway Service powered by Node-RED",
   "main": "./dist/index.js",
   "scripts": {
