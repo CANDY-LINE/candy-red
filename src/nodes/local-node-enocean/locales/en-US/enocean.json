@@ -8,6 +8,7 @@
       "addEepType" : "Add EEP Type to payload",
       "enoceanPort" : "EnOcean Serial Port",
       "useString" : "Use string payload",
+      "ignoreLRNBit" : "Ignore LRN BIT (1BS/4BS only)",
       "serialPort" : "Serial Port"
     },
     "eepType" : {

@@ -32,6 +32,11 @@
     <input type='checkbox' id='node-input-addEepType' style='display: inline-block; width: auto; vertical-align: top;'>
     <label for='node-input-addEepType' style='width: 70%;' data-i18n='enocean.label.addEepType'></label>
   </div>
+  <div class='form-row' id='node-ignoreLRNBit'>
+    <label>&nbsp;</label>
+    <input type='checkbox' id='node-input-ignoreLRNBit' style='display: inline-block; width: auto; vertical-align: top;'>
+    <label for='node-input-ignoreLRNBit' style='width: 70%;' data-i18n='enocean.label.ignoreLRNBit'></label>
+  </div>
   <div class='form-row node-input-enoceanPort'>
     <label for='node-input-enoceanPort'>
       <i class='fa fa-random'></i>
@@ -54,6 +59,7 @@
       alwaysStartAsLearningMode: { value: false, required: false },
       eepType: { value: '', requried: true },
       addEepType: { value: false, required: false },
+      ignoreLRNBit: { value: false, required: false },
       enoceanPort: { type: 'EnOcean Port', required: true },
       useString: { value: false, required: false }
     },

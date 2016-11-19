@@ -61,10 +61,10 @@ export const ERP2_TEACH_IN_HANDLERS = {
   'f6': (ctx) => {
     return (ctx.dataDl.length === 1);
   },
-  'd5': (ctx) => {
-    return (ctx.dataDl.length === 1) && ((ctx.dataDl[0] & 0x08) === 0);
+  'd5': (ctx, ignoreLRNBit=false) => {
+    return (ctx.dataDl.length === 1) && (ignoreLRNBit ? true : (ctx.dataDl[0] & 0x08) === 0);
   },
-  'a5': (ctx) => {
-    return (ctx.dataDl.length === 4) && ((ctx.dataDl[3] & 0x08) === 0);
+  'a5': (ctx, ignoreLRNBit=false) => {
+    return (ctx.dataDl.length === 4) && (ignoreLRNBit ? true : (ctx.dataDl[3] & 0x08) === 0);
   }
 };
