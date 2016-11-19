@@ -14,6 +14,11 @@
     </label>
     <input type='text' id='node-input-originatorId' data-i18n='[placeholder]enocean.placeholder.originatorId'>
   </div>
+  <div class='form-row' id='node-alwaysStartAsLearningMode'>
+    <label>&nbsp;</label>
+    <input type='checkbox' id='node-input-alwaysStartAsLearningMode' style='display: inline-block; width: auto; vertical-align: top;'>
+    <label for='node-input-alwaysStartAsLearningMode' style='width: 70%;' data-i18n='enocean.label.alwaysStartAsLearningMode'></label>
+  </div>
   <div class='form-row'>
     <label for='node-input-eepType'>
       <i class='fa fa-simplybuilt'></i>
@@ -26,6 +31,11 @@
     <label>&nbsp;</label>
     <input type='checkbox' id='node-input-addEepType' style='display: inline-block; width: auto; vertical-align: top;'>
     <label for='node-input-addEepType' style='width: 70%;' data-i18n='enocean.label.addEepType'></label>
+  </div>
+  <div class='form-row' id='node-ignoreLRNBit'>
+    <label>&nbsp;</label>
+    <input type='checkbox' id='node-input-ignoreLRNBit' style='display: inline-block; width: auto; vertical-align: top;'>
+    <label for='node-input-ignoreLRNBit' style='width: 70%;' data-i18n='enocean.label.ignoreLRNBit'></label>
   </div>
   <div class='form-row node-input-enoceanPort'>
     <label for='node-input-enoceanPort'>
@@ -46,8 +56,10 @@
     defaults: {
       name: { name: '' },
       originatorId: { value: '', required: false },
+      alwaysStartAsLearningMode: { value: false, required: false },
       eepType: { value: '', requried: true },
       addEepType: { value: false, required: false },
+      ignoreLRNBit: { value: false, required: false },
       enoceanPort: { type: 'EnOcean Port', required: true },
       useString: { value: false, required: false }
     },
@@ -64,12 +76,22 @@
     oneditprepare: function() {
       $('#node-input-originatorId').blur(function() {
         var text = $(this).val();
+        var mode = $('#node-alwaysStartAsLearningMode');
         if (text && typeof(text) === 'string') {
           $(this).val(text.toLowerCase().trim().substring(0, 12));
+          mode.hide(400);
         } else {
           $(this).val('');
+          mode.show(400);
         }
       });
+
+      var mode = $('#node-alwaysStartAsLearningMode');
+      if ($('#node-input-originatorId').val()) {
+        mode.hide();
+      } else {
+        mode.show();
+      }
 
       var that = this;
       $.getJSON('eeps',function(profiles) {

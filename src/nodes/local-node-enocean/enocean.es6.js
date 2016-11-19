@@ -64,7 +64,9 @@ export default function(RED) {
         node.emit('timeout');
       }, ENOCEAN_LEARN_MODE_TIMEOUT);
       enocean.port.on('learn', (ctx) => {
-        if (node.learning && ctx.container.dBm <= ENOCEAN_LEARN_MODE_THRESHOLD_RSSI && node.isValidLearnPacket(ctx)) {
+        if (node.learning &&
+            ctx.container.dBm <= ENOCEAN_LEARN_MODE_THRESHOLD_RSSI &&
+            node.isValidLearnPacket(ctx, node.ignoreLRNBit)) {
           if (node.learningCount === 0) {
             node.learnEventAt = Date.now();
           }
@@ -130,13 +132,20 @@ export default function(RED) {
     constructor(n) {
       RED.nodes.createNode(this, n);
       this.name = n.name;
-      this.originatorId = n.originatorId || loadLearnedIDs(this.id);
+      this.alwaysStartAsLearningMode = n.alwaysStartAsLearningMode || false;
+      this.originatorId = n.originatorId;
+      if (!n.originatorId) {
+        if (!n.alwaysStartAsLearningMode) {
+          this.originatorId = loadLearnedIDs(this.id);
+        }
+      }
       this.originatorIdInt = parseInt(this.originatorId, 16);
       this.eepType = n.eepType;
       this.addEepType = n.addEepType;
       this.useString = n.useString;
       this.enoceanPortNodeId = n.enoceanPort;
       this.enoceanPortNode = RED.nodes.getNode(this.enoceanPortNodeId);
+      this.ignoreLRNBit = n.ignoreLRNBit || false;
       this.learning = false;
       if (this.eepType) {
         let rorg = this.eepType.substring(0, 2);
