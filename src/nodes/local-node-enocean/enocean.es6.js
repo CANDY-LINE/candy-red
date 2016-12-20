@@ -104,7 +104,8 @@ export default function(RED) {
         if (node.useString) {
           payload = JSON.stringify(payload);
         }
-        node.send({ payload: payload });
+        let topic = `${node.eepType}/${payload.id}`;
+        node.send({ topic: topic, payload: payload });
       });
       if (node.learningTimeout) {
         clearTimeout(node.learningTimeout);
