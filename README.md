@@ -46,12 +46,6 @@ This theme appears when CANDY IoT Board is available on a device.
 
 This will install the latest version of CANDY RED.
 
-### Supported npm version
-
-* v2.x (Run `npm install -g npm@latest-2` to update from preinstalled v1.x)
-
-Don't use npm v3.x as v3.x of npm failed to resolve the collision between different version of moment-timezone (older version was always chosen).
-
 ## Install/Version-up
 
 The installation will take about 5 minutes.
@@ -266,12 +260,6 @@ Note that the downloaded flow file will be discarded if it is not a valid JSON d
 
 * v0.12
 * v4.4
-
-### Supported npm version
-
-* v2.x (run `(sudo) npm install -g npm@latest-2`)
-
-v3.x of npm failed to resolve the collision between different version of moment-timezone (older version was always chosen).
 
 ## Setup for Building
 
