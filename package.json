@@ -76,7 +76,7 @@
     "node-red-contrib-sequence-functions": ">=1.0.0",
     "node-red-contrib-device-stats": ">=1.0.2",
     "node-red-contrib-moment": "^2.0.0",
-    "node-red-dashboard": "^2.2.0",
+    "node-red-dashboard": "^2.2.1",
     "request": "^2.74.0",
     "nan": "^2.4.0",
     "serialport": "~4.0.7",
