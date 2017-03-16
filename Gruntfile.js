@@ -72,6 +72,16 @@ module.exports = function (grunt) {
             './services/sysvinit/wrapper.sh'
           ]
         }]
+      },
+      builtin_ja: {
+        files: [{
+          dot: true,
+          src: [
+            'node_modules/node-red/red/api/locales/ja',
+            'node_modules/node-red/red/runtime/locales/ja',
+            'node_modules/node-red/nodes/core/locales/ja',
+          ]
+        }]
       }
     },
 
