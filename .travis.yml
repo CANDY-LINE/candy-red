@@ -2,7 +2,6 @@ language: node_js
 
 matrix:
   include:
-    - node_js: "0.12" # Until Dec 2016
     - node_js: "4.7"  # Until Apr 2018
     - node_js: "6.9"
     - node_js: "7.2"

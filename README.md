@@ -42,7 +42,7 @@ This theme appears when CANDY IoT Board is available on a device.
 ### Tested Node.js versions
 
 * v4.4.3   (preinstalled in v3.5 firmware)
-* v0.10.38 (preinstalled in v2.1 firmware)
+* ~~v0.10.38 (preinstalled in v2.1 firmware)~~ no longer supported
 
 This will install the latest version of CANDY RED.
 
@@ -94,7 +94,7 @@ $ rm -f "$(dirname $(dirname $(which systemctl)))/lib/systemd/system/candy-red.s
 
 ### Tested Node.js versions
 
-* v0.12.6
+* v4.7.0
 
 The preinstalled version of Node.js v0.10.29 won't work because of the [header file issue](http://dustinbolton.com/replace_invalid_utf8-is-not-a-member-of-v8string-installing-nodejs-packages-on-raspbian-debian-on-raspberry-pi-2-b/) appearing on installing native addons.
 
@@ -430,6 +430,9 @@ $ docker run -tid -v ./dist:/candy-red-dist candy-red
 * publish local Node-RED nodes in this project to npm repository
 
 ## Revision History
+* 3.0.0
+  - Bump up Node-RED version to v0.16.0 (NOTE: Node-RED Node Palette is disabled by default, set NODE_PALETTE_ENABLED=true for enabling the palette UI)
+  - Node.js v0.12 is no longer supported
 * 2.9.1
   - Add a new switch to enable/disable learning mode on start up for test use (local-node-enocean)
   - Add a new boolean property whether or not to ignore LRN bit while learning mode (local-node-enocean)
