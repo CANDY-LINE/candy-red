@@ -221,7 +221,6 @@ And you'll see the sensor info like this:
     29 Jul 21:52:36 - [info] UI started at /api/ui
     29 Jul 21:52:36 - [warn] ------------------------------------------------------
     29 Jul 21:52:36 - [warn] [rpi-gpio] Info : Ignoring Raspberry Pi specific node
-    29 Jul 21:52:36 - [warn] [ltepi-gps] Info : LTEPiGPS isn't supported on this device
     29 Jul 21:52:36 - [warn] ------------------------------------------------------
     29 Jul 21:52:36 - [info] User directory : /Users/guest/.node-red
     29 Jul 21:52:36 - [info] Flows file     : /Users/guest/.node-red/flows_candy-red.json
@@ -334,6 +333,7 @@ $ docker run -tid -v ./dist:/candy-red-dist candy-red
   - Bump up Node-RED version to v0.16.2 (NOTE: Node-RED Node Palette is disabled by default, set NODE_PALETTE_ENABLED=true for enabling the palette UI)
   - Node.js v0.12 is no longer supported
   - Intel Edison is no longer supported
+  - LTEPiGPS is retired
 * 2.9.1
   - Add a new switch to enable/disable learning mode on start up for test use (local-node-enocean)
   - Add a new boolean property whether or not to ignore LRN bit while learning mode (local-node-enocean)
