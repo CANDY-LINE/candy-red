@@ -73,16 +73,6 @@ module.exports = function (grunt) {
           ]
         }]
       },
-      builtin_ja: {
-        files: [{
-          dot: true,
-          src: [
-            'node_modules/node-red/red/api/locales/ja',
-            'node_modules/node-red/red/runtime/locales/ja',
-            'node_modules/node-red/nodes/core/locales/ja',
-          ]
-        }]
-      }
     },
 
     jshint: {
