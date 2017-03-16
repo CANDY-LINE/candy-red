@@ -19,8 +19,6 @@
     "url": "git+https://dbaba@github.com/dbaba/candy-red.git"
   },
   "keywords": [
-    "edison",
-    "yocto",
     "rpi",
     "raspberry-pi",
     "bluetooth",

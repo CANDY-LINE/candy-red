@@ -18,7 +18,6 @@ _\* CANDY EGG cloud services are required_
 
 ## OS and Hardwares
 
-* [Intel Edison + Yocto](#intel-edison--yocto)
 * [Raspberry Pi + Raspbian](#raspberry-pi--raspbian)
 * [OSX/Linux for Development](#development)
 
@@ -28,61 +27,6 @@ _\* CANDY EGG cloud services are required_
 This is the default screen theme.
 
 ![CANDY RED Screenshot](https://raw.githubusercontent.com/dbaba/candy-red/master/images/screenshot-candy-red.png "CANDY RED Screenshot")
-
-## CANDY BOX flow editor page on browser
-
-This theme appears when CANDY IoT Board is available on a device.
-
-![CANDY BOX Screenshot](https://raw.githubusercontent.com/dbaba/candy-red/master/images/screenshot-candy-box.png "CANDY BOX Screenshot")
-
-# Intel Edison + Yocto
-
-## Prerequisites
-
-### Tested Node.js versions
-
-* v4.4.3   (preinstalled in v3.5 firmware)
-* ~~v0.10.38 (preinstalled in v2.1 firmware)~~ no longer supported
-
-This will install the latest version of CANDY RED.
-
-## Install/Version-up
-
-The installation will take about 5 minutes.
-
-You can ignore `npm WARN`s, `gyp WARN`s, `gyp ERR!`s and `node-pre-gyp ERR!`s unless the installation terminates normally. You can check if the installation is successful by `systemctl status candy-red` command.
-
-** Please export your flow data prior to performing version-up **
-
-```
-$ npm install -g --unsafe-perm candy-red
-```
-
-You can access `http://<hostname.local or ip address>:8100` with your browser on the same LAN where `<hostname.local or ip address>` is a host name with `.local` suffix or IP address.
-
-## Stop/Start/Status Service
-
-The service name is `candy-red`.
-
-```
-$ systemctl stop candy-red
-$ systemctl start candy-red
-$ systemctl status candy-red
-```
-
-## Uninstall
-
-```
-$ npm uninstall -g --unsafe-perm candy-red
-```
-
-If you run `npm uninstall -g candy-red` (without `--unsafe-perm`) and see `[ERROR] This script must be run as root` message, please run the following commands in order to reset systemd configurations.
-
-```
-$ systemctl stop candy-red
-$ systemctl disable candy-red
-$ rm -f "$(dirname $(dirname $(which systemctl)))/lib/systemd/system/candy-red.service"
-```
 
 # Raspberry Pi + Raspbian
 
