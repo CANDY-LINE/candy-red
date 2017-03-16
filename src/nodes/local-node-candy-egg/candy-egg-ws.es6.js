@@ -187,6 +187,9 @@ export default function(RED) {
         payload: obj,
         _session: {type:'candy-box-ws',id:id}
       };
+      if (typeof(wholemsg) === 'object') {
+        wholemsg._session = msg._session;
+      }
       wholemsg._session = msg._session;
       for (let i = 0; i < this._inputNodes.length; i++) {
         if (this._inputNodes[i].wholemsg) {
