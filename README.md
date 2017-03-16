@@ -54,41 +54,6 @@ Don't use npm v3.x as v3.x of npm failed to resolve the collision between differ
 $ sudo apt-get remove -y nodered nodejs nodejs-legacy npm
 ```
 
-### Using Node.js.0.12.x (RPi1)
-
-In order to install Node.js 0.12.x, run the following commands.
-
-```
-$ sudo apt-get update -y
-$ sudo apt-get upgrade -y
-$ wget http://node-arm.herokuapp.com/node_archive_armhf.deb
-$ sudo dpkg -i node_archive_armhf.deb
-$ sudo apt-get install -y python-dev python-rpi.gpio bluez
-```
-
-You can check the installed Node.js version by the following command.
-
-```
-$ node -v
-```
-
-This command shows the following text.
-
-```
-v0.12.6
-```
-
-### Using Node.js.0.12.x (RPi2+)
-
-```
-$ sudo apt-get update
-$ sudo apt-get upgrade
-$ curl -sL https://deb.nodesource.com/setup_0.12 | sudo bash -
-$ sudo apt-get install -y python-dev python-rpi.gpio bluez nodejs libudev-dev
-```
-
-You can try another version as well. See the [instruction in Node-RED document](http://nodered.org/docs/hardware/raspberrypi.html) for detail.
-
 ## Install/Version-up
 
 The module installation will take around 30 minutes on RPi1. On RPi2+, the installation time will be shorter.
@@ -202,8 +167,7 @@ Note that the downloaded flow file will be discarded if it is not a valid JSON d
 
 ### Supported Node.js versions
 
-* v0.12
-* v4.4
+* v4.7
 
 ## Setup for Building
 
