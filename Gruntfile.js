@@ -8,8 +8,11 @@ module.exports = function (grunt) {
 
     babel: {
       options: {
-        plugins: ['uglify:after'],
-        sourceMap: true
+        sourceMaps: true,
+        minified: true,
+        compact: true,
+        presets: ['es2015'],
+        plugins: ['add-module-exports']
       },
       dist: {
         files: [{
