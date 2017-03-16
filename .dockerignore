@@ -1,0 +1,16 @@
+.git
+.node-red
+.vagrant
+node_modules
+images
+!dist/public/images
+test
+.gitignore
+.npmignore
+.jshintrc
+.travis.yml
+Dockerfile
+Vagrantfile
+*.tgz
+*.zip
+*.log

@@ -17,6 +17,12 @@
   <h3>Example Output</h3>
   <p>Note that <code>eep</code> is added if <code>Add EEP Type to payload</code> is selected.</p>
   <h4>F6-04-02: RPS/Rocker Switch, 2 Rocker/Light and blind control ERP2</h4>
+  <h5>topic</h5>
+  <p>
+  Topic is composed of EEP type and originator ID with slash separator, e.g.
+  <code>f6-02-04/00000000</code>
+  </p>
+  <h5>payload</h5>
   <p>
   <pre>
   {
@@ -30,6 +36,12 @@
   }</pre>
   </p>
   <h4>D5-00-01: 1BS/Contacts and Switches/Single Input Contact</h4>
+  <h5>topic</h5>
+  <p>
+  Topic is composed of EEP type and originator ID with slash separator, e.g.
+  <code>d5-00-01/00000000</code>
+  </p>
+  <h5>payload</h5>
   <pre>
   {
     "lrn": false,
@@ -40,6 +52,12 @@
     "eep": "d5-00-01"
   }</pre>
   <h4>A5-07-01: 4BS/Occupancy with Supply voltage monitor</h4>
+  <h5>topic</h5>
+  <p>
+  Topic is composed of EEP type and originator ID with slash separator, e.g.
+  <code>a5-07-01/00000000</code>
+  </p>
+  <h5>payload</h5>
   <pre>
   {
     "svc": 96,

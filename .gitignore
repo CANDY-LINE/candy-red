@@ -41,3 +41,4 @@ services/start_sysvinit.sh
 .vagrant
 .node-red
 dist
+.node-version

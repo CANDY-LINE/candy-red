@@ -18,7 +18,6 @@ _\* CANDY EGG cloud services are required_
 
 ## OS and Hardwares
 
-* [Intel Edison + Yocto](#intel-edison--yocto)
 * [Raspberry Pi + Raspbian](#raspberry-pi--raspbian)
 * [OSX/Linux for Development](#development)
 
@@ -28,67 +27,6 @@ _\* CANDY EGG cloud services are required_
 This is the default screen theme.
 
 ![CANDY RED Screenshot](https://raw.githubusercontent.com/dbaba/candy-red/master/images/screenshot-candy-red.png "CANDY RED Screenshot")
-
-## CANDY BOX flow editor page on browser
-
-This theme appears when CANDY IoT Board is available on a device.
-
-![CANDY BOX Screenshot](https://raw.githubusercontent.com/dbaba/candy-red/master/images/screenshot-candy-box.png "CANDY BOX Screenshot")
-
-# Intel Edison + Yocto
-
-## Prerequisites
-
-### Tested Node.js versions
-
-* v4.4.3   (preinstalled in v3.5 firmware)
-* v0.10.38 (preinstalled in v2.1 firmware)
-
-This will install the latest version of CANDY RED.
-
-### Supported npm version
-
-* v2.x (Run `npm install -g npm@latest-2` to update from preinstalled v1.x)
-
-Don't use npm v3.x as v3.x of npm failed to resolve the collision between different version of moment-timezone (older version was always chosen).
-
-## Install/Version-up
-
-The installation will take about 5 minutes.
-
-You can ignore `npm WARN`s, `gyp WARN`s, `gyp ERR!`s and `node-pre-gyp ERR!`s unless the installation terminates normally. You can check if the installation is successful by `systemctl status candy-red` command.
-
-** Please export your flow data prior to performing version-up **
-
-```
-$ npm install -g --unsafe-perm candy-red
-```
-
-You can access `http://<hostname.local or ip address>:8100` with your browser on the same LAN where `<hostname.local or ip address>` is a host name with `.local` suffix or IP address.
-
-## Stop/Start/Status Service
-
-The service name is `candy-red`.
-
-```
-$ systemctl stop candy-red
-$ systemctl start candy-red
-$ systemctl status candy-red
-```
-
-## Uninstall
-
-```
-$ npm uninstall -g --unsafe-perm candy-red
-```
-
-If you run `npm uninstall -g candy-red` (without `--unsafe-perm`) and see `[ERROR] This script must be run as root` message, please run the following commands in order to reset systemd configurations.
-
-```
-$ systemctl stop candy-red
-$ systemctl disable candy-red
-$ rm -f "$(dirname $(dirname $(which systemctl)))/lib/systemd/system/candy-red.service"
-```
 
 # Raspberry Pi + Raspbian
 
@@ -100,56 +38,13 @@ $ rm -f "$(dirname $(dirname $(which systemctl)))/lib/systemd/system/candy-red.s
 
 ### Tested Node.js versions
 
-* v0.12.6
-
-The preinstalled version of Node.js v0.10.29 won't work because of the [header file issue](http://dustinbolton.com/replace_invalid_utf8-is-not-a-member-of-v8string-installing-nodejs-packages-on-raspbian-debian-on-raspberry-pi-2-b/) appearing on installing native addons.
+* v4.7.0
 
 I highly recommend you to uninstall the preinstalled version of Node.js, Node-RED (which depends on `nodejs` and `nodejs-legacy` packages) and npm by the following command, and to install another version instead.
-
-### Supported npm version
-
-* v2.x (v2.0.0 or above but less than v3.0.0)
-
-Don't use npm v3.x as v3.x of npm failed to resolve the collision between different version of moment-timezone (older version was always chosen).
 
 ```
 $ sudo apt-get remove -y nodered nodejs nodejs-legacy npm
 ```
-
-### Using Node.js.0.12.x (RPi1)
-
-In order to install Node.js 0.12.x, run the following commands.
-
-```
-$ sudo apt-get update -y
-$ sudo apt-get upgrade -y
-$ wget http://node-arm.herokuapp.com/node_archive_armhf.deb
-$ sudo dpkg -i node_archive_armhf.deb
-$ sudo apt-get install -y python-dev python-rpi.gpio bluez
-```
-
-You can check the installed Node.js version by the following command.
-
-```
-$ node -v
-```
-
-This command shows the following text.
-
-```
-v0.12.6
-```
-
-### Using Node.js.0.12.x (RPi2+)
-
-```
-$ sudo apt-get update
-$ sudo apt-get upgrade
-$ curl -sL https://deb.nodesource.com/setup_0.12 | sudo bash -
-$ sudo apt-get install -y python-dev python-rpi.gpio bluez nodejs libudev-dev
-```
-
-You can try another version as well. See the [instruction in Node-RED document](http://nodered.org/docs/hardware/raspberrypi.html) for detail.
 
 ## Install/Version-up
 
@@ -166,7 +61,7 @@ You can ignore `npm WARN`s, `gyp WARN`s, `gyp ERR!`s and `node-pre-gyp ERR!`s un
 Please refer to the following commands to install.
 
 ```
-$ sudo NODE_OPTS=--max-old-space-size=128 npm install -g --unsafe-perm candy-red
+$ sudo NODE_OPTS=--max-old-space-size=256 npm install -g --unsafe-perm candy-red
 ```
 
 You can access `http://<hostname.local or ip address>:8100` with your browser on the same LAN where `<hostname.local or ip address>` is a host name with `.local` suffix or IP address.
@@ -264,14 +159,7 @@ Note that the downloaded flow file will be discarded if it is not a valid JSON d
 
 ### Supported Node.js versions
 
-* v0.12
-* v4.4
-
-### Supported npm version
-
-* v2.x (run `(sudo) npm install -g npm@latest-2`)
-
-v3.x of npm failed to resolve the collision between different version of moment-timezone (older version was always chosen).
+* v4.7
 
 ## Setup for Building
 
@@ -333,7 +221,6 @@ And you'll see the sensor info like this:
     29 Jul 21:52:36 - [info] UI started at /api/ui
     29 Jul 21:52:36 - [warn] ------------------------------------------------------
     29 Jul 21:52:36 - [warn] [rpi-gpio] Info : Ignoring Raspberry Pi specific node
-    29 Jul 21:52:36 - [warn] [ltepi-gps] Info : LTEPiGPS isn't supported on this device
     29 Jul 21:52:36 - [warn] ------------------------------------------------------
     29 Jul 21:52:36 - [info] User directory : /Users/guest/.node-red
     29 Jul 21:52:36 - [info] Flows file     : /Users/guest/.node-red/flows_candy-red.json
@@ -442,6 +329,11 @@ $ docker run -tid -v ./dist:/candy-red-dist candy-red
 * publish local Node-RED nodes in this project to npm repository
 
 ## Revision History
+* 3.0.0
+  - Bump up Node-RED version to v0.16.2 (NOTE: Node-RED Node Palette is disabled by default, set NODE_PALETTE_ENABLED=true for enabling the palette UI)
+  - Node.js v0.12 is no longer supported
+  - Intel Edison is no longer supported
+  - LTEPiGPS is retired
 * 2.9.1
   - Add a new switch to enable/disable learning mode on start up for test use (local-node-enocean)
   - Add a new boolean property whether or not to ignore LRN bit while learning mode (local-node-enocean)

@@ -1013,7 +1013,7 @@ export class DeviceManagerStore {
           });
         });
       };
-    }());
+    })();
   }
 
   _onFlowFileRemovedFunc() {
@@ -1044,7 +1044,7 @@ export class DeviceManagerStore {
           }
         });
       };
-    }());
+    })();
   }
 
   _get(accountFqn) {
