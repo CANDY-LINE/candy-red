@@ -40,15 +40,7 @@ This is the default screen theme.
 
 * v4.7.0
 
-The preinstalled version of Node.js v0.10.29 won't work because of the [header file issue](http://dustinbolton.com/replace_invalid_utf8-is-not-a-member-of-v8string-installing-nodejs-packages-on-raspbian-debian-on-raspberry-pi-2-b/) appearing on installing native addons.
-
 I highly recommend you to uninstall the preinstalled version of Node.js, Node-RED (which depends on `nodejs` and `nodejs-legacy` packages) and npm by the following command, and to install another version instead.
-
-### Supported npm version
-
-* v2.x (v2.0.0 or above but less than v3.0.0)
-
-Don't use npm v3.x as v3.x of npm failed to resolve the collision between different version of moment-timezone (older version was always chosen).
 
 ```
 $ sudo apt-get remove -y nodered nodejs nodejs-legacy npm
