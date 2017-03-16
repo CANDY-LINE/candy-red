@@ -17,3 +17,5 @@ Vagrantfile
 *.tgz
 *.zip
 *.log
+.dockerignore
+.node-version
