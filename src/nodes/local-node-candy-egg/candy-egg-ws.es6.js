@@ -185,12 +185,11 @@ export default function(RED) {
       }
       msg = {
         payload: obj,
-        _session: {type:'candy-box-ws',id:id}
+        _session: {type:'candy-egg-ws',id:id}
       };
       if (typeof(wholemsg) === 'object') {
         wholemsg._session = msg._session;
       }
-      wholemsg._session = msg._session;
       for (let i = 0; i < this._inputNodes.length; i++) {
         if (this._inputNodes[i].wholemsg) {
           this._inputNodes[i].send(wholemsg);
