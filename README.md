@@ -339,8 +339,9 @@ $ docker run -tid -v ./dist:/candy-red-dist candy-red
 
 ## Revision History
 * 3.0.0
-  - Bump up Node-RED version to v0.16.0 (NOTE: Node-RED Node Palette is disabled by default, set NODE_PALETTE_ENABLED=true for enabling the palette UI)
+  - Bump up Node-RED version to v0.16.2 (NOTE: Node-RED Node Palette is disabled by default, set NODE_PALETTE_ENABLED=true for enabling the palette UI)
   - Node.js v0.12 is no longer supported
+  - Intel Edison is no longer supported
 * 2.9.1
   - Add a new switch to enable/disable learning mode on start up for test use (local-node-enocean)
   - Add a new boolean property whether or not to ignore LRN bit while learning mode (local-node-enocean)
