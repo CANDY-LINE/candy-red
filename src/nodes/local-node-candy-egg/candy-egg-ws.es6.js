@@ -185,7 +185,7 @@ export default function(RED) {
       }
       msg = {
         payload: obj,
-        _session: {type:'candy-box-ws',id:id}
+        _session: {type:'candy-egg-ws',id:id}
       };
       if (typeof(wholemsg) === 'object') {
         wholemsg._session = msg._session;
