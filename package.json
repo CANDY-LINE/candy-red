@@ -53,13 +53,13 @@
     "grunt-cli": "^1.2.0",
     "grunt-contrib-clean": "^0.6.0",
     "grunt-contrib-copy": "^0.8.2",
-    "grunt-contrib-jshint": "^0.11.3",
-    "grunt-mocha-test": "^0.12.7",
+    "grunt-contrib-jshint": "^1.1.0",
+    "grunt-mocha-test": "^0.13.0",
     "grunt-run": "^0.6.0",
     "jshint": "^2.9.1",
     "jshint-stylish": "^2.0.1",
     "mocha": "^3.0.2",
-    "sinon": "^1.17.1",
+    "sinon": "^2.0.0",
     "time-grunt": "^1.2.2"
   },
   "dependencies": {
