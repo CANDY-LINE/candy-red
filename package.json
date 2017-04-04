@@ -5,7 +5,6 @@
   "main": "./dist/index.js",
   "scripts": {
     "start": "node ./dist/index.js",
-    "pretest": "gulp build",
     "build": "gulp build",
     "clean": "gulp clean",
     "test": "gulp test",
