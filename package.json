@@ -12,7 +12,8 @@
     "preinstall": "./install.sh test",
     "postinstall": "./install.sh",
     "preuninstall": "./uninstall.sh",
-    "prepublish": "if [ -d \"./src\" ] ; then grunt test build; fi"
+    "prepublish": "if [ -d \"./src\" ] ; then grunt test build; fi",
+    "freeze": "npm prune && npm shrinkwrap"
   },
   "repository": {
     "type": "git",
