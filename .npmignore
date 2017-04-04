@@ -12,6 +12,7 @@ tests
 .jshintrc
 .travis.yml
 Gruntfile.js
+gulpfile.js
 Dockerfile
 Vagrantfile
 *.tgz

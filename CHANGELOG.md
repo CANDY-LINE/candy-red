@@ -1,5 +1,6 @@
 ## Revision History
 * ?.?.?
+  - Migrate to gulp
   - Use credentials property for CANDY EGG account node (with backward compatibilities)
 
 * 3.0.0

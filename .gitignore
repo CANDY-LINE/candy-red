@@ -38,6 +38,7 @@ services/start_sysvinit.sh
 !dist/**/*.js
 !*.es6.js
 !Gruntfile.js
+!gulpfile.js
 .vagrant
 .node-red
 dist
