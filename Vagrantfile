@@ -73,7 +73,7 @@ Vagrant.configure(2) do |config|
     apt-get -qq install curl bluez libudev-dev git
     curl -sL https://deb.nodesource.com/setup_4.x | bash -
     apt-get -qq install nodejs
-    npm install -g npm@latest-2
+    npm install -g npm@4.x
     cd /vagrant
     rm -fr node_modules
     DEVEL=true npm install
