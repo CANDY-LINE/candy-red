@@ -1,3 +1,5 @@
+'use strict';
+
 import * as sinon from 'sinon';
 import { assert } from 'chai';
 import os from 'os';
