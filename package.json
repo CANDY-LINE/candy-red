@@ -62,7 +62,7 @@
     "jshint-stylish": "^2.0.1",
     "mocha": "^3.0.2",
     "run-sequence": "^1.2.2",
-    "sinon": "^2.0.0"
+    "sinon": "^2.1.0"
   },
   "dependencies": {
     "chokidar": "^1.4.2",
