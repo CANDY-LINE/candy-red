@@ -200,37 +200,6 @@ describe('DeviceState', () => {
 
   });
 
-  describe('#testIfLTEPiInstalled()', () => {
-    it('should return whether or not LTEPi board is installed', done => {
-      state.testIfLTEPiInstalled().then(version => {
-        console.log(`installed version? => [${version}]`);
-        done();
-      }).catch(err => {
-        done(err);
-      });
-    });
-
-    it('should return the installed LTEPi Board version', done => {
-      let stubCproc = sandbox.stub(cproc);
-      let systemctl = sandbox.stub({
-        on: () => {}
-      });
-      systemctl.on.onFirstCall().yields(0);
-      stubCproc.spawn.onFirstCall().returns(systemctl);
-
-      let readFileStub = sandbox.stub(fs, 'readFile');
-      readFileStub.onFirstCall().yields(null, '1234');
-
-      state.deviceId = 'my:deviceId';
-      state.testIfLTEPiInstalled().then(version => {
-        assert.deepEqual(['my:deviceId', '1234'], version);
-        done();
-      }).catch(err => {
-        done(err);
-      });
-    });
-  });
-
   describe('#testIfLTEPi2Installed()', () => {
     it('should return whether or not LTEPi2 board is installed', done => {
       state.testIfLTEPi2Installed().then(version => {

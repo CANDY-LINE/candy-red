@@ -239,7 +239,6 @@ export class CandyRed {
   _inspectBoardStatus(inputPackageJsonPath) {
     return Promise.all([
       this.deviceManagerStore.deviceState.testIfCANDYIoTInstalled(),
-      this.deviceManagerStore.deviceState.testIfLTEPiInstalled(),
       this.deviceManagerStore.deviceState.testIfLTEPi2Installed()
     ]).then(results => {
       let candyIotv;

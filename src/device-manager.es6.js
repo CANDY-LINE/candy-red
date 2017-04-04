@@ -18,7 +18,6 @@ const TRACE = process.env.DEBUG || false;
 const EDISON_YOCTO_SN_PATH = '/factory/serial_number';
 const PROC_CPUINFO_PATH = '/proc/cpuinfo';
 
-const LTEPI_VERSION_FILE_PATH = '/opt/inn-farm/ltepi/bin/version.txt';
 const MODEM_OFFLINE = 'offline';
 
 export class DeviceIdResolver {
@@ -771,36 +770,6 @@ export class DeviceState {
             }).catch(() => {
               // installed but offline
               resolve([this.deviceId, version]);
-            });
-          } else {
-            resolve([this.deviceId, null]);
-          }
-        });
-      });
-    });
-  }
-
-  testIfLTEPiInstalled() {
-    return this.init().then(() => {
-      return new Promise(resolve => {
-        let systemctl = cproc.spawn('systemctl', ['is-enabled', 'ltepi'], { timeout: 1000 });
-        systemctl.on('close', code => {
-          let ltepiSupported = (code === 0);
-          resolve(ltepiSupported);
-        });
-        systemctl.on('error', () => {
-          resolve(false);
-        });
-      }).then(ltepiSupported => {
-        this.ltepiSupported = ltepiSupported;
-        return new Promise(resolve => {
-          let version = process.env.DEBUG_CIOTV || MODEM_OFFLINE;
-          if (ltepiSupported) {
-            fs.readFile(LTEPI_VERSION_FILE_PATH, (err, data) => {
-              if (err) {
-                resolve([this.deviceId, version]);
-              }
-              resolve([this.deviceId, data.toString()]);
             });
           } else {
             resolve([this.deviceId, null]);
