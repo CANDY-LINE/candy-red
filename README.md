@@ -319,6 +319,15 @@ $ npm run build
 $ docker run -tid -v ./dist:/candy-red-dist candy-red
 ```
 
+### Shrinkwrap
+
+```
+$ rm -fr node_modules; \
+  rm -f npm-shrinkwrap.json; \
+  docker run --name build --rm -ti -v $(pwd):/work -w /work -e DEVEL=true \
+    node:4.7 bash -c "npm install -g npm@4.x;npm install;npm run freeze"
+```
+
 ## Coding Styles
 
 1. Use ES6 (except Gruntfile.js and \*.html)
@@ -329,8 +338,6 @@ $ docker run -tid -v ./dist:/candy-red-dist candy-red
 ## Known Issues
 
 * CANDY EGG cloud services aren't yet available
-* CANDY EGG credentials are embedded in a flow file
-  - In this version, CANDY EGG credentials are stored into the flow file rather than the dedicated [credentials file](http://nodered.org/docs/creating-nodes/credentials.html) which Node-RED offers. This behavior can be modified in the future release.
 
 ## TODO
 * publish local Node-RED nodes in this project to npm repository
@@ -342,6 +349,6 @@ $ docker run -tid -v ./dist:/candy-red-dist candy-red
 
 # Copyright and License
 
-PNG/ICO images under src/public folder are released under [CC BY-NC-SA](http://creativecommons.org/licenses/by-nc-sa/4.0/), copyright 2016 Robotma.com.
+PNG/ICO images under src/public folder are released under [CC BY-NC-SA](http://creativecommons.org/licenses/by-nc-sa/4.0/), © 2017 CANDY LINE INC.
 
 Other stuff than the files above in this project repository is released under MIT. See [LICENSE](LICENSE) for the license terms and the copyright.
