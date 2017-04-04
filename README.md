@@ -227,7 +227,6 @@ And you'll see the sensor info like this:
     29 Jul 21:52:36 - [info] UI started at /api/ui
     29 Jul 21:52:36 - [warn] ------------------------------------------------------
     29 Jul 21:52:36 - [warn] [rpi-gpio] Info : Ignoring Raspberry Pi specific node
-    29 Jul 21:52:36 - [warn] [ltepi-gps] Info : LTEPiGPS isn't supported on this device
     29 Jul 21:52:36 - [warn] ------------------------------------------------------
     29 Jul 21:52:36 - [info] User directory : /Users/guest/.node-red
     29 Jul 21:52:36 - [info] Flows file     : /Users/guest/.node-red/flows_candy-red.json
