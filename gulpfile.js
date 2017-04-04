@@ -47,7 +47,7 @@ gulp.task('npmLocalInstall', () => {
 });
 
 gulp.task('copyResources', () => {
-  gulp.src('./src/**/*.{css,ico,png,html,json}')
+  gulp.src('./src/**/*.{css,ico,png,html,json,yaml,yml}')
   .pipe(gulp.dest('./dist'));
 });
 
@@ -90,7 +90,7 @@ gulp.task('build', (done) => {
 });
 
 gulp.task('copyTestResources', () => {
-  gulp.src('./tests/**/*.{css,ico,png,html,json}')
+  gulp.src('./tests/**/*.{css,ico,png,html,json,yaml,yml}')
   .pipe(gulp.dest('./dist'));
 });
 
