@@ -422,7 +422,7 @@ describe('DeviceManagerStore', () => {
 
     it('should publish a command when the flow file is modified', done => {
       let promise = sandbox.stub(new Promise());
-      promise.then.onFirstCall().yields(true).returns(promise); // modified = true
+      promise.then.onFirstCall().yields(true).onFirstCall().returns(promise); // modified = true
       promise.then.onSecondCall().yields(); // Promise.all()
       promise.then.onThirdCall().yields(); // publish
       let listenerConfig = sandbox.stub({
