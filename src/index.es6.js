@@ -242,7 +242,6 @@ export class CandyRed {
       this.deviceManagerStore.deviceState.testIfLTEPi2Installed()
     ]).then(results => {
       let candyIotv;
-      let ltepiv;
       let ltepi2v;
       let deviceId;
       if (results[0][0]) {
@@ -252,10 +251,7 @@ export class CandyRed {
         candyIotv = results[0][1];
         this.editorTheme = this._createCandyBoxEditorTheme(deviceId);
       } else if (results[1][1]) {
-        ltepiv = results[1][1];
-        this.editorTheme = this._createCandyRedEditorTheme(deviceId);
-      } else if (results[2][1]) {
-        ltepi2v = results[2][1];
+        ltepi2v = results[1][1];
         this.editorTheme = this._createCandyRedEditorTheme(deviceId);
       } else {
         this.editorTheme = this._createCandyRedEditorTheme(deviceId);
@@ -265,7 +261,6 @@ export class CandyRed {
       };
       deviceId = deviceId || 'N/A';
       candyIotv = candyIotv || 'N/A';
-      ltepiv = ltepiv || 'N/A';
       ltepi2v = ltepi2v || 'N/A';
       return new Promise((resolve, reject) => {
         fs.stat(inputPackageJsonPath, err => {
@@ -280,7 +275,6 @@ export class CandyRed {
             if (err) {
               return resolve({
                 candyIotv: candyIotv,
-                ltepiv: ltepiv,
                 candyRedv: 'N/A'
               });
             }
@@ -288,7 +282,6 @@ export class CandyRed {
             return resolve({
               deviceId: deviceId,
               candyIotv: candyIotv,
-              ltepiv: ltepiv,
               ltepi2v: ltepi2v,
               candyRedv: packageJson.version || 'N/A'
             });
@@ -344,7 +337,6 @@ export class CandyRed {
       deviceManagerStore: this.deviceManagerStore,
       editorTheme: this.editorTheme,
       candyIotVersion: versions.candyIotv,
-      ltepiVersion: versions.ltepiv,
       candyRedVersion: versions.candyRedv,
       deviceId: versions.deviceId
     };
