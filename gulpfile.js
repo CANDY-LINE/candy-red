@@ -94,7 +94,7 @@ gulp.task('copyTestResources', () => {
   .pipe(gulp.dest('./dist'));
 });
 
-gulp.task('buldTests', ['build','copyTestResources'], () => {
+gulp.task('buldTests', ['buildSrcs','copyTestResources'], () => {
   return gulp.src('./tests/**/*.es6.js')
     .pipe(sourcemaps.init())
     .pipe(babel({
@@ -117,8 +117,10 @@ gulp.task('test', ['lint', 'buldTests'], () => {
   ], {read: false})
   .pipe(mocha({
     require: ['source-map-support/register'],
-    reporter: 'nyan'
+    reporter: 'spec'
   }))
+  .once('error', () => process.exit(1))
+  .once('end', () => process.exit())
 });
 
 gulp.task('default', ['build']);
