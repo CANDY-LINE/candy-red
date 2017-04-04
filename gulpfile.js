@@ -7,6 +7,8 @@ const jshint      = require('gulp-jshint');
 const mocha       = require('gulp-mocha');
 const sourcemaps  = require('gulp-sourcemaps');
 const livereload  = require('gulp-livereload');
+const exec        = require('gulp-exec');
+const sequence    = require('run-sequence');
 
 gulp.task('lint', () => {
   return gulp.src([
@@ -14,7 +16,8 @@ gulp.task('lint', () => {
     './src/**/*.es6.js'
   ])
   .pipe(jshint())
-  .pipe(jshint.reporter('jshint-stylish'));
+  .pipe(jshint.reporter('jshint-stylish'))
+  .pipe(jshint.reporter('fail'));
 });
 
 gulp.task('clean', () => {
@@ -37,12 +40,18 @@ gulp.task('clean', () => {
   .pipe(clean({force: true}));
 });
 
+gulp.task('npmLocalInstall', () => {
+  return gulp.src('./dist/nodes/local-*')
+  .pipe(exec('npm install --prod <%= file.path %>'))
+  .pipe(exec.reporter({}));
+});
+
 gulp.task('copyResources', () => {
   gulp.src('./src/**/*.{css,ico,png,html,json}')
   .pipe(gulp.dest('./dist'));
 });
 
-gulp.task('build', ['copyResources'], () => {
+gulp.task('buildSrcs', ['copyResources'], () => {
   return gulp.src('./src/**/*.es6.js')
     .pipe(sourcemaps.init())
     .pipe(babel({
@@ -76,12 +85,16 @@ gulp.task('build', ['copyResources'], () => {
     .pipe(livereload());
 });
 
+gulp.task('build', (done) => {
+  sequence('buildSrcs', 'npmLocalInstall', done);
+});
+
 gulp.task('copyTestResources', () => {
   gulp.src('./tests/**/*.{css,ico,png,html,json}')
   .pipe(gulp.dest('./dist'));
 });
 
-gulp.task('testBuild', ['build','copyTestResources'], () => {
+gulp.task('buldTests', ['build','copyTestResources'], () => {
   return gulp.src('./tests/**/*.es6.js')
     .pipe(sourcemaps.init())
     .pipe(babel({
@@ -98,7 +111,7 @@ gulp.task('watch', ['build'], () => {
   gulp.watch('./src/*.js', ['build']);
 });
 
-gulp.task('test', ['lint', 'testBuild'], () => {
+gulp.task('test', ['lint', 'buldTests'], () => {
   return gulp.src([
     './dist/**/*.test.es6.js',
   ], {read: false})
