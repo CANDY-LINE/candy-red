@@ -2,12 +2,12 @@
 * ?.?.?
   - Migrate to gulp
   - Use credentials property for CANDY EGG account node (with backward compatibilities)
-  - Remove LTEPiGPS (no longer supported)
 
 * 3.0.0
   - Bump up Node-RED version to v0.16.2 (NOTE: Node-RED Node Palette is disabled by default, set NODE_PALETTE_ENABLED=true for enabling the palette UI)
   - Node.js v0.12 is no longer supported
   - Intel Edison is no longer supported
+  - LTEPiGPS is retired
 
 * 2.9.1
   - Add a new switch to enable/disable learning mode on start up for test use (local-node-enocean)
