@@ -98,7 +98,6 @@ gulp.task('buldTests', ['buildSrcs','copyTestResources'], () => {
   return gulp.src('./tests/**/*.es6.js')
     .pipe(sourcemaps.init())
     .pipe(babel({
-      sourceMaps: true,
       presets: ['es2015'],
       plugins: ['add-module-exports']
     }))
