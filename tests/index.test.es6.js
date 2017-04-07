@@ -1,3 +1,5 @@
+'use strict';
+
 import * as sinon from 'sinon';
 import { assert } from 'chai';
 import { spawn } from 'child_process';
@@ -76,7 +78,6 @@ describe('CandyRed', () => {
     it('should not return any undefined values', done => {
       cr._inspectBoardStatus(__dirname + '/../package.json').then(versions => {
         assert.equal('N/A', versions.candyIotv);
-        assert.equal('N/A', versions.ltepiv);
         assert.isDefined(versions.candyRedv);
         done();
       }).catch(err => {

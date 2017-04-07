@@ -273,9 +273,9 @@ export default function(RED) {
   class CANDYEggAccountNode {
     constructor(n) {
       RED.nodes.createNode(this,n);
-      this.accountFqn = n.accountFqn;
-      this.loginUser = n.loginUser;
-      this.loginPassword = n.loginPassword;
+      this.accountFqn = this.credentials ? this.credentials.accountFqn : n.accountFqn;
+      this.loginUser = this.credentials ? this.credentials.loginUser : n.loginUser;
+      this.loginPassword = this.credentials ? this.credentials.loginPassword : n.loginPassword;
       this.secure = n.secure;
       webSocketListeners.reset(n.id);
 
@@ -289,7 +289,13 @@ export default function(RED) {
       }
     }
   }
-  RED.nodes.registerType('CANDY EGG account', CANDYEggAccountNode);
+  RED.nodes.registerType('CANDY EGG account', CANDYEggAccountNode, {
+    credentials: {
+      accountFqn: {type: 'text'},
+      loginUser: {type: 'text'},
+      loginPassword: {type: 'password'},
+    }
+  });
 
   class WebSocketInNode {
     constructor(n) {

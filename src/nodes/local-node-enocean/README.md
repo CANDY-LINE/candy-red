@@ -7,13 +7,6 @@ The supported EEPs are described in the help text (appears on `info` tab on the 
 
 # Prior to building
 
-Install the following CLI tools globally.
-
-```
-$ npm install -g grunt-cli babel mocha jshint
-```
-
-Then, try this.
 ```
 $ npm install
 ```
@@ -21,12 +14,12 @@ $ npm install
 # Build
 
 ```
-$ grunt build
+$ npm run build
 ```
 will generate ES5 js files.
 
 # Copyright and License
 
-PNG images under icon folder are released under [CC BY-NC-SA](http://creativecommons.org/licenses/by-nc-sa/4.0/), copyright 2016 Robotma.com.
+PNG images under icon folder are released under [CC BY-NC-SA](http://creativecommons.org/licenses/by-nc-sa/4.0/), © 2017 CANDY LINE INC.
 
 The project is released under MIT License. See LICENSE for detail.

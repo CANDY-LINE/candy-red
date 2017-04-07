@@ -23,6 +23,20 @@ let learnedIDs = null;
 
 export default function(RED) {
 
+  class EnOceanPortNode {
+    constructor(n) {
+      RED.nodes.createNode(this, n);
+      try {
+        this.serialPort = n.serialPort;
+        EnOceanPortNode.pool.add(this);
+      } catch (e) {
+        RED.log.warn(RED._('enocean.errors.serialPortError', { error: e }));
+      }
+    }
+  }
+  EnOceanPortNode.pool = new SerialPool(RED);
+  RED.nodes.registerType('EnOcean Port', EnOceanPortNode);
+
   function createIDfilePath() {
     return path.join(RED.settings.userDir, 'enocean-ids.json');
   }
@@ -114,20 +128,6 @@ export default function(RED) {
       node.emit('learned');
     }
   }
-
-  class EnOceanPortNode {
-    constructor(n) {
-      RED.nodes.createNode(this, n);
-      try {
-        this.serialPort = n.serialPort;
-        EnOceanPortNode.pool.add(this);
-      } catch (e) {
-        RED.log.warn(RED._('enocean.errors.serialPortError', { error: e }));
-      }
-    }
-  }
-  EnOceanPortNode.pool = new SerialPool(RED);
-  RED.nodes.registerType('EnOcean Port', EnOceanPortNode);
 
   class EnOceanInNode {
     constructor(n) {
