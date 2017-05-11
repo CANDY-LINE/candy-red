@@ -1,4 +1,7 @@
 ## Revision History
+* ?.?.?
+  - Set NODE_PALETTE_ENABLED=true by default
+
 * 3.1.0
   - Migrate to gulp
   - Use credentials property for CANDY EGG account node (with backward compatibilities)

@@ -4,7 +4,7 @@
   "description": "CANDY RED Device Gateway Service powered by Node-RED",
   "main": "./dist/index.js",
   "scripts": {
-    "start": "node ./dist/index.js",
+    "start": "NODE_PALETTE_ENABLED=true node ./dist/index.js",
     "build": "gulp build",
     "clean": "gulp clean",
     "test": "gulp test",

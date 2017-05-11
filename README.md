@@ -201,13 +201,13 @@ Try the following commands after `npm run build`:
 (Prepends `sudo` for Raspbian)
 
 ```
-$ node ./dist/index.js
+$ npm run start
 ```
 
 With a remote welcome flow file:
 
 ```
-$ WELCOME_FLOW_URL=https://git.io/vKx5r node ./dist/index.js
+$ WELCOME_FLOW_URL=https://git.io/vKx5r npm run start
 ```
 
 And you'll see the sensor info like this:
@@ -263,7 +263,7 @@ $ time sudo npm install -g --unsafe-perm ./candy-red-3.1.0.tgz
 (host)  $ vagrant ssh
 (varant)$ cd /vagrant
 (varant)$ npm install
-(varant)$ node dist/index.js
+(varant)$ npm run start
 ```
 
 ### Local Installation Test

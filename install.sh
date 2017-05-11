@@ -3,6 +3,7 @@
 SERVICE_NAME="candy-red"
 # 1 for disabling service installation & uninstallation, 0 for enabling them (default)
 DISABLE_SERVICE_INSTALL=${DISABLE_SERVICE_INSTALL:-0}
+NODE_PALETTE_ENABLED=${NODE_PALETTE_ENABLED:-true}
 
 function err {
   echo -e "\033[91m[ERROR] $1\033[0m"
