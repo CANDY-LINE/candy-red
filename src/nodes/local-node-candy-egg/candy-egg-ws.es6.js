@@ -173,25 +173,38 @@ export default function(RED) {
       }
     }
 
+    _deserialize(data) {
+      return JSON.parse(data, (k, v) => {
+        if (v && typeof(v) === 'object' && Array.isArray(v.data) && v.type === 'Buffer') {
+          return Buffer.from(v.data);
+        }
+        return v;
+      });
+    }
+
     handleEvent(id,/*socket*/socket,/*String*/event,/*Object*/data,/*Object*/flags) {
       let msg, wholemsg, obj;
       try {
-        wholemsg = JSON.parse(data);
-        obj = JSON.parse(data);
-      }
-      catch(err) {
-        wholemsg = { payload:data };
+        obj = this._deserialize(data);
+      } catch(err) {
         obj = data;
       }
       msg = {
         payload: obj,
         _session: {type:'candy-egg-ws',id:id}
       };
-      if (typeof(wholemsg) === 'object') {
-        wholemsg._session = msg._session;
-      }
       for (let i = 0; i < this._inputNodes.length; i++) {
         if (this._inputNodes[i].wholemsg) {
+          if (!wholemsg) {
+            try {
+              wholemsg = this._deserialize(data);
+            } catch(err) {
+              wholemsg = { payload:data };
+            }
+            if (typeof(wholemsg) === 'object') {
+              wholemsg._session = msg._session;
+            }
+          }
           this._inputNodes[i].send(wholemsg);
         } else {
           this._inputNodes[i].send(msg);
