@@ -14,8 +14,13 @@ function info {
 }
 
 function download_and_npm_install {
-  info "Performing npm install ${SERVICE_NAME}..."
-  npm install -g --unsafe-perm ${SERVICE_NAME}
+  if [ -z "${TARBALL}" ]; then
+    info "Performing npm install ${SERVICE_NAME}..."
+    npm install -g --unsafe-perm ${SERVICE_NAME}
+  else
+    info "Performing npm install ${TARBALL}..."
+    npm install -g --unsafe-perm ${TARBALL}
+  fi
 }
 
 function setup {
