@@ -32,6 +32,7 @@ gulp.task('clean', () => {
     './tests/**/*.js',
     '!./tests/**/*.es6.js',
     './*.tgz',
+    '!node_modules/**/*',
     './node_modules/local-node-*',
     './services/environment',
     './services/start_systemd.sh',
