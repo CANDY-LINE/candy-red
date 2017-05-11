@@ -52,10 +52,12 @@
     "gulp-mocha": "^4.3.0",
     "gulp-rename": "^1.2.2",
     "gulp-sourcemaps": "^2.5.1",
+    "gulp-symlink": "^2.1.4",
     "gulp-uglify": "^2.1.2",
     "jshint": "^2.9.1",
     "jshint-stylish": "^2.0.1",
     "mocha": "^3.0.2",
+    "rmdir": "^1.2.0",
     "run-sequence": "^1.2.2",
     "sinon": "^2.1.0"
   },

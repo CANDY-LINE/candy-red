@@ -9,6 +9,10 @@ const sourcemaps  = require('gulp-sourcemaps');
 const livereload  = require('gulp-livereload');
 const exec        = require('gulp-exec');
 const sequence    = require('run-sequence');
+const symlink     = require('gulp-symlink');
+const fs          = require('fs');
+const path        = require('path');
+const rmdir       = require('rmdir');
 
 gulp.task('lint', () => {
   return gulp.src([
@@ -40,10 +44,23 @@ gulp.task('clean', () => {
   .pipe(clean({force: true}));
 });
 
-gulp.task('npmLocalInstall', () => {
-  return gulp.src('./dist/nodes/local-*')
-  .pipe(exec('npm install --prod <%= file.path %>'))
-  .pipe(exec.reporter({}));
+gulp.task('nodes', () => {
+  return Promise.all(fs.readdirSync('node_modules/')
+  .filter(f => f.indexOf('local-node-') === 0)
+  .filter(f => fs.statSync(`node_modules/${f}`).isDirectory())
+  .map(f => {
+    return new Promise((resolve, reject) => rmdir(`node_modules/${f}`, (err) => {
+      if (err) {
+        return reject(err);
+      }
+      return resolve();
+    }))
+  })).then(() => {
+    return gulp.src('./dist/nodes/local-*')
+    .pipe(symlink((f) => {
+      return path.join(`node_modules/${f.relative}`);
+    }));
+  });
 });
 
 gulp.task('copyResources', () => {
@@ -86,7 +103,7 @@ gulp.task('buildSrcs', ['copyResources'], () => {
 });
 
 gulp.task('build', (done) => {
-  sequence('buildSrcs', 'npmLocalInstall', done);
+  sequence('buildSrcs', 'nodes', done);
 });
 
 gulp.task('copyTestResources', () => {
