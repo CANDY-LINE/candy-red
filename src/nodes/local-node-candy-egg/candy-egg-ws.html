@@ -209,7 +209,7 @@
         originator: {value:''}
       },
       credentials: {
-        accountFqn: {type: 'text', validate:RED.validators.regex(/^[0-9a-zA-Z]+@(([0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3})|(([a-zA-Z\-0-9]+\.)*[a-zA-Z]{2,}))($|:[0-9]+$)/), required:true},
+        accountFqn: {type: 'text', validate:RED.validators.regex(/^[a-zA-Z\-0-9]+@(([0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3})|(([a-zA-Z\-0-9]+\.)*[a-zA-Z]{2,}))($|:[0-9]+$)/), required:true},
         loginUser: {type: 'text', required:true},
         loginPassword: {type: 'password', required:true},
       },
