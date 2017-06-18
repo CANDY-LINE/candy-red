@@ -10,11 +10,11 @@ CANDY RED is a gateway service working between local area wireless network devic
 ## Features
 
 * Include Node-RED flow editor/flow execution runtime
-* BLE and EnOcean nodes (which will be published to npm in the future release)
-* Dedicated nodes for CANDY EGG cloud services offering you to connect your server side flows with ease\*
-* Flow file syncing (both to be delivered and to upload to the cloud)\*
+* Running as a systemd service
+* Preinstalled EnOcean node
+* Preinstalled helper nodes for CANDY EGG cloud service \*
 
-_\* CANDY EGG cloud services are required_
+_\* CANDY EGG cloud service account is required_
 
 ## OS and Hardwares
 
@@ -105,7 +105,7 @@ Since RPi hostname is `raspberrypi` by default, you will get confused when you h
 You can change the host name by either `sudo raspi-config` or modifying `/etc/hosts`. Regarding the latter method, here is a brief instruction.
 
 ```
-$ export NEW_NAME="my-ltepi" # Modify my-ltepi as you like
+$ export NEW_NAME="my-candy-pi" # Modify my-candy-pi as you like
 $ sudo sed -i -e "s/raspberrypi/${NEW_NAME//\//\\/}/g" /etc/hosts
 $ sudo sed -i -e "s/raspberrypi/${NEW_NAME//\//\\/}/g" /etc/hostname
 $ sudo /etc/init.d/hostname.sh && sudo reboot
