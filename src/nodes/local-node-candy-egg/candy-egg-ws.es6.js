@@ -42,9 +42,9 @@ export default function(RED) {
     startconn(url) {  // Connect to remote endpoint
       let conf = this.accountConfig;
       let prefix = 'ws' + (conf.secure ? 's' : '') + '://';
-      prefix += conf.loginUser + ':' + conf.loginPassword + '@';
+      prefix += encodeURIComponent(conf.loginUser) + ':' + encodeURIComponent(conf.loginPassword) + '@';
       let accountId = conf.accountFqn.split('@');
-      prefix += accountId[1];
+      prefix += encodeURIComponent(accountId[1]);
       let path = this.path;
       if (url) {
         let urlobj = urllib.parse(url);
@@ -55,7 +55,7 @@ export default function(RED) {
           path = null;
         }
       } else {
-        prefix += '/' + accountId[0] + '/api';
+        prefix += '/' + encodeURIComponent(accountId[0]) + '/api';
       }
 
       if (path && path.length > 0 && path.charAt(0) !== '/') {
