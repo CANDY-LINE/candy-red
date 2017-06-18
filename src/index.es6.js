@@ -15,7 +15,7 @@ import { DeviceManagerStore } from './device-manager';
 const PORT = process.env.PORT || 8100;
 const DEFAULT_PACKAGE_JSON = __dirname + '/../package.json';
 const DEFAULT_WELCOME_FLOW = __dirname + '/welcome-flow.json';
-const NODE_PALETTE_ENABLED = process.env.NODE_PALETTE_ENABLED || false;
+const NODE_PALETTE_ENABLED = process.env.NODE_PALETTE_ENABLED ? process.env.NODE_PALETTE_ENABLED === 'true' : false;
 
 export class CandyRed {
   constructor(packageJsonPath) {

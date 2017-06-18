@@ -36,147 +36,6 @@
   </div>
 </script>
 
-<script type='text/javascript'>
-
-(function() {
-
-  function resolveApiPath(accountId, path) {
-    var root = RED.settings.httpNodeRoot;
-    if (root.indexOf(accountId) < 0) {
-      root = '/' + accountId + root;
-    }
-    if (path) {
-      if (root.slice(-1) != "/") {
-        root = root+"/";
-      }
-      if (path.charAt(0) == "/") {
-        root += path.slice(1);
-      } else {
-        root += path;
-      }
-    }
-    return root;
-  }
-
-  function trasnlateIntoFqn(text) {
-    text = text.trim();
-    var i = -1;
-    if (text.indexOf('https://') === 0) {
-      i = 'https://'.length;
-    }
-    if (text.indexOf('http://') === 0) {
-      i = 'http://'.length;
-    }
-    if (i >= 0) {
-      var e = text.indexOf('/', i);
-      if (e < 0) {
-        return text;
-      }
-      var f = text.indexOf('/', e + 1);
-      if (f < 0) {
-        f = text.length;
-      }
-      var hostAndPort = text.substring(i, e);
-      var account = text.substring(e + 1, f);
-      if (account && hostAndPort) {
-        text = account + '@' + hostAndPort;
-      }
-    }
-    return text;
-  }
-
-  RED.nodes.registerType('CANDY EGG websocket in',{
-    category: 'input',
-    defaults: {
-      name: {value:''},
-      account: {type: 'CANDY EGG account', required: true},
-      path: {value:'',required:true,validate:RED.validators.regex(/^((?!candy-(api|ws)).)*$/) },
-      wholemsg: {value:'false'}
-    },
-    color:'rgb(128, 219, 255)',
-    inputs:0,
-    outputs:1,
-    icon: 'candy-egg.png',
-    labelStyle: function() {
-      return this.name?'node_label_italic':'';
-    },
-    label: function() {
-      var accountNode = RED.nodes.node(this.account);
-      return this.name||(accountNode ? '[ws] ' + resolveApiPath(accountNode.label(), this.path) :
-        this._('candy-egg-ws.label.category-IN'));
-    }
-  });
-
-  RED.nodes.registerType('CANDY EGG websocket out',{
-    category: 'output',
-    defaults: {
-      name: {value:''},
-      account: {type: 'CANDY EGG account', required: true},
-      path: {value:'',required:true,validate:RED.validators.regex(/^((?!candy-(api|ws)).)*$/) },
-      wholemsg: {value:'false'}
-    },
-    color:'rgb(128, 219, 255)',
-    inputs:1,
-    outputs:0,
-    icon: 'candy-egg.png',
-    align: 'right',
-    labelStyle: function() {
-      return this.name?'node_label_italic':'';
-    },
-    label: function() {
-      var accountNode = RED.nodes.node(this.account);
-      return this.name||(accountNode ? '[ws] ' + resolveApiPath(accountNode.label(), this.path) :
-        this._('candy-egg-ws.label.category-OUT'));
-    }
-  });
-
-  RED.nodes.registerType('CANDY EGG account',{
-    category: 'config',
-    defaults: {
-      secure: {value:true},
-      managed: {value:false},
-      lastDeliveredAt: {value:''},
-      revision: {value:''},
-      originator: {value:''}
-    },
-    credentials: {
-      accountFqn: {type: 'text', validate:RED.validators.regex(/^[0-9a-zA-Z]+@(([0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3})|(([a-zA-Z\-0-9]+\.)*[a-zA-Z]{2,}))($|:[0-9]+$)/), required:true},
-      loginUser: {type: 'text', required:true},
-      loginPassword: {type: 'password', required:true},
-    },
-    inputs:0,
-    outputs:0,
-    label: function() {
-      return this.accountFqn ? this.accountFqn.split('@')[0] : this._('candy-egg-ws.label.category-acc');
-    },
-    oneditprepare: function() {
-      if (RED.settings.version.indexOf('[candy-red v') >= 0) {
-        $('.form-row-managed').show();
-        if (this.managed) {
-          $('.form-row-device-managed').show();
-          if (this.lastDeliveredAt) {
-            $('#node-config-input-last-delivered').val(new Date(this.lastDeliveredAt).toString());
-          }
-        } else {
-          $('.form-row-device-managed').hide();
-        }
-      } else {
-        $('.form-row-managed').hide();
-      }
-      $('#node-config-input-accountFqn').blur(function() {
-        var text = $(this).val();
-        if (text && typeof(text) === 'string') {
-          $(this).val(trasnlateIntoFqn(text));
-        } else {
-          $(this).val('');
-        }
-      });
-    }
-  });
-
-})();
-</script>
-
 <!-- WebSocket out Node -->
 <script type='text/x-red' data-template-name='CANDY EGG websocket out'>
   <div class='form-row' id='candy-egg-ws-account-row'>
@@ -199,7 +58,6 @@
     <input type='text' id='node-input-name' data-i18n='[placeholder]node-red:common.label.name'>
   </div>
 </script>
-
 
 <!-- CANDY EGG account configuration node -->
 <script type='text/x-red' data-template-name='CANDY EGG account'>
@@ -240,15 +98,162 @@
     <label for='node-config-input-originator' style='width: 100px'><i class='fa  fa-upload'></i> <span data-i18n='candy-egg-ws.label.originator'></span></label>
     <input type='text' id='node-config-input-originator' disabled>
   </div>
+  <div class='form-row'>
+    <label for='node-config-input-name'><i class='fa fa-tag'></i> <span data-i18n='node-red:common.label.name'></span></label>
+    <input type='text' id='node-config-input-name' data-i18n='[placeholder]node-red:common.label.name'>
+  </div>
 </script>
 
 <script>
-  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-  })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+  (function() {
 
-  ga('create', 'UA-88353523-2', 'auto');
-  ga('send', 'pageview');
+    function resolveApiPath(accountId, path) {
+      var root = RED.settings.httpNodeRoot;
+      if (root.indexOf(accountId) < 0) {
+        root = '/' + accountId + root;
+      }
+      if (path) {
+        if (root.slice(-1) != "/") {
+          root = root+"/";
+        }
+        if (path.charAt(0) == "/") {
+          root += path.slice(1);
+        } else {
+          root += path;
+        }
+      }
+      return root;
+    }
 
+    function trasnlateIntoFqn(text) {
+      text = text.trim();
+      var i = -1;
+      if (text.indexOf('https://') === 0) {
+        i = 'https://'.length;
+      }
+      if (text.indexOf('http://') === 0) {
+        i = 'http://'.length;
+      }
+      if (i >= 0) {
+        var e = text.indexOf('/', i);
+        if (e < 0) {
+          return text;
+        }
+        var f = text.indexOf('/', e + 1);
+        if (f < 0) {
+          f = text.length;
+        }
+        var hostAndPort = text.substring(i, e);
+        var account = text.substring(e + 1, f);
+        if (account && hostAndPort) {
+          text = account + '@' + hostAndPort;
+        }
+      }
+      return text;
+    }
+
+    RED.nodes.registerType('CANDY EGG websocket in',{
+      category: 'input',
+      defaults: {
+        name: {value:''},
+        account: {type: 'CANDY EGG account', required: true},
+        path: {value:'',required:true,validate:RED.validators.regex(/^((?!candy-(api|ws)).)*$/) },
+        wholemsg: {value:'false'}
+      },
+      color:'rgb(128, 219, 255)',
+      inputs:0,
+      outputs:1,
+      icon: 'candy-egg.png',
+      labelStyle: function() {
+        return this.name?'node_label_italic':'';
+      },
+      label: function() {
+        var accountNode = RED.nodes.node(this.account);
+        return this.name||(accountNode && accountNode.accountId ? '[ws] ' + resolveApiPath(accountNode.accountId, this.path) :
+          this._('candy-egg-ws.label.category-IN'));
+      }
+    });
+
+    RED.nodes.registerType('CANDY EGG websocket out',{
+      category: 'output',
+      defaults: {
+        name: {value:''},
+        account: {type: 'CANDY EGG account', required: true},
+        path: {value:'',required:true,validate:RED.validators.regex(/^((?!candy-(api|ws)).)*$/) },
+        wholemsg: {value:'false'}
+      },
+      color:'rgb(128, 219, 255)',
+      inputs:1,
+      outputs:0,
+      icon: 'candy-egg.png',
+      align: 'right',
+      labelStyle: function() {
+        return this.name?'node_label_italic':'';
+      },
+      label: function() {
+        var accountNode = RED.nodes.node(this.account);
+        return this.name||(accountNode && accountNode.accountId ? '[ws] ' + resolveApiPath(accountNode.accountId, this.path) :
+          this._('candy-egg-ws.label.category-OUT'));
+      }
+    });
+
+    RED.nodes.registerType('CANDY EGG account',{
+      category: 'config',
+      defaults: {
+        name: {value:''},
+        accountId: {value:''},
+        secure: {value:true},
+        managed: {value:false},
+        lastDeliveredAt: {value:''},
+        revision: {value:''},
+        originator: {value:''}
+      },
+      credentials: {
+        accountFqn: {type: 'text', validate:RED.validators.regex(/^[a-zA-Z\-0-9]+@(([0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3})|(([a-zA-Z\-0-9]+\.)*[a-zA-Z]{2,}))($|:[0-9]+$)/), required:true},
+        loginUser: {type: 'text', required:true},
+        loginPassword: {type: 'password', required:true},
+      },
+      inputs:0,
+      outputs:0,
+      label: function() {
+        return this.name || this.accountId || this._('candy-egg-ws.label.category-acc');
+      },
+      oneditsave: function() {
+        this.accountId = this.credentials.accountFqn ? this.credentials.accountFqn.split('@')[0] : '';
+      },
+      oneditprepare: function() {
+        if (false && RED.settings.version.indexOf('[candy-red v') >= 0) {
+          $('.form-row-managed').show();
+          if (this.managed) {
+            $('.form-row-device-managed').show();
+            if (this.lastDeliveredAt) {
+              $('#node-config-input-last-delivered').val(new Date(this.lastDeliveredAt).toString());
+            }
+          } else {
+            $('.form-row-device-managed').hide();
+          }
+        } else {
+          $('.form-row-managed').hide();
+        }
+        $('#node-config-input-accountFqn').blur(function() {
+          var text = $(this).val();
+          if (text && typeof(text) === 'string') {
+            $(this).val(trasnlateIntoFqn(text));
+          } else {
+            $(this).val('');
+          }
+        });
+      }
+    });
+
+  })();
+  if (RED.settings.version.indexOf('[candy-red v') < 0) {
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+    ga('create', 'UA-88353523-2', 'auto');
+    ga('send', 'pageview');
+  }
 </script>
