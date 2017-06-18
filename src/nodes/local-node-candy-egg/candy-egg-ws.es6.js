@@ -36,10 +36,14 @@ export default function(RED) {
       this.options = options || {};
       this.redirect = 0;
       this.authRetry = 0;
+      this.connected = false;
       this.startconn(); // start outbound connection
     }
 
     startconn(url) {  // Connect to remote endpoint
+      if (this.connected) {
+        return;
+      }
       let conf = this.accountConfig;
       let prefix = 'ws' + (conf.secure ? 's' : '') + '://';
       prefix += encodeURIComponent(conf.loginUser) + ':' + encodeURIComponent(conf.loginPassword) + '@';
@@ -75,12 +79,14 @@ export default function(RED) {
     handleConnection(/*socket*/socket) {
       let id = (1+Math.random()*4294967295).toString(16);
       socket.on('open', () => {
+        this.connected = true;
         this.emit2all('opened');
         this.redirect = 0;
         this.authRetry = 0;
         socket.skipCloseEventHandler = false;
       });
       socket.on('close', () => {
+        this.connected = false;
         if (socket.skipCloseEventHandler) {
           return;
         }
