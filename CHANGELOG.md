@@ -1,8 +1,11 @@
 ## Revision History
-* ?.?.?
+* 4.0.0
   - Set NODE_PALETTE_ENABLED=true by default
+  - Repo transferred to CANDY-LINE
+  - Fix an issue where ws complained of the credentials containing unescaped special characters like '%'
+  - Allow hyphen as CANDY EGG account id
 
-* 3.1.0
+* 4.0.0
   - Migrate to gulp
   - Use credentials property for CANDY EGG account node (with backward compatibilities)
 
