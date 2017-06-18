@@ -38,6 +38,9 @@ function setup {
     info "Ready for installation!"
     exit 0
   fi
+  rm -fr ${PROJECT_ROOT}/node_modules/node-red/red/api/locales/ja
+  rm -fr ${PROJECT_ROOT}/node_modules/node-red/red/runtime/locales/ja
+  rm -fr ${PROJECT_ROOT}/node_modules/node-red/nodes/core/locales/ja
 }
 
 function cpf {
