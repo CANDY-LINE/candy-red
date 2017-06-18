@@ -1,9 +1,9 @@
 CANDY RED
 ===
 
-[![GitHub release](https://img.shields.io/github/release/dbaba/candy-red.svg)](https://github.com/dbaba/candy-red/releases/latest)
-[![master Build Status](https://travis-ci.org/dbaba/candy-red.svg?branch=master)](https://travis-ci.org/dbaba/candy-red/)
-[![License MIT](https://img.shields.io/github/license/dbaba/candy-red.svg)](http://opensource.org/licenses/MIT)
+[![GitHub release](https://img.shields.io/github/release/CANDY-LINE/candy-red.svg)](https://github.com/CANDY-LINE/candy-red/releases/latest)
+[![master Build Status](https://travis-ci.org/CANDY-LINE/candy-red.svg?branch=master)](https://travis-ci.org/CANDY-LINE/candy-red/)
+[![License MIT](https://img.shields.io/github/license/CANDY-LINE/candy-red.svg)](http://opensource.org/licenses/MIT)
 
 CANDY RED is a gateway service working between local area wireless network devices and internet servers.
 
@@ -26,7 +26,7 @@ _\* CANDY EGG cloud service account is required_
 
 This is the default screen theme.
 
-![CANDY RED Screenshot](https://raw.githubusercontent.com/dbaba/candy-red/master/images/screenshot-candy-red.png "CANDY RED Screenshot")
+![CANDY RED Screenshot](https://raw.githubusercontent.com/CANDY-LINE/candy-red/master/images/screenshot-candy-red.png "CANDY RED Screenshot")
 
 # Raspberry Pi + Raspbian
 
@@ -172,7 +172,7 @@ Note that the downloaded flow file will be discarded if it is not a valid JSON d
 Install the local dependencies.
 
 ```
-$ git clone https://github.com/dbaba/candy-red.git
+$ git clone https://github.com/CANDY-LINE/candy-red.git
 $ cd candy-red
 $ DEVEL=true npm install
 ```

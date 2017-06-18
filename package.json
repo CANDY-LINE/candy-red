@@ -16,7 +16,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://dbaba@github.com/dbaba/candy-red.git"
+    "url": "https://github.com/CANDY-LINE/candy-red.git"
   },
   "keywords": [
     "rpi",
@@ -28,9 +28,9 @@
   "author": "Daisuke Baba",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/dbaba/candy-red/issues"
+    "url": "https://github.com/CANDY-LINE/candy-red/issues"
   },
-  "homepage": "https://github.com/dbaba/candy-red#readme",
+  "homepage": "https://github.com/CANDY-LINE/candy-red#readme",
   "preferGlobal": true,
   "os": [
     "!win32"
