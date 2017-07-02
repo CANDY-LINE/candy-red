@@ -71,7 +71,7 @@
     "mustache": "^2.2.1",
     "nan": "^2.4.0",
     "node-enocean": "^1.8.0",
-    "node-red": "^0.17.0",
+    "node-red": "^0.17.1",
     "node-red-contrib-asakusa_giken": ">=3.0.0",
     "node-red-contrib-cache": ">=1.0.0",
     "node-red-contrib-device-stats": ">=1.0.2",
