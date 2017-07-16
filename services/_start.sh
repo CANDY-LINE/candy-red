@@ -11,7 +11,7 @@ HCIDEVICE="${HCIDEVICE:-hci0}"
 RET=`which hciconfig`
 RET=$?
 if [ "${RET}" == "0" ]; then
-  hciconfig ${HCIDEVICE} up
+  hciconfig ${HCIDEVICE} reset
 fi
 
 mkdir -p /opt/candy-red
