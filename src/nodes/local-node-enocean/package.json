@@ -2,6 +2,7 @@
   "name": "local-node-enocean",
   "version": "1.0.0",
   "description": "Node-RED nodes for EnOcean Devices",
+  "license": "Apache-2.0",
   "private": "true",
   "dependencies": {
   },
