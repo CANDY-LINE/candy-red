@@ -126,6 +126,19 @@ function npm_local_install {
   fi
 }
 
+function install_preinstalled_nodes {
+  NODES_CSV_PATH="${NODES_CSV_PATH:-${PROJECT_ROOT}/default-nodes.csv}"
+  if [ -f "${NODES_CSV_PATH}" ]; then
+    info "Installing default nodes..."
+    cat ${NODES_CSV_PATH} | tr -d '\r' | \
+      while IFS=',' read p v; do
+        p=`echo -e ${p} | tr -d ' '`
+        v=`echo -e ${v} | tr -d ' '`
+        npm install ${p}@${v}
+      done
+  fi
+}
+
 function system_service_install {
   if [ "${DISABLE_SERVICE_INSTALL}" == "1" ]; then
     info "Skip to setup a SystemD service (DISABLE_SERVICE_INSTALL is 1)"
@@ -174,6 +187,7 @@ cd_module_root
 setup $1
 resolve_version
 test_system_service
+install_preinstalled_nodes
 if [ -n "${SYSTEM_SERVICE_TYPE}" ]; then
   DISABLE_SERVICE_INSTALL=${DISABLE_SERVICE_INSTALL} ${PROJECT_ROOT}/uninstall.sh
   npm_local_install

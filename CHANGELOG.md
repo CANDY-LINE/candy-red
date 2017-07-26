@@ -1,4 +1,9 @@
 ## Revision History
+* 5.0.0
+  - Migrate to Apache Software License 2.0 as of this version
+  - Add a feature to allow users to install additional node packages on installing CANDY RED
+    * Set `NODES_CSV_PATH` pointing to the path to node package list CSV file
+
 * 4.0.0
   - Set NODE_PALETTE_ENABLED=true by default
   - Repo transferred to CANDY-LINE
