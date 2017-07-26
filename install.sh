@@ -3,6 +3,7 @@
 SERVICE_NAME="candy-red"
 # 1 for disabling service installation & uninstallation, 0 for enabling them (default)
 DISABLE_SERVICE_INSTALL=${DISABLE_SERVICE_INSTALL:-0}
+NODE_PALETTE_ENABLED=${NODE_PALETTE_ENABLED:-true}
 
 function err {
   echo -e "\033[91m[ERROR] $1\033[0m"
@@ -13,8 +14,13 @@ function info {
 }
 
 function download_and_npm_install {
-  info "Performing npm install ${SERVICE_NAME}..."
-  npm install -g --unsafe-perm ${SERVICE_NAME}
+  if [ -z "${TARBALL}" ]; then
+    info "Performing npm install ${SERVICE_NAME}..."
+    npm install -g --unsafe-perm ${SERVICE_NAME}
+  else
+    info "Performing npm install ${TARBALL}..."
+    npm install -g --unsafe-perm ${TARBALL}
+  fi
 }
 
 function setup {
@@ -32,6 +38,9 @@ function setup {
     info "Ready for installation!"
     exit 0
   fi
+  rm -fr ${PROJECT_ROOT}/node_modules/node-red/red/api/locales/ja
+  rm -fr ${PROJECT_ROOT}/node_modules/node-red/red/runtime/locales/ja
+  rm -fr ${PROJECT_ROOT}/node_modules/node-red/nodes/core/locales/ja
 }
 
 function cpf {

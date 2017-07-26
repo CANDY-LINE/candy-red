@@ -36,15 +36,19 @@ export default function(RED) {
       this.options = options || {};
       this.redirect = 0;
       this.authRetry = 0;
+      this.connected = false;
       this.startconn(); // start outbound connection
     }
 
     startconn(url) {  // Connect to remote endpoint
+      if (this.connected) {
+        return;
+      }
       let conf = this.accountConfig;
       let prefix = 'ws' + (conf.secure ? 's' : '') + '://';
-      prefix += conf.loginUser + ':' + conf.loginPassword + '@';
+      prefix += encodeURIComponent(conf.loginUser) + ':' + encodeURIComponent(conf.loginPassword) + '@';
       let accountId = conf.accountFqn.split('@');
-      prefix += accountId[1];
+      prefix += encodeURIComponent(accountId[1]);
       let path = this.path;
       if (url) {
         let urlobj = urllib.parse(url);
@@ -55,7 +59,7 @@ export default function(RED) {
           path = null;
         }
       } else {
-        prefix += '/' + accountId[0] + '/api';
+        prefix += '/' + encodeURIComponent(accountId[0]) + '/api';
       }
 
       if (path && path.length > 0 && path.charAt(0) !== '/') {
@@ -75,12 +79,14 @@ export default function(RED) {
     handleConnection(/*socket*/socket) {
       let id = (1+Math.random()*4294967295).toString(16);
       socket.on('open', () => {
+        this.connected = true;
         this.emit2all('opened');
         this.redirect = 0;
         this.authRetry = 0;
         socket.skipCloseEventHandler = false;
       });
       socket.on('close', () => {
+        this.connected = false;
         if (socket.skipCloseEventHandler) {
           return;
         }
@@ -173,25 +179,38 @@ export default function(RED) {
       }
     }
 
+    _deserialize(data) {
+      return JSON.parse(data, (k, v) => {
+        if (v && typeof(v) === 'object' && Array.isArray(v.data) && v.type === 'Buffer') {
+          return Buffer.from(v.data);
+        }
+        return v;
+      });
+    }
+
     handleEvent(id,/*socket*/socket,/*String*/event,/*Object*/data,/*Object*/flags) {
       let msg, wholemsg, obj;
       try {
-        wholemsg = JSON.parse(data);
-        obj = JSON.parse(data);
-      }
-      catch(err) {
-        wholemsg = { payload:data };
+        obj = this._deserialize(data);
+      } catch(err) {
         obj = data;
       }
       msg = {
         payload: obj,
         _session: {type:'candy-egg-ws',id:id}
       };
-      if (typeof(wholemsg) === 'object') {
-        wholemsg._session = msg._session;
-      }
       for (let i = 0; i < this._inputNodes.length; i++) {
         if (this._inputNodes[i].wholemsg) {
+          if (!wholemsg) {
+            try {
+              wholemsg = this._deserialize(data);
+            } catch(err) {
+              wholemsg = { payload:data };
+            }
+            if (typeof(wholemsg) === 'object') {
+              wholemsg._session = msg._session;
+            }
+          }
           this._inputNodes[i].send(wholemsg);
         } else {
           this._inputNodes[i].send(msg);

@@ -1,10 +1,10 @@
 {
   "name": "candy-red",
-  "version": "3.1.0",
+  "version": "4.0.0",
   "description": "CANDY RED Device Gateway Service powered by Node-RED",
   "main": "./dist/index.js",
   "scripts": {
-    "start": "node ./dist/index.js",
+    "start": "NODE_PALETTE_ENABLED=true node ./dist/index.js",
     "build": "gulp build",
     "clean": "gulp clean",
     "test": "gulp test",
@@ -16,7 +16,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://dbaba@github.com/dbaba/candy-red.git"
+    "url": "https://github.com/CANDY-LINE/candy-red.git"
   },
   "keywords": [
     "rpi",
@@ -28,9 +28,9 @@
   "author": "Daisuke Baba",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/dbaba/candy-red/issues"
+    "url": "https://github.com/CANDY-LINE/candy-red/issues"
   },
-  "homepage": "https://github.com/dbaba/candy-red#readme",
+  "homepage": "https://github.com/CANDY-LINE/candy-red#readme",
   "preferGlobal": true,
   "os": [
     "!win32"
@@ -52,10 +52,12 @@
     "gulp-mocha": "^4.3.0",
     "gulp-rename": "^1.2.2",
     "gulp-sourcemaps": "^2.5.1",
+    "gulp-symlink": "^2.1.4",
     "gulp-uglify": "^3.0.0",
     "jshint": "^2.9.1",
     "jshint-stylish": "^2.0.1",
     "mocha": "^3.0.2",
+    "rmdir": "^1.2.0",
     "run-sequence": "^1.2.2",
     "sinon": "^2.1.0"
   },
@@ -68,14 +70,14 @@
     "mkdirp": "^0.5.1",
     "mustache": "^2.2.1",
     "nan": "^2.4.0",
-    "node-enocean": "^1.8.0",
+    "node-enocean": "^2.1.0",
     "node-red": "^0.16.2",
     "node-red-contrib-asakusa_giken": ">=3.0.0",
     "node-red-contrib-cache": ">=1.0.0",
     "node-red-contrib-device-stats": ">=1.0.2",
     "node-red-contrib-moment": "^2.0.0",
     "node-red-contrib-sequence-functions": ">=1.0.0",
-    "node-red-dashboard": "^2.3.5",
+    "node-red-dashboard": "^2.3.10",
     "node-red-node-serialport": "^0.4.2",
     "request": "^2.74.0",
     "serialport": "~4.0.7",

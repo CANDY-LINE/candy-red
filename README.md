@@ -1,20 +1,20 @@
 CANDY RED
 ===
 
-[![GitHub release](https://img.shields.io/github/release/dbaba/candy-red.svg)](https://github.com/dbaba/candy-red/releases/latest)
-[![master Build Status](https://travis-ci.org/dbaba/candy-red.svg?branch=master)](https://travis-ci.org/dbaba/candy-red/)
-[![License MIT](https://img.shields.io/github/license/dbaba/candy-red.svg)](http://opensource.org/licenses/MIT)
+[![GitHub release](https://img.shields.io/github/release/CANDY-LINE/candy-red.svg)](https://github.com/CANDY-LINE/candy-red/releases/latest)
+[![master Build Status](https://travis-ci.org/CANDY-LINE/candy-red.svg?branch=master)](https://travis-ci.org/CANDY-LINE/candy-red/)
+[![License MIT](https://img.shields.io/github/license/CANDY-LINE/candy-red.svg)](http://opensource.org/licenses/MIT)
 
 CANDY RED is a gateway service working between local area wireless network devices and internet servers.
 
 ## Features
 
 * Include Node-RED flow editor/flow execution runtime
-* BLE and EnOcean nodes (which will be published to npm in the future release)
-* Dedicated nodes for CANDY EGG cloud services offering you to connect your server side flows with ease\*
-* Flow file syncing (both to be delivered and to upload to the cloud)\*
+* Running as a systemd service
+* Preinstalled EnOcean node
+* Preinstalled helper nodes for CANDY EGG cloud service \*
 
-_\* CANDY EGG cloud services are required_
+_\* CANDY EGG cloud service account is required_
 
 ## OS and Hardwares
 
@@ -26,7 +26,7 @@ _\* CANDY EGG cloud services are required_
 
 This is the default screen theme.
 
-![CANDY RED Screenshot](https://raw.githubusercontent.com/dbaba/candy-red/master/images/screenshot-candy-red.png "CANDY RED Screenshot")
+![CANDY RED Screenshot](https://raw.githubusercontent.com/CANDY-LINE/candy-red/master/images/screenshot-candy-red.png "CANDY RED Screenshot")
 
 # Raspberry Pi + Raspbian
 
@@ -105,7 +105,7 @@ Since RPi hostname is `raspberrypi` by default, you will get confused when you h
 You can change the host name by either `sudo raspi-config` or modifying `/etc/hosts`. Regarding the latter method, here is a brief instruction.
 
 ```
-$ export NEW_NAME="my-ltepi" # Modify my-ltepi as you like
+$ export NEW_NAME="my-candy-pi" # Modify my-candy-pi as you like
 $ sudo sed -i -e "s/raspberrypi/${NEW_NAME//\//\\/}/g" /etc/hosts
 $ sudo sed -i -e "s/raspberrypi/${NEW_NAME//\//\\/}/g" /etc/hostname
 $ sudo /etc/init.d/hostname.sh && sudo reboot
@@ -172,7 +172,7 @@ Note that the downloaded flow file will be discarded if it is not a valid JSON d
 Install the local dependencies.
 
 ```
-$ git clone https://github.com/dbaba/candy-red.git
+$ git clone https://github.com/CANDY-LINE/candy-red.git
 $ cd candy-red
 $ DEVEL=true npm install
 ```
@@ -201,13 +201,13 @@ Try the following commands after `npm run build`:
 (Prepends `sudo` for Raspbian)
 
 ```
-$ node ./dist/index.js
+$ npm run start
 ```
 
 With a remote welcome flow file:
 
 ```
-$ WELCOME_FLOW_URL=https://git.io/vKx5r node ./dist/index.js
+$ WELCOME_FLOW_URL=https://git.io/vKx5r npm run start
 ```
 
 And you'll see the sensor info like this:
@@ -247,7 +247,7 @@ $ npm test
 ```
 $ npm pack
 # RPi
-$ time sudo npm install -g --unsafe-perm ./candy-red-3.1.0.tgz
+$ time sudo npm install -g --unsafe-perm ./candy-red-4.0.0.tgz
 ```
 
 ## Vagrant
@@ -263,7 +263,7 @@ $ time sudo npm install -g --unsafe-perm ./candy-red-3.1.0.tgz
 (host)  $ vagrant ssh
 (varant)$ cd /vagrant
 (varant)$ npm install
-(varant)$ node dist/index.js
+(varant)$ npm run start
 ```
 
 ### Local Installation Test
