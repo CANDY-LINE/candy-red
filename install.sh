@@ -103,6 +103,7 @@ function cd_module_root {
   else
     REALPATH=`readlink -f -- "$0"`
   fi
+  REALPATH=${REALPATH:-$(pwd)}
   PROJECT_ROOT=`dirname ${REALPATH}`
   cd ${PROJECT_ROOT}
 }
@@ -136,6 +137,8 @@ function install_preinstalled_nodes {
         v=`echo -e ${v} | tr -d ' '`
         npm install ${p}@${v}
       done
+  else
+    info "Skip to install nodes!!"
   fi
 }
 
@@ -184,10 +187,10 @@ function _install_systemd {
 }
 
 cd_module_root
+install_preinstalled_nodes
 setup $1
 resolve_version
 test_system_service
-install_preinstalled_nodes
 if [ -n "${SYSTEM_SERVICE_TYPE}" ]; then
   DISABLE_SERVICE_INSTALL=${DISABLE_SERVICE_INSTALL} ${PROJECT_ROOT}/uninstall.sh
   npm_local_install
