@@ -38,7 +38,7 @@ This is the default screen theme.
 
 ### Tested Node.js versions
 
-* v4.7.0
+* v6.11.2
 
 The preinstalled version of Node.js v0.10.29 won't work because of the [header file issue](http://dustinbolton.com/replace_invalid_utf8-is-not-a-member-of-v8string-installing-nodejs-packages-on-raspbian-debian-on-raspberry-pi-2-b/) appearing on installing native addons.
 
@@ -165,7 +165,7 @@ Note that the downloaded flow file will be discarded if it is not a valid JSON d
 
 ### Supported Node.js versions
 
-* v4.7
+* v6.11
 
 ## Setup for Building
 
@@ -326,7 +326,7 @@ $ docker run -tid -v ./dist:/candy-red-dist candy-red
 $ rm -fr node_modules; \
   rm -f npm-shrinkwrap.json; \
   docker run --name build --rm -ti -v $(pwd):/work -w /work -e DEVEL=true \
-    node:4.7 bash -c "npm install -g npm@4.x;npm install;npm run freeze"
+    node:6.11 bash -c "npm install;npm run freeze"
 ```
 
 ## Coding Styles
