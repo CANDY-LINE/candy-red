@@ -4,6 +4,7 @@
   - Add a feature to allow users to install additional node packages on installing CANDY RED
     * Set `NODES_CSV_PATH` pointing to the path to node package list CSV file
   - Bump default Node.js version to 6.11
+  - DO NOT bump node-enocean version to 2.x or later as Node.js 7+ isn't yet supported
 
 * 4.0.0
   - Set NODE_PALETTE_ENABLED=true by default

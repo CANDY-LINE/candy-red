@@ -70,7 +70,7 @@
     "mkdirp": "^0.5.1",
     "mustache": "^2.2.1",
     "nan": "^2.4.0",
-    "node-enocean": "^2.1.0",
+    "node-enocean": "^1.8.0",
     "node-red": "^0.17.5",
     "node-red-contrib-device-stats": ">=1.0.2",
     "node-red-contrib-moment": "^2.0.0",
