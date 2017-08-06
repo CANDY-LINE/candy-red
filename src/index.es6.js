@@ -201,8 +201,8 @@ export class CandyRed {
       },
       menu: {
         'menu-item-help': {
-          label: 'Powered By Node-RED',
-          url: 'http://nodered.org/docs'
+          label: 'Users Forum',
+          url: 'https://forums.candy-line.io/c/candy-red'
         },
         'menu-item-keyboard-shortcuts': true
       }
