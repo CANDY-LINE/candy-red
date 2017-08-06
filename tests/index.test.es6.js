@@ -61,19 +61,6 @@ describe('CandyRed', () => {
     });
   });
 
-  describe('#_createCandyBoxEditorTheme()', () => {
-    it('should return titles containing hostname', () => {
-      let theme = cr._createCandyBoxEditorTheme();
-      assert.equal('CANDY BOX@' + os.hostname(), theme.page.title);
-      assert.equal(' ** ' + os.hostname() + ' **', theme.header.title);
-    });
-    it('should return titles containing deviceId as well as hostname', () => {
-      let theme = cr._createCandyBoxEditorTheme('my:deviceId');
-      assert.equal('CANDY BOX@my:deviceId', theme.page.title);
-      assert.equal(' ** ' + os.hostname() + ' (my:deviceId) **', theme.header.title);
-    });
-  });
-
   describe('#_inspectBoardStatus()', () => {
     it('should not return any undefined values', done => {
       cr._inspectBoardStatus(__dirname + '/../package.json').then(versions => {

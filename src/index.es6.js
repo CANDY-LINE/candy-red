@@ -209,33 +209,6 @@ export class CandyRed {
     };
   }
 
-  _createCandyBoxEditorTheme(deviceId) {
-    let name = os.hostname();
-    let longname = name;
-    if (deviceId) {
-      name = deviceId;
-      longname = `${os.hostname()} (${name})`;
-    }
-    return {
-      page: {
-        title: 'CANDY BOX@' + name,
-        favicon: __dirname + '/public/images/candy-box.ico',
-        css: __dirname + '/public/css/candy-box.css'
-      },
-      header: {
-        title: ' ** ' + longname + ' **',
-        image: __dirname + '/public/images/candy-box.png'
-      },
-      menu: {
-        'menu-item-help': {
-          label: 'Powered By Node-RED',
-          url: 'http://nodered.org/docs'
-        },
-        'menu-item-keyboard-shortcuts': true
-      }
-    };
-  }
-
   _inspectBoardStatus(inputPackageJsonPath) {
     return Promise.all([
       this.deviceManagerStore.deviceState.testIfCANDYIoTInstalled(),
@@ -249,7 +222,7 @@ export class CandyRed {
       }
       if (results[0][1]) {
         candyIotv = results[0][1];
-        this.editorTheme = this._createCandyBoxEditorTheme(deviceId);
+        this.editorTheme = this._createCandyRedEditorTheme(deviceId);
       } else if (results[1][1]) {
         ltepi2v = results[1][1];
         this.editorTheme = this._createCandyRedEditorTheme(deviceId);
