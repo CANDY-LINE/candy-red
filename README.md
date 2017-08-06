@@ -34,7 +34,7 @@ This is the default screen theme.
 
 ### Raspbian version
 
- * JESSIE/JESSIE LITE 4.4 (2017-03-02)
+ * JESSIE/JESSIE LITE Kernel Version: 4.9 (2017-07-05)
 
 ### Tested Node.js versions
 
