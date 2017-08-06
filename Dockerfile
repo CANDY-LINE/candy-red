@@ -15,7 +15,6 @@ COPY ./dist ${CR_DIST}
 
 RUN ( \
   cd ${CR_HOME} && \
-  npm install -g npm@4.x && \
   npm install --production && \
   npm cache clean \
 )
