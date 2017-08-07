@@ -14,7 +14,7 @@ CANDY RED is a gateway service working between local area wireless network devic
 * Preinstalled EnOcean node
 * Preinstalled helper nodes for CANDY EGG cloud service \*
 
-_\* CANDY EGG cloud service account is required_
+_\* [CANDY EGG cloud service](https://www.candy-line.io/%E8%A3%BD%E5%93%81%E4%B8%80%E8%A6%A7/candy-red-egg/) account is required_
 
 ## OS and Hardwares
 
@@ -50,7 +50,7 @@ $ sudo apt-get remove -y nodered nodejs nodejs-legacy npm
 
 ### Supported npm version
 
-* v4.x (Run `sudo npm install -g npm@4.x` to install)
+* v3.x (same as default npm bundled with Node.js v6)
 
 ## Install/Version-up
 
