@@ -3,6 +3,11 @@
   - Migrate to Apache Software License 2.0 as of this version
   - Add a feature to allow users to install additional node packages on installing CANDY RED
     * Set `NODES_CSV_PATH` pointing to the path to node package list CSV file
+  - Bump default Node.js version to 6.11
+  - DO NOT bump node-enocean version to 2.x or later as Node.js 7+ isn't yet supported
+  - Remove obsolete board support (CANDY BOX)
+  - `node-red-contrib-asakusa_giken` is now an optional node, which can be installed via the Node Palette
+  - `node-red-contrib-generic-ble` is installed as a preinstalled BLE node
 
 * 4.0.0
   - Set NODE_PALETTE_ENABLED=true by default
