@@ -201,35 +201,8 @@ export class CandyRed {
       },
       menu: {
         'menu-item-help': {
-          label: 'Powered By Node-RED',
-          url: 'http://nodered.org/docs'
-        },
-        'menu-item-keyboard-shortcuts': true
-      }
-    };
-  }
-
-  _createCandyBoxEditorTheme(deviceId) {
-    let name = os.hostname();
-    let longname = name;
-    if (deviceId) {
-      name = deviceId;
-      longname = `${os.hostname()} (${name})`;
-    }
-    return {
-      page: {
-        title: 'CANDY BOX@' + name,
-        favicon: __dirname + '/public/images/candy-box.ico',
-        css: __dirname + '/public/css/candy-box.css'
-      },
-      header: {
-        title: ' ** ' + longname + ' **',
-        image: __dirname + '/public/images/candy-box.png'
-      },
-      menu: {
-        'menu-item-help': {
-          label: 'Powered By Node-RED',
-          url: 'http://nodered.org/docs'
+          label: 'Users Forum',
+          url: 'https://forums.candy-line.io/c/candy-red'
         },
         'menu-item-keyboard-shortcuts': true
       }
@@ -238,30 +211,25 @@ export class CandyRed {
 
   _inspectBoardStatus(inputPackageJsonPath) {
     return Promise.all([
-      this.deviceManagerStore.deviceState.testIfCANDYIoTInstalled(),
-      this.deviceManagerStore.deviceState.testIfLTEPi2Installed()
+      this.deviceManagerStore.deviceState.testIfCANDYBoardServiceInstalled('candy-pi-lite'),
+      this.deviceManagerStore.deviceState.testIfCANDYBoardServiceInstalled('ltepi2')
     ]).then(results => {
-      let candyIotv;
-      let ltepi2v;
+      let candyBsv;
       let deviceId;
       if (results[0][0]) {
         deviceId = results[0][0];
       }
       if (results[0][1]) {
-        candyIotv = results[0][1];
-        this.editorTheme = this._createCandyBoxEditorTheme(deviceId);
+        candyBsv = results[0][1];
       } else if (results[1][1]) {
-        ltepi2v = results[1][1];
-        this.editorTheme = this._createCandyRedEditorTheme(deviceId);
-      } else {
-        this.editorTheme = this._createCandyRedEditorTheme(deviceId);
+        candyBsv = results[1][1];
       }
+      this.editorTheme = this._createCandyRedEditorTheme(deviceId);
       this.editorTheme.palette = {
         editable: NODE_PALETTE_ENABLED
       };
       deviceId = deviceId || 'N/A';
-      candyIotv = candyIotv || 'N/A';
-      ltepi2v = ltepi2v || 'N/A';
+      candyBsv = candyBsv || 'N/A';
       return new Promise((resolve, reject) => {
         fs.stat(inputPackageJsonPath, err => {
           if (err) {
@@ -274,15 +242,14 @@ export class CandyRed {
           fs.readFile(packageJsonPath, (err, data) => {
             if (err) {
               return resolve({
-                candyIotv: candyIotv,
+                candyBsv: candyBsv,
                 candyRedv: 'N/A'
               });
             }
             let packageJson = JSON.parse(data);
             return resolve({
               deviceId: deviceId,
-              candyIotv: candyIotv,
-              ltepi2v: ltepi2v,
+              candyBsv: candyBsv,
               candyRedv: packageJson.version || 'N/A'
             });
           });
@@ -336,7 +303,7 @@ export class CandyRed {
       ],
       deviceManagerStore: this.deviceManagerStore,
       editorTheme: this.editorTheme,
-      candyIotVersion: versions.candyIotv,
+      candyBoardServiceVersion: versions.candyBsv,
       candyRedVersion: versions.candyRedv,
       deviceId: versions.deviceId
     };

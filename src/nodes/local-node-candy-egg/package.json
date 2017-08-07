@@ -2,6 +2,7 @@
   "name": "local-node-candy-egg",
   "version": "1.0.0",
   "description": "Node-RED nodes for CANDY EGG user environment",
+  "license": "Apache-2.0",
   "private": "true",
   "dependencies": {
     "follow-redirects": "^0.0.7",

@@ -4,6 +4,7 @@ SERVICE_NAME="candy-red"
 # 1 for disabling service installation & uninstallation, 0 for enabling them (default)
 DISABLE_SERVICE_INSTALL=${DISABLE_SERVICE_INSTALL:-0}
 NODE_PALETTE_ENABLED=${NODE_PALETTE_ENABLED:-true}
+CANDY_RED_MODULE_ROOT="/opt/${SERVICE_NAME}/.node-red"
 
 function err {
   echo -e "\033[91m[ERROR] $1\033[0m"
@@ -103,6 +104,7 @@ function cd_module_root {
   else
     REALPATH=`readlink -f -- "$0"`
   fi
+  REALPATH=${REALPATH:-$(pwd)}
   PROJECT_ROOT=`dirname ${REALPATH}`
   cd ${PROJECT_ROOT}
 }
@@ -123,6 +125,26 @@ function resolve_version {
 function npm_local_install {
   if [ -d "${PROJECT_ROOT}/dist" ]; then
     cp -r ${PROJECT_ROOT}/dist/nodes/local-node-* node_modules/
+  fi
+}
+
+function install_preinstalled_nodes {
+  NODES_CSV_PATH="${NODES_CSV_PATH:-${PROJECT_ROOT}/default-nodes.csv}"
+  if [ -f "${NODES_CSV_PATH}" ]; then
+    mkdir -p ${CANDY_RED_MODULE_ROOT}
+    info "Installing default nodes to ${CANDY_RED_MODULE_ROOT}..."
+    cat ${NODES_CSV_PATH} | tr -d '\r' | \
+      while IFS=',' read p v; do
+        p=`echo -e ${p} | tr -d ' '`
+        v=`echo -e ${v} | tr -d ' '`
+        npm install --unsafe-perm --prefix ${CANDY_RED_MODULE_ROOT} ${p}@${v}
+      done
+    # nodes are installed to {prefix}/lib directory
+    # because -g flag is implicitly inherited on performing the above npm
+    mv ${CANDY_RED_MODULE_ROOT}/lib/node_modules/ ${CANDY_RED_MODULE_ROOT}
+    rm -fr ${CANDY_RED_MODULE_ROOT}/etc
+  else
+    info "Skip to install nodes!!"
   fi
 }
 
@@ -171,6 +193,7 @@ function _install_systemd {
 }
 
 cd_module_root
+install_preinstalled_nodes
 setup $1
 resolve_version
 test_system_service

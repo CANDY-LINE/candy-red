@@ -1,4 +1,4 @@
-FROM node:4.7
+FROM node:6.11
 
 ENV USER_DIR /candy-red-user
 ENV CR_HOME /candy-red
@@ -15,7 +15,6 @@ COPY ./dist ${CR_DIST}
 
 RUN ( \
   cd ${CR_HOME} && \
-  npm install -g npm@4.x && \
   npm install --production && \
   npm cache clean \
 )

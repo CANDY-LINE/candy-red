@@ -14,7 +14,7 @@ CANDY RED is a gateway service working between local area wireless network devic
 * Preinstalled EnOcean node
 * Preinstalled helper nodes for CANDY EGG cloud service \*
 
-_\* CANDY EGG cloud service account is required_
+_\* [CANDY EGG cloud service](https://www.candy-line.io/%E8%A3%BD%E5%93%81%E4%B8%80%E8%A6%A7/candy-red-egg/) account is required_
 
 ## OS and Hardwares
 
@@ -34,11 +34,11 @@ This is the default screen theme.
 
 ### Raspbian version
 
- * JESSIE/JESSIE LITE 4.4 (2017-03-02)
+ * JESSIE/JESSIE LITE Kernel Version: 4.9 (2017-07-05)
 
 ### Tested Node.js versions
 
-* v4.7.0
+* v6.11.2
 
 The preinstalled version of Node.js v0.10.29 won't work because of the [header file issue](http://dustinbolton.com/replace_invalid_utf8-is-not-a-member-of-v8string-installing-nodejs-packages-on-raspbian-debian-on-raspberry-pi-2-b/) appearing on installing native addons.
 
@@ -50,7 +50,7 @@ $ sudo apt-get remove -y nodered nodejs nodejs-legacy npm
 
 ### Supported npm version
 
-* v4.x (Run `sudo npm install -g npm@4.x` to install)
+* v3.x (same as default npm bundled with Node.js v6)
 
 ## Install/Version-up
 
@@ -135,14 +135,14 @@ You can find the installation instruction in the [article](http://www.elinux.org
 
 Here is a brief instruction. (Check the latest version of BlueZ at www.bluez.org)
 ```
-$ BLUEZ_VER=5.44
+$ BLUEZ_VER=5.45
 $ sudo apt-get install -y build-essential libdbus-1-dev \
     libdbus-glib-1-dev libglib2.0-dev libical-dev \
     libreadline-dev libudev-dev libusb-dev make
 $ wget https://www.kernel.org/pub/linux/bluetooth/bluez-${BLUEZ_VER}.tar.xz
 $ tar xvf bluez-${BLUEZ_VER}.tar.xz
 $ cd bluez-${BLUEZ_VER}
-$ ./configure --disable-systemd
+$ ./configure
 $ make
 $ sudo make install
 ```
@@ -165,7 +165,7 @@ Note that the downloaded flow file will be discarded if it is not a valid JSON d
 
 ### Supported Node.js versions
 
-* v4.7
+* v6.11
 
 ## Setup for Building
 
@@ -247,7 +247,7 @@ $ npm test
 ```
 $ npm pack
 # RPi
-$ time sudo npm install -g --unsafe-perm ./candy-red-4.0.0.tgz
+$ time sudo npm install -g --unsafe-perm ./candy-red-5.0.0.tgz
 ```
 
 ## Vagrant
@@ -326,7 +326,7 @@ $ docker run -tid -v ./dist:/candy-red-dist candy-red
 $ rm -fr node_modules; \
   rm -f npm-shrinkwrap.json; \
   docker run --name build --rm -ti -v $(pwd):/work -w /work -e DEVEL=true \
-    node:4.7 bash -c "npm install -g npm@4.x;npm install;npm run freeze"
+    node:6.11 bash -c "npm install;npm run freeze"
 ```
 
 ## Coding Styles
