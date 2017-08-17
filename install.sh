@@ -141,6 +141,7 @@ function install_preinstalled_nodes {
       done
     # nodes are installed to {prefix}/lib directory
     # because -g flag is implicitly inherited on performing the above npm
+    rm -fr ${CANDY_RED_MODULE_ROOT}/node_modules
     mv ${CANDY_RED_MODULE_ROOT}/lib/node_modules/ ${CANDY_RED_MODULE_ROOT}
     rm -fr ${CANDY_RED_MODULE_ROOT}/etc
   else
