@@ -247,6 +247,7 @@ $ npm test
 ```
 $ npm pack
 # RPi
+$ sudo npm uninstall -g --unsafe-perm candy-red
 $ time sudo npm install -g --unsafe-perm ./candy-red-5.0.0.tgz
 ```
 

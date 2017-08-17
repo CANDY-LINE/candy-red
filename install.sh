@@ -132,6 +132,13 @@ function install_preinstalled_nodes {
   NODES_CSV_PATH="${NODES_CSV_PATH:-${PROJECT_ROOT}/default-nodes.csv}"
   if [ -f "${NODES_CSV_PATH}" ]; then
     mkdir -p ${CANDY_RED_MODULE_ROOT}
+    if [ -d "${CANDY_RED_MODULE_ROOT}/node_modules" ]; then
+      mkdir -p ${CANDY_RED_MODULE_ROOT}/lib
+      rm -fr ${CANDY_RED_MODULE_ROOT}/lib/node_modules
+      mv ${CANDY_RED_MODULE_ROOT}/node_modules/ ${CANDY_RED_MODULE_ROOT}/lib
+    elif [ -e "${CANDY_RED_MODULE_ROOT}/node_modules" ]; then
+      rm -f ${CANDY_RED_MODULE_ROOT}/node_modules
+    fi
     info "Installing default nodes to ${CANDY_RED_MODULE_ROOT}..."
     cat ${NODES_CSV_PATH} | tr -d '\r' | \
       while IFS=',' read p v; do
