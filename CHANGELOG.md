@@ -1,4 +1,7 @@
 ## Revision History
+* 5.0.1
+  - Fix an issue where some of default packages cannot be installed because of existing packages
+
 * 5.0.0
   - Migrate to Apache Software License 2.0 as of this version
   - Add a feature to allow users to install additional node packages on installing CANDY RED
