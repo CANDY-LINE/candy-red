@@ -69,7 +69,12 @@ gulp.task('copyResources', () => {
   .pipe(gulp.dest('./dist'));
 });
 
-gulp.task('buildSrcs', ['copyResources'], () => {
+gulp.task('favicons', () => {
+  return gulp.src('./src/public/images/icon*.png')
+    .pipe(gulp.dest('./node_modules/node-red-dashboard/dist'));
+});
+
+gulp.task('buildSrcs', ['copyResources', 'favicons'], () => {
   return gulp.src('./src/**/*.es6.js')
     .pipe(sourcemaps.init())
     .pipe(babel({
