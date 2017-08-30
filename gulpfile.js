@@ -95,7 +95,7 @@ gulp.task('buildSrcs', ['copyResources', 'favicons'], () => {
         unused: true,
         toplevel: true,
         if_return: true,
-        drop_console: true,
+        drop_console: false,
         conditionals: true,
         unsafe_math: true,
         unsafe: true
