@@ -33,16 +33,18 @@ gulp.task('clean', () => {
     '!./tests/**/*.es6.js',
     './*.tgz',
     '!node_modules/**/*',
-    './node_modules/local-node-*',
     './services/environment',
     './services/start_systemd.sh',
     './services/systemd/candy-red.service',
     './services/systemd/environment',
+  ])
+  .pipe(clean({force: true}))
+  .pipe(gulp.src([
     './node_modules/node-red/red/api/locales/ja',
     './node_modules/node-red/red/runtime/locales/ja',
     './node_modules/node-red/nodes/core/locales/ja',
-  ])
-  .pipe(clean({force: true}));
+  ]))
+  .pipe(clean({force: true}))
 });
 
 gulp.task('nodes', () => {
@@ -69,7 +71,12 @@ gulp.task('copyResources', () => {
   .pipe(gulp.dest('./dist'));
 });
 
-gulp.task('buildSrcs', ['copyResources'], () => {
+gulp.task('favicons', () => {
+  return gulp.src('./src/public/images/icon*.png')
+    .pipe(gulp.dest('./node_modules/node-red-dashboard/dist'));
+});
+
+gulp.task('buildSrcs', ['copyResources', 'favicons'], () => {
   return gulp.src('./src/**/*.es6.js')
     .pipe(sourcemaps.init())
     .pipe(babel({
@@ -88,7 +95,7 @@ gulp.task('buildSrcs', ['copyResources'], () => {
         unused: true,
         toplevel: true,
         if_return: true,
-        drop_console: true,
+        drop_console: false,
         conditionals: true,
         unsafe_math: true,
         unsafe: true

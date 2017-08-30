@@ -130,7 +130,12 @@ function npm_local_install {
 
 function install_preinstalled_nodes {
   NODES_CSV_PATH="${NODES_CSV_PATH:-${PROJECT_ROOT}/default-nodes.csv}"
-  if [ -f "${NODES_CSV_PATH}" ]; then
+  if [ -n "${NODES_CSV}" ]; then
+    NODES=`echo ${NODES_CSV} | tr ' ' '\n'`
+  elif [ -f "${NODES_CSV_PATH}" ]; then
+    NODES=`cat ${NODES_CSV_PATH} | tr -d '\r'`
+  fi
+  if [ -n "${NODES}" ]; then
     mkdir -p ${CANDY_RED_MODULE_ROOT}
     if [ -d "${CANDY_RED_MODULE_ROOT}/node_modules" ]; then
       mkdir -p ${CANDY_RED_MODULE_ROOT}/lib
@@ -140,10 +145,13 @@ function install_preinstalled_nodes {
       rm -f ${CANDY_RED_MODULE_ROOT}/node_modules
     fi
     info "Installing default nodes to ${CANDY_RED_MODULE_ROOT}..."
-    cat ${NODES_CSV_PATH} | tr -d '\r' | \
+    echo "${NODES}" | \
       while IFS=',' read p v; do
         p=`echo -e ${p} | tr -d ' '`
         v=`echo -e ${v} | tr -d ' '`
+        if [ -z "${p}" ]; then
+          continue
+        fi
         npm install --unsafe-perm --prefix ${CANDY_RED_MODULE_ROOT} ${p}@${v}
       done
     # nodes are installed to {prefix}/lib directory
@@ -200,10 +208,10 @@ function _install_systemd {
 }
 
 cd_module_root
-install_preinstalled_nodes
 setup $1
 resolve_version
 test_system_service
+install_preinstalled_nodes
 if [ -n "${SYSTEM_SERVICE_TYPE}" ]; then
   DISABLE_SERVICE_INSTALL=${DISABLE_SERVICE_INSTALL} ${PROJECT_ROOT}/uninstall.sh
   npm_local_install

@@ -159,6 +159,13 @@ By default, [`welcome-flow.json`](src/welcome-flow.json) is used as the initial 
 
 Note that the downloaded flow file will be discarded if it is not a valid JSON data.
 
+## Preinstalled nodes
+
+```
+$ sudo NODES_CSV="node-ed-contib-cache,>=1.0.0 node-ed-contib-geneic-ble,>=0.1.0 node-ed-contib-sequence-functions,>=1.0.0" npm install -g --unsafe-perm candy-red
+```
+Either a single space` ` or `\n` can be a delimiter of `NODE_CSV` value.
+
 # Development
 
 ## Prerequisites
