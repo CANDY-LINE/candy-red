@@ -144,6 +144,9 @@ function install_preinstalled_nodes {
       while IFS=',' read p v; do
         p=`echo -e ${p} | tr -d ' '`
         v=`echo -e ${v} | tr -d ' '`
+        if [ -z "${p}" ]; then
+          continue
+        fi
         npm install --unsafe-perm --prefix ${CANDY_RED_MODULE_ROOT} ${p}@${v}
       done
     # nodes are installed to {prefix}/lib directory
