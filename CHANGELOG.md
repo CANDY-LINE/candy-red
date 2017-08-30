@@ -1,5 +1,6 @@
 ## Revision History
 * 5.1.0
+  - Add a new environment `NODES_CSV` to provide preinstalled nodes on installing CANDY RED
   - Add CANDY RED icons to appear on Node-RED Dashboard
   - Fix an issue where install_preinstalled_nodes were invoked on installation test
   - Disable drop_console in order to show logs at pre-initialized state
