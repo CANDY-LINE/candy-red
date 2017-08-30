@@ -200,10 +200,10 @@ function _install_systemd {
 }
 
 cd_module_root
-install_preinstalled_nodes
 setup $1
 resolve_version
 test_system_service
+install_preinstalled_nodes
 if [ -n "${SYSTEM_SERVICE_TYPE}" ]; then
   DISABLE_SERVICE_INSTALL=${DISABLE_SERVICE_INSTALL} ${PROJECT_ROOT}/uninstall.sh
   npm_local_install
