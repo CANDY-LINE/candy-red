@@ -77,7 +77,7 @@
     "node-red-dashboard": "^2.4.3",
     "node-red-node-serialport": "^0.4.2",
     "request": "^2.74.0",
-    "serialport": "~4.0.7",
+    "serialport": "~5.0.0",
     "source-map-support": "^0.4.2",
     "ws": "^2.2.1"
   }
