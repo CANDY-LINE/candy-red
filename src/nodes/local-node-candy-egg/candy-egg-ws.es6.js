@@ -48,7 +48,11 @@ export default function(RED) {
       let prefix = 'ws' + (conf.secure ? 's' : '') + '://';
       prefix += encodeURIComponent(conf.loginUser) + ':' + encodeURIComponent(conf.loginPassword) + '@';
       let accountId = conf.accountFqn.split('@');
-      prefix += encodeURIComponent(accountId[1]);
+      let port = accountId[1].split(':');
+      prefix += encodeURIComponent(port[0]);
+      if (port[1]) {
+        prefix += `:${port[1]}`;
+      }
       let path = this.path;
       if (url) {
         let urlobj = urllib.parse(url);
