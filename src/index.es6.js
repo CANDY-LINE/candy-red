@@ -264,7 +264,7 @@ export class CandyRed {
     function exitHandler(err) {
       console.log('[CANDY RED] Bye');
       if (RED.settings && RED.settings.exitHandlers) {
-        RED.settings.exitHandlers.forEach(handler => {
+        RED.settings.exitHandlers.forEach((handler) => {
           try {
             handler(RED);
           } catch (err) {
@@ -282,9 +282,11 @@ export class CandyRed {
         process.exit(err);
       }
     }
-    process.on('exit', exitHandler);
     process.on('SIGINT', exitHandler);
     process.on('uncaughtException', exitHandler);
+    process.on('unhandledRejection', (err) => {
+      console.log('unhandledRejection', err);
+    });
   }
 
   _createREDSettigngs(versions) {
