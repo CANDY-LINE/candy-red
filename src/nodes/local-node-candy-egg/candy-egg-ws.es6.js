@@ -117,23 +117,23 @@ export default function(RED) {
           if (res.headers.location) {
             if (this.redirect > 3) {
               this.redirect = 0;
-              RED.log.error(RED._('candy-egg-ws.errors.too-many-redirects', { path: this.path, location: res.headers.location }));
+              this.emit2all('log-error', RED._('candy-egg-ws.errors.too-many-redirects', { path: this.path, location: res.headers.location }));
             } else {
               ++this.redirect;
               return this.startconn(res.headers.location);
             }
           }
         } else if (res.statusCode === 404) {
-          RED.log.error(RED._('candy-egg-ws.errors.wrong-path', { path: this.path }));
+          this.emit2all('log-error', RED._('candy-egg-ws.errors.wrong-path', { path: this.path }));
         } else if (res.statusCode === 401) {
-          RED.log.error(RED._('candy-egg-ws.errors.auth-error', { path: this.path, user: this.accountConfig.loginUser }));
+          this.emit2all('log-error', RED._('candy-egg-ws.errors.auth-error', { path: this.path, user: this.accountConfig.loginUser }));
           ++this.authRetry;
           if (this.authRetry > 10) {
             return; // never retry
           }
-          RED.log.info(RED._('candy-egg-ws.status.auth-retry'));
+          this.emit2all('log-info', RED._('candy-egg-ws.status.auth-retry'));
         } else {
-          RED.log.error(RED._('candy-egg-ws.errors.server-error', { path: this.path, status: res.statusCode }));
+          this.emit2all('log-error', RED._('candy-egg-ws.errors.server-error', { path: this.path, status: res.statusCode }));
         }
         // try to reconnect every approx. 1 min
         socket.skipCloseEventHandler = true;
@@ -143,7 +143,7 @@ export default function(RED) {
       });
       socket.on('error', err => {
         this.emit2all('erro', err);
-        RED.log.error(RED._('candy-egg-ws.errors.connect-error', { err: err, accountFqn: this.accountConfig.accountFqn}));
+        this.emit2all('log-error', RED._('candy-egg-ws.errors.connect-error', { err: err, accountFqn: this.accountConfig.accountFqn}));
         socket.skipCloseEventHandler = true;
         socket.close();
         if (!this.closing) {
@@ -220,7 +220,6 @@ export default function(RED) {
           this._inputNodes[i].send(msg);
         }
       }
-      RED.log.debug('flags:' + flags);
     }
 
     emit2all(...args) {
@@ -249,7 +248,7 @@ export default function(RED) {
         this.server.send(data);
         return true;
       } catch (err) {
-        RED.log.error(RED._('candy-egg-ws.errors.send-error', { err: err, accountFqn: this.accountConfig.accountFqn}));
+        this.emit2all('log-error', RED._('candy-egg-ws.errors.send-error', { err: err, accountFqn: this.accountConfig.accountFqn}));
         return false;
       }
     }
@@ -345,6 +344,13 @@ export default function(RED) {
           this.listenerConfig.removeInputNode(this);
         }
       });
+
+      this.on('log-info', (msg) => {
+        this.info(msg);
+      });
+      this.on('log-error', (msg) => {
+        this.error(msg);
+      });
     }
   }
   RED.nodes.registerType('CANDY EGG websocket in', WebSocketInNode);
@@ -371,6 +377,13 @@ export default function(RED) {
 
       this.on('close', () => {
         this.listenerConfig.removeOutputNode(this);
+      });
+
+      this.on('log-info', (msg) => {
+        this.info(msg);
+      });
+      this.on('log-error', (msg) => {
+        this.error(msg);
       });
 
       this.on('input', msg => {
