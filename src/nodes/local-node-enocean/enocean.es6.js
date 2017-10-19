@@ -30,7 +30,7 @@ export default function(RED) {
         this.serialPort = n.serialPort;
         EnOceanPortNode.pool.add(this);
       } catch (e) {
-        RED.log.warn(RED._('enocean.errors.serialPortError', { error: e }));
+        this.warn(RED._('enocean.errors.serialPortError', { error: e }));
       }
     }
   }
@@ -41,14 +41,15 @@ export default function(RED) {
     return path.join(RED.settings.userDir, 'enocean-ids.json');
   }
 
-  function saveLearnedIDs(id, originatorId) {
+  function saveLearnedIDs(node) {
+    let id = node.id;
     if (!learnedIDs) {
       learnedIDs = {};
     }
-    learnedIDs[id] = originatorId;
+    learnedIDs[id] = node.originatorId;
     fs.writeFile(createIDfilePath(), JSON.stringify(learnedIDs), (err) => {
       if (err) {
-        RED.log.error('Failed to write detected OriginatorID!', err);
+        node.error('Failed to write detected OriginatorID!', err);
       }
     });
   }
@@ -90,7 +91,7 @@ export default function(RED) {
               node.originatorId = ctx.originatorId;
               node.originatorIdInt = ctx.originatorIdInt;
               if (!isNaN(node.originatorIdInt)) {
-                saveLearnedIDs(node.id, node.originatorId);
+                saveLearnedIDs(node);
                 addEventListener(node);
               }
             }
@@ -105,7 +106,7 @@ export default function(RED) {
       enocean.port.on(`ctx-${node.originatorIdInt}`, ctx => {
         let handleIt = ERP2_HANDLERS[node.eepType];
         if (!handleIt) {
-          RED.log.warn(RED._('enocean.warn.noHandler', { eepType: node.eepType }));
+          node.warn(RED._('enocean.warn.noHandler', { eepType: node.eepType }));
           return;
         }
         let payload = handleIt(ctx);
@@ -169,7 +170,7 @@ export default function(RED) {
       this.on('learned', () => {
         this.learning = false;
         this.status({ fill: 'green', shape: 'dot', text: 'node-red:common.status.connected'});
-        RED.log.warn(RED._('enocean.info.learned', { name: (this.name || this.id), originatorId: this.originatorId }));
+        this.warn(RED._('enocean.info.learned', { name: (this.name || this.id), originatorId: this.originatorId }));
       });
       this.on('timeout', () => {
         this.learning = false;
@@ -196,7 +197,7 @@ export default function(RED) {
           this.status({ fill: 'red', shape: 'ring', text: 'node-red:common.status.not-connected'});
         });
       } catch (e) {
-        RED.log.warn(RED._('enocean.errors.serialPortError', { error: e }));
+        this.warn(RED._('enocean.errors.serialPortError', { error: e }));
       }
     }
   }

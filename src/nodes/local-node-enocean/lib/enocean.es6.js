@@ -63,36 +63,36 @@ export class SerialPool {
           that.erp2Parser.parse(ctx).then(ctx => {
             let originatorIdInt = ctx.originatorIdInt;
             if (!port.emit(`ctx-${originatorIdInt}`, ctx)) {
-              that.RED.log.warn(that.RED._('enocean.warn.noNode', { originatorId: ctx.originatorId }));
+              enOceanPortNode.warn(that.RED._('enocean.warn.noNode', { originatorId: ctx.originatorId }));
               port.emit('learn', ctx);
             }
           }).catch(e => {
-            that.RED.log.error(that.RED._('enocean.errors.parseError', { error: e, data: JSON.stringify(ctx) }));
+            enOceanPortNode.error(that.RED._('enocean.errors.parseError', { error: e, data: JSON.stringify(ctx) }));
           });
         }).catch(e => {
-          that.RED.log.error(that.RED._('enocean.errors.parseError', { error: e, data: result.payload }));
+          enOceanPortNode.error(that.RED._('enocean.errors.parseError', { error: e, data: result.payload }));
         });
       }).catch(e => {
         if (e instanceof Error && e.message === 'enocean.info.unsupportedPacketType') {
-          that.RED.log.info(that.RED._('enocean.info.unsupportedPacketType', { packetType: e.packetType }));
+          enOceanPortNode.info(that.RED._('enocean.info.unsupportedPacketType', { packetType: e.packetType }));
         } else {
-          that.RED.log.error(that.RED._('enocean.errors.parseError', { error: e, data: JSON.stringify(data) }));
+          enOceanPortNode.error(that.RED._('enocean.errors.parseError', { error: e, data: JSON.stringify(data) }));
         }
       });
     });
     port.on('error', e => {
-      that.RED.log.warn(that.RED._('enocean.errors.serialPortError',{ error: e }));
+      enOceanPortNode.warn(that.RED._('enocean.errors.serialPortError',{ error: e }));
       delete that.pool[portName];
     });
     port.on('close', () => {
-      that.RED.log.info(that.RED._('enocean.info.serialPortClosed',{ portName: portName }));
+      enOceanPortNode.info(that.RED._('enocean.info.serialPortClosed',{ portName: portName }));
       delete that.pool[portName];
     });
     that.pool[portName] = {
       node: enOceanPortNode,
       port: port
     };
-    that.RED.log.info(that.RED._('enocean.info.serialPortAdded',{ portName: portName }));
+    enOceanPortNode.info(that.RED._('enocean.info.serialPortAdded',{ portName: portName }));
   }
 
   get(portName) {
