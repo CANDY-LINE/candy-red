@@ -40,9 +40,8 @@ gulp.task('clean', () => {
   ])
   .pipe(clean({force: true}))
   .pipe(gulp.src([
-    './node_modules/node-red/red/api/locales/ja',
-    './node_modules/node-red/red/runtime/locales/ja',
-    './node_modules/node-red/nodes/core/locales/ja',
+    './node_modules/node-red*/locales/!(en-US)',
+    './node_modules/node-red/**/locales/!(en-US)',
   ]))
   .pipe(clean({force: true}))
 });
