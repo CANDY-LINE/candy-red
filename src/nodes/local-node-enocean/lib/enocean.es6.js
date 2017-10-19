@@ -63,7 +63,6 @@ export class SerialPool {
           that.erp2Parser.parse(ctx).then(ctx => {
             let originatorIdInt = ctx.originatorIdInt;
             if (!port.emit(`ctx-${originatorIdInt}`, ctx)) {
-              enOceanPortNode.warn(that.RED._('enocean.warn.noNode', { originatorId: ctx.originatorId }));
               port.emit('learn', ctx);
             }
           }).catch(e => {

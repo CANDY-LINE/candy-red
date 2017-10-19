@@ -9,7 +9,8 @@
       "enoceanPort" : "EnOcean Serial Port",
       "useString" : "Use string payload",
       "ignoreLRNBit" : "Ignore LRN BIT (1BS/4BS only)",
-      "serialPort" : "Serial Port"
+      "serialPort" : "Serial Port",
+      "logUnknownOriginatorId": "Log Unknown Originator ID"
     },
     "eepType" : {
       "f6-02-04" : "RPS/Rocker Switch, 2 Rocker/Light and blind control ERP2",

@@ -48,6 +48,11 @@
     <input type='checkbox' id='node-input-useString' style='display: inline-block; width: auto; vertical-align: top;'>
     <label for='node-input-useString' style='width: 70%;' data-i18n='enocean.label.useString'></label>
   </div>
+  <div class='form-row' id='node-logUnknownOriginatorId'>
+    <label>&nbsp;</label>
+    <input type='checkbox' id='node-input-logUnknownOriginatorId' style='display: inline-block; width: auto; vertical-align: top;'>
+    <label for='node-input-logUnknownOriginatorId' style='width: 70%;' data-i18n='enocean.label.logUnknownOriginatorId'></label>
+  </div>
 </script>
 
 <script type='text/javascript'>
@@ -61,7 +66,8 @@
       addEepType: { value: false, required: false },
       ignoreLRNBit: { value: false, required: false },
       enoceanPort: { type: 'EnOcean Port', required: true },
-      useString: { value: false, required: false }
+      useString: { value: false, required: false },
+      logUnknownOriginatorId: { value: true }
     },
     color: 'PaleGreen',
     inputs: 0,

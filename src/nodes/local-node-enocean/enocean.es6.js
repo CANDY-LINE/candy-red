@@ -99,6 +99,8 @@ export default function(RED) {
             node.learningCount = 0;
             node.learnEventAt = 0;
           }
+        } else if (node.logUnknownOriginatorId) {
+          node.warn(that.RED._('enocean.warn.noNode', { originatorId: ctx.originatorId }));
         }
       });
     } else {
@@ -106,7 +108,9 @@ export default function(RED) {
       enocean.port.on(`ctx-${node.originatorIdInt}`, ctx => {
         let handleIt = ERP2_HANDLERS[node.eepType];
         if (!handleIt) {
-          node.warn(RED._('enocean.warn.noHandler', { eepType: node.eepType }));
+          if (node.logUnknownOriginatorId) {
+            node.warn(RED._('enocean.warn.noHandler', { eepType: node.eepType }));
+          }
           return;
         }
         let payload = handleIt(ctx);
@@ -145,6 +149,7 @@ export default function(RED) {
       this.eepType = n.eepType;
       this.addEepType = n.addEepType;
       this.useString = n.useString;
+      this.logUnknownOriginatorId = n.logUnknownOriginatorId || true;
       this.enoceanPortNodeId = n.enoceanPort;
       this.enoceanPortNode = RED.nodes.getNode(this.enoceanPortNodeId);
       this.ignoreLRNBit = n.ignoreLRNBit || false;
