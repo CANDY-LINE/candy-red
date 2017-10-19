@@ -17,7 +17,7 @@ fi
 mkdir -p /opt/candy-red
 
 # Disable i18n resources other than en-US for now (will be enabled in the future release)
-for l in `find -f %SERVICE_HOME%/node_modules/node-red | grep locales/ | grep -v en-US | grep -v json`; do
+for l in `find -f %SERVICE_HOME%/node_modules/node-red* | grep locales/ | grep -v en-US | grep -v json`; do
   rm -fr ${l}
 done
 
