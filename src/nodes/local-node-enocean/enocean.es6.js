@@ -100,7 +100,7 @@ export default function(RED) {
             node.learnEventAt = 0;
           }
         } else if (node.logUnknownOriginatorId) {
-          node.warn(that.RED._('enocean.warn.noNode', { originatorId: ctx.originatorId }));
+          node.warn(RED._('enocean.warn.noNode', { originatorId: ctx.originatorId }));
         }
       });
     } else {
