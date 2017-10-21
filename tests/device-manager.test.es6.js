@@ -501,57 +501,6 @@ describe('DeviceManagerStore', () => {
         done(err);
       });
     });
-  });
+  }); /* #_onFlowFileRemovedFunc() */
 
-  describe('#initWsClient()', () => {
-    it('should initialize a websocket client as a primary device manager client', done => {
-      let account = {};
-      let listenerConfig = sandbox.stub({
-        registerInputNode: () => {}
-      });
-      let accountConfig = sandbox.stub({
-        accountFqn: 'TEST@localhost',
-        on: () => {}
-      });
-      let webSocketListeners = sandbox.stub({
-        get: () => {}
-      });
-      webSocketListeners.get.returns(listenerConfig);
-      assert.isFalse(store.isWsClientInitialized(accountConfig.accountFqn));
-      store.initWsClient(account, accountConfig, webSocketListeners);
-      assert.isTrue(store.isWsClientInitialized(accountConfig.accountFqn));
-      assert.isTrue(store.store[accountConfig.accountFqn].primary);
-      store.initWsClient(account, accountConfig, webSocketListeners);
-      assert.equal(1, Object.keys(store.store).length);
-      done();
-    });
-
-    it('should initialize a websocket client as NOT a primary device manager client', done => {
-      let account = {};
-      let listenerConfig = sandbox.stub({
-        registerInputNode: () => {}
-      });
-      let accountConfig = sandbox.stub({
-        accountFqn: 'TEST@localhost',
-        on: () => {}
-      });
-      let webSocketListeners = sandbox.stub({
-        get: () => {}
-      });
-      webSocketListeners.get.returns(listenerConfig);
-      store.initWsClient(account, accountConfig, webSocketListeners);
-      assert.isTrue(store.store[accountConfig.accountFqn].primary);
-
-      let accountConfig2 = sandbox.stub({
-        accountFqn: 'TEST2@localhost',
-        on: () => {}
-      });
-      assert.isFalse(store.isWsClientInitialized(accountConfig2.accountFqn));
-      store.initWsClient(account, accountConfig2, webSocketListeners);
-      assert.isTrue(store.isWsClientInitialized(accountConfig2.accountFqn));
-      assert.equal(2, Object.keys(store.store).length);
-      assert.isNotTrue(store.store[accountConfig2.accountFqn].primary);
-      done();
-    });
-  });
 });

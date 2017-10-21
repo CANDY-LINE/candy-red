@@ -192,7 +192,7 @@ export default function(RED) {
       });
     }
 
-    handleEvent(id,/*socket*/socket,/*String*/event,/*Object*/data,/*Object*/flags) {
+    handleEvent(id,/*socket*/socket,/*String*/event,/*Object*/data/*, Object flags */) {
       let msg, wholemsg, obj;
       try {
         obj = this._deserialize(data);
@@ -300,15 +300,6 @@ export default function(RED) {
       this.loginPassword = this.credentials ? this.credentials.loginPassword : n.loginPassword;
       this.secure = n.secure;
       webSocketListeners.reset(n.id);
-
-      this.managed = n.managed;
-      // deploying implicit API clients (candy-ws)
-      let deviceManagerStore = RED.settings.deviceManagerStore;
-      if (this.managed && deviceManagerStore && deviceManagerStore.isWsClientInitialized) {
-        if (!deviceManagerStore.isWsClientInitialized(this.accountFqn)) {
-          deviceManagerStore.initWsClient(n.id, this, webSocketListeners);
-        }
-      }
     }
   }
   RED.nodes.registerType('CANDY EGG account', CANDYEggAccountNode, {

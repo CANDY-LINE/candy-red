@@ -78,26 +78,6 @@
     <input type='checkbox' id='node-config-input-secure' style='display: inline-block; width: auto; vertical-align: top;'>
     <label for='node-config-input-secure' style='width: 70%;' data-i18n='candy-egg-ws.label.secure'></label>
   </div>
-  <div class='form-row form-row-managed'>
-    <label>&nbsp;</label>
-    <input type='checkbox' id='node-config-input-managed' style='display: inline-block; width: auto; vertical-align: top;'>
-    <label for='node-config-input-managed' style='width: 70%;' data-i18n='candy-egg-ws.label.managed'></label>
-  </div>
-  <div class='form-row form-row-managed form-row-device-managed'>
-    <span data-i18n='candy-egg-ws.label.flow'></span>
-  </div>
-  <div class='form-row form-row-managed form-row-device-managed'>
-    <label for='node-config-input-last-delivered' style='width: 100px'><i class='fa fa-clock-o'></i> <span data-i18n='candy-egg-ws.label.lastDeliveredAt'></span></label>
-    <input type='text' id='node-config-input-last-delivered' disabled>
-  </div>
-  <div class='form-row form-row-managed form-row-device-managed'>
-    <label for='node-config-input-revision' style='width: 100px'><i class='fa fa-bolt'></i> <span data-i18n='candy-egg-ws.label.revision'></span></label>
-    <input type='text' id='node-config-input-revision' disabled>
-  </div>
-  <div class='form-row form-row-managed form-row-device-managed'>
-    <label for='node-config-input-originator' style='width: 100px'><i class='fa  fa-upload'></i> <span data-i18n='candy-egg-ws.label.originator'></span></label>
-    <input type='text' id='node-config-input-originator' disabled>
-  </div>
   <div class='form-row'>
     <label for='node-config-input-name'><i class='fa fa-tag'></i> <span data-i18n='node-red:common.label.name'></span></label>
     <input type='text' id='node-config-input-name' data-i18n='[placeholder]node-red:common.label.name'>
@@ -203,7 +183,6 @@
         name: {value:''},
         accountId: {value:''},
         secure: {value:true},
-        managed: {value:false},
         lastDeliveredAt: {value:''},
         revision: {value:''},
         originator: {value:''}
@@ -222,19 +201,6 @@
         this.accountId = this.credentials.accountFqn ? this.credentials.accountFqn.split('@')[0] : '';
       },
       oneditprepare: function() {
-        if (false && RED.settings.version.indexOf('[candy-red v') >= 0) {
-          $('.form-row-managed').show();
-          if (this.managed) {
-            $('.form-row-device-managed').show();
-            if (this.lastDeliveredAt) {
-              $('#node-config-input-last-delivered').val(new Date(this.lastDeliveredAt).toString());
-            }
-          } else {
-            $('.form-row-device-managed').hide();
-          }
-        } else {
-          $('.form-row-managed').hide();
-        }
         $('#node-config-input-accountFqn').blur(function() {
           var text = $(this).val();
           if (text && typeof(text) === 'string') {
