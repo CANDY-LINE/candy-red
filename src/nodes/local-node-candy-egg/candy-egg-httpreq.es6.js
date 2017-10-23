@@ -59,7 +59,7 @@ export default function(RED) {
 
     this.on('input', msg => {
       let preRequestTimestamp = process.hrtime();
-      node.status({fill:'blue',shape:'dot',text:'candy-box-httpreq.status.requesting'});
+      node.status({fill:'blue',shape:'dot',text:'candy-egg-httpreq.status.requesting'});
       let conf = node.accountConfig;
       let url = (conf.secure ? 'https' : 'http') + '://';
       let accountId = conf.accountFqn.split('@');
@@ -180,7 +180,7 @@ export default function(RED) {
           }
           else if (node.ret === 'obj') {
             try { msg.payload = JSON.parse(msg.payload); }
-            catch(e) { node.warn(RED._('candy-box-httpreq.errors.json-error')); }
+            catch(e) { node.warn(RED._('candy-egg-httpreq.errors.json-error')); }
           }
           node.send(msg);
           node.status({});
