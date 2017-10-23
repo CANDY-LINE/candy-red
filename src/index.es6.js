@@ -41,7 +41,7 @@ export class CandyRed {
     this.server = http.createServer(this.app);
 
     // Device Management
-    this.deviceManagerStore = new DeviceManagerStore(RED);
+    this.deviceManagerStore = new DeviceManagerStore();
 
     // path to package.json
     this.packageJsonPath = packageJsonPath;
