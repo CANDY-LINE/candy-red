@@ -312,7 +312,7 @@ export class CandyRed {
       disableEditor: false,
       httpAdminRoot: '/red/',
       httpNodeRoot: '/api/',
-      userDir: (process.env.HOME || process.env.USERPROFILE) + '/.node-red',
+      userDir: (process.env.CANDY_RED_HOME || process.env.HOME || process.env.USERPROFILE) + '/.node-red',
       flowFile: this.flowFile,
       functionGlobalContext: {
       },
