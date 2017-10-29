@@ -323,7 +323,14 @@ export class CandyRed {
       editorTheme: this.editorTheme,
       candyBoardServiceVersion: versions.candyBsv,
       candyRedVersion: versions.candyRedv,
-      deviceId: versions.deviceId
+      deviceId: versions.deviceId,
+      logging: {
+        console: {
+          level: 'info',
+          metrics: false,
+          audit: false
+        }
+      }
     };
   }
 
