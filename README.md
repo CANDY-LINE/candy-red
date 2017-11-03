@@ -121,6 +121,7 @@ However, you need to tell the system to restart the CANDY RED service by perform
 ### Node-RED home
 
 The Node-RED home path, where flow files are placed, is found at `$(npm root -g)/candy-red/.node-red/`.
+Alternately, you can provide the arbitrary path with `CANDY_RED_HOME` environment variable defined in `$(npm root -g)/candy-red/.node-red/environment` file.
 
 ### Slow boot time
 
