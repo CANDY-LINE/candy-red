@@ -32,6 +32,10 @@ const PORT = process.env.PORT || 8100;
 const DEFAULT_PACKAGE_JSON = __dirname + '/../package.json';
 const DEFAULT_WELCOME_FLOW = __dirname + '/welcome-flow.json';
 const NODE_PALETTE_ENABLED = process.env.NODE_PALETTE_ENABLED ? process.env.NODE_PALETTE_ENABLED === 'true' : false;
+const CANDY_RED_SESSION_TIMEOUT = parseInt(process.env.CANDY_RED_SESSION_TIMEOUT || 86400);
+const CANDY_RED_ADMIN_USER_ID = process.env.CANDY_RED_ADMIN_USER_ID;
+const CANDY_RED_ADMIN_PASSWORD_ENC = process.env.CANDY_RED_ADMIN_PASSWORD_ENC;
+const CANDY_RED_LOG_LEVEL = process.env.CANDY_RED_LOG_LEVEL || 'info';
 
 export class CandyRed {
   constructor(packageJsonPath) {
@@ -309,7 +313,7 @@ export class CandyRed {
   }
 
   _createREDSettigngs(versions) {
-    return {
+    let settings = {
       flowFilePretty: true,
       verbose: true,
       disableEditor: false,
@@ -329,12 +333,24 @@ export class CandyRed {
       deviceId: versions.deviceId,
       logging: {
         console: {
-          level: 'info',
+          level: CANDY_RED_LOG_LEVEL,
           metrics: false,
           audit: false
         }
       }
     };
+    if (CANDY_RED_ADMIN_USER_ID && CANDY_RED_ADMIN_PASSWORD_ENC) {
+      settings.adminAuth = {
+        sessionExpiryTime: CANDY_RED_SESSION_TIMEOUT,
+        type: 'credentials',
+        users: [{
+          username: CANDY_RED_ADMIN_USER_ID,
+          password: CANDY_RED_ADMIN_PASSWORD_ENC,
+          permissions: '*'
+        }]
+      };
+    }
+    return settings;
   }
 
 }
