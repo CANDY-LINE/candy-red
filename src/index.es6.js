@@ -215,6 +215,9 @@ export class CandyRed {
         title: ' ** ' + longname + ' **',
         image: __dirname + '/public/images/candy-red.png'
       },
+      login: {
+        image: __dirname + '/public/images/logo.png'
+      },
       menu: {
         'menu-item-help': {
           label: 'Users Forum',
