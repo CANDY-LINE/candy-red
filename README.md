@@ -70,6 +70,17 @@ Please refer to the following commands to install.
 $ sudo NODE_OPTS=--max-old-space-size=256 npm install -g --unsafe-perm candy-red
 ```
 
+You can add administrator role credentials on installation in order to enable authentication.
+
+```
+$ sudo NODE_OPTS=--max-old-space-size=256 \
+    CANDY_RED_ADMIN_USER_ID=... \
+    CANDY_RED_ADMIN_PASSWORD=... \
+    npm install -g --unsafe-perm candy-red
+```
+
+The password is encrypted while the installation process.
+
 You can access `http://<hostname.local or ip address>:8100` with your browser on the same LAN where `<hostname.local or ip address>` is a host name with `.local` suffix or IP address.
 
 ## Stop/Start/Status Service
