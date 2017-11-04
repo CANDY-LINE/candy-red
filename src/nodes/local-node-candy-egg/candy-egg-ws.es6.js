@@ -279,6 +279,9 @@ export default function(RED) {
       if (!node.accountConfig) {
         throw new Error(RED._('candy-egg-ws.errors.missing-conf'));
       }
+      if (!node.accountConfig.accountFqn || !node.accountConfig.loginUser || !node.accountConfig.loginPassword) {
+        throw new Error(RED._('candy-egg-ws.errors.missing-conf'));
+      }
       let key = node.account + ':' + node.path;
       let listener = this.store[key];
       if (!listener) {
