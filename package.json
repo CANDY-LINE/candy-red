@@ -75,7 +75,7 @@
     "node-red-contrib-device-stats": ">=1.0.2",
     "node-red-contrib-moment": "^2.0.0",
     "node-red-dashboard": "^2.4.3",
-    "node-red-node-serialport": "^0.4.2",
+    "node-red-node-serialport": "^0.6.0",
     "request": "^2.74.0",
     "serialport": "~4.0.7",
     "source-map-support": "^0.4.2",
