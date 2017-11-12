@@ -3086,9 +3086,9 @@
       "resolved": "https://registry.npmjs.org/node-red-contrib-moment/-/node-red-contrib-moment-2.0.6.tgz"
     },
     "node-red-dashboard": {
-      "version": "2.6.1",
+      "version": "2.6.2",
       "from": "node-red-dashboard@>=2.5.1 <3.0.0",
-      "resolved": "https://registry.npmjs.org/node-red-dashboard/-/node-red-dashboard-2.6.1.tgz"
+      "resolved": "https://registry.npmjs.org/node-red-dashboard/-/node-red-dashboard-2.6.2.tgz"
     },
     "node-red-node-email": {
       "version": "0.1.24",
