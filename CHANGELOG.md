@@ -2,6 +2,8 @@
 * 5.2.0
   - Add basic authentication support for admin role account
   - Add a new option to enable/disable the warning output on unknown originator ids being detected
+  - Add node-red-contrib-lwm2m node as a builtin node
+  - Add support for Node.js v8.9+
   - Fix an issue where the runtime error can be thrown when properties in accountConfig is missing
   - Fix an issue where WS client failed to connect to non-default port
 
