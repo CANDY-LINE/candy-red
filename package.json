@@ -59,7 +59,8 @@
     "mocha": "^3.0.2",
     "rmdir": "^1.2.0",
     "run-sequence": "^2.0.0",
-    "sinon": "^3.2.1"
+    "sinon": "^3.2.1",
+    "vinyl-fs": "^2.4.4"
   },
   "dependencies": {
     "chokidar": "^1.4.2",
