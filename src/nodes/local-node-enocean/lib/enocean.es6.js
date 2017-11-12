@@ -43,7 +43,7 @@ class ESP3Parser {
           payload: data.rawByte
         });
       } else {
-        let e = new Error('enocean.errors.unsupportedPacketType');
+        let e = new Error('enocean.warn.unsupportedPacketType');
         e.packetType = data.packetType;
         reject(e);
       }
@@ -88,8 +88,10 @@ export class SerialPool {
           enOceanPortNode.error(that.RED._('enocean.errors.parseError', { error: e, data: result.payload }));
         });
       }).catch(e => {
-        if (e instanceof Error && e.message === 'enocean.info.unsupportedPacketType') {
-          enOceanPortNode.info(that.RED._('enocean.info.unsupportedPacketType', { packetType: e.packetType }));
+        if (e instanceof Error && e.message === 'enocean.warn.unsupportedPacketType') {
+          if (enOceanPortNode.showEnOceanWarning) {
+            enOceanPortNode.warn(that.RED._('enocean.warn.unsupportedPacketType', { packetType: e.packetType }));
+          }
         } else {
           enOceanPortNode.error(that.RED._('enocean.errors.parseError', { error: e, data: JSON.stringify(data) }));
         }
@@ -100,14 +102,14 @@ export class SerialPool {
       delete that.pool[portName];
     });
     port.on('close', () => {
-      enOceanPortNode.info(that.RED._('enocean.info.serialPortClosed',{ portName: portName }));
+      enOceanPortNode.debug(that.RED._('enocean.debug.serialPortClosed',{ portName: portName }));
       delete that.pool[portName];
     });
     that.pool[portName] = {
       node: enOceanPortNode,
       port: port
     };
-    enOceanPortNode.info(that.RED._('enocean.info.serialPortAdded',{ portName: portName }));
+    enOceanPortNode.debug(that.RED._('enocean.debug.serialPortAdded',{ portName: portName }));
   }
 
   get(portName) {

@@ -46,7 +46,7 @@ export default function(RED) {
         this.serialPort = n.serialPort;
         EnOceanPortNode.pool.add(this);
       } catch (e) {
-        this.warn(RED._('enocean.errors.serialPortError', { error: e }));
+        this.error(RED._('enocean.errors.serialPortError', { error: e }));
       }
     }
   }
@@ -115,7 +115,7 @@ export default function(RED) {
             node.learningCount = 0;
             node.learnEventAt = 0;
           }
-        } else if (node.logUnknownOriginatorId) {
+        } else if (node.showEnOceanWarning) {
           node.warn(RED._('enocean.warn.noNode', { originatorId: ctx.originatorId }));
         }
       });
@@ -124,7 +124,7 @@ export default function(RED) {
       enocean.port.on(`ctx-${node.originatorIdInt}`, ctx => {
         let handleIt = ERP2_HANDLERS[node.eepType];
         if (!handleIt) {
-          if (node.logUnknownOriginatorId) {
+          if (node.showEnOceanWarning) {
             node.warn(RED._('enocean.warn.noHandler', { eepType: node.eepType }));
           }
           return;
@@ -165,7 +165,7 @@ export default function(RED) {
       this.eepType = n.eepType;
       this.addEepType = n.addEepType;
       this.useString = n.useString;
-      this.logUnknownOriginatorId = n.logUnknownOriginatorId || true;
+      this.showEnOceanWarning = n.showEnOceanWarning || true;
       this.enoceanPortNodeId = n.enoceanPort;
       this.enoceanPortNode = RED.nodes.getNode(this.enoceanPortNodeId);
       this.ignoreLRNBit = n.ignoreLRNBit || false;
@@ -191,7 +191,7 @@ export default function(RED) {
       this.on('learned', () => {
         this.learning = false;
         this.status({ fill: 'green', shape: 'dot', text: 'node-red:common.status.connected'});
-        this.warn(RED._('enocean.info.learned', { name: (this.name || this.id), originatorId: this.originatorId }));
+        this.warn(RED._('enocean.warn.learned', { name: (this.name || this.id), originatorId: this.originatorId }));
       });
       this.on('timeout', () => {
         this.learning = false;
@@ -218,7 +218,7 @@ export default function(RED) {
           this.status({ fill: 'red', shape: 'ring', text: 'node-red:common.status.not-connected'});
         });
       } catch (e) {
-        this.warn(RED._('enocean.errors.serialPortError', { error: e }));
+        this.error(RED._('enocean.errors.serialPortError', { error: e }));
       }
     }
   }

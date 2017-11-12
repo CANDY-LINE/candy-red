@@ -63,10 +63,10 @@
     <input type='checkbox' id='node-input-useString' style='display: inline-block; width: auto; vertical-align: top;'>
     <label for='node-input-useString' style='width: 70%;' data-i18n='enocean.label.useString'></label>
   </div>
-  <div class='form-row' id='node-logUnknownOriginatorId'>
+  <div class='form-row' id='node-showEnOceanWarning'>
     <label>&nbsp;</label>
-    <input type='checkbox' id='node-input-logUnknownOriginatorId' style='display: inline-block; width: auto; vertical-align: top;'>
-    <label for='node-input-logUnknownOriginatorId' style='width: 70%;' data-i18n='enocean.label.logUnknownOriginatorId'></label>
+    <input type='checkbox' id='node-input-showEnOceanWarning' style='display: inline-block; width: auto; vertical-align: top;'>
+    <label for='node-input-showEnOceanWarning' style='width: 70%;' data-i18n='enocean.label.showEnOceanWarning'></label>
   </div>
 </script>
 
@@ -82,7 +82,7 @@
       ignoreLRNBit: { value: false, required: false },
       enoceanPort: { type: 'EnOcean Port', required: true },
       useString: { value: false, required: false },
-      logUnknownOriginatorId: { value: true }
+      showEnOceanWarning: { value: true }
     },
     color: 'PaleGreen',
     inputs: 0,
