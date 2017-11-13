@@ -1,3 +1,19 @@
+/**
+ * @license
+ * Copyright (c) 2017 CANDY LINE INC.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 'use strict';
 /*
  * EnOcean Serial Node for Packet Type 10: RADIO_ERP2
@@ -30,7 +46,7 @@ export default function(RED) {
         this.serialPort = n.serialPort;
         EnOceanPortNode.pool.add(this);
       } catch (e) {
-        RED.log.warn(RED._('enocean.errors.serialPortError', { error: e }));
+        this.error(RED._('enocean.errors.serialPortError', { error: e }));
       }
     }
   }
@@ -41,14 +57,15 @@ export default function(RED) {
     return path.join(RED.settings.userDir, 'enocean-ids.json');
   }
 
-  function saveLearnedIDs(id, originatorId) {
+  function saveLearnedIDs(node) {
+    let id = node.id;
     if (!learnedIDs) {
       learnedIDs = {};
     }
-    learnedIDs[id] = originatorId;
+    learnedIDs[id] = node.originatorId;
     fs.writeFile(createIDfilePath(), JSON.stringify(learnedIDs), (err) => {
       if (err) {
-        RED.log.error('Failed to write detected OriginatorID!', err);
+        node.error('Failed to write detected OriginatorID!', err);
       }
     });
   }
@@ -90,7 +107,7 @@ export default function(RED) {
               node.originatorId = ctx.originatorId;
               node.originatorIdInt = ctx.originatorIdInt;
               if (!isNaN(node.originatorIdInt)) {
-                saveLearnedIDs(node.id, node.originatorId);
+                saveLearnedIDs(node);
                 addEventListener(node);
               }
             }
@@ -98,6 +115,8 @@ export default function(RED) {
             node.learningCount = 0;
             node.learnEventAt = 0;
           }
+        } else if (node.showEnOceanWarning) {
+          node.warn(RED._('enocean.warn.noNode', { originatorId: ctx.originatorId }));
         }
       });
     } else {
@@ -105,7 +124,9 @@ export default function(RED) {
       enocean.port.on(`ctx-${node.originatorIdInt}`, ctx => {
         let handleIt = ERP2_HANDLERS[node.eepType];
         if (!handleIt) {
-          RED.log.warn(RED._('enocean.warn.noHandler', { eepType: node.eepType }));
+          if (node.showEnOceanWarning) {
+            node.warn(RED._('enocean.warn.noHandler', { eepType: node.eepType }));
+          }
           return;
         }
         let payload = handleIt(ctx);
@@ -144,6 +165,7 @@ export default function(RED) {
       this.eepType = n.eepType;
       this.addEepType = n.addEepType;
       this.useString = n.useString;
+      this.showEnOceanWarning = n.showEnOceanWarning || true;
       this.enoceanPortNodeId = n.enoceanPort;
       this.enoceanPortNode = RED.nodes.getNode(this.enoceanPortNodeId);
       this.ignoreLRNBit = n.ignoreLRNBit || false;
@@ -169,7 +191,7 @@ export default function(RED) {
       this.on('learned', () => {
         this.learning = false;
         this.status({ fill: 'green', shape: 'dot', text: 'node-red:common.status.connected'});
-        RED.log.warn(RED._('enocean.info.learned', { name: (this.name || this.id), originatorId: this.originatorId }));
+        this.warn(RED._('enocean.warn.learned', { name: (this.name || this.id), originatorId: this.originatorId }));
       });
       this.on('timeout', () => {
         this.learning = false;
@@ -196,7 +218,7 @@ export default function(RED) {
           this.status({ fill: 'red', shape: 'ring', text: 'node-red:common.status.not-connected'});
         });
       } catch (e) {
-        RED.log.warn(RED._('enocean.errors.serialPortError', { error: e }));
+        this.error(RED._('enocean.errors.serialPortError', { error: e }));
       }
     }
   }

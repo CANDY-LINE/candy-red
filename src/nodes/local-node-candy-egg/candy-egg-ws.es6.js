@@ -14,6 +14,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  **/
+/**
+ * @license
+ * Copyright (c) 2017 CANDY LINE INC.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 
 import WebSocket from 'ws';
 import urllib from 'url';
@@ -48,7 +64,11 @@ export default function(RED) {
       let prefix = 'ws' + (conf.secure ? 's' : '') + '://';
       prefix += encodeURIComponent(conf.loginUser) + ':' + encodeURIComponent(conf.loginPassword) + '@';
       let accountId = conf.accountFqn.split('@');
-      prefix += encodeURIComponent(accountId[1]);
+      let port = accountId[1].split(':');
+      prefix += encodeURIComponent(port[0]);
+      if (port[1]) {
+        prefix += `:${port[1]}`;
+      }
       let path = this.path;
       if (url) {
         let urlobj = urllib.parse(url);
@@ -113,23 +133,23 @@ export default function(RED) {
           if (res.headers.location) {
             if (this.redirect > 3) {
               this.redirect = 0;
-              RED.log.error(RED._('candy-egg-ws.errors.too-many-redirects', { path: this.path, location: res.headers.location }));
+              this.emit2all('log-error', RED._('candy-egg-ws.errors.too-many-redirects', { path: this.path, location: res.headers.location }));
             } else {
               ++this.redirect;
               return this.startconn(res.headers.location);
             }
           }
         } else if (res.statusCode === 404) {
-          RED.log.error(RED._('candy-egg-ws.errors.wrong-path', { path: this.path }));
+          this.emit2all('log-error', RED._('candy-egg-ws.errors.wrong-path', { path: this.path }));
         } else if (res.statusCode === 401) {
-          RED.log.error(RED._('candy-egg-ws.errors.auth-error', { path: this.path, user: this.accountConfig.loginUser }));
+          this.emit2all('log-error', RED._('candy-egg-ws.errors.auth-error', { path: this.path, user: this.accountConfig.loginUser }));
           ++this.authRetry;
           if (this.authRetry > 10) {
             return; // never retry
           }
-          RED.log.info(RED._('candy-egg-ws.status.auth-retry'));
+          this.emit2all('log-info', RED._('candy-egg-ws.status.auth-retry'));
         } else {
-          RED.log.error(RED._('candy-egg-ws.errors.server-error', { path: this.path, status: res.statusCode }));
+          this.emit2all('log-error', RED._('candy-egg-ws.errors.server-error', { path: this.path, status: res.statusCode }));
         }
         // try to reconnect every approx. 1 min
         socket.skipCloseEventHandler = true;
@@ -139,7 +159,7 @@ export default function(RED) {
       });
       socket.on('error', err => {
         this.emit2all('erro', err);
-        RED.log.error(RED._('candy-egg-ws.errors.connect-error', { err: err, accountFqn: this.accountConfig.accountFqn}));
+        this.emit2all('log-error', RED._('candy-egg-ws.errors.connect-error', { err: err, accountFqn: this.accountConfig.accountFqn}));
         socket.skipCloseEventHandler = true;
         socket.close();
         if (!this.closing) {
@@ -188,7 +208,7 @@ export default function(RED) {
       });
     }
 
-    handleEvent(id,/*socket*/socket,/*String*/event,/*Object*/data,/*Object*/flags) {
+    handleEvent(id,/*socket*/socket,/*String*/event,/*Object*/data/*, Object flags */) {
       let msg, wholemsg, obj;
       try {
         obj = this._deserialize(data);
@@ -216,7 +236,6 @@ export default function(RED) {
           this._inputNodes[i].send(msg);
         }
       }
-      RED.log.debug('flags:' + flags);
     }
 
     emit2all(...args) {
@@ -245,7 +264,7 @@ export default function(RED) {
         this.server.send(data);
         return true;
       } catch (err) {
-        RED.log.error(RED._('candy-egg-ws.errors.send-error', { err: err, accountFqn: this.accountConfig.accountFqn}));
+        this.emit2all('log-error', RED._('candy-egg-ws.errors.send-error', { err: err, accountFqn: this.accountConfig.accountFqn}));
         return false;
       }
     }
@@ -258,6 +277,9 @@ export default function(RED) {
 
     get(node, options=null) {
       if (!node.accountConfig) {
+        throw new Error(RED._('candy-egg-ws.errors.missing-conf'));
+      }
+      if (!node.accountConfig.accountFqn || !node.accountConfig.loginUser || !node.accountConfig.loginPassword) {
         throw new Error(RED._('candy-egg-ws.errors.missing-conf'));
       }
       let key = node.account + ':' + node.path;
@@ -297,15 +319,6 @@ export default function(RED) {
       this.loginPassword = this.credentials ? this.credentials.loginPassword : n.loginPassword;
       this.secure = n.secure;
       webSocketListeners.reset(n.id);
-
-      this.managed = n.managed;
-      // deploying implicit API clients (candy-ws)
-      let deviceManagerStore = RED.settings.deviceManagerStore;
-      if (this.managed && deviceManagerStore && deviceManagerStore.isWsClientInitialized) {
-        if (!deviceManagerStore.isWsClientInitialized(this.accountFqn)) {
-          deviceManagerStore.initWsClient(n.id, this, webSocketListeners);
-        }
-      }
     }
   }
   RED.nodes.registerType('CANDY EGG account', CANDYEggAccountNode, {
@@ -341,6 +354,13 @@ export default function(RED) {
           this.listenerConfig.removeInputNode(this);
         }
       });
+
+      this.on('log-info', (msg) => {
+        this.info(msg);
+      });
+      this.on('log-error', (msg) => {
+        this.error(msg);
+      });
     }
   }
   RED.nodes.registerType('CANDY EGG websocket in', WebSocketInNode);
@@ -367,6 +387,13 @@ export default function(RED) {
 
       this.on('close', () => {
         this.listenerConfig.removeOutputNode(this);
+      });
+
+      this.on('log-info', (msg) => {
+        this.info(msg);
+      });
+      this.on('log-error', (msg) => {
+        this.error(msg);
       });
 
       this.on('input', msg => {

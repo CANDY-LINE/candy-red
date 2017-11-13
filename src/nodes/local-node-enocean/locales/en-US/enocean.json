@@ -9,7 +9,8 @@
       "enoceanPort" : "EnOcean Serial Port",
       "useString" : "Use string payload",
       "ignoreLRNBit" : "Ignore LRN BIT (1BS/4BS only)",
-      "serialPort" : "Serial Port"
+      "serialPort" : "Serial Port",
+      "showEnOceanWarning": "Show EnOcean Warning"
     },
     "eepType" : {
       "f6-02-04" : "RPS/Rocker Switch, 2 Rocker/Light and blind control ERP2",
@@ -24,13 +25,13 @@
       "learning" : "learning",
       "timeout" : "timeout"
     },
-    "info" : {
-      "learned" : "The node [__name__] has learned Originator ID:__originatorId__",
-      "unsupportedPacketType" : "Unsupported Packet Type: __packetType__",
+    "debug" : {
       "serialPortClosed" : "The serial port [__portName__] is closed and removed from the port pool",
       "serialPortAdded" : "The serial port [__portName__] is added to the port pool"
     },
     "warn" : {
+      "unsupportedPacketType" : "Unsupported Packet Type: __packetType__",
+      "learned" : "The node [__name__] has learned Originator ID:__originatorId__",
       "noNode" : "No node on the flow for the Originator ID:__originatorId__",
       "noParser" : "Missing parser for Data:[__data__] (__error__)",
       "noHandler" : "Missing handler for EEP Type:[__eepType__]"
