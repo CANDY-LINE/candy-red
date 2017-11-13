@@ -352,14 +352,10 @@ $ rm -fr node_modules; \
 
 ## Coding Styles
 
-1. Use ES6 (except Gruntfile.js and \*.html)
+1. Use ES6 (except gulpfile.js and \*.html)
 1. 2-space soft tabs
 1. Append .es6.js suffix to ES6 JS files
 1. See .jshintrc for detail
-
-## Known Issues
-
-* CANDY EGG cloud services aren't yet available
 
 ## TODO
 * publish local Node-RED nodes in this project to npm repository
