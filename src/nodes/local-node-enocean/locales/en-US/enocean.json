@@ -26,6 +26,7 @@
       "timeout" : "timeout"
     },
     "debug" : {
+      "serialPortDisconnected": "The serial port [__portName__] is disconnected and removed from the port pool",
       "serialPortClosed" : "The serial port [__portName__] is closed and removed from the port pool",
       "serialPortAdded" : "The serial port [__portName__] is added to the port pool"
     },
