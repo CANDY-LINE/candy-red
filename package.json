@@ -63,8 +63,6 @@
     "vinyl-fs": "^2.4.4"
   },
   "dependencies": {
-    "chokidar": "^1.4.2",
-    "es6-promises": "^1.0.10",
     "express": "^4.14.0",
     "follow-redirects": "^1.2.0",
     "lru-cache": "^4.0.0",
