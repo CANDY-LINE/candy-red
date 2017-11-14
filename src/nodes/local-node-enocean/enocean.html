@@ -163,7 +163,7 @@
 
       $('#node-config-lookup-serial').click(function() {
         $('#node-config-lookup-serial').addClass('disabled');
-        $.getJSON('serialports',function(data) {
+        $.getJSON('enoceanports',function(data) {
           $('#node-config-lookup-serial').removeClass('disabled');
           var ports = [];
           $.each(data, function(i, port){

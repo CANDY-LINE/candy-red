@@ -27,6 +27,7 @@
 
 import fs from 'fs';
 import path from 'path';
+import serialport from 'serialport';
 
 import { SerialPool } from './lib/enocean';
 import { ERP2_TEACH_IN_HANDLERS, ERP2_HANDLERS } from './lib/eep_handlers';
@@ -227,4 +228,18 @@ export default function(RED) {
   RED.httpAdmin.get('/eeps', RED.auth.needsPermission('eep.read'), function(req,res) {
     res.json(Object.keys(ERP2_HANDLERS));
   });
+  RED.httpAdmin.get("/enoceanports", RED.auth.needsPermission('serial.read'), function(req,res) {
+    let list = [];
+    fs.stat('/dev/enocean', (err) => {
+      if (!err) {
+        list.push({
+          comName: '/dev/enocean'
+        });
+      }
+      serialport.list(function (_, ports) {
+        res.json(list.concat(ports));
+      });
+    });
+  });
+
 }
