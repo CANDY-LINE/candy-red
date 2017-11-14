@@ -104,7 +104,7 @@ export class SerialPool {
             enOceanPortNode.warn(that.RED._('enocean.warn.unsupportedPacketType', { packetType: e.packetType }));
           }
         } else {
-          enOceanPortNode.error(that.RED._('enocean.errors.parseError', { error: e, data: JSON.stringify(data) }));
+          enOceanPortNode.error(that.RED._('enocean.errors.parseError', { error: e, data: JSON.stringify(buffer) }));
         }
       });
     });
