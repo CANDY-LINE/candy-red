@@ -39,6 +39,7 @@ This is the default screen theme.
 ### Tested Node.js versions
 
 * v6.12
+* v8.9
 
 The preinstalled version of Node.js v0.10.29 won't work because of the [header file issue](http://dustinbolton.com/replace_invalid_utf8-is-not-a-member-of-v8string-installing-nodejs-packages-on-raspbian-debian-on-raspberry-pi-2-b/) appearing on installing native addons.
 
@@ -346,8 +347,8 @@ $ docker run -tid -v ./dist:/candy-red-dist candy-red
 ```
 $ rm -fr node_modules; \
   rm -f npm-shrinkwrap.json; \
-  docker run --name build --rm -ti -v $(pwd):/work -w /work -e DEVEL=true \
-    node:6.12 bash -c "npm install;npm run freeze"
+  nodenv local 8.9.1; \
+  DEVEL=true npm install;npm run freeze"
 ```
 
 ## Coding Styles

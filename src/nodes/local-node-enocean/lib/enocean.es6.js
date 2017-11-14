@@ -20,7 +20,8 @@
  * EnOcean Module
  */
 
-import setUpEnocean from 'node-enocean';
+import SerialPort from 'serialport';
+import pareseESP3 from 'serialport-enocean-parser';
 import { ESP3RadioERP2Parser, ERP2Parser } from './esp3_erp2_parser';
 import Promise from 'es6-promises';
 import fs from 'fs';
@@ -29,22 +30,22 @@ const ESP3_PACKET_PARSERS = {
   10: new ESP3RadioERP2Parser() // Packet Type 10: RADIO_ERP2
 };
 
-class ESP3Parser {
+class ESP3PacketParser {
   constructor(RED) {
     this.RED = RED;
   }
 
-  parse(data) {
+  parse(packet) {
     return new Promise((resolve, reject) => {
-      let esp3PacketParser = ESP3_PACKET_PARSERS[data.packetType];
+      let esp3PacketParser = ESP3_PACKET_PARSERS[packet.header.packetType];
       if (esp3PacketParser) {
         resolve({
           parser: esp3PacketParser,
-          payload: data.rawByte
+          payload: packet.getRawBuffer()
         });
       } else {
         let e = new Error('enocean.warn.unsupportedPacketType');
-        e.packetType = data.packetType;
+        e.packetType = packet.header.packetType;
         reject(e);
       }
     });
@@ -54,7 +55,7 @@ class ESP3Parser {
 export class SerialPool {
   constructor(RED) {
     this.pool = {};
-    this.esp3Parser = new ESP3Parser(RED);
+    this.esp3PacketParser = new ESP3PacketParser(RED);
     this.erp2Parser = new ERP2Parser();
     this.RED = RED;
   }
@@ -71,21 +72,31 @@ export class SerialPool {
     if (that.pool[portName]) {
       throw new Error(`The serial port [${portName}] is duplicate!`);
     }
-    let port = setUpEnocean();
-    port.listen(portName);
-    port.on('data', data => {
-      that.esp3Parser.parse(data).then(result => {
-        result.parser.parse(result.payload).then(ctx => {
-          that.erp2Parser.parse(ctx).then(ctx => {
-            let originatorIdInt = ctx.originatorIdInt;
-            if (!port.emit(`ctx-${originatorIdInt}`, ctx)) {
-              port.emit('learn', ctx);
-            }
+    let port = new SerialPort(portName, { baudRate: 57600 });
+    port.on('open', () => {
+      port.emit('ready');
+    });
+    port.on('data', buffer => {
+      return new Promise((resolve) => {
+        pareseESP3({
+          emit(_, out) {
+            return resolve(out);
+          }
+        }, buffer);
+      }).then((data) => {
+        return that.esp3PacketParser.parse(data).then(result => {
+          result.parser.parse(result.payload).then(ctx => {
+            that.erp2Parser.parse(ctx).then(ctx => {
+              let originatorIdInt = ctx.originatorIdInt;
+              if (!port.emit(`ctx-${originatorIdInt}`, ctx)) {
+                port.emit('learn', ctx);
+              }
+            }).catch(e => {
+              enOceanPortNode.error(that.RED._('enocean.errors.parseError', { error: e, data: JSON.stringify(ctx) }));
+            });
           }).catch(e => {
-            enOceanPortNode.error(that.RED._('enocean.errors.parseError', { error: e, data: JSON.stringify(ctx) }));
+            enOceanPortNode.error(that.RED._('enocean.errors.parseError', { error: e, data: result.payload }));
           });
-        }).catch(e => {
-          enOceanPortNode.error(that.RED._('enocean.errors.parseError', { error: e, data: result.payload }));
         });
       }).catch(e => {
         if (e instanceof Error && e.message === 'enocean.warn.unsupportedPacketType') {
@@ -93,12 +104,16 @@ export class SerialPool {
             enOceanPortNode.warn(that.RED._('enocean.warn.unsupportedPacketType', { packetType: e.packetType }));
           }
         } else {
-          enOceanPortNode.error(that.RED._('enocean.errors.parseError', { error: e, data: JSON.stringify(data) }));
+          enOceanPortNode.error(that.RED._('enocean.errors.parseError', { error: e, data: JSON.stringify(buffer) }));
         }
       });
     });
     port.on('error', e => {
       enOceanPortNode.warn(that.RED._('enocean.errors.serialPortError',{ error: e }));
+      delete that.pool[portName];
+    });
+    port.on('disconnect', () => {
+      enOceanPortNode.debug(that.RED._('enocean.debug.serialPortDisconnected',{ portName: portName }));
       delete that.pool[portName];
     });
     port.on('close', () => {
