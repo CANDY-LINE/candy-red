@@ -21,7 +21,7 @@
  */
 
 import SerialPort from 'serialport';
-import ESP3Parser from 'serialport-enocean-parser';
+import pareseESP3 from 'serialport-enocean-parser';
 import { ESP3RadioERP2Parser, ERP2Parser } from './esp3_erp2_parser';
 import Promise from 'es6-promises';
 import fs from 'fs';
@@ -72,23 +72,31 @@ export class SerialPool {
     if (that.pool[portName]) {
       throw new Error(`The serial port [${portName}] is duplicate!`);
     }
-    let port = new SerialPort(portName, { baudrate: 57600, parser: ESP3Parser });
+    let port = new SerialPort(portName, { baudRate: 57600 });
     port.on('open', () => {
       port.emit('ready');
     });
-    port.on('data', data => {
-      that.esp3PacketParser.parse(data).then(result => {
-        result.parser.parse(result.payload).then(ctx => {
-          that.erp2Parser.parse(ctx).then(ctx => {
-            let originatorIdInt = ctx.originatorIdInt;
-            if (!port.emit(`ctx-${originatorIdInt}`, ctx)) {
-              port.emit('learn', ctx);
-            }
+    port.on('data', buffer => {
+      return new Promise((resolve) => {
+        pareseESP3({
+          emit(_, out) {
+            return resolve(out);
+          }
+        }, buffer);
+      }).then((data) => {
+        return that.esp3PacketParser.parse(data).then(result => {
+          result.parser.parse(result.payload).then(ctx => {
+            that.erp2Parser.parse(ctx).then(ctx => {
+              let originatorIdInt = ctx.originatorIdInt;
+              if (!port.emit(`ctx-${originatorIdInt}`, ctx)) {
+                port.emit('learn', ctx);
+              }
+            }).catch(e => {
+              enOceanPortNode.error(that.RED._('enocean.errors.parseError', { error: e, data: JSON.stringify(ctx) }));
+            });
           }).catch(e => {
-            enOceanPortNode.error(that.RED._('enocean.errors.parseError', { error: e, data: JSON.stringify(ctx) }));
+            enOceanPortNode.error(that.RED._('enocean.errors.parseError', { error: e, data: result.payload }));
           });
-        }).catch(e => {
-          enOceanPortNode.error(that.RED._('enocean.errors.parseError', { error: e, data: result.payload }));
         });
       }).catch(e => {
         if (e instanceof Error && e.message === 'enocean.warn.unsupportedPacketType') {
