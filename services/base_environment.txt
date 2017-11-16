@@ -23,3 +23,6 @@ CANDY_RED_LOG_LEVEL=%CANDY_RED_LOG_LEVEL%
 
 # The path to .node-red directory if any
 #CANDY_RED_HOME=
+
+# Set the --max-old-space-size (automatically allocated by default)
+#MAX_OLD_SPACE_SIZE=
