@@ -12,10 +12,14 @@ CANDY RED is IoT gateway software desgined for [CANDY Pi Lite board](https://tra
 * Include Node-RED flow editor/flow execution runtime
 * PAM Authentication is enabled by default
 * Running as a systemd service
-* Custom builtin nodes
-    * OMA LwM2M client nodes
-    * EnOcean node (ESP3 over ERP2)
-    * CANDY EGG cloud service nodes \*
+* Dashboard UI is installed by default
+* More builtin nodes
+    * [OMA LwM2M client nodes](https://www.npmjs.com/package/node-red-contrib-lwm2m)
+    * [EnOcean node (ESP3 over ERP2)](https://github.com/CANDY-LINE/candy-red/tree/master/src/nodes/local-node-enocean)
+    * [GATT BLE nodes](https://www.npmjs.com/package/node-red-contrib-generic-ble)
+    * [Serialport node](https://www.npmjs.com/package/node-red-node-serialport)
+    * [Device Statistics node](https://www.npmjs.com/package/node-red-contrib-device-stats)
+    * [CANDY EGG cloud service nodes](https://github.com/CANDY-LINE/candy-red/tree/master/src/nodes/local-node-candy-egg) \*
 
 _\* [CANDY EGG cloud service](https://www.candy-line.io/%E8%A3%BD%E5%93%81%E4%B8%80%E8%A6%A7/candy-red-egg/) account is required_
 
