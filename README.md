@@ -5,15 +5,17 @@ CANDY RED
 [![master Build Status](https://travis-ci.org/CANDY-LINE/candy-red.svg?branch=master)](https://travis-ci.org/CANDY-LINE/candy-red/)
 [![License MIT](https://img.shields.io/github/license/CANDY-LINE/candy-red.svg)](http://opensource.org/licenses/MIT)
 
-CANDY RED is an IoT gateway service for [CANDY Pi Lite board](https://translate.google.com/translate?hl=en&sl=ja&u=https://www.candy-line.io/%25E8%25A3%25BD%25E5%2593%2581%25E4%25B8%2580%25E8%25A6%25A7/candy-pi-lite/&prev=search) with [Raspberry Pi](https://www.raspberrypi.org) powered by [Node-RED](https://nodered.org).
+CANDY RED is IoT gateway software desgined for [CANDY Pi Lite board](https://translate.google.com/translate?hl=en&sl=ja&u=https://www.candy-line.io/%25E8%25A3%25BD%25E5%2593%2581%25E4%25B8%2580%25E8%25A6%25A7/candy-pi-lite/&prev=search) with [Raspberry Pi](https://www.raspberrypi.org) powered by [Node-RED](https://nodered.org).
 
 ## Features
 
-* PAM Authentication is enabled by default
 * Include Node-RED flow editor/flow execution runtime
+* PAM Authentication is enabled by default
 * Running as a systemd service
-* Preinstalled EnOcean node (ESP3 over ERP2)
-* Preinstalled helper nodes for CANDY EGG cloud service \*
+* Custom builtin nodes
+    * OMA LwM2M client nodes
+    * EnOcean node (ESP3 over ERP2)
+    * CANDY EGG cloud service nodes \*
 
 _\* [CANDY EGG cloud service](https://www.candy-line.io/%E8%A3%BD%E5%93%81%E4%B8%80%E8%A6%A7/candy-red-egg/) account is required_
 
