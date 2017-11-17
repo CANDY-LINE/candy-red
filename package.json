@@ -1,6 +1,6 @@
 {
   "name": "candy-red",
-  "version": "4.0.0",
+  "version": "5.2.0",
   "description": "CANDY RED Device Gateway Service powered by Node-RED",
   "main": "./dist/index.js",
   "scripts": {
@@ -26,7 +26,7 @@
     "CANDY EGG"
   ],
   "author": "Daisuke Baba",
-  "license": "MIT",
+  "license": "Apache-2.0",
   "bugs": {
     "url": "https://github.com/CANDY-LINE/candy-red/issues"
   },
@@ -59,7 +59,8 @@
     "mocha": "^3.0.2",
     "rmdir": "^1.2.0",
     "run-sequence": "^2.0.0",
-    "sinon": "^2.1.0"
+    "sinon": "^3.2.1",
+    "vinyl-fs": "^2.4.4"
   },
   "dependencies": {
     "chokidar": "^1.4.2",
@@ -70,18 +71,16 @@
     "mkdirp": "^0.5.1",
     "mustache": "^2.2.1",
     "nan": "^2.4.0",
-    "node-enocean": "^2.1.0",
+    "node-enocean": "^1.8.0",
     "node-red": "^0.17.5",
-    "node-red-contrib-asakusa_giken": ">=3.0.0",
-    "node-red-contrib-cache": ">=1.0.0",
     "node-red-contrib-device-stats": ">=1.0.2",
-    "node-red-contrib-moment": "^2.0.0",
-    "node-red-contrib-sequence-functions": ">=1.0.0",
-    "node-red-dashboard": "^2.3.10",
-    "node-red-node-serialport": "^0.4.2",
+    "node-red-contrib-lwm2m": "^1.1.0",
+    "node-red-contrib-moment": "^2.0.6",
+    "node-red-dashboard": "^2.6.2",
+    "node-red-node-serialport": "^0.6.0",
     "request": "^2.74.0",
     "serialport": "~4.0.7",
-    "source-map-support": "^0.4.2",
+    "source-map-support": "^0.5.0",
     "ws": "^3.1.0"
   }
 }

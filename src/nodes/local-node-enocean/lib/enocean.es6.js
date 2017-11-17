@@ -1,3 +1,19 @@
+/**
+ * @license
+ * Copyright (c) 2017 CANDY LINE INC.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 'use strict';
 
 /*
@@ -27,7 +43,7 @@ class ESP3Parser {
           payload: data.rawByte
         });
       } else {
-        let e = new Error('enocean.errors.unsupportedPacketType');
+        let e = new Error('enocean.warn.unsupportedPacketType');
         e.packetType = data.packetType;
         reject(e);
       }
@@ -63,36 +79,37 @@ export class SerialPool {
           that.erp2Parser.parse(ctx).then(ctx => {
             let originatorIdInt = ctx.originatorIdInt;
             if (!port.emit(`ctx-${originatorIdInt}`, ctx)) {
-              that.RED.log.warn(that.RED._('enocean.warn.noNode', { originatorId: ctx.originatorId }));
               port.emit('learn', ctx);
             }
           }).catch(e => {
-            that.RED.log.error(that.RED._('enocean.errors.parseError', { error: e, data: JSON.stringify(ctx) }));
+            enOceanPortNode.error(that.RED._('enocean.errors.parseError', { error: e, data: JSON.stringify(ctx) }));
           });
         }).catch(e => {
-          that.RED.log.error(that.RED._('enocean.errors.parseError', { error: e, data: result.payload }));
+          enOceanPortNode.error(that.RED._('enocean.errors.parseError', { error: e, data: result.payload }));
         });
       }).catch(e => {
-        if (e instanceof Error && e.message === 'enocean.info.unsupportedPacketType') {
-          that.RED.log.info(that.RED._('enocean.info.unsupportedPacketType', { packetType: e.packetType }));
+        if (e instanceof Error && e.message === 'enocean.warn.unsupportedPacketType') {
+          if (enOceanPortNode.showEnOceanWarning) {
+            enOceanPortNode.warn(that.RED._('enocean.warn.unsupportedPacketType', { packetType: e.packetType }));
+          }
         } else {
-          that.RED.log.error(that.RED._('enocean.errors.parseError', { error: e, data: JSON.stringify(data) }));
+          enOceanPortNode.error(that.RED._('enocean.errors.parseError', { error: e, data: JSON.stringify(data) }));
         }
       });
     });
     port.on('error', e => {
-      that.RED.log.warn(that.RED._('enocean.errors.serialPortError',{ error: e }));
+      enOceanPortNode.warn(that.RED._('enocean.errors.serialPortError',{ error: e }));
       delete that.pool[portName];
     });
     port.on('close', () => {
-      that.RED.log.info(that.RED._('enocean.info.serialPortClosed',{ portName: portName }));
+      enOceanPortNode.debug(that.RED._('enocean.debug.serialPortClosed',{ portName: portName }));
       delete that.pool[portName];
     });
     that.pool[portName] = {
       node: enOceanPortNode,
       port: port
     };
-    that.RED.log.info(that.RED._('enocean.info.serialPortAdded',{ portName: portName }));
+    enOceanPortNode.debug(that.RED._('enocean.debug.serialPortAdded',{ portName: portName }));
   }
 
   get(portName) {

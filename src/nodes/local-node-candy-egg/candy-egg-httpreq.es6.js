@@ -14,6 +14,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  **/
+/**
+ * @license
+ * Copyright (c) 2017 CANDY LINE INC.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 
 import { http, https } from 'follow-redirects';
 import urllib from 'url';
@@ -43,7 +59,7 @@ export default function(RED) {
 
     this.on('input', msg => {
       let preRequestTimestamp = process.hrtime();
-      node.status({fill:'blue',shape:'dot',text:'candy-box-httpreq.status.requesting'});
+      node.status({fill:'blue',shape:'dot',text:'candy-egg-httpreq.status.requesting'});
       let conf = node.accountConfig;
       let url = (conf.secure ? 'https' : 'http') + '://';
       let accountId = conf.accountFqn.split('@');
@@ -164,7 +180,7 @@ export default function(RED) {
           }
           else if (node.ret === 'obj') {
             try { msg.payload = JSON.parse(msg.payload); }
-            catch(e) { node.warn(RED._('candy-box-httpreq.errors.json-error')); }
+            catch(e) { node.warn(RED._('candy-egg-httpreq.errors.json-error')); }
           }
           node.send(msg);
           node.status({});

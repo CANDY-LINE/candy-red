@@ -1,3 +1,19 @@
+/**
+ * @license
+ * Copyright (c) 2017 CANDY LINE INC.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 'use strict';
 
 import 'source-map-support/register';
@@ -23,7 +39,7 @@ const MODEM_OFFLINE = 'offline';
 export class DeviceIdResolver {
   constructor() {
     this.hearbeatIntervalMs = -1;
-    this.ciotSupported = false;
+    this.candyBoardServiceSupported = false;
   }
 
   resolve() {
@@ -496,13 +512,13 @@ export class DeviceManager {
 
   _performInspect(c) {
     return new Promise((resolve, reject) => {
-      if (!this.ciotSupported) {
+      if (!this.candyBoardServiceSupported) {
         return reject({ status: 405 });
       }
       if (!c) {
         return reject({ status: 400 });
       }
-      this.deviceState._ciotRun('modem', 'show').then(output => {
+      this.deviceState._candyRun('modem', 'show').then(output => {
         resolve({ status: 200, results: output });
       }).catch(err => {
         reject(err);
@@ -671,7 +687,7 @@ export class DeviceManager {
 export class DeviceState {
 
   constructor(onFlowFileChanged, onFlowFileRemoved) {
-    this.ciotSupported = false;
+    this.candyBoardServiceSupported = false;
     this.flowFileSignature = '';
     this.flowFilePath = '';
     this.resolver = new DeviceIdResolver();
@@ -690,34 +706,6 @@ export class DeviceState {
           resolve();
         });
       }
-    });
-  }
-
-  _ciotRun(cat, act, ...args) {
-    return new Promise((resolve, reject) => {
-      if (!args) {
-        args = [];
-      }
-      args.unshift(cat, act);
-      let ciot = cproc.spawn('ciot', args, { timeout: 1000 });
-      let ret;
-      ciot.stdout.on('data', data => {
-        try {
-          ret = JSON.parse(data);
-        } catch (e) {
-          RED.log.error('** CANDY IoT Service isn\'t running');
-          RED.log.info(e.stack);
-        }
-      });
-      ciot.on('close', code => {
-        if (ret) {
-          return resolve(ret);
-        }
-        reject({ code: code });
-      });
-      ciot.on('error', err => {
-        reject(err);
-      });
     });
   }
 
@@ -749,56 +737,26 @@ export class DeviceState {
     });
   }
 
-  testIfCANDYIoTInstalled() {
+  testIfCANDYBoardServiceInstalled(service) {
     return this.init().then(() => {
       return new Promise(resolve => {
-        let systemctl = cproc.spawn('systemctl', ['is-enabled', 'candy-iot'], { timeout: 1000 });
+        let systemctl = cproc.spawn('systemctl', ['is-enabled', service], { timeout: 1000 });
         systemctl.on('close', code => {
-          let ciotSupported = (code === 0);
-          resolve(ciotSupported);
+          let candyBoardServiceSupported = (code === 0);
+          resolve(candyBoardServiceSupported);
         });
         systemctl.on('error', () => {
           resolve(false);
         });
-      }).then(ciotSupported => {
-        this.ciotSupported = ciotSupported;
+      }).then(candyBoardServiceSupported => {
+        this.candyBoardServiceSupported = candyBoardServiceSupported;
         return new Promise((resolve) => {
-          let version = process.env.DEBUG_CIOTV || MODEM_OFFLINE;
-          if (ciotSupported) {
-            this._ciotRun('info', 'version').then(versions => {
-              resolve([this.deviceId, versions.version]);
-            }).catch(() => {
-              // installed but offline
-              resolve([this.deviceId, version]);
-            });
-          } else {
-            resolve([this.deviceId, null]);
-          }
-        });
-      });
-    });
-  }
-
-  testIfLTEPi2Installed() {
-    return this.init().then(() => {
-      return new Promise(resolve => {
-        let systemctl = cproc.spawn('systemctl', ['is-enabled', 'ltepi2'], { timeout: 1000 });
-        systemctl.on('close', code => {
-          let ltepi2Supported = (code === 0);
-          resolve(ltepi2Supported);
-        });
-        systemctl.on('error', () => {
-          resolve(false);
-        });
-      }).then(ltepi2Supported => {
-        this.ltepi2Supported = ltepi2Supported;
-        return new Promise((resolve) => {
-          let version = process.env.DEBUG_CIOTV || MODEM_OFFLINE;
-          if (ltepi2Supported) {
+          let version = process.env.DEBUG_CANDY_BOARD_VERSION || MODEM_OFFLINE;
+          if (candyBoardServiceSupported) {
             this._candyRun('service', 'version').then(versions => {
               resolve([this.deviceId, versions.version]);
             }).catch(() => {
-              // installed but offline
+              // installed but offline or serialport busy
               resolve([this.deviceId, version]);
             });
           } else {
@@ -1022,39 +980,5 @@ export class DeviceManagerStore {
 
   _remove(accountFqn) {
     delete this.store[accountFqn];
-  }
-
-  isWsClientInitialized(accountFqn) {
-    return !!this._get(accountFqn);
-  }
-
-  initWsClient(account, accountConfig, webSocketListeners) {
-    let accountFqn = accountConfig.accountFqn;
-    let primary = (Object.keys(this.store).length === 0);
-    if (primary) {
-      RED.log.error(`[CANDY RED] This account is PRIMARY: ${accountFqn}`);
-    }
-
-    let listenerConfig = webSocketListeners.get({
-      accountConfig: accountConfig,
-      account: account,
-      path: 'candy-ws'
-    }, {
-      headers: {
-        'x-acc-fqn': accountFqn,
-        'x-acc-user': accountConfig.loginUser,
-        'x-device-id': this.deviceState.deviceId,
-        'x-hostname': os.hostname(),
-        'x-candy-iotv': RED.settings.candyIotVersion,
-        'x-candy-redv': RED.settings.candyRedVersion,
-      }
-    });
-    accountConfig.on('close', () => {
-      listenerConfig.close();
-      this._remove(accountFqn);
-      RED.log.info(`[CANDY RED] Disassociated from [${accountFqn}]`);
-    });
-    this.store[accountFqn] = new DeviceManager(primary, listenerConfig, accountConfig, this.deviceState);
-    RED.log.info(`[CANDY RED] Associated with [${accountFqn}]`);
   }
 }

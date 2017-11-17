@@ -1,3 +1,18 @@
+<!--
+  Copyright (c) 2017 CANDY LINE INC.
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
 <!-- EnOcean in -->
 <script type='text/x-red' data-template-name='EnOcean in'>
   <div class='form-row'>
@@ -48,6 +63,11 @@
     <input type='checkbox' id='node-input-useString' style='display: inline-block; width: auto; vertical-align: top;'>
     <label for='node-input-useString' style='width: 70%;' data-i18n='enocean.label.useString'></label>
   </div>
+  <div class='form-row' id='node-showEnOceanWarning'>
+    <label>&nbsp;</label>
+    <input type='checkbox' id='node-input-showEnOceanWarning' style='display: inline-block; width: auto; vertical-align: top;'>
+    <label for='node-input-showEnOceanWarning' style='width: 70%;' data-i18n='enocean.label.showEnOceanWarning'></label>
+  </div>
 </script>
 
 <script type='text/javascript'>
@@ -61,7 +81,8 @@
       addEepType: { value: false, required: false },
       ignoreLRNBit: { value: false, required: false },
       enoceanPort: { type: 'EnOcean Port', required: true },
-      useString: { value: false, required: false }
+      useString: { value: false, required: false },
+      showEnOceanWarning: { value: true }
     },
     color: 'PaleGreen',
     inputs: 0,

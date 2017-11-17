@@ -4,6 +4,11 @@ SERVICE_NAME="candy-red"
 # 1 for disabling service installation & uninstallation, 0 for enabling them (default)
 DISABLE_SERVICE_INSTALL=${DISABLE_SERVICE_INSTALL:-0}
 NODE_PALETTE_ENABLED=${NODE_PALETTE_ENABLED:-true}
+CANDY_RED_MODULE_ROOT="/opt/${SERVICE_NAME}/.node-red"
+CANDY_RED_ADMIN_USER_ID=${CANDY_RED_ADMIN_USER_ID:-""}
+CANDY_RED_ADMIN_PASSWORD_ENC=""
+CANDY_RED_LOG_LEVEL="info"
+CANDY_RED_SESSION_TIMEOUT=${CANDY_RED_SESSION_TIMEOUT:-86400}
 
 function err {
   echo -e "\033[91m[ERROR] $1\033[0m"
@@ -38,9 +43,10 @@ function setup {
     info "Ready for installation!"
     exit 0
   fi
-  rm -fr ${PROJECT_ROOT}/node_modules/node-red/red/api/locales/ja
-  rm -fr ${PROJECT_ROOT}/node_modules/node-red/red/runtime/locales/ja
-  rm -fr ${PROJECT_ROOT}/node_modules/node-red/nodes/core/locales/ja
+  # Disable i18n resources other than en-US for now (will be enabled in the future release)
+  for l in `find ${PROJECT_ROOT}/node_modules/node-red* | grep locales/ | grep -v en-US | grep -v json`; do
+    rm -fr ${l}
+  done
 }
 
 function cpf {
@@ -103,6 +109,7 @@ function cd_module_root {
   else
     REALPATH=`readlink -f -- "$0"`
   fi
+  REALPATH=${REALPATH:-$(pwd)}
   PROJECT_ROOT=`dirname ${REALPATH}`
   cd ${PROJECT_ROOT}
 }
@@ -126,6 +133,45 @@ function npm_local_install {
   fi
 }
 
+function install_preinstalled_nodes {
+  NODES_CSV_PATH="${NODES_CSV_PATH:-${PROJECT_ROOT}/default-nodes.csv}"
+  if [ -n "${NODES_CSV}" ]; then
+    NODES=`echo ${NODES_CSV} | tr ' ' '\n'`
+  elif [ -f "${NODES_CSV_PATH}" ]; then
+    NODES=`cat ${NODES_CSV_PATH} | tr -d '\r'`
+  fi
+  if [ -n "${NODES}" ]; then
+    mkdir -p ${CANDY_RED_MODULE_ROOT}
+    if [ -d "${CANDY_RED_MODULE_ROOT}/node_modules" ]; then
+      mkdir -p ${CANDY_RED_MODULE_ROOT}/lib
+      rm -fr ${CANDY_RED_MODULE_ROOT}/lib/node_modules
+      mv ${CANDY_RED_MODULE_ROOT}/node_modules/ ${CANDY_RED_MODULE_ROOT}/lib
+    elif [ -e "${CANDY_RED_MODULE_ROOT}/node_modules" ]; then
+      rm -f ${CANDY_RED_MODULE_ROOT}/node_modules
+    fi
+    info "Installing default nodes to ${CANDY_RED_MODULE_ROOT}..."
+    echo "${NODES}" | \
+      while IFS=',' read p v; do
+        p=`echo -e ${p} | tr -d ' '`
+        v=`echo -e ${v} | tr -d ' '`
+        if [ -z "${p}" ]; then
+          continue
+        fi
+        npm install --unsafe-perm --prefix ${CANDY_RED_MODULE_ROOT} ${p}@${v}
+      done
+    # nodes are installed to {prefix}/lib directory
+    # because -g flag is implicitly inherited on performing the above npm
+    mv ${CANDY_RED_MODULE_ROOT}/lib/node_modules/ ${CANDY_RED_MODULE_ROOT}
+    rm -fr ${CANDY_RED_MODULE_ROOT}/etc
+  else
+    info "Skip to install nodes!!"
+  fi
+}
+
+function setup_credentials {
+  CANDY_RED_ADMIN_PASSWORD_ENC=`node -e "console.log(require('bcryptjs').hashSync(process.argv[1], 8));" ${CANDY_RED_ADMIN_PASSWORD}`
+}
+
 function system_service_install {
   if [ "${DISABLE_SERVICE_INSTALL}" == "1" ]; then
     info "Skip to setup a SystemD service (DISABLE_SERVICE_INSTALL is 1)"
@@ -141,10 +187,16 @@ function system_service_install {
   sed -i -e "s/%SERVICE_HOME%/${PROJECT_ROOT//\//\\/}/g" ${START_SH}
 
   cp -f ${SERVICES}/base_environment.txt ${SERVICES}/environment
-  sed -i -e "s/%HCIDEVICE%/${HCIDEVICE//\//\\/}/g" ${SERVICES}/environment
-  sed -i -e "s/%NODE_OPTS%/${NODE_OPTS//\//\\/}/g" ${SERVICES}/environment
-  sed -i -e "s/%WELCOME_FLOW_URL%/${WELCOME_FLOW_URL//\//\\/}/g" ${SERVICES}/environment
-  sed -i -e "s/%NODE_PALETTE_ENABLED%/${NODE_PALETTE_ENABLED//\//\\/}/g" ${SERVICES}/environment
+  for e in HCIDEVICE \
+      NODE_OPTS \
+      WELCOME_FLOW_URL \
+      PPPD_DEBUG \
+      NODE_PALETTE_ENABLED \
+      CANDY_RED_ADMIN_USER_ID \
+      CANDY_RED_ADMIN_PASSWORD_ENC \
+      CANDY_RED_LOG_LEVEL; do
+    sed -i -e "s/%${e}%/${!e//\//\\/}/g" ${SERVICES}/environment
+  done
 
   _install_${SYSTEM_SERVICE_TYPE}
 }
@@ -174,6 +226,8 @@ cd_module_root
 setup $1
 resolve_version
 test_system_service
+setup_credentials
+install_preinstalled_nodes
 if [ -n "${SYSTEM_SERVICE_TYPE}" ]; then
   DISABLE_SERVICE_INSTALL=${DISABLE_SERVICE_INSTALL} ${PROJECT_ROOT}/uninstall.sh
   npm_local_install

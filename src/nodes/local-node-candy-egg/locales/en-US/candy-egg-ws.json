@@ -9,12 +9,7 @@
       "account-fqn": "Account FQN",
       "login-user": "User ID",
       "login-password": "Password",
-      "secure": "Use Secure Connection (TLS)",
-      "flow": "Flow Meta Info.",
-      "lastDeliveredAt": "Delivered At",
-      "revision": "Revision",
-      "originator": "Originator",
-      "managed": "Manage This Device"
+      "secure": "Use Secure Connection (TLS)"
     },
     "payload": "Send/Receive payload",
     "message": "Send/Receive entire message",

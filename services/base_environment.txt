@@ -1,5 +1,25 @@
+# Node.js environments
 NODE_ENV=production
 NODE_OPTS=%NODE_OPTS%
+
+# BLE variable
 HCIDEVICE=%HCIDEVICE%
+
+# The URI for the welcome flow file
 WELCOME_FLOW_URL=%WELCOME_FLOW_URL%
+
+# Set true for enabling the node palette manager
 NODE_PALETTE_ENABLED=%NODE_PALETTE_ENABLED%
+
+# Authentication User ID (leave empty for disabling authentication)
+CANDY_RED_ADMIN_USER_ID=%CANDY_RED_ADMIN_USER_ID%
+# Authentication User Password
+CANDY_RED_ADMIN_PASSWORD_ENC=%CANDY_RED_ADMIN_PASSWORD_ENC%
+# Authentication Session Timeout in seconds
+CANDY_RED_SESSION_TIMEOUT=%CANDY_RED_SESSION_TIMEOUT%
+
+# Logging Level (info by default)
+CANDY_RED_LOG_LEVEL=%CANDY_RED_LOG_LEVEL%
+
+# The path to .node-red directory if any
+#CANDY_RED_HOME=

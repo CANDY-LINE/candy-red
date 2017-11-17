@@ -1,3 +1,19 @@
+/**
+ * @license
+ * Copyright (c) 2017 CANDY LINE INC.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 'use strict';
 
 import * as sinon from 'sinon';
@@ -61,23 +77,10 @@ describe('CandyRed', () => {
     });
   });
 
-  describe('#_createCandyBoxEditorTheme()', () => {
-    it('should return titles containing hostname', () => {
-      let theme = cr._createCandyBoxEditorTheme();
-      assert.equal('CANDY BOX@' + os.hostname(), theme.page.title);
-      assert.equal(' ** ' + os.hostname() + ' **', theme.header.title);
-    });
-    it('should return titles containing deviceId as well as hostname', () => {
-      let theme = cr._createCandyBoxEditorTheme('my:deviceId');
-      assert.equal('CANDY BOX@my:deviceId', theme.page.title);
-      assert.equal(' ** ' + os.hostname() + ' (my:deviceId) **', theme.header.title);
-    });
-  });
-
   describe('#_inspectBoardStatus()', () => {
     it('should not return any undefined values', done => {
       cr._inspectBoardStatus(__dirname + '/../package.json').then(versions => {
-        assert.equal('N/A', versions.candyIotv);
+        assert.equal('N/A', versions.candyBsv);
         assert.isDefined(versions.candyRedv);
         done();
       }).catch(err => {

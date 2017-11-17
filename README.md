@@ -11,10 +11,10 @@ CANDY RED is a gateway service working between local area wireless network devic
 
 * Include Node-RED flow editor/flow execution runtime
 * Running as a systemd service
-* Preinstalled EnOcean node
+* Preinstalled EnOcean node (ESP3 over ERP2)
 * Preinstalled helper nodes for CANDY EGG cloud service \*
 
-_\* CANDY EGG cloud service account is required_
+_\* [CANDY EGG cloud service](https://www.candy-line.io/%E8%A3%BD%E5%93%81%E4%B8%80%E8%A6%A7/candy-red-egg/) account is required_
 
 ## OS and Hardwares
 
@@ -34,11 +34,11 @@ This is the default screen theme.
 
 ### Raspbian version
 
- * JESSIE/JESSIE LITE 4.4 (2017-03-02)
+ * JESSIE/JESSIE LITE Kernel Version: 4.9 (2017-07-05)
 
 ### Tested Node.js versions
 
-* v4.7.0
+* v6.12
 
 The preinstalled version of Node.js v0.10.29 won't work because of the [header file issue](http://dustinbolton.com/replace_invalid_utf8-is-not-a-member-of-v8string-installing-nodejs-packages-on-raspbian-debian-on-raspberry-pi-2-b/) appearing on installing native addons.
 
@@ -50,7 +50,7 @@ $ sudo apt-get remove -y nodered nodejs nodejs-legacy npm
 
 ### Supported npm version
 
-* v4.x (Run `sudo npm install -g npm@4.x` to install)
+* v3.x+
 
 ## Install/Version-up
 
@@ -69,6 +69,17 @@ Please refer to the following commands to install.
 ```
 $ sudo NODE_OPTS=--max-old-space-size=256 npm install -g --unsafe-perm candy-red
 ```
+
+You can add administrator role credentials on installation in order to enable authentication.
+
+```
+$ sudo NODE_OPTS=--max-old-space-size=256 \
+    CANDY_RED_ADMIN_USER_ID=... \
+    CANDY_RED_ADMIN_PASSWORD=... \
+    npm install -g --unsafe-perm candy-red
+```
+
+The password is encrypted while the installation process.
 
 You can access `http://<hostname.local or ip address>:8100` with your browser on the same LAN where `<hostname.local or ip address>` is a host name with `.local` suffix or IP address.
 
@@ -121,6 +132,7 @@ However, you need to tell the system to restart the CANDY RED service by perform
 ### Node-RED home
 
 The Node-RED home path, where flow files are placed, is found at `$(npm root -g)/candy-red/.node-red/`.
+Alternately, you can provide the arbitrary path with `CANDY_RED_HOME` environment variable defined in `$(npm root -g)/candy-red/.node-red/environment` file.
 
 ### Slow boot time
 
@@ -135,14 +147,14 @@ You can find the installation instruction in the [article](http://www.elinux.org
 
 Here is a brief instruction. (Check the latest version of BlueZ at www.bluez.org)
 ```
-$ BLUEZ_VER=5.44
+$ BLUEZ_VER=5.45
 $ sudo apt-get install -y build-essential libdbus-1-dev \
     libdbus-glib-1-dev libglib2.0-dev libical-dev \
     libreadline-dev libudev-dev libusb-dev make
 $ wget https://www.kernel.org/pub/linux/bluetooth/bluez-${BLUEZ_VER}.tar.xz
 $ tar xvf bluez-${BLUEZ_VER}.tar.xz
 $ cd bluez-${BLUEZ_VER}
-$ ./configure --disable-systemd
+$ ./configure
 $ make
 $ sudo make install
 ```
@@ -159,13 +171,21 @@ By default, [`welcome-flow.json`](src/welcome-flow.json) is used as the initial 
 
 Note that the downloaded flow file will be discarded if it is not a valid JSON data.
 
+## Preinstalled nodes
+
+```
+$ sudo NODES_CSV="node-ed-contib-cache,>=1.0.0 node-ed-contib-geneic-ble,>=0.1.0 node-ed-contib-sequence-functions,>=1.0.0" npm install -g --unsafe-perm candy-red
+```
+Either a single space` ` or `\n` can be a delimiter of `NODE_CSV` value.
+
 # Development
 
 ## Prerequisites
 
 ### Supported Node.js versions
 
-* v4.7
+* v6.12
+* v8.9
 
 ## Setup for Building
 
@@ -247,7 +267,8 @@ $ npm test
 ```
 $ npm pack
 # RPi
-$ time sudo npm install -g --unsafe-perm ./candy-red-4.0.0.tgz
+$ sudo npm uninstall -g --unsafe-perm candy-red
+$ time sudo npm install -g --unsafe-perm ./candy-red-5.0.0.tgz
 ```
 
 ## Vagrant
@@ -326,19 +347,15 @@ $ docker run -tid -v ./dist:/candy-red-dist candy-red
 $ rm -fr node_modules; \
   rm -f npm-shrinkwrap.json; \
   docker run --name build --rm -ti -v $(pwd):/work -w /work -e DEVEL=true \
-    node:4.7 bash -c "npm install -g npm@4.x;npm install;npm run freeze"
+    node:6.12 bash -c "npm install;npm run freeze"
 ```
 
 ## Coding Styles
 
-1. Use ES6 (except Gruntfile.js and \*.html)
+1. Use ES6 (except gulpfile.js and \*.html)
 1. 2-space soft tabs
 1. Append .es6.js suffix to ES6 JS files
 1. See .jshintrc for detail
-
-## Known Issues
-
-* CANDY EGG cloud services aren't yet available
 
 ## TODO
 * publish local Node-RED nodes in this project to npm repository

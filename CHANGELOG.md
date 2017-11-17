@@ -1,11 +1,37 @@
 ## Revision History
+* 5.2.0
+  - Add basic authentication support for admin role account
+  - Add a new option to enable/disable the warning output on unknown originator ids being detected
+  - Add node-red-contrib-lwm2m node as a builtin node
+  - Add support for Node.js v8.9+
+  - Fix an issue where the runtime error can be thrown when properties in accountConfig is missing
+  - Fix an issue where WS client failed to connect to non-default port
+
+* 5.1.0
+  - Add a new environment `NODES_CSV` to provide preinstalled nodes on installing CANDY RED
+  - Add CANDY RED icons to appear on Node-RED Dashboard
+  - Fix an issue where install_preinstalled_nodes were invoked on installation test
+  - Disable drop_console in order to show logs at pre-initialized state
+  - Fix an issue where folders under node_moudles cannot be removed
+
+* 5.0.1
+  - Fix an issue where some of default packages cannot be installed because of existing packages
+
+* 5.0.0
+  - Migrate to Apache Software License 2.0 as of this version
+  - Add a feature to allow users to install additional node packages on installing CANDY RED
+    * Set `NODES_CSV_PATH` pointing to the path to node package list CSV file
+  - Bump default Node.js version to 6.11
+  - DO NOT bump node-enocean version to 2.x or later as Node.js 7+ isn't yet supported
+  - Remove obsolete board support (CANDY BOX)
+  - `node-red-contrib-asakusa_giken` is now an optional node, which can be installed via the Node Palette
+  - `node-red-contrib-generic-ble` is installed as a preinstalled BLE node
+
 * 4.0.0
   - Set NODE_PALETTE_ENABLED=true by default
   - Repo transferred to CANDY-LINE
   - Fix an issue where ws complained of the credentials containing unescaped special characters like '%'
   - Allow hyphen as CANDY EGG account id
-
-* 4.0.0
   - Migrate to gulp
   - Use credentials property for CANDY EGG account node (with backward compatibilities)
 
