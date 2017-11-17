@@ -8,7 +8,7 @@
     "build": "gulp build",
     "clean": "gulp clean",
     "test": "gulp test",
-    "preinstall": "./install.sh test",
+    "preinstall": "./install.sh pre",
     "postinstall": "./install.sh",
     "preuninstall": "./uninstall.sh",
     "prepublish": "if [ -d ./src ] ; then gulp test && gulp clean && gulp build; fi",
@@ -63,6 +63,8 @@
     "vinyl-fs": "^2.4.4"
   },
   "dependencies": {
+    "authenticate-pam": "^1.0.2",
+    "basic-auth": "^2.0.0",
     "express": "^4.14.0",
     "follow-redirects": "^1.2.0",
     "lru-cache": "^4.0.0",

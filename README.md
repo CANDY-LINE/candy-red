@@ -135,10 +135,6 @@ However, you need to tell the system to restart the CANDY RED service by perform
 The Node-RED home path, where flow files are placed, is found at `$(npm root -g)/candy-red/.node-red/`.
 Alternately, you can provide the arbitrary path with `CANDY_RED_HOME` environment variable defined in `$(npm root -g)/candy-red/.node-red/environment` file.
 
-### Slow boot time
-
-It takes up to around a minute to boot up the service. Please be patient and wait until the service is online.
-
 ### BlueZ source code build
 
 The latest Raspbian offers you to install BlueZ with `apt-get` command as described above.

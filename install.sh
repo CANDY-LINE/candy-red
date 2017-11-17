@@ -39,9 +39,17 @@ function setup {
     rm -f "${CP_DESTS}"
     touch "${CP_DESTS}"
   fi
-  if [ "$1" == "test" ]; then
-    info "Ready for installation!"
-    exit 0
+  if [ "$1" == "pre" ]; then
+    RET=`which apt-get`
+    if [ "$?" == "0" ]; then
+      info "Ready for installation!"
+      info "Setting up native dependencies"
+      apt-get install -y libpam0g-dev
+      exit 0
+    else
+      err "Cannot install on this platform"
+      exit 1
+    fi
   fi
   # Disable i18n resources other than en-US for now (will be enabled in the future release)
   for l in `find ${PROJECT_ROOT}/node_modules/node-red* | grep locales/ | grep -v en-US | grep -v json`; do
@@ -197,6 +205,8 @@ function system_service_install {
       CANDY_RED_LOG_LEVEL; do
     sed -i -e "s/%${e}%/${!e//\//\\/}/g" ${SERVICES}/environment
   done
+  chmod 0600 ${SERVICES}/environment
+  rm -f ${SERVICES}/environment-e
 
   _install_${SYSTEM_SERVICE_TYPE}
 }
