@@ -177,7 +177,9 @@ function install_preinstalled_nodes {
 }
 
 function setup_credentials {
-  CANDY_RED_ADMIN_PASSWORD_ENC=`node -e "console.log(require('bcryptjs').hashSync(process.argv[1], 8));" ${CANDY_RED_ADMIN_PASSWORD}`
+  if [ -n "${CANDY_RED_ADMIN_PASSWORD}" ]; then
+    CANDY_RED_ADMIN_PASSWORD_ENC=`node -e "console.log(require('bcryptjs').hashSync(process.argv[1], 8));" ${CANDY_RED_ADMIN_PASSWORD}`
+  fi
 }
 
 function system_service_install {
