@@ -228,7 +228,7 @@ export default function(RED) {
   RED.httpAdmin.get('/eeps', RED.auth.needsPermission('eep.read'), function(req,res) {
     res.json(Object.keys(ERP2_HANDLERS));
   });
-  RED.httpAdmin.get("/enoceanports", RED.auth.needsPermission('serial.read'), function(req,res) {
+  RED.httpAdmin.get('/enoceanports', RED.auth.needsPermission('serial.read'), function(req,res) {
     let list = [];
     fs.stat('/dev/enocean', (err) => {
       if (!err) {
