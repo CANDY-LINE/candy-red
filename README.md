@@ -5,7 +5,7 @@ CANDY RED
 [![master Build Status](https://travis-ci.org/CANDY-LINE/candy-red.svg?branch=master)](https://travis-ci.org/CANDY-LINE/candy-red/)
 [![License MIT](https://img.shields.io/github/license/CANDY-LINE/candy-red.svg)](http://opensource.org/licenses/MIT)
 
-CANDY RED is IoT gateway software desgined for [CANDY Pi Lite board](https://translate.google.com/translate?hl=en&sl=ja&u=https://www.candy-line.io/%25E8%25A3%25BD%25E5%2593%2581%25E4%25B8%2580%25E8%25A6%25A7/candy-pi-lite/&prev=search) with [Raspberry Pi](https://www.raspberrypi.org) powered by [Node-RED](https://nodered.org).
+CANDY RED is IoT gateway software designed for [CANDY Pi Lite board](https://translate.google.com/translate?hl=en&sl=ja&u=https://www.candy-line.io/%25E8%25A3%25BD%25E5%2593%2581%25E4%25B8%2580%25E8%25A6%25A7/candy-pi-lite/&prev=search) with [Raspberry Pi](https://www.raspberrypi.org) powered by [Node-RED](https://nodered.org).
 
 ## Features
 
