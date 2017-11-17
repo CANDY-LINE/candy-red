@@ -14,10 +14,20 @@ if [ "${RET}" == "0" ]; then
   hciconfig ${HCIDEVICE} reset
 fi
 
+if [[ ${NODE_OPTS} != *--max-old-space-size=* ]]; then
+  if [ -n "`which free`" ]; then
+    MEM=`free -m | grep "Mem:" | awk '{print $2}'`
+    MAX_OLD_SPACE_SIZE=${MAX_OLD_SPACE_SIZE:-`expr ${MEM} / 3`}
+  fi
+  MAX_OLD_SPACE_SIZE=${MAX_OLD_SPACE_SIZE:-256}
+  NODE_OPTS="${NODE_OPTS} --max-old-space-size=${MAX_OLD_SPACE_SIZE}"
+fi
+logger -s "node options => ${NODE_OPTS}"
+
 mkdir -p /opt/candy-red
 
 # Disable i18n resources other than en-US for now (will be enabled in the future release)
-for l in `find -f %SERVICE_HOME%/node_modules/node-red* | grep locales/ | grep -v en-US | grep -v json`; do
+for l in `find %SERVICE_HOME%/node_modules/node-red* | grep locales/ | grep -v en-US | grep -v json`; do
   rm -fr ${l}
 done
 

@@ -1,4 +1,11 @@
 ## Revision History
+* 5.3.0
+  - Add PAM authentication support (enabled by default)
+  - Fix an issue where API authentication didn't work when basic authentication is enabled
+  - Compute --max-old-space-size value when the option is missing
+  - Fix an issue where ESP3Parser doesn't support node-serialport@5+ interface
+  - Add a new endpoint to provide enocean ports as well as serial ports
+
 * 5.2.0
   - Add basic authentication support for admin role account
   - Add a new option to enable/disable the warning output on unknown originator ids being detected

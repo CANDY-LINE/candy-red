@@ -5,21 +5,28 @@ CANDY RED
 [![master Build Status](https://travis-ci.org/CANDY-LINE/candy-red.svg?branch=master)](https://travis-ci.org/CANDY-LINE/candy-red/)
 [![License MIT](https://img.shields.io/github/license/CANDY-LINE/candy-red.svg)](http://opensource.org/licenses/MIT)
 
-CANDY RED is a gateway service working between local area wireless network devices and internet servers.
+CANDY RED is IoT gateway software designed for [CANDY Pi Lite board](https://translate.google.com/translate?hl=en&sl=ja&u=https://www.candy-line.io/%25E8%25A3%25BD%25E5%2593%2581%25E4%25B8%2580%25E8%25A6%25A7/candy-pi-lite/&prev=search) with [Raspberry Pi](https://www.raspberrypi.org) powered by [Node-RED](https://nodered.org).
 
 ## Features
 
 * Include Node-RED flow editor/flow execution runtime
+* PAM Authentication is enabled by default
 * Running as a systemd service
-* Preinstalled EnOcean node (ESP3 over ERP2)
-* Preinstalled helper nodes for CANDY EGG cloud service \*
+* Dashboard UI is installed by default
+* More builtin nodes
+    * [OMA LwM2M client nodes](https://www.npmjs.com/package/node-red-contrib-lwm2m)
+    * [EnOcean nodes (ESP3 over ERP2)](https://github.com/CANDY-LINE/candy-red/tree/master/src/nodes/local-node-enocean)
+    * [GATT BLE nodes](https://www.npmjs.com/package/node-red-contrib-generic-ble)
+    * [Serialport node](https://www.npmjs.com/package/node-red-node-serialport)
+    * [Device Statistics node](https://www.npmjs.com/package/node-red-contrib-device-stats)
+    * [CANDY EGG cloud service nodes](https://github.com/CANDY-LINE/candy-red/tree/master/src/nodes/local-node-candy-egg) \*
 
 _\* [CANDY EGG cloud service](https://www.candy-line.io/%E8%A3%BD%E5%93%81%E4%B8%80%E8%A6%A7/candy-red-egg/) account is required_
 
 ## OS and Hardwares
 
 * [Raspberry Pi + Raspbian](#raspberry-pi--raspbian)
-* [OSX/Linux for Development](#development)
+* [OSX/Debian/Ubuntu/Raspbian for Development](#development)
 
 # Screenshots
 ## CANDY RED flow editor page on browser
@@ -34,11 +41,12 @@ This is the default screen theme.
 
 ### Raspbian version
 
- * JESSIE/JESSIE LITE Kernel Version: 4.9 (2017-07-05)
+ * STRETCH/STRETCH LITE Kernel Version: 4.9 (2017-09-07)
 
 ### Tested Node.js versions
 
-* v6.12
+* v6.12 (Maintenance LTS)
+* v8.9  (Active LTS)
 
 The preinstalled version of Node.js v0.10.29 won't work because of the [header file issue](http://dustinbolton.com/replace_invalid_utf8-is-not-a-member-of-v8string-installing-nodejs-packages-on-raspbian-debian-on-raspberry-pi-2-b/) appearing on installing native addons.
 
@@ -70,7 +78,13 @@ Please refer to the following commands to install.
 $ sudo NODE_OPTS=--max-old-space-size=256 npm install -g --unsafe-perm candy-red
 ```
 
-You can add administrator role credentials on installation in order to enable authentication.
+You can access `http://<hostname.local or ip address>:8100` with your browser on the same LAN where `<hostname.local or ip address>` is a host name with `.local` suffix or IP address.
+
+## Authentication
+
+PAM authentication is enabled by default for both Linux (Raspbian/Debian/Ubuntu) and macOS. So you need to login with your OS account such as `pi` user. You can add custom user ID/password as well by providing the following environmental variables on installation.
+
+When providing the credentials, PAM authentication is disabled.
 
 ```
 $ sudo NODE_OPTS=--max-old-space-size=256 \
@@ -81,9 +95,9 @@ $ sudo NODE_OPTS=--max-old-space-size=256 \
 
 The password is encrypted while the installation process.
 
-You can access `http://<hostname.local or ip address>:8100` with your browser on the same LAN where `<hostname.local or ip address>` is a host name with `.local` suffix or IP address.
+Note that PAM authentication feature (not custom credentials authentication) is disabled unless `NODE_ENV` is `production`.
 
-## Stop/Start/Status Service
+## Stop/Start/Status Service (Raspbian)
 
 The service name is `candy-red`. As of Jessie, systemd comes as a default system manager.
 
@@ -134,10 +148,6 @@ However, you need to tell the system to restart the CANDY RED service by perform
 The Node-RED home path, where flow files are placed, is found at `$(npm root -g)/candy-red/.node-red/`.
 Alternately, you can provide the arbitrary path with `CANDY_RED_HOME` environment variable defined in `$(npm root -g)/candy-red/.node-red/environment` file.
 
-### Slow boot time
-
-It takes up to around a minute to boot up the service. Please be patient and wait until the service is online.
-
 ### BlueZ source code build
 
 The latest Raspbian offers you to install BlueZ with `apt-get` command as described above.
@@ -184,8 +194,8 @@ Either a single space` ` or `\n` can be a delimiter of `NODE_CSV` value.
 
 ### Supported Node.js versions
 
-* v6.12
-* v8.9
+* v6.12 (Maintenance LTS)
+* v8.9  (Active LTS)
 
 ## Setup for Building
 
@@ -268,7 +278,7 @@ $ npm test
 $ npm pack
 # RPi
 $ sudo npm uninstall -g --unsafe-perm candy-red
-$ time sudo npm install -g --unsafe-perm ./candy-red-5.0.0.tgz
+$ time sudo npm install -g --unsafe-perm ./candy-red-5.3.0.tgz
 ```
 
 ## Vagrant
@@ -346,8 +356,8 @@ $ docker run -tid -v ./dist:/candy-red-dist candy-red
 ```
 $ rm -fr node_modules; \
   rm -f npm-shrinkwrap.json; \
-  docker run --name build --rm -ti -v $(pwd):/work -w /work -e DEVEL=true \
-    node:6.12 bash -c "npm install;npm run freeze"
+  nodenv local 8.9.1; \
+  DEVEL=true npm install;npm run freeze
 ```
 
 ## Coding Styles
@@ -367,6 +377,22 @@ $ rm -fr node_modules; \
 
 # Copyright and License
 
-PNG/ICO images under src/public folder are released under [CC BY-NC-SA](http://creativecommons.org/licenses/by-nc-sa/4.0/), © 2017 CANDY LINE INC.
+## Source Code License
 
-Other stuff than the files above in this project repository is released under MIT. See [LICENSE](LICENSE) for the license terms and the copyright.
+Copyright (c) 2017 [CANDY LINE INC.](https://www.candy-line.io)
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+
+## Creative works
+
+PNG/ICO images under src/public folder are released under [CC BY-NC-SA](http://creativecommons.org/licenses/by-nc-sa/4.0/), Copyright (c) 2017 [CANDY LINE INC.](https://www.candy-line.io)
