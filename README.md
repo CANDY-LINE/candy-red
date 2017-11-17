@@ -5,10 +5,11 @@ CANDY RED
 [![master Build Status](https://travis-ci.org/CANDY-LINE/candy-red.svg?branch=master)](https://travis-ci.org/CANDY-LINE/candy-red/)
 [![License MIT](https://img.shields.io/github/license/CANDY-LINE/candy-red.svg)](http://opensource.org/licenses/MIT)
 
-CANDY RED is a gateway service working between local area wireless network devices and internet servers.
+CANDY RED is an IoT gateway service for [CANDY Pi Lite board](https://translate.google.com/translate?hl=en&sl=ja&u=https://www.candy-line.io/%25E8%25A3%25BD%25E5%2593%2581%25E4%25B8%2580%25E8%25A6%25A7/candy-pi-lite/&prev=search) with [Raspberry Pi](https://www.raspberrypi.org) powered by [Node-RED](https://nodered.org).
 
 ## Features
 
+* PAM Authentication is enabled by default
 * Include Node-RED flow editor/flow execution runtime
 * Running as a systemd service
 * Preinstalled EnOcean node (ESP3 over ERP2)
@@ -19,7 +20,7 @@ _\* [CANDY EGG cloud service](https://www.candy-line.io/%E8%A3%BD%E5%93%81%E4%B8
 ## OS and Hardwares
 
 * [Raspberry Pi + Raspbian](#raspberry-pi--raspbian)
-* [OSX/Linux for Development](#development)
+* [OSX/Debian/Ubuntu/Raspbian for Development](#development)
 
 # Screenshots
 ## CANDY RED flow editor page on browser
@@ -34,12 +35,12 @@ This is the default screen theme.
 
 ### Raspbian version
 
- * JESSIE/JESSIE LITE Kernel Version: 4.9 (2017-07-05)
+ * STRETCH/STRETCH LITE Kernel Version: 4.9 (2017-09-07)
 
 ### Tested Node.js versions
 
-* v6.12
-* v8.9
+* v6.12 (Maintenance LTS)
+* v8.9  (Active LTS)
 
 The preinstalled version of Node.js v0.10.29 won't work because of the [header file issue](http://dustinbolton.com/replace_invalid_utf8-is-not-a-member-of-v8string-installing-nodejs-packages-on-raspbian-debian-on-raspberry-pi-2-b/) appearing on installing native addons.
 
@@ -71,7 +72,13 @@ Please refer to the following commands to install.
 $ sudo NODE_OPTS=--max-old-space-size=256 npm install -g --unsafe-perm candy-red
 ```
 
-You can add administrator role credentials on installation in order to enable authentication.
+You can access `http://<hostname.local or ip address>:8100` with your browser on the same LAN where `<hostname.local or ip address>` is a host name with `.local` suffix or IP address.
+
+## Authentication
+
+PAM authentication is enabled by default for both Linux (Raspbian/Debian/Ubuntu) and macOS. So you need to login with your OS account such as `pi` user. You can add custom user ID/password as well by providing the following environmental variables on installation.
+
+When providing the credentials, PAM authentication is disabled.
 
 ```
 $ sudo NODE_OPTS=--max-old-space-size=256 \
@@ -82,9 +89,9 @@ $ sudo NODE_OPTS=--max-old-space-size=256 \
 
 The password is encrypted while the installation process.
 
-You can access `http://<hostname.local or ip address>:8100` with your browser on the same LAN where `<hostname.local or ip address>` is a host name with `.local` suffix or IP address.
+Note that PAM authentication feature (not custom credentials authentication) is disabled unless `NODE_ENV` is `production`.
 
-## Stop/Start/Status Service
+## Stop/Start/Status Service (Raspbian)
 
 The service name is `candy-red`. As of Jessie, systemd comes as a default system manager.
 
@@ -181,8 +188,8 @@ Either a single space` ` or `\n` can be a delimiter of `NODE_CSV` value.
 
 ### Supported Node.js versions
 
-* v6.12
-* v8.9
+* v6.12 (Maintenance LTS)
+* v8.9  (Active LTS)
 
 ## Setup for Building
 
