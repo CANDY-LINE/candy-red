@@ -11,7 +11,7 @@ CANDY RED is a gateway service working between local area wireless network devic
 
 * Include Node-RED flow editor/flow execution runtime
 * Running as a systemd service
-* Preinstalled EnOcean node
+* Preinstalled EnOcean node (ESP3 over ERP2)
 * Preinstalled helper nodes for CANDY EGG cloud service \*
 
 _\* [CANDY EGG cloud service](https://www.candy-line.io/%E8%A3%BD%E5%93%81%E4%B8%80%E8%A6%A7/candy-red-egg/) account is required_
@@ -38,7 +38,7 @@ This is the default screen theme.
 
 ### Tested Node.js versions
 
-* v6.11.2
+* v6.12
 
 The preinstalled version of Node.js v0.10.29 won't work because of the [header file issue](http://dustinbolton.com/replace_invalid_utf8-is-not-a-member-of-v8string-installing-nodejs-packages-on-raspbian-debian-on-raspberry-pi-2-b/) appearing on installing native addons.
 
@@ -50,7 +50,7 @@ $ sudo apt-get remove -y nodered nodejs nodejs-legacy npm
 
 ### Supported npm version
 
-* v3.x (same as default npm bundled with Node.js v6)
+* v3.x+
 
 ## Install/Version-up
 
@@ -69,6 +69,17 @@ Please refer to the following commands to install.
 ```
 $ sudo NODE_OPTS=--max-old-space-size=256 npm install -g --unsafe-perm candy-red
 ```
+
+You can add administrator role credentials on installation in order to enable authentication.
+
+```
+$ sudo NODE_OPTS=--max-old-space-size=256 \
+    CANDY_RED_ADMIN_USER_ID=... \
+    CANDY_RED_ADMIN_PASSWORD=... \
+    npm install -g --unsafe-perm candy-red
+```
+
+The password is encrypted while the installation process.
 
 You can access `http://<hostname.local or ip address>:8100` with your browser on the same LAN where `<hostname.local or ip address>` is a host name with `.local` suffix or IP address.
 
@@ -121,6 +132,7 @@ However, you need to tell the system to restart the CANDY RED service by perform
 ### Node-RED home
 
 The Node-RED home path, where flow files are placed, is found at `$(npm root -g)/candy-red/.node-red/`.
+Alternately, you can provide the arbitrary path with `CANDY_RED_HOME` environment variable defined in `$(npm root -g)/candy-red/.node-red/environment` file.
 
 ### Slow boot time
 
@@ -172,7 +184,8 @@ Either a single space` ` or `\n` can be a delimiter of `NODE_CSV` value.
 
 ### Supported Node.js versions
 
-* v6.11
+* v6.12
+* v8.9
 
 ## Setup for Building
 
@@ -334,19 +347,15 @@ $ docker run -tid -v ./dist:/candy-red-dist candy-red
 $ rm -fr node_modules; \
   rm -f npm-shrinkwrap.json; \
   docker run --name build --rm -ti -v $(pwd):/work -w /work -e DEVEL=true \
-    node:6.11 bash -c "npm install;npm run freeze"
+    node:6.12 bash -c "npm install;npm run freeze"
 ```
 
 ## Coding Styles
 
-1. Use ES6 (except Gruntfile.js and \*.html)
+1. Use ES6 (except gulpfile.js and \*.html)
 1. 2-space soft tabs
 1. Append .es6.js suffix to ES6 JS files
 1. See .jshintrc for detail
-
-## Known Issues
-
-* CANDY EGG cloud services aren't yet available
 
 ## TODO
 * publish local Node-RED nodes in this project to npm repository

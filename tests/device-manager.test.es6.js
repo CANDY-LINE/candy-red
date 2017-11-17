@@ -1,3 +1,19 @@
+/**
+ * @license
+ * Copyright (c) 2017 CANDY LINE INC.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 'use strict';
 
 import * as sinon from 'sinon';
@@ -501,57 +517,6 @@ describe('DeviceManagerStore', () => {
         done(err);
       });
     });
-  });
+  }); /* #_onFlowFileRemovedFunc() */
 
-  describe('#initWsClient()', () => {
-    it('should initialize a websocket client as a primary device manager client', done => {
-      let account = {};
-      let listenerConfig = sandbox.stub({
-        registerInputNode: () => {}
-      });
-      let accountConfig = sandbox.stub({
-        accountFqn: 'TEST@localhost',
-        on: () => {}
-      });
-      let webSocketListeners = sandbox.stub({
-        get: () => {}
-      });
-      webSocketListeners.get.returns(listenerConfig);
-      assert.isFalse(store.isWsClientInitialized(accountConfig.accountFqn));
-      store.initWsClient(account, accountConfig, webSocketListeners);
-      assert.isTrue(store.isWsClientInitialized(accountConfig.accountFqn));
-      assert.isTrue(store.store[accountConfig.accountFqn].primary);
-      store.initWsClient(account, accountConfig, webSocketListeners);
-      assert.equal(1, Object.keys(store.store).length);
-      done();
-    });
-
-    it('should initialize a websocket client as NOT a primary device manager client', done => {
-      let account = {};
-      let listenerConfig = sandbox.stub({
-        registerInputNode: () => {}
-      });
-      let accountConfig = sandbox.stub({
-        accountFqn: 'TEST@localhost',
-        on: () => {}
-      });
-      let webSocketListeners = sandbox.stub({
-        get: () => {}
-      });
-      webSocketListeners.get.returns(listenerConfig);
-      store.initWsClient(account, accountConfig, webSocketListeners);
-      assert.isTrue(store.store[accountConfig.accountFqn].primary);
-
-      let accountConfig2 = sandbox.stub({
-        accountFqn: 'TEST2@localhost',
-        on: () => {}
-      });
-      assert.isFalse(store.isWsClientInitialized(accountConfig2.accountFqn));
-      store.initWsClient(account, accountConfig2, webSocketListeners);
-      assert.isTrue(store.isWsClientInitialized(accountConfig2.accountFqn));
-      assert.equal(2, Object.keys(store.store).length);
-      assert.isNotTrue(store.store[accountConfig2.accountFqn].primary);
-      done();
-    });
-  });
 });

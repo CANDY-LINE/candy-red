@@ -1,3 +1,19 @@
+/**
+ * @license
+ * Copyright (c) 2017 CANDY LINE INC.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 'use strict';
 
 import 'source-map-support/register';
@@ -16,6 +32,10 @@ const PORT = process.env.PORT || 8100;
 const DEFAULT_PACKAGE_JSON = __dirname + '/../package.json';
 const DEFAULT_WELCOME_FLOW = __dirname + '/welcome-flow.json';
 const NODE_PALETTE_ENABLED = process.env.NODE_PALETTE_ENABLED ? process.env.NODE_PALETTE_ENABLED === 'true' : false;
+const CANDY_RED_SESSION_TIMEOUT = parseInt(process.env.CANDY_RED_SESSION_TIMEOUT || 86400);
+const CANDY_RED_ADMIN_USER_ID = process.env.CANDY_RED_ADMIN_USER_ID;
+const CANDY_RED_ADMIN_PASSWORD_ENC = process.env.CANDY_RED_ADMIN_PASSWORD_ENC;
+const CANDY_RED_LOG_LEVEL = process.env.CANDY_RED_LOG_LEVEL || 'info';
 
 export class CandyRed {
   constructor(packageJsonPath) {
@@ -25,7 +45,7 @@ export class CandyRed {
     this.server = http.createServer(this.app);
 
     // Device Management
-    this.deviceManagerStore = new DeviceManagerStore(RED);
+    this.deviceManagerStore = new DeviceManagerStore();
 
     // path to package.json
     this.packageJsonPath = packageJsonPath;
@@ -199,6 +219,9 @@ export class CandyRed {
         title: ' ** ' + longname + ' **',
         image: __dirname + '/public/images/candy-red.png'
       },
+      login: {
+        image: __dirname + '/public/images/logo.png'
+      },
       menu: {
         'menu-item-help': {
           label: 'Users Forum',
@@ -264,7 +287,7 @@ export class CandyRed {
     function exitHandler(err) {
       console.log('[CANDY RED] Bye');
       if (RED.settings && RED.settings.exitHandlers) {
-        RED.settings.exitHandlers.forEach(handler => {
+        RED.settings.exitHandlers.forEach((handler) => {
           try {
             handler(RED);
           } catch (err) {
@@ -282,19 +305,21 @@ export class CandyRed {
         process.exit(err);
       }
     }
-    process.on('exit', exitHandler);
     process.on('SIGINT', exitHandler);
     process.on('uncaughtException', exitHandler);
+    process.on('unhandledRejection', (err) => {
+      console.log('unhandledRejection', err);
+    });
   }
 
   _createREDSettigngs(versions) {
-    return {
+    let settings = {
       flowFilePretty: true,
       verbose: true,
       disableEditor: false,
       httpAdminRoot: '/red/',
       httpNodeRoot: '/api/',
-      userDir: (process.env.HOME || process.env.USERPROFILE) + '/.node-red',
+      userDir: (process.env.CANDY_RED_HOME || process.env.HOME || process.env.USERPROFILE) + '/.node-red',
       flowFile: this.flowFile,
       functionGlobalContext: {
       },
@@ -305,8 +330,27 @@ export class CandyRed {
       editorTheme: this.editorTheme,
       candyBoardServiceVersion: versions.candyBsv,
       candyRedVersion: versions.candyRedv,
-      deviceId: versions.deviceId
+      deviceId: versions.deviceId,
+      logging: {
+        console: {
+          level: CANDY_RED_LOG_LEVEL,
+          metrics: false,
+          audit: false
+        }
+      }
     };
+    if (CANDY_RED_ADMIN_USER_ID && CANDY_RED_ADMIN_PASSWORD_ENC) {
+      settings.adminAuth = {
+        sessionExpiryTime: CANDY_RED_SESSION_TIMEOUT,
+        type: 'credentials',
+        users: [{
+          username: CANDY_RED_ADMIN_USER_ID,
+          password: CANDY_RED_ADMIN_PASSWORD_ENC,
+          permissions: '*'
+        }]
+      };
+    }
+    return settings;
   }
 
 }

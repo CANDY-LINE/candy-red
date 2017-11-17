@@ -1,3 +1,19 @@
+/**
+ * @license
+ * Copyright (c) 2017 CANDY LINE INC.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 'use strict';
 
 import 'source-map-support/register';
@@ -964,39 +980,5 @@ export class DeviceManagerStore {
 
   _remove(accountFqn) {
     delete this.store[accountFqn];
-  }
-
-  isWsClientInitialized(accountFqn) {
-    return !!this._get(accountFqn);
-  }
-
-  initWsClient(account, accountConfig, webSocketListeners) {
-    let accountFqn = accountConfig.accountFqn;
-    let primary = (Object.keys(this.store).length === 0);
-    if (primary) {
-      RED.log.error(`[CANDY RED] This account is PRIMARY: ${accountFqn}`);
-    }
-
-    let listenerConfig = webSocketListeners.get({
-      accountConfig: accountConfig,
-      account: account,
-      path: 'candy-ws'
-    }, {
-      headers: {
-        'x-acc-fqn': accountFqn,
-        'x-acc-user': accountConfig.loginUser,
-        'x-device-id': this.deviceState.deviceId,
-        'x-hostname': os.hostname(),
-        'x-candy-bsv': RED.settings.candyBoardServiceVersion,
-        'x-candy-redv': RED.settings.candyRedVersion,
-      }
-    });
-    accountConfig.on('close', () => {
-      listenerConfig.close();
-      this._remove(accountFqn);
-      RED.log.info(`[CANDY RED] Disassociated from [${accountFqn}]`);
-    });
-    this.store[accountFqn] = new DeviceManager(primary, listenerConfig, accountConfig, this.deviceState);
-    RED.log.info(`[CANDY RED] Associated with [${accountFqn}]`);
   }
 }
