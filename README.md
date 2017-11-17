@@ -15,7 +15,7 @@ CANDY RED is IoT gateway software desgined for [CANDY Pi Lite board](https://tra
 * Dashboard UI is installed by default
 * More builtin nodes
     * [OMA LwM2M client nodes](https://www.npmjs.com/package/node-red-contrib-lwm2m)
-    * [EnOcean node (ESP3 over ERP2)](https://github.com/CANDY-LINE/candy-red/tree/master/src/nodes/local-node-enocean)
+    * [EnOcean nodes (ESP3 over ERP2)](https://github.com/CANDY-LINE/candy-red/tree/master/src/nodes/local-node-enocean)
     * [GATT BLE nodes](https://www.npmjs.com/package/node-red-contrib-generic-ble)
     * [Serialport node](https://www.npmjs.com/package/node-red-node-serialport)
     * [Device Statistics node](https://www.npmjs.com/package/node-red-contrib-device-stats)
@@ -357,7 +357,7 @@ $ docker run -tid -v ./dist:/candy-red-dist candy-red
 $ rm -fr node_modules; \
   rm -f npm-shrinkwrap.json; \
   nodenv local 8.9.1; \
-  DEVEL=true npm install;npm run freeze"
+  DEVEL=true npm install;npm run freeze
 ```
 
 ## Coding Styles
