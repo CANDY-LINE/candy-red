@@ -26,6 +26,7 @@ import os from 'os';
 import fs from 'fs';
 import mkdirp from 'mkdirp';
 import { DeviceManagerStore } from './device-manager';
+import { SingleUserAuthenticator, PAMAuthenticator } from './auth';
 
 // Listen port
 const PORT = process.env.PORT || 8100;
@@ -36,6 +37,7 @@ const CANDY_RED_SESSION_TIMEOUT = parseInt(process.env.CANDY_RED_SESSION_TIMEOUT
 const CANDY_RED_ADMIN_USER_ID = process.env.CANDY_RED_ADMIN_USER_ID;
 const CANDY_RED_ADMIN_PASSWORD_ENC = process.env.CANDY_RED_ADMIN_PASSWORD_ENC;
 const CANDY_RED_LOG_LEVEL = process.env.CANDY_RED_LOG_LEVEL || 'info';
+const NODE_ENV = process.env.NODE_ENV || '';
 
 export class CandyRed {
   constructor(packageJsonPath) {
@@ -87,7 +89,11 @@ export class CandyRed {
       if (url && (url.indexOf('http://') || url.indexOf('https://'))) {
         let req = request.get(url);
         req.on('error', err => {
-          return reject(err);
+          try {
+            return resolve(fs.createReadStream(DEFAULT_WELCOME_FLOW));
+          } catch (err) {
+            return reject(err);
+          }
         });
         return resolve(req);
       } else {
@@ -340,16 +346,20 @@ export class CandyRed {
       }
     };
     if (CANDY_RED_ADMIN_USER_ID && CANDY_RED_ADMIN_PASSWORD_ENC) {
-      settings.adminAuth = {
-        sessionExpiryTime: CANDY_RED_SESSION_TIMEOUT,
-        type: 'credentials',
-        users: [{
-          username: CANDY_RED_ADMIN_USER_ID,
-          password: CANDY_RED_ADMIN_PASSWORD_ENC,
-          permissions: '*'
-        }]
-      };
+      let userAuth = new SingleUserAuthenticator(
+        CANDY_RED_SESSION_TIMEOUT, CANDY_RED_ADMIN_USER_ID, CANDY_RED_ADMIN_PASSWORD_ENC);
+      settings.adminAuth = userAuth.init();
+      this.app.use(settings.httpNodeRoot, userAuth.apiBasicAuthMiddleware.bind(userAuth));
+      console.log(`[INFO] Using the user:${CANDY_RED_ADMIN_USER_ID} credentials for authentication`);
+    } else if (NODE_ENV === 'production') {
+      let pamAuth = new PAMAuthenticator(CANDY_RED_SESSION_TIMEOUT);
+      settings.adminAuth = pamAuth.init();
+      this.app.use(settings.httpNodeRoot, pamAuth.apiBasicAuthMiddleware.bind(pamAuth));
+      console.log(`[INFO] Using PAM for authentication`);
+    } else {
+      console.log(`[WARN] Authentication is disabled`);
     }
+
     return settings;
   }
 
