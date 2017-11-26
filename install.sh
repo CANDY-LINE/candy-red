@@ -43,8 +43,15 @@ function setup {
     RET=`which apt-get`
     if [ "$?" == "0" ]; then
       info "Ready for installation!"
-      info "Setting up native dependencies"
-      apt-get install -y libpam0g-dev
+      if ! dpkg -l libpam0g-dev > /dev/null 2>&1; then
+        info "Setting up native dependencies"
+        apt-get update -y
+        apt-get install -y libpam0g-dev
+      fi
+      python -c "import RPi.GPIO" > /dev/null 2>&1
+      if [ "$?" == "0" ]; then
+        BOARD="RPi"
+      fi
       exit 0
     else
       err "Cannot install on this platform"
@@ -141,12 +148,30 @@ function npm_local_install {
   fi
 }
 
+function install_sensehat {
+  if [ "${BOARD}" != "RPi" ]; then
+    return
+  fi
+  if ! dpkg -l sense-hat > /dev/null 2>&1; then
+    info "Installing Sense HAT ..."
+    apt-get update -y
+    apt-get install -y sense-hat libjpeg8-dev
+  fi
+  if ! python -c "import PIL" > /dev/null 2>&1; then
+    info "Installing Sense HAT node dependencies..."
+    pip install pillow
+  fi
+}
+
 function install_preinstalled_nodes {
   NODES_CSV_PATH="${NODES_CSV_PATH:-${PROJECT_ROOT}/default-nodes.csv}"
   if [ -n "${NODES_CSV}" ]; then
     NODES=`echo ${NODES_CSV} | tr ' ' '\n'`
   elif [ -f "${NODES_CSV_PATH}" ]; then
     NODES=`cat ${NODES_CSV_PATH} | tr -d '\r'`
+  fi
+  if [[ ${NODES} == *"node-red-node-pi-sense-hat"* ]]; then
+    install_sensehat
   fi
   if [ -n "${NODES}" ]; then
     mkdir -p ${CANDY_RED_MODULE_ROOT}
