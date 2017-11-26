@@ -76,6 +76,7 @@
     "node-red-contrib-lwm2m": "^1.1.0",
     "node-red-contrib-moment": "^2.0.6",
     "node-red-dashboard": "^2.6.2",
+    "node-red-node-pi-sense-hat": "0.0.15",
     "node-red-node-serialport": "^0.6.0",
     "request": "^2.83.0",
     "serialport-enocean-parser": "^0.2.0",
