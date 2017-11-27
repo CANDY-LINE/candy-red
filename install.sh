@@ -59,6 +59,7 @@ function setup {
       python -c "import RPi.GPIO" > /dev/null 2>&1
       if [ "$?" == "0" ]; then
         BOARD="RPi"
+        install_sensehat
       fi
       exit 0
     else
@@ -177,9 +178,6 @@ function install_preinstalled_nodes {
     NODES=`echo ${NODES_CSV} | tr ' ' '\n'`
   elif [ -f "${NODES_CSV_PATH}" ]; then
     NODES=`cat ${NODES_CSV_PATH} | tr -d '\r'`
-  fi
-  if [[ ${NODES} == *"node-red-node-pi-sense-hat"* ]]; then
-    install_sensehat
   fi
   if [ -n "${NODES}" ]; then
     mkdir -p ${CANDY_RED_MODULE_ROOT}
