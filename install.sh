@@ -52,7 +52,7 @@ function setup {
     RET=`which apt-get`
     if [ "$?" == "0" ]; then
       info "Ready for installation!"
-      if ! dpkg -l libpam0g-dev > /dev/null 2>&1; then
+      if ! dpkg -l libpam0g-dev 2>&1 | grep "libpam0g-dev" | grep "^i.*"; then
         apt_get_update
         apt-get install -y libpam0g-dev
       fi
@@ -161,7 +161,7 @@ function install_sensehat {
   if [ "${BOARD}" != "RPi" ]; then
     return
   fi
-  if ! dpkg -l sense-hat > /dev/null 2>&1; then
+  if ! dpkg -l sense-hat 2>&1 | grep "sense-hat" | grep "^i.*"; then
     info "Installing Sense HAT ..."
     apt_get_update
     apt-get install -y sense-hat libjpeg8-dev
