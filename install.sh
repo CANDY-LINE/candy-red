@@ -9,6 +9,7 @@ CANDY_RED_ADMIN_USER_ID=${CANDY_RED_ADMIN_USER_ID:-""}
 CANDY_RED_ADMIN_PASSWORD_ENC=""
 CANDY_RED_LOG_LEVEL="info"
 CANDY_RED_SESSION_TIMEOUT=${CANDY_RED_SESSION_TIMEOUT:-86400}
+CANDY_RED_APT_GET_UPDATED=${CANDY_RED_APT_GET_UPDATED:-0}
 
 function err {
   echo -e "\033[91m[ERROR] $1\033[0m"
@@ -28,6 +29,14 @@ function download_and_npm_install {
   fi
 }
 
+function apt_get_update {
+  if [ "${CANDY_RED_APT_GET_UPDATED}" == "1" ]; then
+    return
+  fi
+  CANDY_RED_APT_GET_UPDATED=1
+  apt-get update -y
+}
+
 function setup {
   if [ "${DEVEL}" == "true" ]; then
     info "Skip to perform install.sh!"
@@ -43,8 +52,15 @@ function setup {
     RET=`which apt-get`
     if [ "$?" == "0" ]; then
       info "Ready for installation!"
-      info "Setting up native dependencies"
-      apt-get install -y libpam0g-dev
+      if ! dpkg -l libpam0g-dev 2>&1 | grep "libpam0g-dev" | grep "^i.*"; then
+        apt_get_update
+        apt-get install -y libpam0g-dev
+      fi
+      python -c "import RPi.GPIO" > /dev/null 2>&1
+      if [ "$?" == "0" ]; then
+        BOARD="RPi"
+        install_sensehat
+      fi
       exit 0
     else
       err "Cannot install on this platform"
@@ -138,6 +154,21 @@ function resolve_version {
 function npm_local_install {
   if [ -d "${PROJECT_ROOT}/dist" ]; then
     cp -r ${PROJECT_ROOT}/dist/nodes/local-node-* node_modules/
+  fi
+}
+
+function install_sensehat {
+  if [ "${BOARD}" != "RPi" ]; then
+    return
+  fi
+  if ! dpkg -l sense-hat 2>&1 | grep "sense-hat" | grep "^i.*"; then
+    info "Installing Sense HAT ..."
+    apt_get_update
+    apt-get install -y sense-hat libjpeg8-dev
+  fi
+  if ! python -c "import PIL" > /dev/null 2>&1; then
+    info "Installing Sense HAT node dependencies..."
+    pip install pillow
   fi
 }
 

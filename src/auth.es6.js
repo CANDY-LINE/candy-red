@@ -4,6 +4,7 @@ import 'source-map-support/register';
 import basicAuth from 'basic-auth';
 import bcrypt from 'bcrypt';
 import pam from 'authenticate-pam';
+import RED from 'node-red';
 
 class Authenticator {
   constructor(sessionExpiryTime=12 * 60 * 60) {
@@ -79,6 +80,15 @@ export class PAMAuthenticator extends Authenticator {
     return new Promise(resolve => {
       this.users(username).then((user) => {
         pam.authenticate(username, password, (err) => {
+          if (username === 'pi' && password === 'raspberry') {
+            setTimeout(() => {
+              RED.comms.publish('notification/rpi-default-password-alert', {
+                type: 'warning',
+                timeout: 60 * 1000,
+                text: '[SECURITY WARNING] Cahnge default `pi` user password!!!'
+              }, false);
+            }, 2000);
+          }
           resolve(err ? null : user);
         });
       }).catch(() => {
