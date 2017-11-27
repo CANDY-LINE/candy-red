@@ -9,6 +9,7 @@ CANDY_RED_ADMIN_USER_ID=${CANDY_RED_ADMIN_USER_ID:-""}
 CANDY_RED_ADMIN_PASSWORD_ENC=""
 CANDY_RED_LOG_LEVEL="info"
 CANDY_RED_SESSION_TIMEOUT=${CANDY_RED_SESSION_TIMEOUT:-86400}
+CANDY_RED_APT_GET_UPDATED=${CANDY_RED_APT_GET_UPDATED:-0}
 
 function err {
   echo -e "\033[91m[ERROR] $1\033[0m"
@@ -28,6 +29,14 @@ function download_and_npm_install {
   fi
 }
 
+function apt_get_update {
+  if [ "${CANDY_RED_APT_GET_UPDATED}" == "1" ]; then
+    return
+  fi
+  CANDY_RED_APT_GET_UPDATED=1
+  apt-get update -y
+}
+
 function setup {
   if [ "${DEVEL}" == "true" ]; then
     info "Skip to perform install.sh!"
@@ -44,8 +53,7 @@ function setup {
     if [ "$?" == "0" ]; then
       info "Ready for installation!"
       if ! dpkg -l libpam0g-dev > /dev/null 2>&1; then
-        info "Setting up native dependencies"
-        apt-get update -y
+        apt_get_update
         apt-get install -y libpam0g-dev
       fi
       python -c "import RPi.GPIO" > /dev/null 2>&1
@@ -154,7 +162,7 @@ function install_sensehat {
   fi
   if ! dpkg -l sense-hat > /dev/null 2>&1; then
     info "Installing Sense HAT ..."
-    apt-get update -y
+    apt_get_update
     apt-get install -y sense-hat libjpeg8-dev
   fi
   if ! python -c "import PIL" > /dev/null 2>&1; then
