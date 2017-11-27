@@ -1,7 +1,7 @@
 {
   "name": "candy-red",
   "version": "5.3.0",
-  "description": "CANDY RED Device Gateway Service powered by Node-RED",
+  "description": "CANDY RED :: Visual Programming Editor and Runtime for CANDY Pi Lite powered by Node-RED",
   "main": "./dist/index.js",
   "scripts": {
     "start": "NODE_PALETTE_ENABLED=true node ./dist/index.js",
