@@ -278,7 +278,7 @@ $ npm test
 $ npm pack
 # RPi
 $ sudo npm uninstall -g --unsafe-perm candy-red
-$ time sudo npm install -g --unsafe-perm ./candy-red-5.3.0.tgz
+$ time sudo npm install -g --unsafe-perm ./candy-red-5.4.0.tgz
 ```
 
 ## Vagrant

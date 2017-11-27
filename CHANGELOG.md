@@ -1,4 +1,8 @@
 ## Revision History
+* 5.4.0
+  - Add Show warning alert when the given username and password are Raspberry Pi's default
+  - Add Raspberry Pi Sense HAT support
+
 * 5.3.0
   - Add PAM authentication support (enabled by default)
   - Fix an issue where API authentication didn't work when basic authentication is enabled
