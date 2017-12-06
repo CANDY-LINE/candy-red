@@ -1,4 +1,9 @@
 ## Revision History
+
+* 5.5.0
+  - Add device id prefix support for Tinker Board and generic Linux boards as well as RPi
+  - Warn weak passwords as well as Raspberry Pi default password
+
 * 5.4.0
   - Add Show warning alert when the given username and password are Raspberry Pi's default
   - Add Raspberry Pi Sense HAT support
