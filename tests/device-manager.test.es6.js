@@ -79,17 +79,60 @@ describe('DeviceIdResolver', () => {
     });
   });
 
-  it('should return the cpuinfo serial', done => {
+  it('should return the cpuinfo serial if the device model is RPi', done => {
     let resolver = new DeviceIdResolver();
-    sandbox.stub(fs, 'stat').onFirstCall().yields(new Error()).onSecondCall().yields();
+    sandbox.stub(fs, 'stat').onFirstCall().yields(new Error())
+      .onSecondCall().yields()
+      .onThirdCall().yields();
     let i = 0;
     let readStream = new stream.Readable();
     readStream._read = () => {
       readStream.push(PROC_CPUINFO[i++]);
     };
     sandbox.stub(fs, 'createReadStream').onFirstCall().returns(readStream);
+    sandbox.stub(fs, 'readFileSync').onFirstCall().returns('Raspberry Pi 3 Model B Rev 1.2');
     resolver.resolve().then(id => {
       assert.equal('RPi:00000000ffff9999', id);
+      done();
+    }).catch(err => {
+      done(err);
+    });
+  });
+
+  it('should return the cpuinfo serial if the device model is ATB', done => {
+    let resolver = new DeviceIdResolver();
+    sandbox.stub(fs, 'stat').onFirstCall().yields(new Error())
+      .onSecondCall().yields()
+      .onThirdCall().yields();
+    let i = 0;
+    let readStream = new stream.Readable();
+    readStream._read = () => {
+      readStream.push(PROC_CPUINFO[i++]);
+    };
+    sandbox.stub(fs, 'createReadStream').onFirstCall().returns(readStream);
+    sandbox.stub(fs, 'readFileSync').onFirstCall().returns('Tinker Board\n\0\0\0\0\0');
+    resolver.resolve().then(id => {
+      assert.equal('ATB:00000000ffff9999', id);
+      done();
+    }).catch(err => {
+      done(err);
+    });
+  });
+
+  it('should return the cpuinfo serial if the device model is a generic Linux', done => {
+    let resolver = new DeviceIdResolver();
+    sandbox.stub(fs, 'stat').onFirstCall().yields(new Error())
+      .onSecondCall().yields()
+      .onThirdCall().yields();
+    let i = 0;
+    let readStream = new stream.Readable();
+    readStream._read = () => {
+      readStream.push(PROC_CPUINFO[i++]);
+    };
+    sandbox.stub(fs, 'createReadStream').onFirstCall().returns(readStream);
+    sandbox.stub(fs, 'readFileSync').onFirstCall().returns('Generic Linux\n\0\0\0\0\0');
+    resolver.resolve().then(id => {
+      assert.equal('DEV:00000000ffff9999', id);
       done();
     }).catch(err => {
       done(err);
@@ -100,7 +143,8 @@ describe('DeviceIdResolver', () => {
     let resolver = new DeviceIdResolver();
     sandbox.stub(fs, 'stat').onFirstCall().yields(new Error())
       .onSecondCall().yields(new Error())
-      .onThirdCall().yields();
+      .onThirdCall().yields()
+      .onCall(4).yields();
     sandbox.stub(os, 'networkInterfaces').returns({
       'en0' : [
         { mac: '00:00:00:00:00:00' },
