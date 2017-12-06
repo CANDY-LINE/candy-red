@@ -50,7 +50,6 @@ export class DeviceIdResolver {
 
   _resolveCANDYIoT(resolve, reject) {
     // CANDY IoT
-    // TODO
     return this._resolveEdison(resolve, reject);
   }
 
