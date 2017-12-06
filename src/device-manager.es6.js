@@ -33,6 +33,7 @@ const TRACE = process.env.DEBUG || false;
 
 const EDISON_YOCTO_SN_PATH = '/factory/serial_number';
 const PROC_CPUINFO_PATH = '/proc/cpuinfo';
+const PROC_DT_MODEL_PATH = '/proc/device-tree/model';
 
 const MODEM_OFFLINE = 'offline';
 
@@ -50,7 +51,6 @@ export class DeviceIdResolver {
 
   _resolveCANDYIoT(resolve, reject) {
     // CANDY IoT
-    // TODO
     return this._resolveEdison(resolve, reject);
   }
 
@@ -58,7 +58,7 @@ export class DeviceIdResolver {
     // Intel Edison Yocto
     fs.stat(EDISON_YOCTO_SN_PATH, err => {
       if (err) {
-        return this._resolveRPi(resolve, reject);
+        return this._resolveLinux(resolve, reject);
       }
       fs.readFile(EDISON_YOCTO_SN_PATH, (err, data) => {
         if (err) {
@@ -69,27 +69,39 @@ export class DeviceIdResolver {
     });
   }
 
-  _resolveRPi(resolve, reject) {
-    // RPi
-    fs.stat(PROC_CPUINFO_PATH, err => {
+  _resolveLinux(resolve, reject) {
+    fs.stat(PROC_DT_MODEL_PATH, err => {
       if (err) {
         return this._resolveMAC(resolve, reject);
       }
-      let reader = readline.createInterface({
-        terminal: false,
-        input: fs.createReadStream(PROC_CPUINFO_PATH)
-      });
-      let id = '';
-      reader.on('line', line => {
-        if (line.indexOf('Serial') >= 0 && line.indexOf(':') >= 0) {
-          id = line.split(':')[1].trim();
-        }
-      });
-      reader.on('close', err => {
-        if (err || !id) {
+      fs.stat(PROC_CPUINFO_PATH, err => {
+        if (err) {
           return this._resolveMAC(resolve, reject);
         }
-        resolve('RPi:' + id);
+        let reader = readline.createInterface({
+          terminal: false,
+          input: fs.createReadStream(PROC_CPUINFO_PATH)
+        });
+        let id = '';
+        reader.on('line', line => {
+          if (line.indexOf('Serial') >= 0 && line.indexOf(':') >= 0) {
+            id = line.split(':')[1].trim();
+          }
+        });
+        reader.on('close', err => {
+          if (err || !id) {
+            return this._resolveMAC(resolve, reject);
+          }
+          let model = fs.readFileSync(PROC_DT_MODEL_PATH).toString().replace(/\0/g, '').trim();
+          if (model.match('Raspberry Pi')) {
+            return resolve('RPi:' + id);
+          } else if (model === 'Tinker Board') {
+            return resolve('ATB:' + id);
+          } else {
+            RED.log.warn(`Unknown Linux Device Model: [${model}]`);
+            return resolve('DEV:' + id);
+          }
+        });
       });
     });
   }

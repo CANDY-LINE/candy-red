@@ -7,6 +7,7 @@ import pam from 'authenticate-pam';
 import RED from 'node-red';
 
 class Authenticator {
+
   constructor(sessionExpiryTime=12 * 60 * 60) {
     this.sessionExpiryTime = sessionExpiryTime;
   }
@@ -48,6 +49,24 @@ class Authenticator {
       next(err);
     });
   }
+
+  static areDefaultOrWeakCreds(username, password) {
+    return (username === 'pi' && password === 'raspberry') ||
+      (password && password.length < 8) ||
+      (username === password);
+  }
+
+  testDefaultOrWeakCreds(username, password) {
+    if (Authenticator.areDefaultOrWeakCreds(username, password)) {
+      setTimeout(() => {
+        RED.comms.publish('notification/rpi-default-password-alert', {
+          type: 'warning',
+          timeout: 60 * 1000,
+          text: `[SECURITY WARNING] Cahnge default or weak [${username}] user password!!!`
+        }, false);
+      }, 2000);
+    }
+  }
 }
 
 export class SingleUserAuthenticator extends Authenticator {
@@ -61,6 +80,7 @@ export class SingleUserAuthenticator extends Authenticator {
     return new Promise(resolve => {
       this.users(username).then((user) => {
         bcrypt.compare(password, this.password, (_, res) => {
+          this.testDefaultOrWeakCreds(username, password);
           resolve(res ? user : null);
         });
       }).catch(() => {
@@ -80,15 +100,7 @@ export class PAMAuthenticator extends Authenticator {
     return new Promise(resolve => {
       this.users(username).then((user) => {
         pam.authenticate(username, password, (err) => {
-          if (username === 'pi' && password === 'raspberry') {
-            setTimeout(() => {
-              RED.comms.publish('notification/rpi-default-password-alert', {
-                type: 'warning',
-                timeout: 60 * 1000,
-                text: '[SECURITY WARNING] Cahnge default `pi` user password!!!'
-              }, false);
-            }, 2000);
-          }
+          this.testDefaultOrWeakCreds(username, password);
           resolve(err ? null : user);
         });
       }).catch(() => {
