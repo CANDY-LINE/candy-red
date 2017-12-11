@@ -37,6 +37,7 @@ const CANDY_RED_SESSION_TIMEOUT = parseInt(process.env.CANDY_RED_SESSION_TIMEOUT
 const CANDY_RED_ADMIN_USER_ID = process.env.CANDY_RED_ADMIN_USER_ID;
 const CANDY_RED_ADMIN_PASSWORD_ENC = process.env.CANDY_RED_ADMIN_PASSWORD_ENC;
 const CANDY_RED_LOG_LEVEL = process.env.CANDY_RED_LOG_LEVEL || 'info';
+const CANDY_RED_BIND_IPV4_ADDR = process.env.CANDY_RED_BIND_IPV4_ADDR ? process.env.CANDY_RED_BIND_IPV4_ADDR === 'true' : false;
 const NODE_ENV = process.env.NODE_ENV || '';
 
 export class CandyRed {
@@ -159,7 +160,11 @@ export class CandyRed {
   }
 
   start() {
-    this.server.listen(PORT);
+    if (CANDY_RED_BIND_IPV4_ADDR) {
+      this.server.listen(PORT, '0.0.0.0');
+    } else {
+      this.server.listen(PORT);
+    }
     this._setupExitHandler();
     return this._inspectBoardStatus(this.packageJsonPath).then(versions => {
       return new Promise((resolve, reject) => {

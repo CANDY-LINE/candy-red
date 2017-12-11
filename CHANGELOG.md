@@ -1,5 +1,9 @@
 ## Revision History
 
+* 5.6.0
+  - Add support for binding IPv4 interface as well as IPv6/dual-stack interfaces
+  - Bump dependency versions
+
 * 5.5.0
   - Add device id prefix support for Tinker Board and generic Linux boards as well as RPi
   - Warn weak passwords as well as Raspberry Pi default password
