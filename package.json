@@ -46,7 +46,7 @@
     "gulp-babel": "^6.1.2",
     "gulp-clean": "^0.3.2",
     "gulp-cli": "^1.2.2",
-    "gulp-exec": "^2.1.3",
+    "gulp-exec": "^3.0.0",
     "gulp-jshint": "^2.0.4",
     "gulp-livereload": "^3.8.1",
     "gulp-mocha": "^4.3.0",
