@@ -386,7 +386,9 @@ export default function(RED) {
       }
 
       this.on('close', () => {
-        this.listenerConfig.removeOutputNode(this);
+        if (this.listenerConfig) {
+          this.listenerConfig.removeOutputNode(this);
+        }
       });
 
       this.on('log-info', (msg) => {
@@ -410,7 +412,9 @@ export default function(RED) {
           }
         }
         if (payload) {
-          this.listenerConfig.broadcast(payload);
+          if (this.listenerConfig) {
+            this.listenerConfig.broadcast(payload);
+          }
         }
       });
     }
