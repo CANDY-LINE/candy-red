@@ -1,5 +1,11 @@
 ## Revision History
 
+* ?.?.?
+  - Bump up Node-RED version to v0.18.2
+  - Bump up Node-RED Dashboard version to v2.8.0
+  - Remove `node-red-contrib-sequence-functions` nodes as the similar nodes are now included as core nodes
+  - Add a new option `NODE_RED_PROJECTS_ENABLED` to enable/disable Node-RED Projects support, which allows you git-based version control on your flow files (disabled by default for now)
+
 * 5.6.1
   - Fix issues where type errors can be thrown on some node state
 
