@@ -1,5 +1,8 @@
 ## Revision History
 
+* 5.6.1
+  - Fix issues where type errors can be thrown on some node state
+
 * 5.6.0
   - Add support for binding IPv4 interface as well as IPv6/dual-stack interfaces
   - Bump dependency versions
