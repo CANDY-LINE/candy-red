@@ -33,6 +33,7 @@ const PORT = process.env.PORT || 8100;
 const DEFAULT_PACKAGE_JSON = __dirname + '/../package.json';
 const DEFAULT_WELCOME_FLOW = __dirname + '/welcome-flow.json';
 const NODE_PALETTE_ENABLED = process.env.NODE_PALETTE_ENABLED ? process.env.NODE_PALETTE_ENABLED === 'true' : false;
+const NODE_RED_PROJECTS_ENABLED = process.env.NODE_RED_PROJECTS_ENABLED ? process.env.NODE_RED_PROJECTS_ENABLED === 'true' : false;
 const CANDY_RED_SESSION_TIMEOUT = parseInt(process.env.CANDY_RED_SESSION_TIMEOUT || 86400);
 const CANDY_RED_ADMIN_USER_ID = process.env.CANDY_RED_ADMIN_USER_ID;
 const CANDY_RED_ADMIN_PASSWORD_ENC = process.env.CANDY_RED_ADMIN_PASSWORD_ENC;
@@ -221,6 +222,12 @@ export class CandyRed {
       longname = `${os.hostname()} (${name})`;
     }
     return {
+      palette: {
+        editable: NODE_PALETTE_ENABLED
+      },
+      projects: {
+        enabled: NODE_RED_PROJECTS_ENABLED
+      },
       page: {
         title: 'CANDY RED@' + name,
         favicon: __dirname + '/public/images/candy-red.ico',
@@ -259,9 +266,6 @@ export class CandyRed {
         candyBsv = results[1][1];
       }
       this.editorTheme = this._createCandyRedEditorTheme(deviceId);
-      this.editorTheme.palette = {
-        editable: NODE_PALETTE_ENABLED
-      };
       deviceId = deviceId || 'N/A';
       candyBsv = candyBsv || 'N/A';
       return new Promise((resolve, reject) => {

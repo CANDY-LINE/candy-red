@@ -11,6 +11,9 @@ WELCOME_FLOW_URL=%WELCOME_FLOW_URL%
 # Set true for enabling the node palette manager
 NODE_PALETTE_ENABLED=%NODE_PALETTE_ENABLED%
 
+# Set true for enabling Node-RED projects support (Git-based version management)
+NODE_RED_PROJECTS_ENABLED=%NODE_RED_PROJECTS_ENABLED%
+
 # Authentication User ID (leave empty for disabling authentication)
 CANDY_RED_ADMIN_USER_ID=%CANDY_RED_ADMIN_USER_ID%
 # Authentication User Password
