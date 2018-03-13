@@ -26,6 +26,7 @@ _\* [CANDY EGG cloud service](https://www.candy-line.io/%E8%A3%BD%E5%93%81%E4%B8
 ## OS and Hardwares
 
 * [Raspberry Pi + Raspbian](#raspberry-pi--raspbian)
+* ASUS Tinker Board + Tinker OS v2.0.4+
 * [OSX/Debian/Ubuntu/Raspbian for Development](#development)
 
 # Screenshots
@@ -157,7 +158,7 @@ You can find the installation instruction in the [article](http://www.elinux.org
 
 Here is a brief instruction. (Check the latest version of BlueZ at www.bluez.org)
 ```
-$ BLUEZ_VER=5.45
+$ BLUEZ_VER=5.49
 $ sudo apt-get install -y build-essential libdbus-1-dev \
     libdbus-glib-1-dev libglib2.0-dev libical-dev \
     libreadline-dev libudev-dev libusb-dev make
@@ -278,7 +279,7 @@ $ npm test
 $ npm pack
 # RPi
 $ sudo npm uninstall -g --unsafe-perm candy-red
-$ time sudo npm install -g --unsafe-perm ./candy-red-5.6.1.tgz
+$ time sudo npm install -g --unsafe-perm ./candy-red-6.0.0.tgz
 ```
 
 ## Vagrant
@@ -379,7 +380,7 @@ $ rm -fr node_modules; \
 
 ## Source Code License
 
-Copyright (c) 2017 [CANDY LINE INC.](https://www.candy-line.io)
+Copyright (c) 2018 [CANDY LINE INC.](https://www.candy-line.io)
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
