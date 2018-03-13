@@ -4,6 +4,7 @@ SERVICE_NAME="candy-red"
 # 1 for disabling service installation & uninstallation, 0 for enabling them (default)
 DISABLE_SERVICE_INSTALL=${DISABLE_SERVICE_INSTALL:-0}
 NODE_PALETTE_ENABLED=${NODE_PALETTE_ENABLED:-true}
+NODE_RED_PROJECTS_ENABLED=${NODE_RED_PROJECTS_ENABLED:-false}
 CANDY_RED_MODULE_ROOT="/opt/${SERVICE_NAME}/.node-red"
 CANDY_RED_ADMIN_USER_ID=${CANDY_RED_ADMIN_USER_ID:-""}
 CANDY_RED_ADMIN_PASSWORD_ENC=""
@@ -234,6 +235,8 @@ function system_service_install {
       WELCOME_FLOW_URL \
       PPPD_DEBUG \
       NODE_PALETTE_ENABLED \
+      NODE_RED_PROJECTS_ENABLED \
+      CANDY_RED_SESSION_TIMEOUT \
       CANDY_RED_BIND_IPV4_ADDR \
       CANDY_RED_ADMIN_USER_ID \
       CANDY_RED_ADMIN_PASSWORD_ENC \
@@ -242,8 +245,8 @@ function system_service_install {
   done
   chmod 0600 ${SERVICES}/environment
   rm -f ${SERVICES}/environment-e
-
   _install_${SYSTEM_SERVICE_TYPE}
+  rm -f ${SERVICES}/environment
 }
 
 function _install_systemd {

@@ -20,6 +20,6 @@ will generate ES5 js files.
 
 # Copyright and License
 
-PNG images under icon folder are released under [CC BY-NC-SA](http://creativecommons.org/licenses/by-nc-sa/4.0/), © 2017 CANDY LINE INC.
+PNG images under icon folder are released under [CC BY-NC-SA](http://creativecommons.org/licenses/by-nc-sa/4.0/), © 2018 CANDY LINE INC.
 
 The project is released under MIT License. See LICENSE for detail.
