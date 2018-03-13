@@ -26,6 +26,7 @@ _\* [CANDY EGG cloud service](https://www.candy-line.io/%E8%A3%BD%E5%93%81%E4%B8
 ## OS and Hardwares
 
 * [Raspberry Pi + Raspbian](#raspberry-pi--raspbian)
+* ASUS Tinker Board + Tinker OS v2.0.4+
 * [OSX/Debian/Ubuntu/Raspbian for Development](#development)
 
 # Screenshots
