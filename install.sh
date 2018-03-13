@@ -245,8 +245,8 @@ function system_service_install {
   done
   chmod 0600 ${SERVICES}/environment
   rm -f ${SERVICES}/environment-e
-
   _install_${SYSTEM_SERVICE_TYPE}
+  rm -f ${SERVICES}/environment
 }
 
 function _install_systemd {
