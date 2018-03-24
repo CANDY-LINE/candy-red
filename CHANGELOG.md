@@ -1,4 +1,6 @@
 ## Revision History
+* 6.0.1
+  - Fix an issue where ATB with Tinker OS v2.0.5+ was misidentified as RPi because of preinstalled `RPI.GPIO` package
 
 * 6.0.0
   - Bump up Node-RED version to v0.18.4
