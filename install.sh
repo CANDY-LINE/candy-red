@@ -58,10 +58,22 @@ function setup {
         apt_get_update
         apt-get install -y libpam0g-dev
       fi
-      python -c "import RPi.GPIO" > /dev/null 2>&1
-      if [ "$?" == "0" ]; then
-        BOARD="RPi"
-        install_sensehat
+      if [ -f "/proc/board_info" ]; then
+        DT_MODEL=`cat /proc/board_info 2>&1`
+        case ${DT_MODEL} in
+          "Tinker Board" | "Tinker Board S")
+            BOARD="ATB"
+            ;;
+          *)
+            BOARD=""
+            ;;
+        esac
+      else
+        python -c "import RPi.GPIO" > /dev/null 2>&1
+        if [ "$?" == "0" ]; then
+          BOARD="RPi"
+          install_sensehat
+        fi
       fi
       exit 0
     else
