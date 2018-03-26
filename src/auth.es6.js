@@ -62,7 +62,7 @@ class Authenticator {
         RED.comms.publish('notification/rpi-default-password-alert', {
           type: 'warning',
           timeout: 60 * 1000,
-          text: `[SECURITY WARNING] Cahnge default or weak [${username}] user password!!!`
+          text: `[SECURITY WARNING] Change default or weak [${username}] user password!!!`
         }, false);
       }, 2000);
     }
