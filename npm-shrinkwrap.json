@@ -37,7 +37,7 @@
     },
     "@sinonjs/formatio": {
       "version": "2.0.0",
-      "resolved": "http://registry.npmjs.org/@sinonjs/formatio/-/formatio-2.0.0.tgz",
+      "resolved": "https://registry.npmjs.org/@sinonjs/formatio/-/formatio-2.0.0.tgz",
       "integrity": "sha512-ls6CAMA6/5gG+O/IdsBcblvnd8qcO/l1TYoNeAzp3wcISOxlPXQEus0mLcdwazEkWjaBdaJ3TaxmNgCLWwvWzg==",
       "dev": true,
       "requires": {
@@ -8442,9 +8442,9 @@
       }
     },
     "node-red-dashboard": {
-      "version": "2.8.2",
-      "resolved": "https://registry.npmjs.org/node-red-dashboard/-/node-red-dashboard-2.8.2.tgz",
-      "integrity": "sha512-15bru01uz9bUMcSMrejqM/QEt8IslB9tGfpvQ7VWFcz5txVe3GVw0IVuPfbm/sQRlUdNHt3QlHwkPJewo8NTqg==",
+      "version": "2.9.1",
+      "resolved": "https://registry.npmjs.org/node-red-dashboard/-/node-red-dashboard-2.9.1.tgz",
+      "integrity": "sha512-Mkgi6ZmPGMliGD0pN4bAF1W4GXbrpiHMjBG3GnfAbbfxtHY5m/m4DZn936pCm2zuS7OEQ0ZozNFPzvOo9aPRxQ==",
       "requires": {
         "serve-static": "1.13.2",
         "socket.io": "1.7.4"

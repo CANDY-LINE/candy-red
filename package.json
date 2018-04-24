@@ -75,7 +75,7 @@
     "node-red-contrib-device-stats": ">=1.0.3",
     "node-red-contrib-lwm2m": "^1.2.0",
     "node-red-contrib-moment": "^2.0.7",
-    "node-red-dashboard": "^2.8.2",
+    "node-red-dashboard": "^2.9.1",
     "node-red-node-pi-sense-hat": "0.0.15",
     "node-red-node-serialport": "^0.6.5",
     "request": "^2.83.0",
