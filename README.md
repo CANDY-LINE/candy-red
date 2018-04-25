@@ -4,7 +4,7 @@ CANDY RED
 [![GitHub release](https://img.shields.io/github/release/CANDY-LINE/candy-red.svg)](https://github.com/CANDY-LINE/candy-red/releases/latest)
 [![master Build Status](https://travis-ci.org/CANDY-LINE/candy-red.svg?branch=master)](https://travis-ci.org/CANDY-LINE/candy-red/)
 
-CANDY RED is IoT gateway software designed for [CANDY Pi Lite board](https://translate.google.com/translate?hl=en&sl=ja&u=https://www.candy-line.io/%25E8%25A3%25BD%25E5%2593%2581%25E4%25B8%2580%25E8%25A6%25A7/candy-pi-lite/&prev=search) with [Raspberry Pi](https://www.raspberrypi.org) powered by [Node-RED](https://nodered.org).
+CANDY RED is IoT gateway software designed for [CANDY Pi Lite board](https://translate.google.com/translate?hl=en&sl=ja&u=https://www.candy-line.io/%25E8%25A3%25BD%25E5%2593%2581%25E4%25B8%2580%25E8%25A6%25A7/candy-pi-lite/&prev=search) with [Raspberry Pi](https://www.raspberrypi.org) and [ASUS Tinker Board](https://www.asus.com/Single-Board-Computer/Tinker-Board/) powered by [Node-RED](https://nodered.org).
 
 ## Features
 
@@ -14,6 +14,7 @@ CANDY RED is IoT gateway software designed for [CANDY Pi Lite board](https://tra
 * Dashboard UI is installed by default
 * More builtin nodes
     * [OMA LwM2M client nodes](https://www.npmjs.com/package/node-red-contrib-lwm2m)
+    * [Analog Devices SmartMesh IP™ nodes](https://www.npmjs.com/package/node-red-contrib-smartmesh)
     * [EnOcean nodes (ESP3 over ERP2)](https://github.com/CANDY-LINE/candy-red/tree/master/src/nodes/local-node-enocean)
     * [GATT BLE nodes](https://www.npmjs.com/package/node-red-contrib-generic-ble)
     * [Serialport node](https://www.npmjs.com/package/node-red-node-serialport)
@@ -25,7 +26,7 @@ _\* [CANDY EGG cloud service](https://www.candy-line.io/%E8%A3%BD%E5%93%81%E4%B8
 ## OS and Hardwares
 
 * [Raspberry Pi + Raspbian](#raspberry-pi--raspbian)
-* ASUS Tinker Board + Tinker OS v2.0.4+
+* ASUS Tinker Board + Tinker OS (Debian) v2.0.4+
 * [OSX/Debian/Ubuntu/Raspbian for Development](#development)
 
 # Screenshots
@@ -41,12 +42,12 @@ This is the default screen theme.
 
 ### Raspbian version
 
- * STRETCH/STRETCH LITE Kernel Version: 4.9 (2017-09-07)
+ * STRETCH/STRETCH LITE Kernel Version: 4.9 (2018-03-29)
 
 ### Tested Node.js versions
 
-* v6.12 (Maintenance LTS)
-* v8.9  (Active LTS)
+* v6.14.1 (Maintenance LTS)
+* v8.11.1 (Active LTS)
 
 The preinstalled version of Node.js v0.10.29 won't work because of the [header file issue](http://dustinbolton.com/replace_invalid_utf8-is-not-a-member-of-v8string-installing-nodejs-packages-on-raspbian-debian-on-raspberry-pi-2-b/) appearing on installing native addons.
 
@@ -184,7 +185,7 @@ Note that the downloaded flow file will be discarded if it is not a valid JSON d
 ## Preinstalled nodes
 
 ```
-$ sudo NODES_CSV="node-ed-contib-cache,>=1.0.0 node-ed-contib-geneic-ble,>=0.1.0 node-ed-contib-sequence-functions,>=1.0.0" npm install -g --unsafe-perm candy-red
+$ sudo NODES_CSV="node-ed-contib-cache,>=1.0.4 node-ed-contib-geneic-ble,>=2.0.4 node-ed-contib-smartmesh,>=1.0.0" npm install -g --unsafe-perm candy-red
 ```
 Either a single space` ` or `\n` can be a delimiter of `NODE_CSV` value.
 
@@ -194,8 +195,8 @@ Either a single space` ` or `\n` can be a delimiter of `NODE_CSV` value.
 
 ### Supported Node.js versions
 
-* v6.12 (Maintenance LTS)
-* v8.9  (Active LTS)
+* v6.14.1 (Maintenance LTS)
+* v8.11.1 (Active LTS)
 
 ## Setup for Building
 
@@ -278,7 +279,7 @@ $ npm test
 $ npm pack
 # RPi
 $ sudo npm uninstall -g --unsafe-perm candy-red
-$ time sudo npm install -g --unsafe-perm ./candy-red-6.0.0.tgz
+$ time sudo npm install -g --unsafe-perm ./candy-red-6.1.0.tgz
 ```
 
 ## Vagrant
@@ -356,7 +357,7 @@ $ docker run -tid -v ./dist:/candy-red-dist candy-red
 ```
 $ rm -fr node_modules; \
   rm -f npm-shrinkwrap.json; \
-  nodenv local 8.9.1; \
+  nodenv local 8.11.1; \
   DEVEL=true npm install;npm run freeze
 ```
 
@@ -395,4 +396,4 @@ limitations under the License.
 
 ## Creative works
 
-PNG/ICO images under src/public folder are released under [CC BY-NC-SA](http://creativecommons.org/licenses/by-nc-sa/4.0/), Copyright (c) 2017 [CANDY LINE INC.](https://www.candy-line.io)
+PNG/ICO images under src/public folder are released under [CC BY-NC-SA](http://creativecommons.org/licenses/by-nc-sa/4.0/), Copyright (c) 2018 [CANDY LINE INC.](https://www.candy-line.io)

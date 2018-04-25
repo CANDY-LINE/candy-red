@@ -1,4 +1,9 @@
 ## Revision History
+* 6.1.0
+  - Bump up Node-RED Dashboard version to v2.9.1
+  - Add a new preinstalled package (SmartMesh IP™ device node)
+  - Install PySerial for preinstalled SmartMesh IP™ device node
+
 * 6.0.1
   - Fix an issue where ATB with Tinker OS v2.0.5+ was misidentified as RPi because of preinstalled `RPI.GPIO` package
 

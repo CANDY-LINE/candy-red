@@ -54,10 +54,8 @@ function setup {
     RET=`which apt-get`
     if [ "$?" == "0" ]; then
       info "Ready for installation!"
-      if ! dpkg -l libpam0g-dev 2>&1 | grep "libpam0g-dev" | grep "^i.*"; then
-        apt_get_update
-        apt-get install -y libpam0g-dev
-      fi
+      install_libpam
+      install_pyserial
       if [ -f "/proc/board_info" ]; then
         DT_MODEL=`cat /proc/board_info 2>&1`
         case ${DT_MODEL} in
@@ -171,6 +169,13 @@ function npm_local_install {
   fi
 }
 
+function install_libpam {
+  if ! dpkg -l libpam0g-dev 2>&1 | grep "libpam0g-dev" | grep "^i.*"; then
+    apt_get_update
+    apt-get install -y libpam0g-dev
+  fi
+}
+
 function install_sensehat {
   if [ "${BOARD}" != "RPi" ]; then
     return
@@ -183,6 +188,13 @@ function install_sensehat {
   if ! python -c "import PIL" > /dev/null 2>&1; then
     info "Installing Sense HAT node dependencies..."
     pip install pillow
+  fi
+}
+
+function install_pyserial {
+  if ! python -c "import serial" > /dev/null 2>&1; then
+    info "Installing SmartMesh node dependencies..."
+    pip install pyserial
   fi
 }
 
