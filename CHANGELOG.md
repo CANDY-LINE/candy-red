@@ -1,4 +1,12 @@
 ## Revision History
+* ?.?.?
+  - Add new preinstalled nodes
+    - node-red-node-smooth
+    - node-red-node-base64
+    - node-red-node-data-generator
+    - node-red-node-random
+    - node-red-node-suncalc
+
 * 6.1.0
   - Bump up Node-RED Dashboard version to v2.9.1
   - Add a new preinstalled package (SmartMesh IP™ device node)
