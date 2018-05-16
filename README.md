@@ -267,6 +267,21 @@ And you'll see the sensor info like this:
     29 Jul 21:52:36 - [info] [inject:89c364b0.763c98] repeat = 1000
     29 Jul 21:52:36 - [info] Started flows
 
+With password authentication:
+
+```
+$ CANDY_RED_ADMIN_USER_ID=admin \
+  CANDY_RED_ADMIN_PASSWORD_ENC=`node -e "console.log(require('bcryptjs').hashSync(process.argv[1], 8));" password` \
+  CANDY_RED_SESSION_TIMEOUT=3600 \
+  npm run start
+```
+
+The above variables allows you to use the following credentials,
+
+- username: `admin`
+- password: `password`
+- session timeout: 1 hour
+
 ## Test
 
 ```
