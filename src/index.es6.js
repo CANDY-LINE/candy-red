@@ -359,7 +359,7 @@ export class CandyRed {
         CANDY_RED_SESSION_TIMEOUT, CANDY_RED_ADMIN_USER_ID, CANDY_RED_ADMIN_PASSWORD_ENC);
       settings.adminAuth = userAuth.init();
       this.app.use(settings.httpNodeRoot, userAuth.apiBasicAuthMiddleware.bind(userAuth));
-      console.log(`[INFO] Using the user:${CANDY_RED_ADMIN_USER_ID} credentials for authentication`);
+      console.log(`[INFO] Using the user:${CANDY_RED_ADMIN_USER_ID} credentials for authentication, session expires after ${CANDY_RED_SESSION_TIMEOUT} seconds`);
     } else if (NODE_ENV === 'production') {
       let pamAuth = new PAMAuthenticator(CANDY_RED_SESSION_TIMEOUT);
       settings.adminAuth = pamAuth.init();
