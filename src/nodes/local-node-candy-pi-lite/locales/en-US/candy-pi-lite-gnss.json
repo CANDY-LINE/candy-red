@@ -1,0 +1,20 @@
+{
+  "candy-pi-lite-gnss": {
+    "label": {
+      "category": "GNSS"
+    },
+    "errors": {
+      "unknownCommand": "Unknown command: __cmd__",
+      "alreadyExecuting": "Already executing"
+    },
+    "status": {
+      "starting": "starting",
+      "stopping": "stopping",
+      "executing": "executing",
+      "positioning": "positioning",
+      "idle": "idle",
+      "unfixed": "unfixed",
+      "error": "error"
+    }
+  }
+}

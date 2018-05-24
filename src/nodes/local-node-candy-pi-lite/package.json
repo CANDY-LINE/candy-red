@@ -1,0 +1,14 @@
+{
+  "name": "local-node-candy-pi-lite",
+  "version": "1.0.0",
+  "description": "Node-RED nodes for CANDY Pi Lite/CANDY Pi LIte+ boards",
+  "license": "Apache-2.0",
+  "private": "true",
+  "dependencies": {
+  },
+  "node-red": {
+    "nodes": {
+      "candy-pi-lite-gnss": "candy-pi-lite-gnss.js"
+    }
+  }
+}
