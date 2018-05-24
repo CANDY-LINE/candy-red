@@ -49,7 +49,13 @@ gulp.task('clean', () => {
 gulp.task('nodes', () => {
   return Promise.all(fs.readdirSync('node_modules/')
   .filter(f => f.indexOf('local-node-') === 0)
-  .filter(f => fs.statSync(`node_modules/${f}`).isDirectory())
+  .filter(f => {
+    try {
+      return fs.statSync(`node_modules/${f}`).isDirectory();
+    } catch (_) {
+      return false;
+    }
+  })
   .map(f => {
     return new Promise((resolve, reject) => rmdir(`node_modules/${f}`, (err) => {
       if (err) {
