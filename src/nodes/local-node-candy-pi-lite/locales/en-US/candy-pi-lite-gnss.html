@@ -18,23 +18,53 @@
 Emits a JSON object containing the obtained latitude and longitude
 from the GNSS/GPS module on the connected CANDY Pi Lite/CANDY Pi Lite+ board.
 </p>
+<p>
+NMEA can be available via the dedicated USB serial port shown in the dialog as
+<code>NMEA Port</code>. You can use the serial port with <code>serialport</code> node
+to subscribe NMEA sentences. <b>Note that this node NEVER emits NMEA sentences.</b>
+In addition, NMEA Serial Port is available only when CANDY Pi Lite/CANDY Pi Lite+ board is
+connected via USB.
+</p>
+
+<dl>
+<dt>Name</dt>
+<dd>
+  the identifier of the GNSS data. This name is shared on this computer.
+</dd>
+<dt>Output format</dt>
+<dd>
+  the format type for the outgoing message.
+  <code>worldmap</code> is applicable for <code>worldmap</code> node.
+  <code>raw</code> is the same as the <code>candy gnss locate</code> command output.
+</dd>
+<dt>Run GNSS on start-up</dt>
+<dd>
+  whether or not to run GNSS session on starting the flow. <b>Note that this precedes <code>candy-pi-lite</code> settings.</b>
+</dd>
+<dt>NMEA Port</dt>
+<dd>
+  the serial port identifier available for NMEA sentence subscription.
+  <code>Not Available</code> is shown when NMEA is not available.
+</dd>
+</dl>
+
 <h3>Outputs</h3>
 <dl class="message-properties">
 <dt>date<span class="property-type">string</span></dt>
 <dd>
 UTC date when positioning in ISO8601 format
 </dd>
-<dt>latitude<span class="property-type">float | string</span></dt>
+<dt>lat (latitude)<span class="property-type">float</span></dt>
 <dd>
-The latitude value of the position
+The latitude value of the position. <code>latitude</code> is used in the raw format.
 </dd>
-<dt>longitude<span class="property-type">float | string</span></dt>
+<dt>lon (longitude)<span class="property-type">float</span></dt>
 <dd>
-The longitude value of the position
+The longitude value of the position. <code>longitude</code> is used in the raw format.
 </dd>
-<dt>hdop<span class="property-type">float</span></dt>
+<dt>acuracy (hdop)<span class="property-type">float</span></dt>
 <dd>
-Horizontal precision
+Horizontal precision. <code>hdop</code> is used in the raw format.
 </dd>
 <dt>altitude<span class="property-type">float</span></dt>
 <dd>
@@ -42,15 +72,19 @@ The altitude of the antenna away from the sea level in meters
 </dd>
 <dt>cog<span class="property-type">float</span></dt>
 <dd>
-Ground heading based on the north in degrees
+Ground heading based on the <b>north</b> in degrees. <b>Used in the raw format only.</b>
+</dd>
+<dt>bearing<span class="property-type">float</span></dt>
+<dd>
+Ground heading based on the <b>south</b> in degrees. <b>Used in the worldmap format only.</b>
 </dd>
 <dt>nsat<span class="property-type">int</span></dt>
 <dd>
 The number of satellites
 </dd>
-<dt>spkm<span class="property-type">float</span></dt>
+<dt>speed (spkm)<span class="property-type">float</span></dt>
 <dd>
-Speed over ground in km/h
+Speed over ground in km/h. <code>spkm</code> is used in the raw format.
 </dd>
 <dt>spkn<span class="property-type">float</span></dt>
 <dd>
