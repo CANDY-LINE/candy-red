@@ -3,6 +3,11 @@
     "label": {
       "category": "GNSS",
       "outformat": "Output format",
+      "nmeaPort": "NMEA Port",
+      "runOnStartup": "Run GNSS on starting the flow"
+    },
+    "nmeaPort": {
+      "na": "Not Available"
     },
     "outformat": {
       "worldmap": "worldmap node",
@@ -10,7 +15,11 @@
     },
     "errors": {
       "unknownCommand": "Unknown command: __cmd__",
-      "alreadyExecuting": "Already executing"
+      "alreadyExecuting": "Already executing",
+      "setupError": "CANDY Pi Lite Service is missing"
+    },
+    "info": {
+      "updated": "GNSS configuration updated normally."
     },
     "status": {
       "starting": "starting",

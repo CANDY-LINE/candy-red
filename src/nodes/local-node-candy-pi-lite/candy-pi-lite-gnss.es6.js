@@ -19,10 +19,8 @@
 import 'source-map-support/register';
 import cproc from 'child_process';
 import fs from 'fs';
+import path from 'path';
 import { EventEmitter } from 'events';
-
-const CANDY_PI_LITE_HOME = `/opt/candy-line/candy-pi-lite/`;
-const MODEM_SERIAL_PORT_FILE = `${CANDY_PI_LITE_HOME}/__modem_serial_port`;
 
 export default function(RED) {
 
@@ -35,16 +33,85 @@ export default function(RED) {
       this.log = opts.log ? opts.log.bind(opts) : console.log;
       this.trace = opts.trace ? opts.trace.bind(opts) : console.log;
       this.output = null;
+      this.name = null;
+      this.runOnStartup = false;
+      this.runCommandTask = null;
     }
 
-    isUSBMode() {
+    init() {
+      return this.loadGNSSConfig().then(() => {
+        if (this.runOnStartup) {
+          this.scheduleRunCommand(5000);
+        }
+        return Promise.resolve();
+      });
+    }
+
+    scheduleRunCommand(timeout=2000) {
+      if (this.runCommandTask) {
+        clearTimeout(this.runCommandTask);
+      }
+      this.runCommandTask = setTimeout(() => {
+        this.execute('start').then((ev) => {
+          if (ev.code !== 0) {
+            this.scheduleRunCommand();
+          }
+        }).catch((err) => {
+          RED.log.error(err.message || err);
+          if (err.code !== 'ENOENT') {
+            this.scheduleRunCommand(10000);
+          }
+        });
+      }, timeout);
+    }
+
+    getNMEAPort() {
       try {
-        return !!fs.readFileSync(MODEM_SERIAL_PORT_FILE)
-          .toString()
-          .trim()
-          .match('/dev/QWS\.[A-Z0-9]*\.MODEM');
+        let port = fs.readdirSync('/dev').filter(f => f.match('QWS\.[A-Z0-9]*\.NMEA'));
+        if (port.length < 1) {
+          return RED._('candy-pi-lite-gnss.nmeaPort.na');
+        }
+        return `/dev/${port[0]}`;
       } catch (_) {
-        return false;
+        return RED._('candy-pi-lite-gnss.nmeaPort.na');
+      }
+    }
+
+    createGNSSfilePath() {
+      return path.join(RED.settings.userDir, 'candy-pi-lite-gnss.json');
+    }
+
+    saveGNSSConfig() {
+      return new Promise((resolve, reject) => {
+        fs.writeFile(this.createGNSSfilePath(), JSON.stringify({
+          name: this.name,
+          runOnStartup: this.runOnStartup
+        }), (err) => {
+          if (err) {
+            RED.log.error(err);
+            return reject('Failed to write GNSS config');
+          }
+        });
+      });
+    }
+
+    loadGNSSConfig() {
+      return new Promise((resolve) => {
+        fs.readFile(this.createGNSSfilePath(), (err, data) => {
+          if (err) {
+            return resolve();
+          }
+          try {
+            let config = JSON.parse(data.toString());
+            this.name = config.name;
+            this.runOnStartup = config.runOnStartup;
+          } catch (_) {
+          }
+          return resolve();
+        });
+      });
+    }
+
     transform(input, outformat) {
       let output = input;
       output.name = this.name || 'CANDY Pi Lite/+ GNSS';
@@ -228,9 +295,29 @@ export default function(RED) {
   }
   RED.nodes.registerType('CANDY Pi Lite gnss in', CANDYPiLiteGNSSInNode);
 
+  RED.httpAdmin.get('/candy-pi-lite-gnss', RED.auth.needsPermission('candy-pi-lite-gnss.read'), (req, res) => {
+    res.json({
+      name: gnssClient.name,
+      runOnStartup: gnssClient.runOnStartup,
+      nmeaPort: gnssClient.getNMEAPort() || RED._('candy-pi-lite-gnss.nmeaPort.na')
+    });
+  });
+
+  RED.httpAdmin.post('/candy-pi-lite-gnss', RED.auth.needsPermission('candy-pi-lite-gnss.write'), (req, res) => {
+    gnssClient.name = req.body.name;
+    gnssClient.runOnStartup = req.body.runOnStartup;
+    gnssClient.saveGNSSConfig().then(() => {
+      res.sendStatus(200);
+    }).catch(() => {
+      res.sendStatus(500);
+    });
+  });
+
   RED.events.on('runtime-event', (ev) => {
     if (ev.id === 'runtime-state') {
-      gnssClient.emit('idle');
+      gnssClient.init().then(() => {
+        gnssClient.emit('idle');
+      });
     }
   });
 }
