@@ -138,7 +138,10 @@ export default function(RED) {
           return resolve(ev);
         });
         this.cproc.stdout.on('data', (data) => {
-          let text =  data.toString().replace(/[\u001b\u009b][[()#;?]*(?:[0-9]{1,4}(?:;[0-9]{0,4})*)?[0-9A-ORZcf-nqry=><]/g, '');
+          let text =  data
+            .toString()
+            .trim()
+            .replace(/[\u001b\u009b][[()#;?]*(?:[0-9]{1,4}(?:;[0-9]{0,4})*)?[0-9A-ORZcf-nqry=><]/g, '');
           this.trace(`<stdout> cmd => [${cmd}], output => [${text}]`);
           this.output += text;
         });
