@@ -27,7 +27,10 @@ const MODEM_SERIAL_PORT_FILE = `${CANDY_PI_LITE_HOME}/__modem_serial_port`;
 export default function(RED) {
 
   class GNSSClient extends EventEmitter {
-    constructor(opts={}) {
+    constructor(opts={
+      log: () => {},
+      trace: () => {}
+    }) {
       super();
       this.log = opts.log ? opts.log.bind(opts) : console.log;
       this.trace = opts.trace ? opts.trace.bind(opts) : console.log;
