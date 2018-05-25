@@ -102,6 +102,15 @@ export default function(RED) {
           stdio: ['pipe', 'pipe', 'ignore']
         });
         this.emit(status);
+        this.cproc.on('error', (err) => {
+          this.cproc = null;
+          this.emit('ended');
+          this.emit('error');
+          if (err.code === 'ENOENT') {
+            err.message = RED._('candy-pi-lite-gnss.errors.setupError');
+          }
+          return reject(err);
+        });
         this.cproc.on('exit', (code) => {
           this.log(`Command Done: pid => ${this.cproc.pid}, code => ${code}`);
           this.cproc = null;
