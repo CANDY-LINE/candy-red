@@ -42,10 +42,31 @@ export default function(RED) {
           .match('/dev/QWS\.[A-Z0-9]*\.MODEM');
       } catch (_) {
         return false;
+    transform(input, outformat) {
+      let output = input;
+      output.name = this.name || 'CANDY Pi Lite/+ GNSS';
+      switch (outformat) {
+        case 'worldmap':
+          output.lat = output.latitude;
+          output.lon = output.longitude;
+          output.speed = output.spkm;
+          output.accuracy = output.hdop;
+          // bearing:north=180,east=270 cog:north=0,east=90
+          output.bearing = (output.cog + 180) % 360;
+          delete output.latitude;
+          delete output.longitude;
+          delete output.spkm;
+          delete output.hdop;
+          delete output.cog;
+          break;
+        case 'raw':
+          break;
+        default:
       }
+      return output;
     }
 
-    execute(cmd) {
+    execute(cmd, outformat) {
       return new Promise((resolve, reject) => {
         if (this.isExecuting()) {
           return reject(RED._('candy-pi-lite-gnss.errors.alreadyExecuting'));
@@ -99,7 +120,7 @@ export default function(RED) {
                 status = 'unfixed';
               } else if (code === 0) {
                 try {
-                  result = JSON.parse(result);
+                  result = this.transform(JSON.parse(result), outformat);
                   status = 'idle';
                 } catch (_) {
                 }
@@ -155,6 +176,7 @@ export default function(RED) {
   class CANDYPiLiteGNSSInNode {
     constructor(n) {
       RED.nodes.createNode(this, n);
+      this.outformat = n.outformat || 'worldmap';
       ['starting', 'stopping', 'executing'].forEach((ev) => {
         gnssClient.on(ev, () => {
           this.status({fill:'blue', shape:'dot', text: `candy-pi-lite-gnss.status.${ev}`});
@@ -176,7 +198,7 @@ export default function(RED) {
         });
       });
       this.on('input', (msg) => {
-        gnssClient.execute(msg.topic).then((result) => {
+        gnssClient.execute(msg.topic, this.outformat, this.name).then((result) => {
           this.send({
             topic: msg.topic,
             code: result.code,

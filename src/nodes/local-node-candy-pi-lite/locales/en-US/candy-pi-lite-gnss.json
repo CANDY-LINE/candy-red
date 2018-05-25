@@ -1,7 +1,12 @@
 {
   "candy-pi-lite-gnss": {
     "label": {
-      "category": "GNSS"
+      "category": "GNSS",
+      "outformat": "Output format",
+    },
+    "outformat": {
+      "worldmap": "worldmap node",
+      "raw": "raw"
     },
     "errors": {
       "unknownCommand": "Unknown command: __cmd__",
