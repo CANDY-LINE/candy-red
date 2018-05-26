@@ -314,12 +314,12 @@ export default function(RED) {
           });
         }).catch((err) => {
           let obj = err.payload ? err : { payload: err, topic: msg.topic };
-          this.error(`CANDY Pi Lite gnss in error`, obj);
+          this.error(`CANDY Pi Lite/+ gnss in error`, obj);
         });
       });
     }
   }
-  RED.nodes.registerType('CANDY Pi Lite gnss in', CANDYPiLiteGNSSInNode);
+  RED.nodes.registerType('CANDY Pi Lite/+ gnss in', CANDYPiLiteGNSSInNode);
 
   RED.httpAdmin.get('/candy-pi-lite-gnss', RED.auth.needsPermission('candy-pi-lite-gnss.read'), (req, res) => {
     res.json({
