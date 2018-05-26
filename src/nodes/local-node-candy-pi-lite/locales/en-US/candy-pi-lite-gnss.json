@@ -1,7 +1,8 @@
 {
   "candy-pi-lite-gnss": {
     "label": {
-      "category": "GNSS",
+      "gnss": "GNSS",
+      "nmea": "GNSS NMEA",
       "outformat": "Output format",
       "nmeaPort": "NMEA Port",
       "runOnStartup": "Run GNSS on starting the flow"
@@ -28,7 +29,9 @@
       "positioning": "positioning",
       "idle": "idle",
       "unfixed": "unfixed",
-      "error": "error"
+      "error": "error",
+      "nmea-available": "available",
+      "nmea-not-available": "not available"
     }
   }
 }

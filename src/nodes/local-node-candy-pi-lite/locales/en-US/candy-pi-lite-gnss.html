@@ -18,13 +18,6 @@
 Emits a JSON object containing the obtained latitude and longitude
 from the GNSS/GPS module on the connected CANDY Pi Lite/CANDY Pi Lite+ board.
 </p>
-<p>
-NMEA can be available via the dedicated USB serial port shown in the dialog as
-<code>NMEA Port</code>. You can use the serial port with <code>serialport</code> node
-to subscribe NMEA sentences. <b>Note that this node NEVER emits NMEA sentences.</b>
-In addition, NMEA Serial Port is available only when CANDY Pi Lite/CANDY Pi Lite+ board is
-connected via USB.
-</p>
 
 <dl>
 <dt>Name</dt>
@@ -39,12 +32,9 @@ connected via USB.
 </dd>
 <dt>Run GNSS on start-up</dt>
 <dd>
-  whether or not to run GNSS session on starting the flow. <b>Note that this precedes <code>candy-pi-lite</code> settings.</b>
-</dd>
-<dt>NMEA Port</dt>
-<dd>
-  the serial port identifier available for NMEA sentence subscription.
-  <code>Not Available</code> is shown when NMEA is not available.
+  whether or not to run GNSS session on starting the flow.
+  <b>Note that this precedes <code>candy-pi-lite</code> settings.</b>
+  <b>This setting takes effect only when 1 or more <coe>GNSS</code> node is used in the flow.</b>
 </dd>
 </dl>
 
@@ -94,4 +84,41 @@ Speed over ground in knots
 <dd>
 GNSS positioning mode (2D or 3D)
 </dd>
+</script>
+
+<script type="text/x-red" data-help-name="CANDY Pi Lite nmea in">
+<p>
+Emits NMEA sentences from the GNSS/GPS module on the connected CANDY Pi Lite/CANDY Pi Lite+ board.
+Note that NMEA can be available via the dedicated USB serial port shown in the dialog as
+<code>NMEA Port</code>. The <code>NMEA Port</code> is <b>automatically detected</b>.
+</p>
+
+<dl>
+<dt>Name</dt>
+<dd>
+  the identifier of the GNSS data. This name is shared on this computer.
+</dd>
+<dt>Run GNSS on start-up</dt>
+<dd>
+  whether or not to run GNSS session on starting the flow.
+  <b>Note that this precedes <code>candy-pi-lite</code> settings.</b>
+  <b>This setting takes effect only when 1 or more <coe>GNSS</code> node is used in the flow.</b>
+</dd>
+<dt>NMEA Port</dt>
+<dd>
+  the serial port identifier available for NMEA sentence subscription.
+  <code>Not Available</code> is shown when NMEA is not available.
+  This serial port is <b>automatically detected</b>.
+</dd>
+</dl>
+
+<h3>Outputs</h3>
+The following GPS NMEA output formats are supported.
+<ul>
+<li><code>GGA</code></li>
+<li><code>RMC</code></li>
+<li><code>GSV</code></li>
+<li><code>GSA</code></li>
+<li><code>VTG</code></li>
+</ul>
 </script>

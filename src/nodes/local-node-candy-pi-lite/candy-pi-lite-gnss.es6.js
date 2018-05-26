@@ -21,6 +21,7 @@ import cproc from 'child_process';
 import fs from 'fs';
 import path from 'path';
 import { EventEmitter } from 'events';
+import SerialPort from 'serialport';
 
 export default function(RED) {
 
@@ -36,19 +37,32 @@ export default function(RED) {
       this.name = null;
       this.runOnStartup = false;
       this.runCommandTask = null;
+      this.nmeaPortName = null;
+      this.nmeaPort = null;
+      this.initialized = false;
+      this.nodes = [];
     }
 
     init() {
+      if (this.initialized) {
+        return Promise.resolve();
+      }
+      this.initialized = true;
       return this.loadGNSSConfig().then(() => {
         if (this.isEnabled()) {
           RED.log.info('CANDY Pi Lite GNSS Client is enabled');
           if (this.runOnStartup) {
             this.scheduleRunCommand(5000);
           }
+          return this.resolveNMEAPortName().then((port) => {
+            this.nmeaPortName = port;
+          }).finally(() => {
+            return this.setupNMEAPort();
+          });
         } else {
           RED.log.info('CANDY Pi Lite GNSS Client is disabled');
+          return Promise.resolve();
         }
-        return Promise.resolve();
       });
     }
 
@@ -70,16 +84,65 @@ export default function(RED) {
       }, timeout);
     }
 
-    getNMEAPort() {
-      try {
-        let port = fs.readdirSync('/dev').filter(f => f.match('QWS\.[A-Z0-9]*\.NMEA'));
-        if (port.length < 1) {
-          return RED._('candy-pi-lite-gnss.nmeaPort.na');
-        }
-        return `/dev/${port[0]}`;
-      } catch (_) {
-        return RED._('candy-pi-lite-gnss.nmeaPort.na');
+    resolveNMEAPortName() {
+      return new Promise((resolve, reject) => {
+        fs.readdir('/dev', (err, dirs) => {
+          if (err) {
+            return reject(err);
+          }
+          let port = dirs.filter(f => f.match('QWS\.[A-Z0-9]*\.NMEA'));
+          if (port.length < 1) {
+            return resolve(null);
+          }
+          return resolve(`/dev/${port[0]}`);
+        });
+      });
+    }
+
+    getNMEAPortName() {
+      return this.nmeaPortName || RED._('candy-pi-lite-gnss.nmeaPort.na');
+    }
+
+    isNMEASupported() {
+      return !!this.nmeaPortName;
+    }
+
+    setupNMEAPort() {
+      if (this.isNMEASupported()) {
+        this.nmeaPort = new SerialPort(this.nmeaPortName, {
+          baudRate: 9600,
+          dataBits: 8,
+          parity: 'none',
+          stopBits: 1
+        }, (err) => {
+          if (err) {
+            this.emit('nmea-not-available');
+            setTimeout(() => {
+              this.setupNMEAPort();
+            }, 5000);
+          } else {
+            this.emit('nmea-available');
+          }
+        });
+        this.nmeaPort.on('data', (data) => {
+          Buffer.from(data).toString().split('\n').map((line) => line.trim()).forEach((line) => {
+            if (line) {
+              this.emit('nmea', line);
+            }
+          });
+        });
+        this.nmeaPort.on('error', (err) => {
+          this.emit('nmea-error', err);
+        });
+      } else {
+        this.emit('nmea-not-available');
+        setTimeout(() => {
+          this.resolveNMEAPortName().finally(() => {
+            this.setupNMEAPort();
+          });
+        }, 5000);
       }
+      return Promise.resolve();
     }
 
     createGNSSfilePath() {
@@ -188,14 +251,19 @@ export default function(RED) {
           this.cproc = null;
           let result = this.output;
           let status = '';
+          if (code === 0) {
+            status = 'idle';
+          } else {
+            status = 'error';
+          }
           switch (cmd) {
             case 'start':
             case 'stop':
+              break;
             case 'status':
-              if (code === 0) {
-                status = 'idle';
-              } else {
-                status = 'error';
+              try {
+                result = JSON.parse(result).session;
+              } catch (_) {
               }
               break;
             case 'locate':
@@ -238,19 +306,23 @@ export default function(RED) {
 
     add(node) {
       if (node) {
-        this.nodes = (this.nodes || []).push(node);
+        this.nodes.push(node);
       }
-      return this.nodes || [];
+      return this.nodes;
     }
 
     remove(node) {
-      if (node && this.node) {
-        this.node.remove(node);
+      if (node) {
+        this.nodes.remove(node);
       }
+      if (this.nodes.length === 0) {
+        return this.shutdown();
+      }
+      return Promise.resolve();
     }
 
     isEnabled() {
-      return this.node && this.node.length > 0;
+      return this.nodes.length > 0;
     }
 
     shutdown() {
@@ -259,11 +331,21 @@ export default function(RED) {
         if (isExecuting) {
           this.cproc.kill('SIGINT');
           this.once('ended', () => {
-              return resolve(true);
+              return resolve();
           });
         } else {
           return resolve();
         }
+      }).then(() => {
+        return new Promise((resolve) => {
+          if (this.nmeaPort && !this.nmeaPort.isOpen) {
+            this.nmeaPort.once('close', () => {
+              return resolve();
+            });
+            this.nmeaPort.close();
+            this.nmeaPort = null;
+          }
+        });
       });
     }
   }
@@ -302,8 +384,12 @@ export default function(RED) {
         });
       });
       gnssClient.add(this);
-      this.on('close', () => {
-        gnssClient.remove(this);
+      this.on('close', (done) => {
+        gnssClient.remove(this).then(() => {
+          done();
+        }).catch((err) => {
+          done(err);
+        });
       });
       this.on('input', (msg) => {
         gnssClient.execute(msg.topic, this.outformat, this.name).then((result) => {
@@ -321,11 +407,48 @@ export default function(RED) {
   }
   RED.nodes.registerType('CANDY Pi Lite gnss in', CANDYPiLiteGNSSInNode);
 
+  class CANDYPiLiteNMEAInNode {
+    constructor(n) {
+      RED.nodes.createNode(this, n);
+      ['nmea-available'].forEach((ev) => {
+        gnssClient.on(ev, () => {
+          this.status({fill:'green', shape:'dot', text: `candy-pi-lite-gnss.status.${ev}`});
+        });
+      });
+      ['error', 'nmea-not-available'].forEach((ev) => {
+        gnssClient.on(ev, () => {
+          this.status({fill:'red', shape:'ring', text: `candy-pi-lite-gnss.status.${ev}`});
+        });
+      });
+      gnssClient.on('nmea', (nmea) => {
+        this.send({
+          topic: gnssClient.name,
+          payload: nmea
+        });
+      });
+      gnssClient.on('nmea-error', (err) => {
+        let obj = err.payload ? err : { payload: err, topic: 'nmea' };
+        this.error(`CANDY Pi Lite nmea in error`, obj);
+      });
+      gnssClient.add(this);
+      this.on('close', (done) => {
+        gnssClient.remove(this).then(() => {
+          done();
+        }).catch((err) => {
+          done(err);
+        });
+      });
+    }
+  }
+  RED.nodes.registerType('CANDY Pi Lite nmea in', CANDYPiLiteNMEAInNode);
+
   RED.httpAdmin.get('/candy-pi-lite-gnss', RED.auth.needsPermission('candy-pi-lite-gnss.read'), (req, res) => {
-    res.json({
-      name: gnssClient.name,
-      runOnStartup: gnssClient.runOnStartup,
-      nmeaPort: gnssClient.getNMEAPort() || RED._('candy-pi-lite-gnss.nmeaPort.na')
+    gnssClient.resolveNMEAPortName().then((port) => {
+      res.json({
+        name: gnssClient.name,
+        runOnStartup: gnssClient.runOnStartup,
+        nmeaPort: port || RED._('candy-pi-lite-gnss.nmeaPort.na')
+      });
     });
   });
 

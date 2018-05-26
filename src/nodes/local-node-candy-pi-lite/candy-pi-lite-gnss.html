@@ -15,7 +15,7 @@
 -->
 
 <!-- CANDY Pi Lite gnss Input Node -->
-<script type='text/x-red' data-template-name='CANDY Pi Lite/+ gnss in'>
+<script type='text/x-red' data-template-name='CANDY Pi Lite gnss in'>
   <div class='form-row'>
     <label for='name'><i class='fa fa-tag'></i> <span data-i18n='node-red:common.label.name'></span></label>
     <input type='text' id='name' data-i18n='[placeholder]node-red:common.label.name'>
@@ -33,6 +33,20 @@
     <input type='checkbox' id='runOnStartup' style='display: inline-block; width: auto; vertical-align: top;'>
     <label for='runOnStartup' style='width: 70%;' data-i18n='candy-pi-lite-gnss.label.runOnStartup'></label>
   </div>
+</script>
+
+<!-- CANDY Pi Lite nmea Input Node -->
+<script type='text/x-red' data-template-name='CANDY Pi Lite nmea in'>
+  <div class='form-row'>
+    <label for='name'><i class='fa fa-tag'></i> <span data-i18n='node-red:common.label.name'></span></label>
+    <input type='text' id='name' data-i18n='[placeholder]node-red:common.label.name'>
+  </div>
+  <hr></hr>
+  <div class='form-row'>
+    <label>&nbsp;</label>
+    <input type='checkbox' id='runOnStartup' style='display: inline-block; width: auto; vertical-align: top;'>
+    <label for='runOnStartup' style='width: 70%;' data-i18n='candy-pi-lite-gnss.label.runOnStartup'></label>
+  </div>
   <hr></hr>
   <div class='form-row'>
     <label for='nmeaPort'><i class='fa fa-random'></i> <span data-i18n='candy-pi-lite-gnss.label.nmeaPort'></span></label>
@@ -42,7 +56,7 @@
 
 <script>
   (function() {
-    RED.nodes.registerType('CANDY Pi Lite/+ gnss in', {
+    RED.nodes.registerType('CANDY Pi Lite gnss in', {
       category: 'CANDY LINE',
       defaults: {
         outformat: { value: 'worldmap' }
@@ -52,7 +66,59 @@
       outputs: 1,
       icon: 'white-globe.png',
       label: function() {
-        return this._('candy-pi-lite-gnss.label.category');
+        return this._('candy-pi-lite-gnss.label.gnss');
+      },
+      oneditprepare: function() {
+        $.ajax({
+          cache: false,
+          url: 'candy-pi-lite-gnss',
+          dataType: 'json',
+          success: function(config) {
+            $('#name').val(config.name);
+            $('#runOnStartup').prop('checked', !!config.runOnStartup);
+          },
+          error: function () {
+          },
+        });
+      },
+      oneditsave: function() {
+        var node = this;
+        $.ajax({
+          cache: false,
+          url: 'candy-pi-lite-gnss',
+          type: 'POST',
+          data: JSON.stringify({
+            name: $('#name').val(),
+            runOnStartup: !!$('#runOnStartup').prop('checked'),
+          }),
+          contentType: "application/json; charset=utf-8",
+          success: function() {
+            RED.notify(node._('candy-pi-lite-gnss.info.updated'), 'success');
+          },
+          error: function (jqXHR) {
+            if (jqXHR.status == 404) {
+              RED.notify(node._('common.notification.error',{message:node._('common.notification.errors.not-deployed')}),'error');
+            } else if (jqXHR.status == 0) {
+              RED.notify(node._('common.notification.error',{message:node._('common.notification.errors.no-response')}),'error');
+            } else {
+              RED.notify(node._('common.notification.error',{message:node._('common.notification.errors.unexpected',{status:jqXHR.status,message:textStatus})}),'error');
+            }
+          },
+        });
+      },
+    });
+
+    RED.nodes.registerType('CANDY Pi Lite nmea in', {
+      category: 'CANDY LINE',
+      defaults: {
+        outformat: { value: 'worldmap' }
+      },
+      color: '#ff80bf',
+      inputs: 0,
+      outputs: 1,
+      icon: 'white-globe.png',
+      label: function() {
+        return this._('candy-pi-lite-gnss.label.nmea');
       },
       oneditprepare: function() {
         $.ajax({
