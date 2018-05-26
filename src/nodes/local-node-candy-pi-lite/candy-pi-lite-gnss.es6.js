@@ -40,8 +40,13 @@ export default function(RED) {
 
     init() {
       return this.loadGNSSConfig().then(() => {
-        if (this.runOnStartup) {
-          this.scheduleRunCommand(5000);
+        if (this.isEnabled()) {
+          RED.log.info('CANDY Pi Lite GNSS Client is enabled');
+          if (this.runOnStartup) {
+            this.scheduleRunCommand(5000);
+          }
+        } else {
+          RED.log.info('CANDY Pi Lite GNSS Client is disabled');
         }
         return Promise.resolve();
       });
@@ -231,6 +236,23 @@ export default function(RED) {
       return !!this.cproc;
     }
 
+    add(node) {
+      if (node) {
+        this.nodes = (this.nodes || []).push(node);
+      }
+      return this.nodes || [];
+    }
+
+    remove(node) {
+      if (node && this.node) {
+        this.node.remove(node);
+      }
+    }
+
+    isEnabled() {
+      return this.node && this.node.length > 0;
+    }
+
     shutdown() {
       let isExecuting = this.isExecuting();
       return new Promise((resolve) => {
@@ -278,6 +300,10 @@ export default function(RED) {
         gnssClient.on(ev, () => {
           this.status({fill:'red', shape:'ring', text: `candy-pi-lite-gnss.status.${ev}`});
         });
+      });
+      gnssClient.add(this);
+      this.on('close', () => {
+        gnssClient.remove(this);
       });
       this.on('input', (msg) => {
         gnssClient.execute(msg.topic, this.outformat, this.name).then((result) => {
