@@ -30,6 +30,7 @@
       "idle": "idle",
       "unfixed": "unfixed",
       "error": "error",
+      "nmea-error": "error",
       "nmea-available": "available",
       "nmea-not-available": "not available"
     }

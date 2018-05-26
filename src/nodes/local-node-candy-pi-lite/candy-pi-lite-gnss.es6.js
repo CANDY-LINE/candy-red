@@ -415,7 +415,7 @@ export default function(RED) {
           this.status({fill:'green', shape:'dot', text: `candy-pi-lite-gnss.status.${ev}`});
         });
       });
-      ['error', 'nmea-not-available'].forEach((ev) => {
+      ['error', 'nmea-error', 'nmea-not-available'].forEach((ev) => {
         gnssClient.on(ev, () => {
           this.status({fill:'red', shape:'ring', text: `candy-pi-lite-gnss.status.${ev}`});
         });
