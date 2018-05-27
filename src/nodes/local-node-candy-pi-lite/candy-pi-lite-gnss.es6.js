@@ -317,13 +317,20 @@ export default function(RED) {
     }
 
     remove(node) {
-      if (node) {
-        this.nodes.remove(node);
+      try {
+        if (node) {
+          let idx = this.nodes.indexOf(node);
+          if (idx >= 0) {
+            this.nodes.splice(node, 1);
+          }
+        }
+        if (this.nodes.length === 0) {
+          return this.shutdown();
+        }
+        return Promise.resolve();
+      } catch (err) {
+        return Promise.reject(err);
       }
-      if (this.nodes.length === 0) {
-        return this.shutdown();
-      }
-      return Promise.resolve();
     }
 
     isEnabled() {
@@ -331,6 +338,7 @@ export default function(RED) {
     }
 
     shutdown() {
+      this.initialized = false;
       let isExecuting = this.isExecuting();
       return new Promise((resolve) => {
         if (isExecuting) {
@@ -349,6 +357,8 @@ export default function(RED) {
             });
             this.nmeaPort.close();
             this.nmeaPort = null;
+          } else {
+            return resolve();
           }
         });
       });
