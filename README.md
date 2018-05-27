@@ -107,6 +107,7 @@ The service name is `candy-red`. As of Jessie, systemd comes as a default system
 $ sudo systemctl stop candy-red
 $ sudo systemctl start candy-red
 $ sudo systemctl status candy-red
+$ sudo journalctl -f -u candy-red -o cat
 ```
 
 ## Uninstall
