@@ -1,0 +1,291 @@
+[
+    {
+        "id": "4abf448b.d65744",
+        "type": "tab",
+        "label": "NMEA Example (USB Only)",
+        "disabled": false,
+        "info": ""
+    },
+    {
+        "id": "616f1234.efcfcc",
+        "type": "comment",
+        "z": "4abf448b.d65744",
+        "name": "CANDY Pi Lite/+ NMEA Serial Port",
+        "info": "",
+        "x": 160,
+        "y": 240,
+        "wires": []
+    },
+    {
+        "id": "766a0679.04ad9",
+        "type": "debug",
+        "z": "4abf448b.d65744",
+        "name": "GGA (Global positioning system fix data)",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "x": 560,
+        "y": 360,
+        "wires": []
+    },
+    {
+        "id": "d536fd50.f963a",
+        "type": "inject",
+        "z": "4abf448b.d65744",
+        "name": "start",
+        "topic": "start",
+        "payload": "",
+        "payloadType": "date",
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "x": 110,
+        "y": 80,
+        "wires": [
+            [
+                "718cbab7.39256c"
+            ]
+        ]
+    },
+    {
+        "id": "a37d11d3.14618",
+        "type": "inject",
+        "z": "4abf448b.d65744",
+        "name": "stop",
+        "topic": "stop",
+        "payload": "",
+        "payloadType": "date",
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "x": 110,
+        "y": 120,
+        "wires": [
+            [
+                "718cbab7.39256c"
+            ]
+        ]
+    },
+    {
+        "id": "754558e7.0c116",
+        "type": "inject",
+        "z": "4abf448b.d65744",
+        "name": "status",
+        "topic": "status",
+        "payload": "",
+        "payloadType": "date",
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "x": 110,
+        "y": 160,
+        "wires": [
+            [
+                "718cbab7.39256c"
+            ]
+        ]
+    },
+    {
+        "id": "f6466ea1.70032",
+        "type": "comment",
+        "z": "4abf448b.d65744",
+        "name": "GNSS operations",
+        "info": "",
+        "x": 100,
+        "y": 40,
+        "wires": []
+    },
+    {
+        "id": "bb9ac72e.0df89",
+        "type": "debug",
+        "z": "4abf448b.d65744",
+        "name": "Ooeration Result",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "x": 490,
+        "y": 120,
+        "wires": []
+    },
+    {
+        "id": "b7f700ec.6276c8",
+        "type": "CANDY Pi Lite nmea in",
+        "z": "4abf448b.d65744",
+        "outformat": "worldmap",
+        "x": 90,
+        "y": 280,
+        "wires": [
+            [
+                "57fe5e0b.9094a",
+                "c75b5232.02db78"
+            ]
+        ]
+    },
+    {
+        "id": "718cbab7.39256c",
+        "type": "CANDY Pi Lite gnss in",
+        "z": "4abf448b.d65744",
+        "outformat": "worldmap",
+        "x": 270,
+        "y": 120,
+        "wires": [
+            [
+                "bb9ac72e.0df89"
+            ]
+        ]
+    },
+    {
+        "id": "57fe5e0b.9094a",
+        "type": "csv",
+        "z": "4abf448b.d65744",
+        "name": "",
+        "sep": ",",
+        "hdrin": "",
+        "hdrout": "",
+        "multi": "mult",
+        "ret": "\\n",
+        "temp": "",
+        "skip": "0",
+        "x": 110,
+        "y": 360,
+        "wires": [
+            [
+                "825686e.fa9d2f8"
+            ]
+        ]
+    },
+    {
+        "id": "825686e.fa9d2f8",
+        "type": "switch",
+        "z": "4abf448b.d65744",
+        "name": "Classify GPS NMEA sentence",
+        "property": "payload[0].col1",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "eq",
+                "v": "$GPGGA",
+                "vt": "str"
+            },
+            {
+                "t": "eq",
+                "v": "$GPRMC",
+                "vt": "str"
+            },
+            {
+                "t": "eq",
+                "v": "$GPGSA",
+                "vt": "str"
+            },
+            {
+                "t": "eq",
+                "v": "$GPGSV",
+                "vt": "str"
+            },
+            {
+                "t": "eq",
+                "v": "$GPVTG",
+                "vt": "str"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 5,
+        "x": 210,
+        "y": 440,
+        "wires": [
+            [
+                "766a0679.04ad9"
+            ],
+            [
+                "8cdaab14.d5b908"
+            ],
+            [
+                "ec96246e.e0fbd8"
+            ],
+            [
+                "1d47bfc2.c89928"
+            ],
+            [
+                "9f8712d2.8ba5"
+            ]
+        ]
+    },
+    {
+        "id": "8cdaab14.d5b908",
+        "type": "debug",
+        "z": "4abf448b.d65744",
+        "name": "RMC (Recommended minimum data)",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "x": 550,
+        "y": 400,
+        "wires": []
+    },
+    {
+        "id": "ec96246e.e0fbd8",
+        "type": "debug",
+        "z": "4abf448b.d65744",
+        "name": "GSV (Detailed satellite data)",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "x": 520,
+        "y": 440,
+        "wires": []
+    },
+    {
+        "id": "1d47bfc2.c89928",
+        "type": "debug",
+        "z": "4abf448b.d65744",
+        "name": "GSA (Overall satellite data)",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "x": 520,
+        "y": 480,
+        "wires": []
+    },
+    {
+        "id": "9f8712d2.8ba5",
+        "type": "debug",
+        "z": "4abf448b.d65744",
+        "name": "VTG (Vector track and speed over the ground)",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "x": 580,
+        "y": 520,
+        "wires": []
+    },
+    {
+        "id": "c75b5232.02db78",
+        "type": "debug",
+        "z": "4abf448b.d65744",
+        "name": "GPS NMEA sentences (CSV)",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "x": 520,
+        "y": 280,
+        "wires": []
+    }
+]
