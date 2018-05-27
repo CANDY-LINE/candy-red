@@ -1,5 +1,5 @@
 ## Revision History
-* ?.?.?
+* 7.0.0
   - Add new preinstalled nodes
     - node-red-node-smooth
     - node-red-node-base64
