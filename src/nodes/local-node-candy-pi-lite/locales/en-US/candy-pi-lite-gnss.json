@@ -3,6 +3,11 @@
     "label": {
       "gnss": "GNSS",
       "nmea": "GNSS NMEA",
+      "icon": "Icon",
+      "iconColor": "Icon color",
+      "photoUrl": "Photo URL",
+      "layer": "Layer",
+      "deleted": "Remove the named marker",
       "outformat": "Output format",
       "nmeaPort": "NMEA Port",
       "runOnStartup": "Run GNSS on starting the flow"
@@ -13,6 +18,12 @@
     "outformat": {
       "worldmap": "worldmap node",
       "raw": "raw"
+    },
+    "placeholder": {
+      "icon": "fontawesome icon name",
+      "iconColor": "CSS name or #rrggbb",
+      "photoUrl": "https://url.to.image/file",
+      "layer": "a layer on the map"
     },
     "errors": {
       "unknownCommand": "Unknown command: __cmd__",

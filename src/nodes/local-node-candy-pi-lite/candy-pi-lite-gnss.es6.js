@@ -180,10 +180,10 @@ export default function(RED) {
       });
     }
 
-    transform(input, outformat) {
+    transform(input, opts={}) {
       let output = input;
       output.name = this.name || 'CANDY Pi Lite/+ GNSS';
-      switch (outformat) {
+      switch (opts.outformat) {
         case 'worldmap':
           output.lat = output.latitude;
           output.lon = output.longitude;
@@ -191,6 +191,11 @@ export default function(RED) {
           output.accuracy = output.hdop;
           // bearing:north=180,east=270 cog:north=0,east=90
           output.bearing = (output.cog + 180) % 360;
+          output.icon = opts.icon;
+          output.iconColor = opts.iconColor;
+          output.photoUrl = opts.photoUrl;
+          output.deleted = opts.deleted;
+          output.layer = opts.layer;
           delete output.latitude;
           delete output.longitude;
           delete output.spkm;
@@ -204,7 +209,7 @@ export default function(RED) {
       return output;
     }
 
-    execute(cmd, outformat) {
+    execute(cmd, opts={}) {
       return new Promise((resolve, reject) => {
         if (this.isExecuting()) {
           return reject(RED._('candy-pi-lite-gnss.errors.alreadyExecuting'));
@@ -272,7 +277,7 @@ export default function(RED) {
                 status = 'unfixed';
               } else if (code === 0) {
                 try {
-                  result = this.transform(JSON.parse(result), outformat);
+                  result = this.transform(JSON.parse(result), opts);
                   status = 'idle';
                 } catch (_) {
                 }
@@ -362,6 +367,11 @@ export default function(RED) {
   class CANDYPiLiteGNSSInNode {
     constructor(n) {
       RED.nodes.createNode(this, n);
+      this.icon = n.icon;
+      this.iconColor = n.iconColor;
+      this.photoUrl = n.photoUrl;
+      this.layer = n.layer;
+      this.deleted = !!n.deleted;
       this.outformat = n.outformat || 'worldmap';
       ['starting', 'stopping', 'executing'].forEach((ev) => {
         gnssClient.on(ev, () => {
@@ -392,7 +402,7 @@ export default function(RED) {
         });
       });
       this.on('input', (msg) => {
-        gnssClient.execute(msg.topic, this.outformat, this.name).then((result) => {
+        gnssClient.execute(msg.topic, this).then((result) => {
           this.send({
             topic: msg.topic,
             code: result.code,

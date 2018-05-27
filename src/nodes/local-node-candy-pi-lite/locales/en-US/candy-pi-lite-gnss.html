@@ -20,15 +20,40 @@ from the GNSS/GPS module on the connected CANDY Pi Lite/CANDY Pi Lite+ board.
 </p>
 
 <dl>
-<dt>Name</dt>
-<dd>
-  the identifier of the GNSS data. This name is shared on this computer.
-</dd>
 <dt>Output format</dt>
 <dd>
   the format type for the outgoing message.
   <code>worldmap</code> is applicable for <code>worldmap</code> node.
   <code>raw</code> is the same as the <code>candy gnss locate</code> command output.
+</dd>
+<dt>Icon</dt>
+<dd>
+  the <a href="http://fortawesome.github.io/Font-Awesome/icons/">fontawsome</a> icon name.
+  <code>fa-map-marker</code> by default. Not available in the raw format.
+</dd>
+<dt>Icon color</dt>
+<dd>
+  standard CSS color name or <code>#rrggbb</code> hex value.
+  Not available in the raw format.
+</dd>
+<dt>Photo URL</dt>
+<dd>
+  an image pointed at by the url to the popup box.
+  Not available in the raw format.
+</dd>
+<dt>Layer</dt>
+<dd>
+  specify a layer on the map to add marker to.
+  Not available in the raw format.
+</dd>
+<dt>Remove the named marker</dt>
+<dd>
+  Check here to remove the named marker. Unchecked by default.
+  Not available in the raw format.
+</dd>
+<dt>Name</dt>
+<dd>
+  the identifier of the GNSS data. This name is shared on this computer.
 </dd>
 <dt>Run GNSS on start-up</dt>
 <dd>
@@ -83,6 +108,32 @@ Speed over ground in knots
 <dt>fix<span class="property-type">string</span></dt>
 <dd>
 GNSS positioning mode (2D or 3D)
+</dd>
+<dt>icon<span class="property-type">string</span></dt>
+<dd>
+<a href="http://fortawesome.github.io/Font-Awesome/icons/">fontawsome</a> icon name
+configured in this node dialog.
+<b>Not available in the raw format.</b>
+</dd>
+<dt>iconColor<span class="property-type">string</span></dt>
+<dd>
+standard CSS color name or #rrggbb hex value.
+<b>Not available in the raw format.</b>
+</dd>
+<dt>photoUrl<span class="property-type">string</span></dt>
+<dd>
+adds an image pointed at by the url to the popup box.
+<b>Not available in the raw format.</b>
+</dd>
+<dt>layer<span class="property-type">string</span></dt>
+<dd>
+specify a layer on the map to add marker to.
+<b>Not available in the raw format.</b>
+</dd>
+<dt>deleted<span class="property-type">boolean</span></dt>
+<dd>
+set to true to remove the named marker. (default false)
+<b>Not available in the raw format.</b>
 </dd>
 </script>
 
