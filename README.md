@@ -77,7 +77,7 @@ You can ignore `npm WARN`s, `gyp WARN`s, `gyp ERR!`s and `node-pre-gyp ERR!`s un
 Please refer to the following commands to install.
 
 ```
-$ sudo NODE_OPTS=--max-old-space-size=256 npm install -g --unsafe-perm candy-red
+$ sudo npm install -g --unsafe-perm candy-red
 ```
 
 You can access `http://<hostname.local or ip address>:8100` with your browser on the same LAN where `<hostname.local or ip address>` is a host name with `.local` suffix or IP address.
@@ -89,7 +89,7 @@ PAM authentication is enabled by default for both Linux (Raspbian/Debian/Ubuntu)
 When providing the credentials, PAM authentication is disabled.
 
 ```
-$ sudo NODE_OPTS=--max-old-space-size=256 \
+$ sudo \
     CANDY_RED_ADMIN_USER_ID=... \
     CANDY_RED_ADMIN_PASSWORD=... \
     npm install -g --unsafe-perm candy-red
