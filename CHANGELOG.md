@@ -1,4 +1,15 @@
 ## Revision History
+* 7.0.0
+  - Add new preinstalled nodes
+    - node-red-node-smooth
+    - node-red-node-base64
+    - node-red-node-data-generator
+    - node-red-node-random
+    - node-red-node-suncalc
+    - node-red-contrib-web-worldmap
+  - Add GNSS nodes with example flows dedicated to CANDY Pi Lite 3G and CANDY Pi Lite+
+  - Add a new category for CANDY LINE (CANDY EGG nodes and GNSS nodes are placed there)
+
 * 6.1.0
   - Bump up Node-RED Dashboard version to v2.9.1
   - Add a new preinstalled package (SmartMesh IP™ device node)

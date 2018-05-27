@@ -37,19 +37,22 @@ gulp.task('clean', () => {
     './services/start_systemd.sh',
     './services/systemd/candy-red.service',
     './services/systemd/environment',
-  ])
-  .pipe(clean({force: true}))
-  .pipe(gulp.src([
-    './node_modules/node-red*/locales/!(en-US)',
+    './node_modules/node-red*/**/locales/!(en-US)',
     './node_modules/node-red/**/locales/!(en-US)',
-  ]))
+  ])
   .pipe(clean({force: true}))
 });
 
 gulp.task('nodes', () => {
   return Promise.all(fs.readdirSync('node_modules/')
   .filter(f => f.indexOf('local-node-') === 0)
-  .filter(f => fs.statSync(`node_modules/${f}`).isDirectory())
+  .filter(f => {
+    try {
+      return fs.statSync(`node_modules/${f}`).isDirectory();
+    } catch (_) {
+      return false;
+    }
+  })
   .map(f => {
     return new Promise((resolve, reject) => rmdir(`node_modules/${f}`, (err) => {
       if (err) {

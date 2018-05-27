@@ -1,0 +1,175 @@
+<!--
+  Copyright (c) 2018 CANDY LINE INC.
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<script type="text/x-red" data-help-name="CANDY Pi Lite gnss in">
+<p>
+Emits a JSON object containing the obtained latitude and longitude
+from the GNSS/GPS module on the connected CANDY Pi Lite/CANDY Pi Lite+ board.
+</p>
+
+<dl>
+<dt>Output format</dt>
+<dd>
+  the format type for the outgoing message.
+  <code>worldmap</code> is applicable for <code>worldmap</code> node.
+  <code>raw</code> is the same as the <code>candy gnss locate</code> command output.
+</dd>
+<dt>Icon</dt>
+<dd>
+  the <a href="http://fortawesome.github.io/Font-Awesome/icons/">fontawsome</a> icon name.
+  <code>fa-map-marker</code> by default. Not available in the raw format.
+</dd>
+<dt>Icon color</dt>
+<dd>
+  standard CSS color name or <code>#rrggbb</code> hex value.
+  Not available in the raw format.
+</dd>
+<dt>Photo URL</dt>
+<dd>
+  an image pointed at by the url to the popup box.
+  Not available in the raw format.
+</dd>
+<dt>Layer</dt>
+<dd>
+  specify a layer on the map to add marker to.
+  Not available in the raw format.
+</dd>
+<dt>Remove the named marker</dt>
+<dd>
+  Check here to remove the named marker. Unchecked by default.
+  Not available in the raw format.
+</dd>
+<dt>Name</dt>
+<dd>
+  the identifier of the GNSS data. This name is shared on this computer.
+</dd>
+<dt>Run GNSS on start-up</dt>
+<dd>
+  whether or not to run GNSS session on starting the flow.
+  <b>Note that this precedes <code>candy-pi-lite</code> settings.</b>
+  <b>This setting takes effect only when 1 or more <coe>GNSS</code> node is used in the flow.</b>
+</dd>
+</dl>
+
+<h3>Outputs</h3>
+<dl class="message-properties">
+<dt>date<span class="property-type">string</span></dt>
+<dd>
+UTC date when positioning in ISO8601 format
+</dd>
+<dt>lat (latitude)<span class="property-type">float</span></dt>
+<dd>
+The latitude value of the position. <code>latitude</code> is used in the raw format.
+</dd>
+<dt>lon (longitude)<span class="property-type">float</span></dt>
+<dd>
+The longitude value of the position. <code>longitude</code> is used in the raw format.
+</dd>
+<dt>acuracy (hdop)<span class="property-type">float</span></dt>
+<dd>
+Horizontal precision. <code>hdop</code> is used in the raw format.
+</dd>
+<dt>altitude<span class="property-type">float</span></dt>
+<dd>
+The altitude of the antenna away from the sea level in meters
+</dd>
+<dt>cog<span class="property-type">float</span></dt>
+<dd>
+Ground heading based on the <b>north</b> in degrees. <b>Used in the raw format only.</b>
+</dd>
+<dt>bearing<span class="property-type">float</span></dt>
+<dd>
+Ground heading based on the <b>south</b> in degrees. <b>Used in the worldmap format only.</b>
+</dd>
+<dt>nsat<span class="property-type">int</span></dt>
+<dd>
+The number of satellites
+</dd>
+<dt>speed (spkm)<span class="property-type">float</span></dt>
+<dd>
+Speed over ground in km/h. <code>spkm</code> is used in the raw format.
+</dd>
+<dt>spkn<span class="property-type">float</span></dt>
+<dd>
+Speed over ground in knots
+</dd>
+<dt>fix<span class="property-type">string</span></dt>
+<dd>
+GNSS positioning mode (2D or 3D)
+</dd>
+<dt>icon<span class="property-type">string</span></dt>
+<dd>
+<a href="http://fortawesome.github.io/Font-Awesome/icons/">fontawsome</a> icon name
+configured in this node dialog.
+<b>Not available in the raw format.</b>
+</dd>
+<dt>iconColor<span class="property-type">string</span></dt>
+<dd>
+standard CSS color name or #rrggbb hex value.
+<b>Not available in the raw format.</b>
+</dd>
+<dt>photoUrl<span class="property-type">string</span></dt>
+<dd>
+adds an image pointed at by the url to the popup box.
+<b>Not available in the raw format.</b>
+</dd>
+<dt>layer<span class="property-type">string</span></dt>
+<dd>
+specify a layer on the map to add marker to.
+<b>Not available in the raw format.</b>
+</dd>
+<dt>deleted<span class="property-type">boolean</span></dt>
+<dd>
+set to true to remove the named marker. (default false)
+<b>Not available in the raw format.</b>
+</dd>
+</script>
+
+<script type="text/x-red" data-help-name="CANDY Pi Lite nmea in">
+<p>
+Emits NMEA sentences from the GNSS/GPS module on the connected CANDY Pi Lite/CANDY Pi Lite+ board.
+Note that NMEA can be available via the dedicated USB serial port shown in the dialog as
+<code>NMEA Port</code>. The <code>NMEA Port</code> is <b>automatically detected</b>.
+</p>
+
+<dl>
+<dt>Name</dt>
+<dd>
+  the identifier of the GNSS data. This name is shared on this computer.
+</dd>
+<dt>Run GNSS on start-up</dt>
+<dd>
+  whether or not to run GNSS session on starting the flow.
+  <b>Note that this precedes <code>candy-pi-lite</code> settings.</b>
+  <b>This setting takes effect only when 1 or more <coe>GNSS</code> node is used in the flow.</b>
+</dd>
+<dt>NMEA Port</dt>
+<dd>
+  the serial port identifier available for NMEA sentence subscription.
+  <code>Not Available</code> is shown when NMEA is not available.
+  This serial port is <b>automatically detected</b>.
+</dd>
+</dl>
+
+<h3>Outputs</h3>
+The following GPS NMEA output formats are supported.
+<ul>
+<li><code>GGA</code> ... Global positioning system fix data, such as time, position, etc.</li>
+<li><code>RMC</code> ... Recommended minimum data</li>
+<li><code>GSV</code> ... Detailed satellite data</li>
+<li><code>GSA</code> ... Overall satellite data</li>
+<li><code>VTG</code> ... Vector track and speed over the ground</li>
+</ul>
+</script>

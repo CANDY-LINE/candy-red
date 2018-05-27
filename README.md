@@ -15,18 +15,19 @@ CANDY RED is IoT gateway software designed for [CANDY Pi Lite board](https://tra
 * More builtin nodes
     * [OMA LwM2M client nodes](https://www.npmjs.com/package/node-red-contrib-lwm2m)
     * [Analog Devices SmartMesh IP™ nodes](https://www.npmjs.com/package/node-red-contrib-smartmesh)
-    * [EnOcean nodes (ESP3 over ERP2)](https://github.com/CANDY-LINE/candy-red/tree/master/src/nodes/local-node-enocean)
+    * [EnOcean nodes (ESP3 over ERP2)](src/nodes/local-node-enocean)
     * [GATT BLE nodes](https://www.npmjs.com/package/node-red-contrib-generic-ble)
     * [Serialport node](https://www.npmjs.com/package/node-red-node-serialport)
     * [Device Statistics node](https://www.npmjs.com/package/node-red-contrib-device-stats)
-    * [CANDY EGG cloud service nodes](https://github.com/CANDY-LINE/candy-red/tree/master/src/nodes/local-node-candy-egg) \*
+    * [CANDY Pi Lite/CANDY Pi Lite+ 3G/4G LTE board nodes](src/nodes/local-node-candy-pi-lite)
+    * [CANDY EGG cloud service nodes](src/nodes/local-node-candy-egg) \*
 
 _\* [CANDY EGG cloud service](https://www.candy-line.io/%E8%A3%BD%E5%93%81%E4%B8%80%E8%A6%A7/candy-red-egg/) account is required_
 
 ## OS and Hardwares
 
 * [Raspberry Pi + Raspbian](#raspberry-pi--raspbian)
-* ASUS Tinker Board + Tinker OS (Debian) v2.0.4+
+* ASUS Tinker Board + Tinker OS (Debian) v2.0.5+
 * [OSX/Debian/Ubuntu/Raspbian for Development](#development)
 
 # Screenshots
@@ -76,7 +77,7 @@ You can ignore `npm WARN`s, `gyp WARN`s, `gyp ERR!`s and `node-pre-gyp ERR!`s un
 Please refer to the following commands to install.
 
 ```
-$ sudo NODE_OPTS=--max-old-space-size=256 npm install -g --unsafe-perm candy-red
+$ sudo npm install -g --unsafe-perm candy-red
 ```
 
 You can access `http://<hostname.local or ip address>:8100` with your browser on the same LAN where `<hostname.local or ip address>` is a host name with `.local` suffix or IP address.
@@ -88,7 +89,7 @@ PAM authentication is enabled by default for both Linux (Raspbian/Debian/Ubuntu)
 When providing the credentials, PAM authentication is disabled.
 
 ```
-$ sudo NODE_OPTS=--max-old-space-size=256 \
+$ sudo \
     CANDY_RED_ADMIN_USER_ID=... \
     CANDY_RED_ADMIN_PASSWORD=... \
     npm install -g --unsafe-perm candy-red
@@ -106,6 +107,7 @@ The service name is `candy-red`. As of Jessie, systemd comes as a default system
 $ sudo systemctl stop candy-red
 $ sudo systemctl start candy-red
 $ sudo systemctl status candy-red
+$ sudo journalctl -f -u candy-red -o cat
 ```
 
 ## Uninstall
@@ -128,15 +130,7 @@ $ sudo rm -f "$(dirname $(dirname $(which systemctl)))/lib/systemd/system/candy-
 
 Since RPi hostname is `raspberrypi` by default, you will get confused when you have 2 or more devices and they're online.
 
-You can change the host name by either `sudo raspi-config` or modifying `/etc/hosts`. Regarding the latter method, here is a brief instruction.
-
-```
-$ export NEW_NAME="my-candy-pi" # Modify my-candy-pi as you like
-$ sudo sed -i -e "s/raspberrypi/${NEW_NAME//\//\\/}/g" /etc/hosts
-$ sudo sed -i -e "s/raspberrypi/${NEW_NAME//\//\\/}/g" /etc/hostname
-$ sudo /etc/init.d/hostname.sh && sudo reboot
-```
-You can ignore `sudo: unable to resolve host raspberrypi` error message.
+You can change the host name by either `sudo raspi-config`.
 
 ### BLE USB adaptor/dongle
 
@@ -267,6 +261,21 @@ And you'll see the sensor info like this:
     29 Jul 21:52:36 - [info] [inject:89c364b0.763c98] repeat = 1000
     29 Jul 21:52:36 - [info] Started flows
 
+With password authentication:
+
+```
+$ CANDY_RED_ADMIN_USER_ID=admin \
+  CANDY_RED_ADMIN_PASSWORD_ENC=`node -e "console.log(require('bcryptjs').hashSync(process.argv[1], 8));" password` \
+  CANDY_RED_SESSION_TIMEOUT=3600 \
+  npm run start
+```
+
+The above variables allows you to use the following credentials,
+
+- username: `admin`
+- password: `password`
+- session timeout: 1 hour
+
 ## Test
 
 ```
@@ -279,7 +288,8 @@ $ npm test
 $ npm pack
 # RPi
 $ sudo npm uninstall -g --unsafe-perm candy-red
-$ time sudo npm install -g --unsafe-perm ./candy-red-6.1.0.tgz
+$ time sudo npm install -g --unsafe-perm ./candy-red-7.0.0.tgz
+$ sudo journalctl -f -u candy-red -o cat # to show logs
 ```
 
 ## Vagrant

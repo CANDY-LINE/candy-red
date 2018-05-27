@@ -1,0 +1,49 @@
+{
+  "candy-pi-lite-gnss": {
+    "label": {
+      "gnss": "GNSS",
+      "nmea": "GNSS NMEA",
+      "icon": "Icon",
+      "iconColor": "Icon color",
+      "photoUrl": "Photo URL",
+      "layer": "Layer",
+      "deleted": "Remove the named marker",
+      "outformat": "Output format",
+      "nmeaPort": "NMEA Port",
+      "runOnStartup": "Run GNSS on starting the flow"
+    },
+    "nmeaPort": {
+      "na": "Not Available"
+    },
+    "outformat": {
+      "worldmap": "worldmap node",
+      "raw": "raw"
+    },
+    "placeholder": {
+      "icon": "fontawesome icon name",
+      "iconColor": "CSS name or #rrggbb",
+      "photoUrl": "https://url.to.image/file",
+      "layer": "a layer on the map"
+    },
+    "errors": {
+      "unknownCommand": "Unknown command: __cmd__",
+      "alreadyExecuting": "Already executing",
+      "setupError": "CANDY Pi Lite Service is missing"
+    },
+    "info": {
+      "updated": "GNSS configuration updated normally."
+    },
+    "status": {
+      "starting": "starting",
+      "stopping": "stopping",
+      "executing": "executing",
+      "positioning": "positioning",
+      "idle": "idle",
+      "unfixed": "unfixed",
+      "error": "error",
+      "nmea-error": "error",
+      "nmea-available": "available",
+      "nmea-not-available": "not available"
+    }
+  }
+}
