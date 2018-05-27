@@ -351,7 +351,7 @@ export default function(RED) {
         }
       }).then(() => {
         return new Promise((resolve) => {
-          if (this.nmeaPort && !this.nmeaPort.isOpen) {
+          if (this.nmeaPort && this.nmeaPort.isOpen) {
             this.nmeaPort.once('close', () => {
               return resolve();
             });
