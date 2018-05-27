@@ -21,7 +21,6 @@ import os from 'os';
 import fs from 'fs';
 import readline from 'readline';
 import { EventEmitter } from 'events';
-import Promise from 'es6-promises';
 import cproc from 'child_process';
 import crypto from 'crypto';
 import path from 'path';

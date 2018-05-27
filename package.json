@@ -1,6 +1,6 @@
 {
   "name": "candy-red",
-  "version": "6.1.0",
+  "version": "7.0.0",
   "description": "CANDY RED :: Visual Programming Editor and Runtime for CANDY Pi Lite powered by Node-RED",
   "main": "./dist/index.js",
   "scripts": {
@@ -22,8 +22,15 @@
     "rpi",
     "raspberry-pi",
     "raspbian",
+    "atb",
+    "asus tinkerboard",
+    "tinkerboard",
     "enocean",
-    "CANDY EGG"
+    "SmartMesh",
+    "lwm2m",
+    "CANDY EGG",
+    "CANDY Pi Lite",
+    "CANDY Pi Lite+"
   ],
   "author": "Daisuke Baba",
   "license": "Apache-2.0",
@@ -71,7 +78,7 @@
     "mkdirp": "^0.5.1",
     "mustache": "^2.3.0",
     "nan": "^2.4.0",
-    "node-red": "^0.18.5",
+    "node-red": "^0.18.6",
     "node-red-contrib-device-stats": ">=1.0.3",
     "node-red-contrib-lwm2m": "^1.2.0",
     "node-red-contrib-moment": "^2.0.7",

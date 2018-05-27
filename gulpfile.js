@@ -37,12 +37,9 @@ gulp.task('clean', () => {
     './services/start_systemd.sh',
     './services/systemd/candy-red.service',
     './services/systemd/environment',
-  ])
-  .pipe(clean({force: true}))
-  .pipe(gulp.src([
     './node_modules/node-red*/**/locales/!(en-US)',
     './node_modules/node-red/**/locales/!(en-US)',
-  ]))
+  ])
   .pipe(clean({force: true}))
 });
 
