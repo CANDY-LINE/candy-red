@@ -1,0 +1,321 @@
+[
+    {
+        "id": "3dbfa7e1.da27a",
+        "type": "tab",
+        "label": "GNSS Dashboard Example",
+        "disabled": false,
+        "info": ""
+    },
+    {
+        "id": "90f60973.22c8b",
+        "type": "inject",
+        "z": "3dbfa7e1.da27a",
+        "name": "start",
+        "topic": "start",
+        "payload": "",
+        "payloadType": "date",
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "x": 170,
+        "y": 80,
+        "wires": [
+            [
+                "2c077eea.89aaea"
+            ]
+        ]
+    },
+    {
+        "id": "24498e9b.3d6a7a",
+        "type": "inject",
+        "z": "3dbfa7e1.da27a",
+        "name": "stop",
+        "topic": "stop",
+        "payload": "",
+        "payloadType": "date",
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "x": 170,
+        "y": 120,
+        "wires": [
+            [
+                "2c077eea.89aaea"
+            ]
+        ]
+    },
+    {
+        "id": "c36a2290.89e02",
+        "type": "inject",
+        "z": "3dbfa7e1.da27a",
+        "name": "locate",
+        "topic": "locate",
+        "payload": "",
+        "payloadType": "date",
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "x": 170,
+        "y": 200,
+        "wires": [
+            [
+                "2c077eea.89aaea"
+            ]
+        ]
+    },
+    {
+        "id": "f833d556.f9ee5",
+        "type": "inject",
+        "z": "3dbfa7e1.da27a",
+        "name": "status",
+        "topic": "status",
+        "payload": "",
+        "payloadType": "date",
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "x": 170,
+        "y": 160,
+        "wires": [
+            [
+                "2c077eea.89aaea"
+            ]
+        ]
+    },
+    {
+        "id": "42c56b11.a24704",
+        "type": "catch",
+        "z": "3dbfa7e1.da27a",
+        "name": "",
+        "scope": null,
+        "x": 180,
+        "y": 360,
+        "wires": [
+            [
+                "859a68a4.2f438"
+            ]
+        ]
+    },
+    {
+        "id": "859a68a4.2f438",
+        "type": "debug",
+        "z": "3dbfa7e1.da27a",
+        "name": "",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "x": 350,
+        "y": 360,
+        "wires": []
+    },
+    {
+        "id": "6fa24ea0.527558",
+        "type": "comment",
+        "z": "3dbfa7e1.da27a",
+        "name": "Errors thrown prior to performing GNSS operations",
+        "info": "",
+        "x": 270,
+        "y": 320,
+        "wires": []
+    },
+    {
+        "id": "a369d094.738388",
+        "type": "comment",
+        "z": "3dbfa7e1.da27a",
+        "name": "GNSS operations",
+        "info": "",
+        "x": 160,
+        "y": 40,
+        "wires": []
+    },
+    {
+        "id": "cf446e30.32112",
+        "type": "worldmap",
+        "z": "3dbfa7e1.da27a",
+        "name": "",
+        "lat": "",
+        "lon": "",
+        "zoom": "18",
+        "layer": "OSM",
+        "cluster": "",
+        "maxage": "",
+        "usermenu": "show",
+        "layers": "show",
+        "panit": "true",
+        "x": 490,
+        "y": 220,
+        "wires": []
+    },
+    {
+        "id": "d7bbba1f.99eaf",
+        "type": "switch",
+        "z": "3dbfa7e1.da27a",
+        "name": "pass locate command",
+        "property": "topic",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "eq",
+                "v": "locate",
+                "vt": "str"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 1,
+        "x": 520,
+        "y": 140,
+        "wires": [
+            [
+                "cf446e30.32112",
+                "b00daaf5.823b48"
+            ]
+        ]
+    },
+    {
+        "id": "b00daaf5.823b48",
+        "type": "debug",
+        "z": "3dbfa7e1.da27a",
+        "name": "Location",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "x": 480,
+        "y": 180,
+        "wires": []
+    },
+    {
+        "id": "8f27d32d.8e3828",
+        "type": "inject",
+        "z": "3dbfa7e1.da27a",
+        "name": "",
+        "topic": "",
+        "payload": "/api/worldmap",
+        "payloadType": "str",
+        "repeat": "",
+        "crontab": "",
+        "once": true,
+        "onceDelay": "",
+        "x": 200,
+        "y": 480,
+        "wires": [
+            [
+                "420c89d9.7fa84"
+            ]
+        ]
+    },
+    {
+        "id": "b7808e11.88d088",
+        "type": "ui_template",
+        "z": "3dbfa7e1.da27a",
+        "group": "8af45f42.910cd8",
+        "name": "",
+        "order": 0,
+        "width": "6",
+        "height": "6",
+        "format": "<div ng-bind-html=\"msg.payload | trusted\"></div>",
+        "storeOutMessages": true,
+        "fwdInMessages": true,
+        "templateScope": "local",
+        "x": 540,
+        "y": 480,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "420c89d9.7fa84",
+        "type": "template",
+        "z": "3dbfa7e1.da27a",
+        "name": "",
+        "field": "payload",
+        "fieldType": "msg",
+        "format": "handlebars",
+        "syntax": "mustache",
+        "template": "<iframe src={{{payload}}} height=600px width=500ox ></iframe>",
+        "x": 370,
+        "y": 480,
+        "wires": [
+            [
+                "b7808e11.88d088"
+            ]
+        ]
+    },
+    {
+        "id": "90b66dab.ae553",
+        "type": "comment",
+        "z": "3dbfa7e1.da27a",
+        "name": "Show Worldmap on Dashboard",
+        "info": "",
+        "x": 210,
+        "y": 440,
+        "wires": []
+    },
+    {
+        "id": "2c077eea.89aaea",
+        "type": "CANDY Pi Lite gnss in",
+        "z": "3dbfa7e1.da27a",
+        "icon": "fa-map-marker",
+        "iconColor": "#ff80bf",
+        "photoUrl": "https://git.io/vhqZU",
+        "deleted": false,
+        "outformat": "worldmap",
+        "x": 330,
+        "y": 140,
+        "wires": [
+            [
+                "d7bbba1f.99eaf"
+            ]
+        ]
+    },
+    {
+        "id": "3d7be55f.4fb27a",
+        "type": "ui_button",
+        "z": "3dbfa7e1.da27a",
+        "name": "",
+        "group": "8af45f42.910cd8",
+        "order": 0,
+        "width": 0,
+        "height": 0,
+        "passthru": false,
+        "label": "locate",
+        "color": "",
+        "bgcolor": "",
+        "icon": "fa-location-arrow",
+        "payload": "",
+        "payloadType": "str",
+        "topic": "locate",
+        "x": 170,
+        "y": 240,
+        "wires": [
+            [
+                "2c077eea.89aaea"
+            ]
+        ]
+    },
+    {
+        "id": "8af45f42.910cd8",
+        "type": "ui_group",
+        "z": "3dbfa7e1.da27a",
+        "name": "GNSS/GPS",
+        "tab": "a49b858f.51193",
+        "disp": true,
+        "width": "6",
+        "collapse": false
+    },
+    {
+        "id": "a49b858f.51193",
+        "type": "ui_tab",
+        "z": "3dbfa7e1.da27a",
+        "name": "Home",
+        "icon": "dashboard"
+    }
+]

@@ -1,0 +1,206 @@
+[
+    {
+        "id": "6e0b751e.8b1dc4",
+        "type": "tab",
+        "label": "CANDY EGG Example",
+        "disabled": false,
+        "info": ""
+    },
+    {
+        "id": "b9099858.02731",
+        "type": "inject",
+        "z": "6e0b751e.8b1dc4",
+        "name": "start",
+        "topic": "start",
+        "payload": "",
+        "payloadType": "date",
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "x": 150,
+        "y": 80,
+        "wires": [
+            [
+                "bf22ac5a.931db"
+            ]
+        ]
+    },
+    {
+        "id": "c36448c3.c31ae8",
+        "type": "inject",
+        "z": "6e0b751e.8b1dc4",
+        "name": "stop",
+        "topic": "stop",
+        "payload": "",
+        "payloadType": "date",
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "x": 150,
+        "y": 120,
+        "wires": [
+            [
+                "bf22ac5a.931db"
+            ]
+        ]
+    },
+    {
+        "id": "6634f519.c1a714",
+        "type": "inject",
+        "z": "6e0b751e.8b1dc4",
+        "name": "locate",
+        "topic": "locate",
+        "payload": "",
+        "payloadType": "date",
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "x": 150,
+        "y": 200,
+        "wires": [
+            [
+                "bf22ac5a.931db"
+            ]
+        ]
+    },
+    {
+        "id": "ffa62c61.f00418",
+        "type": "inject",
+        "z": "6e0b751e.8b1dc4",
+        "name": "status",
+        "topic": "status",
+        "payload": "",
+        "payloadType": "date",
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "x": 150,
+        "y": 160,
+        "wires": [
+            [
+                "bf22ac5a.931db"
+            ]
+        ]
+    },
+    {
+        "id": "10a3fb91.d11134",
+        "type": "comment",
+        "z": "6e0b751e.8b1dc4",
+        "name": "GNSS operations",
+        "info": "",
+        "x": 140,
+        "y": 40,
+        "wires": []
+    },
+    {
+        "id": "ea1f3f18.7fd148",
+        "type": "switch",
+        "z": "6e0b751e.8b1dc4",
+        "name": "pass locate command",
+        "property": "topic",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "eq",
+                "v": "locate",
+                "vt": "str"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 1,
+        "x": 500,
+        "y": 140,
+        "wires": [
+            [
+                "acbffb89.95a09"
+            ]
+        ]
+    },
+    {
+        "id": "bf22ac5a.931db",
+        "type": "CANDY Pi Lite gnss in",
+        "z": "6e0b751e.8b1dc4",
+        "icon": "fa-map-marker",
+        "iconColor": "#ff80bf",
+        "photoUrl": "https://git.io/vhqZU",
+        "deleted": false,
+        "outformat": "worldmap",
+        "x": 310,
+        "y": 140,
+        "wires": [
+            [
+                "ea1f3f18.7fd148"
+            ]
+        ]
+    },
+    {
+        "id": "acbffb89.95a09",
+        "type": "CANDY EGG websocket out",
+        "z": "6e0b751e.8b1dc4",
+        "name": "GNSS Upload",
+        "account": "7741bdf3.8340e4",
+        "path": "/gnss",
+        "wholemsg": "false",
+        "x": 480,
+        "y": 260,
+        "wires": []
+    },
+    {
+        "id": "df57a115.fdddb",
+        "type": "comment",
+        "z": "6e0b751e.8b1dc4",
+        "name": "Upload GNSS location data",
+        "info": "",
+        "x": 520,
+        "y": 220,
+        "wires": []
+    },
+    {
+        "id": "3a5f3a04.91b1de",
+        "type": "CANDY EGG websocket in",
+        "z": "6e0b751e.8b1dc4",
+        "name": "GNSS Control",
+        "account": "7741bdf3.8340e4",
+        "path": "/gnss",
+        "wholemsg": "false",
+        "x": 150,
+        "y": 280,
+        "wires": [
+            [
+                "ccd02af7.17c14"
+            ]
+        ]
+    },
+    {
+        "id": "ccd02af7.17c14",
+        "type": "template",
+        "z": "6e0b751e.8b1dc4",
+        "name": "",
+        "field": "topic",
+        "fieldType": "msg",
+        "format": "handlebars",
+        "syntax": "mustache",
+        "template": "{{payload}}",
+        "output": "str",
+        "x": 140,
+        "y": 240,
+        "wires": [
+            [
+                "bf22ac5a.931db"
+            ]
+        ]
+    },
+    {
+        "id": "7741bdf3.8340e4",
+        "type": "CANDY EGG account",
+        "z": "",
+        "name": "CANDY EGG account",
+        "accountId": "",
+        "secure": true
+    }
+]
