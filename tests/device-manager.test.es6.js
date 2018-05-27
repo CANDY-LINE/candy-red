@@ -23,7 +23,6 @@ import fs from 'fs';
 import stream from 'stream';
 import cproc from 'child_process';
 import RED from 'node-red';
-import Promise from 'es6-promises';
 import { DeviceIdResolver, DeviceState, DeviceManager, DeviceManagerStore } from '../dist/device-manager';
 
 const PROC_CPUINFO = [
@@ -469,7 +468,7 @@ describe('DeviceManagerStore', () => {
 
   describe('#_onFlowFileChangedFunc()', () => {
     it('should do nothing unless the flow file is modified', done => {
-      let promise = sandbox.stub(new Promise());
+      let promise = sandbox.stub(Promise.resolve());
       promise.then.yields(false); // modified = false
       sandbox.stub(store.deviceState, 'loadAndSetFlowSignature').returns(promise);
       store.deviceState.onFlowFileChanged().then(() => {
@@ -480,7 +479,7 @@ describe('DeviceManagerStore', () => {
     });
 
     it('should publish a command when the flow file is modified', done => {
-      let promise = sandbox.stub(new Promise());
+      let promise = sandbox.stub(Promise.resolve());
       promise.then.onFirstCall().yields(true).onFirstCall().returns(promise); // modified = true
       promise.then.onSecondCall().yields(); // Promise.all()
       promise.then.onThirdCall().yields(); // publish
@@ -507,7 +506,7 @@ describe('DeviceManagerStore', () => {
 
   describe('#_onFlowFileRemovedFunc()', () => {
     it('should NOT publish a command when deviceState.flowFileSignature exists', done => {
-      let promise = sandbox.stub(new Promise());
+      let promise = sandbox.stub(Promise.resolve());
       promise.then.yields();
       let listenerConfig = sandbox.stub({
         registerInputNode: () => {}
@@ -529,7 +528,7 @@ describe('DeviceManagerStore', () => {
     });
 
     it('should publish a command when deviceState.flowFileSignature exists', done => {
-      let promise = sandbox.stub(new Promise());
+      let promise = sandbox.stub(Promise.resolve());
       promise.then.yields();
       store.deviceState.flowFileSignature = 'test';
 

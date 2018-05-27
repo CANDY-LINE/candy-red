@@ -23,7 +23,6 @@
 import SerialPort from 'serialport';
 import pareseESP3 from 'serialport-enocean-parser';
 import { ESP3RadioERP2Parser, ERP2Parser } from './esp3_erp2_parser';
-import Promise from 'es6-promises';
 import fs from 'fs';
 
 const ESP3_PACKET_PARSERS = {
