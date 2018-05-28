@@ -12,7 +12,7 @@
     "postinstall": "./install.sh",
     "preuninstall": "./uninstall.sh",
     "prepublish": "if [ -d ./src ] ; then gulp test && gulp clean && gulp build; fi",
-    "freeze": "npm prune && npm shrinkwrap --only=prod"
+    "freeze": "npm prune --production && npm shrinkwrap"
   },
   "repository": {
     "type": "git",
