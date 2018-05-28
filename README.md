@@ -362,7 +362,7 @@ $ npm run build
 $ docker run -tid -v ./dist:/candy-red-dist candy-red
 ```
 
-### Shrinkwrap
+### Clean and generate a Shrinkwrap file
 
 ```
 $ rm -fr node_modules; \
@@ -370,6 +370,18 @@ $ rm -fr node_modules; \
   nodenv local 8.11.1; \
   DEVEL=true npm install;npm run freeze
 ```
+
+### How to release
+
+1. Install devDependencies: `npm install`
+1. Build code: `npm run build`
+1. Test code: `npm run test`
+1. Update the shrinkwrap file: `npm run freeze`
+1. Commit the shrinkwrap file:
+1. Install devDependencies again: `npm install`
+1. Reset the shrinkwrap changes: `git checkout HEAD -- npm-shrinkwrap.json `
+1. Publish the package: `npm publish`
+1. Close Release Branch and Push:
 
 ## Coding Styles
 
