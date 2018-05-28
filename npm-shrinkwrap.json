@@ -1827,6 +1827,11 @@
         }
       }
     },
+    "in-publish": {
+      "version": "2.0.0",
+      "resolved": "https://registry.npmjs.org/in-publish/-/in-publish-2.0.0.tgz",
+      "integrity": "sha1-4g/146KvwmkDILbcVSaCqcf631E="
+    },
     "indexof": {
       "version": "0.0.1",
       "resolved": "https://registry.npmjs.org/indexof/-/indexof-0.0.1.tgz",
