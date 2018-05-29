@@ -1,6 +1,6 @@
 {
   "name": "candy-red",
-  "version": "7.0.0",
+  "version": "7.0.1",
   "description": "CANDY RED :: Visual Programming Editor and Runtime for CANDY Pi Lite powered by Node-RED",
   "main": "./dist/index.js",
   "scripts": {
@@ -12,7 +12,7 @@
     "postinstall": "./install.sh",
     "preuninstall": "./uninstall.sh",
     "prepublish": "if [ -d ./src ] ; then gulp test && gulp clean && gulp build; fi",
-    "freeze": "npm prune && npm shrinkwrap --only=prod"
+    "freeze": "npm prune --production && npm shrinkwrap"
   },
   "repository": {
     "type": "git",
@@ -79,8 +79,8 @@
     "mustache": "^2.3.0",
     "nan": "^2.4.0",
     "node-red": "^0.18.6",
-    "node-red-contrib-device-stats": ">=1.0.3",
-    "node-red-contrib-lwm2m": "^1.2.0",
+    "node-red-contrib-device-stats": ">=1.1.2",
+    "node-red-contrib-lwm2m": "^1.2.2",
     "node-red-contrib-moment": "^2.0.7",
     "node-red-contrib-web-worldmap": "^1.1.12",
     "node-red-dashboard": "^2.9.3",

@@ -1,4 +1,8 @@
 ## Revision History
+* 7.0.1
+  - Remove devDependencies by default on generating a shrinkwrap file
+  - Remove devDependencies from the shrinkwrap file
+
 * 7.0.0
   - Add new preinstalled nodes
     - node-red-node-smooth
