@@ -1,4 +1,7 @@
 ## Revision History
+* 7.0.2
+  - Add a missing package
+
 * 7.0.1
   - Remove devDependencies by default on generating a shrinkwrap file
   - Remove devDependencies from the shrinkwrap file
