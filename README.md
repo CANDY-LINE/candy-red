@@ -375,10 +375,10 @@ $ rm -fr node_modules; \
 
 1. Test all: `npm run test`
 1. Update the shrinkwrap: `npm run freeze` (this prunes devDependencies under `node_modules`)
-1. Publish NPM package: `npm publish`
-1. Tag Release and Push
 1. Install devDependencies: `npm install -dev`
 1. Revert shrinkwrap file changes: `npm run postinstall`
+1. Publish NPM package: `npm publish`
+1. Tag Release and Push
 
 ## Coding Styles
 
