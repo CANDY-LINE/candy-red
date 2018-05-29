@@ -288,7 +288,7 @@ $ npm test
 $ npm pack
 # RPi
 $ sudo npm uninstall -g --unsafe-perm candy-red
-$ time sudo npm install -g --unsafe-perm ./candy-red-7.0.0.tgz
+$ time sudo npm install -g --unsafe-perm ./candy-red-7.0.1.tgz
 $ sudo journalctl -f -u candy-red -o cat # to show logs
 ```
 
@@ -362,7 +362,7 @@ $ npm run build
 $ docker run -tid -v ./dist:/candy-red-dist candy-red
 ```
 
-### Shrinkwrap
+### Clean and generate a Shrinkwrap file
 
 ```
 $ rm -fr node_modules; \
@@ -370,6 +370,13 @@ $ rm -fr node_modules; \
   nodenv local 8.11.1; \
   DEVEL=true npm install;npm run freeze
 ```
+
+### How to release
+
+1. Commit the shrinkwrap file without devDependencies
+1. Prepare the package publishment: `make`
+1. Publish NPM package: `npm publish`
+1. Tag Release and Push
 
 ## Coding Styles
 
