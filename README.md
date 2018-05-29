@@ -374,7 +374,7 @@ $ rm -fr node_modules; \
 ### How to release
 
 1. Test all: `npm run test`
-1. Update the shrinkwrap: `npm freeze` (this prunes devDependencies under `node_modules`)
+1. Update the shrinkwrap: `npm run freeze` (this prunes devDependencies under `node_modules`)
 1. Publish NPM package: `npm publish`
 1. Tag Release and Push
 1. Install devDependencies: `npm install -dev`
