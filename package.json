@@ -12,7 +12,6 @@
     "postinstall": "./install.sh",
     "preuninstall": "./uninstall.sh",
     "prepublish": "if [ -d ./src ] ; then gulp test && gulp clean && gulp build; fi",
-    "postinstall": "git checkout HEAD -- npm-shrinkwrap.json",
     "freeze": "npm prune --production && npm shrinkwrap"
   },
   "repository": {
