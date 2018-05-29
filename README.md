@@ -373,10 +373,8 @@ $ rm -fr node_modules; \
 
 ### How to release
 
-1. Test all: `npm run test`
-1. Update the shrinkwrap: `npm run freeze` (this prunes devDependencies under `node_modules`)
-1. Install devDependencies: `DEVEL=true npm install`
-1. Revert shrinkwrap file changes: `npm run postinstall`
+1. Commit the shrinkwrap file without devDependencies
+1. Prepare the package publishment: `make`
 1. Publish NPM package: `npm publish`
 1. Tag Release and Push
 
