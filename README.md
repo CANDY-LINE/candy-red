@@ -77,7 +77,7 @@ You can ignore `npm WARN`s, `gyp WARN`s, `gyp ERR!`s and `node-pre-gyp ERR!`s un
 Please refer to the following commands to install.
 
 ```
-$ sudo npm install -g --unsafe-perm candy-red
+$ sudo npm install -g --unsafe-perm --production candy-red
 ```
 
 You can access `http://<hostname.local or ip address>:8100` with your browser on the same LAN where `<hostname.local or ip address>` is a host name with `.local` suffix or IP address.
@@ -92,7 +92,7 @@ When providing the credentials, PAM authentication is disabled.
 $ sudo \
     CANDY_RED_ADMIN_USER_ID=... \
     CANDY_RED_ADMIN_PASSWORD=... \
-    npm install -g --unsafe-perm candy-red
+    npm install -g --unsafe-perm --production candy-red
 ```
 
 The password is encrypted while the installation process.
@@ -179,7 +179,7 @@ Note that the downloaded flow file will be discarded if it is not a valid JSON d
 ## Preinstalled nodes
 
 ```
-$ sudo NODES_CSV="node-ed-contib-cache,>=1.0.4 node-ed-contib-geneic-ble,>=2.0.4 node-ed-contib-smartmesh,>=1.0.0" npm install -g --unsafe-perm candy-red
+$ sudo NODES_CSV="node-ed-contib-cache,>=1.0.4 node-ed-contib-geneic-ble,>=2.0.4 node-ed-contib-smartmesh,>=1.0.0" npm install -g --unsafe-perm --production candy-red
 ```
 Either a single space` ` or `\n` can be a delimiter of `NODE_CSV` value.
 
@@ -217,7 +217,7 @@ Just pull the update on the `candy-red` directory and perform `npm install`.
 ```
 $ cd candy-red
 $ git pull
-$ npm install
+$ npm install --production 
 ```
 
 ## Run on localhost for development use
@@ -362,13 +362,14 @@ $ npm run build
 $ docker run -tid -v ./dist:/candy-red-dist candy-red
 ```
 
-### Clean and generate a Shrinkwrap file
+### Clean and update package-lock.json
 
 ```
 $ rm -fr node_modules; \
   rm -f npm-shrinkwrap.json; \
-  nodenv local 8.11.1; \
-  DEVEL=true npm install;npm run freeze
+  rm -f package-lock.json; \
+  nodenv local 8.11.2; \
+  DEVEL=true npm install
 ```
 
 ### How to release
