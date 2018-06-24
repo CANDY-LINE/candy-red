@@ -47,8 +47,7 @@ This is the default screen theme.
 
 ### Tested Node.js versions
 
-* v6.14.1 (Maintenance LTS)
-* v8.11.1 (Active LTS)
+* v8.11.2 (Active LTS)
 
 The preinstalled version of Node.js v0.10.29 won't work because of the [header file issue](http://dustinbolton.com/replace_invalid_utf8-is-not-a-member-of-v8string-installing-nodejs-packages-on-raspbian-debian-on-raspberry-pi-2-b/) appearing on installing native addons.
 
@@ -60,7 +59,7 @@ $ sudo apt-get remove -y nodered nodejs nodejs-legacy npm
 
 ### Supported npm version
 
-* v3.x+
+* v5.x+
 
 ## Install/Version-up
 
@@ -189,7 +188,6 @@ Either a single space` ` or `\n` can be a delimiter of `NODE_CSV` value.
 
 ### Supported Node.js versions
 
-* v6.14.1 (Maintenance LTS)
 * v8.11.1 (Active LTS)
 
 ## Setup for Building
@@ -200,6 +198,9 @@ Install the local dependencies.
 $ git clone https://github.com/CANDY-LINE/candy-red.git
 $ cd candy-red
 $ DEVEL=true npm install
+# Run one of the following command to install default nodes
+$ make #=> default nodes are installed into ~/.node-red/node_modules
+$ make CANDY_RED_HOME=$(pwd)/tmp #=> default nodes are installed into $(pwd)/tmp/.node-red/node_modules
 ```
 
 ## Build
@@ -217,7 +218,7 @@ Just pull the update on the `candy-red` directory and perform `npm install`.
 ```
 $ cd candy-red
 $ git pull
-$ npm install --production 
+$ npm install --production
 ```
 
 ## Run on localhost for development use
