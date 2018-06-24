@@ -5,7 +5,8 @@ SERVICE_NAME="candy-red"
 DISABLE_SERVICE_INSTALL=${DISABLE_SERVICE_INSTALL:-0}
 NODE_PALETTE_ENABLED=${NODE_PALETTE_ENABLED:-true}
 NODE_RED_PROJECTS_ENABLED=${NODE_RED_PROJECTS_ENABLED:-false}
-CANDY_RED_MODULE_ROOT="/opt/${SERVICE_NAME}/.node-red"
+CANDY_RED_HOME=${CANDY_RED_HOME:-/opt/${SERVICE_NAME}}
+CANDY_RED_MODULE_ROOT="${CANDY_RED_HOME}/.node-red"
 CANDY_RED_ADMIN_USER_ID=${CANDY_RED_ADMIN_USER_ID:-""}
 CANDY_RED_ADMIN_PASSWORD_ENC=""
 CANDY_RED_LOG_LEVEL="info"
@@ -42,6 +43,10 @@ function apt_get_update {
 function setup {
   if [ "${DEVEL}" == "true" ]; then
     info "Skip to perform install.sh!"
+    exit 0
+  elif [ "${DEVEL}" == "dep" ]; then
+    info "Installing dependencies..."
+    install_preinstalled_nodes
     exit 0
   fi
   assert_root
@@ -145,7 +150,7 @@ function cd_module_root {
   else
     REALPATH=`readlink -f -- "$0"`
   fi
-  REALPATH=${REALPATH:-$(pwd)}
+  REALPATH=${REALPATH:-$(pwd)/dummy}
   PROJECT_ROOT=`dirname ${REALPATH}`
   cd ${PROJECT_ROOT}
 }
@@ -205,6 +210,11 @@ function install_preinstalled_nodes {
   elif [ -f "${NODES_CSV_PATH}" ]; then
     NODES=`cat ${NODES_CSV_PATH} | tr -d '\r'`
   fi
+  NPM_OPTS="--unsafe-perm --prefix ${CANDY_RED_MODULE_ROOT}"
+  if [ "${DEVEL}" == "dep" ]; then
+    NPM_OPTS=""
+    cd ${CANDY_RED_MODULE_ROOT}
+  fi
   if [ -n "${NODES}" ]; then
     mkdir -p ${CANDY_RED_MODULE_ROOT}
     if [ -d "${CANDY_RED_MODULE_ROOT}/node_modules" ]; then
@@ -222,11 +232,13 @@ function install_preinstalled_nodes {
         if [ -z "${p}" ]; then
           continue
         fi
-        npm install --unsafe-perm --prefix ${CANDY_RED_MODULE_ROOT} ${p}@${v}
+        npm install --production ${NPM_OPTS} ${p}@${v}
       done
     # nodes are installed to {prefix}/lib directory
     # because -g flag is implicitly inherited on performing the above npm
-    mv ${CANDY_RED_MODULE_ROOT}/lib/node_modules/ ${CANDY_RED_MODULE_ROOT}
+    if [ -d "${CANDY_RED_MODULE_ROOT}/lib/node_modules" ]; then
+      mv ${CANDY_RED_MODULE_ROOT}/lib/node_modules/ ${CANDY_RED_MODULE_ROOT}
+    fi
     rm -fr ${CANDY_RED_MODULE_ROOT}/etc
   else
     info "Skip to install nodes!!"
