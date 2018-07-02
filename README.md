@@ -289,7 +289,7 @@ $ npm test
 $ npm pack
 # RPi
 $ sudo npm uninstall -g --unsafe-perm candy-red
-$ time sudo npm install -g --unsafe-perm ./candy-red-7.0.2.tgz
+$ time sudo npm install -g --unsafe-perm ./candy-red-7.1.0.tgz
 $ sudo journalctl -f -u candy-red -o cat # to show logs
 ```
 

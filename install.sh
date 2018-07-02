@@ -240,6 +240,9 @@ function install_preinstalled_nodes {
       mv ${CANDY_RED_MODULE_ROOT}/lib/node_modules/ ${CANDY_RED_MODULE_ROOT}
     fi
     rm -fr ${CANDY_RED_MODULE_ROOT}/etc
+    # Reset cached meta info
+    rm -f ${CANDY_RED_MODULE_ROOT}/.config.json
+    rm -f ${CANDY_RED_MODULE_ROOT}/.config.json.backup
   else
     info "Skip to install nodes!!"
   fi
