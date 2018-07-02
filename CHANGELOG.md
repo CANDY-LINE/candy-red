@@ -5,6 +5,7 @@
     - node-red-contrib-cache
     - node-red-contrib-web-worldmap
     - node-red-node-pi-sense-hat
+  - Remove config cache files after upgrading CANDY RED to discard expired data
 
 * 7.0.2
   - Add a missing package
