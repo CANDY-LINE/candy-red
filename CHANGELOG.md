@@ -1,5 +1,5 @@
 ## Revision History
-* ?.?.?
+* 7.1.0
   - Remove Node.js v6 from the supported versions (still should work on Node.js v6 though)
   - Move the following nodes to user directory so that users can remove them if necessary
     - node-red-contrib-cache
