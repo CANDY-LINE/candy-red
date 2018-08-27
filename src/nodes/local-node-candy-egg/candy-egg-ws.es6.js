@@ -356,7 +356,7 @@ export default function(RED) {
       });
 
       this.on('log-info', (msg) => {
-        this.info(msg);
+        this.log(msg);
       });
       this.on('log-error', (msg) => {
         this.error(msg);
@@ -392,7 +392,7 @@ export default function(RED) {
       });
 
       this.on('log-info', (msg) => {
-        this.info(msg);
+        this.log(msg);
       });
       this.on('log-error', (msg) => {
         this.error(msg);
