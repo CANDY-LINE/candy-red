@@ -84,10 +84,6 @@ function setup {
       exit 1
     fi
   fi
-  # Disable i18n resources other than en-US for now (will be enabled in the future release)
-  for l in `find ${PROJECT_ROOT}/node_modules/node-red* | grep locales/ | grep -v en-US | grep -v json`; do
-    rm -fr ${l}
-  done
 }
 
 function cpf {
