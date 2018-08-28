@@ -47,7 +47,7 @@ This is the default screen theme.
 
 ### Tested Node.js versions
 
-* v8.11.2 (Active LTS)
+* v8.11.4 (Active LTS)
 
 The preinstalled version of Node.js v0.10.29 won't work because of the [header file issue](http://dustinbolton.com/replace_invalid_utf8-is-not-a-member-of-v8string-installing-nodejs-packages-on-raspbian-debian-on-raspberry-pi-2-b/) appearing on installing native addons.
 
