@@ -1,4 +1,10 @@
 ## Revision History
+* 8.0.0
+  - Renew all icons and logo images
+  - Add new preinstalled nodes
+    - node-red-contrib-camera-pi
+  - Bump up Node-RED Dashboard version to v2.9.7
+
 * 7.1.0
   - Remove Node.js v6 from the supported versions (still should work on Node.js v6 though)
   - Move the following nodes to user directory so that users can remove them if necessary
