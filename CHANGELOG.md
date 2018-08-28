@@ -1,8 +1,11 @@
 ## Revision History
+* 8.0.1
+  - Fix typo
+
 * 8.0.0
   - Renew all icons and logo images
   - Add new preinstalled nodes
-    - node-red-contrib-camera-pi
+    - node-red-contrib-camerapi
   - Bump up Node-RED Dashboard version to v2.9.7
 
 * 7.1.0
