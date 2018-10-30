@@ -1,4 +1,7 @@
 ## Revision History
+* 8.0.2
+  - Fix an issue where node-red-contrib-lwm2m was missing
+
 * 8.0.1
   - Fix typo
 
