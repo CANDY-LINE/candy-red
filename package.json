@@ -1,6 +1,6 @@
 {
   "name": "candy-red",
-  "version": "8.0.2",
+  "version": "8.1.0",
   "description": "CANDY RED :: Visual Programming Editor and Runtime for CANDY Pi Lite powered by Node-RED",
   "main": "./dist/index.js",
   "scripts": {
@@ -54,20 +54,19 @@
     "gulp-cli": "^2.0.1",
     "gulp-exec": "^3.0.1",
     "gulp-jshint": "^2.0.4",
-    "gulp-livereload": "^3.8.1",
+    "gulp-livereload": "^4.0.0",
     "gulp-mocha": "^4.3.0",
     "gulp-rename": "^1.2.2",
     "gulp-sourcemaps": "^2.5.1",
     "gulp-symlink": "^2.1.4",
     "gulp-uglify": "^3.0.0",
-    "jshint": "^2.9.1",
+    "jshint": "^2.9.6",
     "jshint-stylish": "^2.0.1",
     "mocha": "^3.0.2",
     "rmdir": "^1.2.0",
     "run-sequence": "^2.0.0",
     "sinon": "^5.0.10",
-    "vinyl-fs": "^2.4.4",
-    "growl": ">=1.10.0"
+    "vinyl-fs": "^2.4.4"
   },
   "dependencies": {
     "authenticate-pam": "^1.0.2",
