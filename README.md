@@ -47,7 +47,7 @@ This is the default screen theme.
 
 ### Tested Node.js versions
 
-* v8.11.4 (Active LTS)
+* v8.12.0 (Active LTS)
 
 The preinstalled version of Node.js v0.10.29 won't work because of the [header file issue](http://dustinbolton.com/replace_invalid_utf8-is-not-a-member-of-v8string-installing-nodejs-packages-on-raspbian-debian-on-raspberry-pi-2-b/) appearing on installing native addons.
 
@@ -188,7 +188,7 @@ Either a single space` ` or `\n` can be a delimiter of `NODE_CSV` value.
 
 ### Supported Node.js versions
 
-* v8.11.1 (Active LTS)
+* v8.12.0 (Active LTS)
 
 ## Setup for Building
 
@@ -369,7 +369,7 @@ $ docker run -tid -v ./dist:/candy-red-dist candy-red
 $ rm -fr node_modules; \
   rm -f npm-shrinkwrap.json; \
   rm -f package-lock.json; \
-  nodenv local 8.11.2; \
+  nodenv local 8.12.0; \
   DEVEL=true npm install
 ```
 
