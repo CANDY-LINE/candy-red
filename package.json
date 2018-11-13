@@ -83,7 +83,7 @@
     "node-red-contrib-device-stats": ">=1.1.2",
     "node-red-contrib-lwm2m": ">=1.3.0",
     "node-red-contrib-moment": "^3.0.0",
-    "node-red-dashboard": "^2.9.7",
+    "node-red-dashboard": "^2.10.1",
     "node-red-node-base64": "^0.1.3",
     "node-red-node-data-generator": "0.0.4",
     "node-red-node-random": "^0.1.0",
