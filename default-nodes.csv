@@ -4,3 +4,4 @@ node-red-contrib-smartmesh,>=1.0.0
 node-red-contrib-web-worldmap,^1.1.12
 node-red-node-pi-sense-hat,^0.0.16
 node-red-contrib-camerapi,>=0.0.38
+node-red-contrib-adxl-vibration-fft,>=1.0.0

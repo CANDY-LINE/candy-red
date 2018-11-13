@@ -1,4 +1,9 @@
 ## Revision History
+* 8.1.0
+  - Add a new preinstalled node
+    - node-red-contrib-adxl-vibration-fft
+  - Bump up Node-RED Dashboard version to v2.10.1
+
 * 8.0.2
   - Fix an issue where node-red-contrib-lwm2m was missing
 
