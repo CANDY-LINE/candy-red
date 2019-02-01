@@ -43,3 +43,4 @@ services/start_sysvinit.sh
 .node-red
 dist
 .node-version
+.mc

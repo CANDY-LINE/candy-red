@@ -188,7 +188,7 @@ Either a single space` ` or `\n` can be a delimiter of `NODE_CSV` value.
 
 ### Supported Node.js versions
 
-* v8.12.0 (Active LTS)
+* v8.15.0 (Maintenance LTS)
 
 ## Setup for Building
 
@@ -289,7 +289,7 @@ $ npm test
 $ npm pack
 # RPi
 $ sudo npm uninstall -g --unsafe-perm candy-red
-$ time sudo npm install -g --unsafe-perm ./candy-red-7.1.0.tgz
+$ time sudo npm install -g --unsafe-perm ./candy-red-8.2.0.tgz
 $ sudo journalctl -f -u candy-red -o cat # to show logs
 ```
 

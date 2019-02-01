@@ -1,4 +1,6 @@
 ## Revision History
+* 8.2.0
+  - Fix an issue where package.json on the preinstalled module directory never contained the preinstalled dependencies
 * 8.1.0
   - Add a new preinstalled node
     - node-red-contrib-adxl-vibration-fft
