@@ -240,6 +240,7 @@ function install_preinstalled_nodes {
     rm -f ${CANDY_RED_MODULE_ROOT}/.config.json
     rm -f ${CANDY_RED_MODULE_ROOT}/.config.json.backup
     cd ${CANDY_RED_MODULE_ROOT}
+    echo '{"name": "node-red-project","version": "0.0.1","description": "A Node-RED Project"}' > package.json
     npm init --yes
   else
     info "Skip to install nodes!!"
