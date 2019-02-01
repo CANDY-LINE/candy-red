@@ -239,6 +239,8 @@ function install_preinstalled_nodes {
     # Reset cached meta info
     rm -f ${CANDY_RED_MODULE_ROOT}/.config.json
     rm -f ${CANDY_RED_MODULE_ROOT}/.config.json.backup
+    cd ${CANDY_RED_MODULE_ROOT}
+    npm init --yes
   else
     info "Skip to install nodes!!"
   fi
