@@ -1,4 +1,7 @@
 ## Revision History
+* 8.2.2
+  - Fix an issue where cwd was not reverted after installing default nodes
+
 * 8.2.1
   - Fix `npm init` error
 
