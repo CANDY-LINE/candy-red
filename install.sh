@@ -166,7 +166,7 @@ function resolve_version {
 
 function npm_local_install {
   if [ -d "${PROJECT_ROOT}/dist" ]; then
-    cp -r ${PROJECT_ROOT}/dist/nodes/local-node-* node_modules/
+    cp -r ${PROJECT_ROOT}/dist/nodes/local-node-* ${PROJECT_ROOT}/node_modules/
   fi
 }
 
@@ -242,6 +242,7 @@ function install_preinstalled_nodes {
     cd ${CANDY_RED_MODULE_ROOT}
     echo '{"name": "node-red-project","version": "0.0.1","description": "A Node-RED Project"}' > package.json
     npm init --yes
+    cd ${PROJECT_ROOT}
   else
     info "Skip to install nodes!!"
   fi

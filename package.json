@@ -1,6 +1,6 @@
 {
   "name": "candy-red",
-  "version": "8.2.1",
+  "version": "8.2.2",
   "description": "CANDY RED :: Visual Programming Editor and Runtime for CANDY Pi Lite powered by Node-RED",
   "main": "./dist/index.js",
   "scripts": {
