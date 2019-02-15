@@ -43,11 +43,11 @@ This is the default screen theme.
 
 ### Raspbian version
 
- * STRETCH/STRETCH LITE Kernel Version: 4.9 (2018-03-29)
+ * STRETCH/STRETCH LITE Kernel Version: 4.9 (2018-11-13)
 
 ### Tested Node.js versions
 
-* v8.12.0 (Active LTS)
+* v8.15.0 (Active LTS)
 
 The preinstalled version of Node.js v0.10.29 won't work because of the [header file issue](http://dustinbolton.com/replace_invalid_utf8-is-not-a-member-of-v8string-installing-nodejs-packages-on-raspbian-debian-on-raspberry-pi-2-b/) appearing on installing native addons.
 
