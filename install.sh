@@ -209,6 +209,10 @@ function install_preinstalled_nodes {
     err "The path [${NODES_CSV_PATH}] is missing."
     exit 1
   fi
+  if [ ! -d "${CANDY_RED_MODULE_ROOT}" ]; then
+    err "The path [${CANDY_RED_MODULE_ROOT}] is missing."
+    exit 1
+  fi
   NPM_OPTS="--unsafe-perm --prefix ${CANDY_RED_MODULE_ROOT}"
   if [ "${DEVEL}" == "dep" ]; then
     NPM_OPTS=""
