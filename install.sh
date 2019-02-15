@@ -205,6 +205,9 @@ function install_preinstalled_nodes {
     NODES=`echo ${NODES_CSV} | tr ' ' '\n'`
   elif [ -f "${NODES_CSV_PATH}" ]; then
     NODES=`cat ${NODES_CSV_PATH} | tr -d '\r'`
+  else
+    err "The path [${NODES_CSV_PATH}] is missing."
+    exit 1
   fi
   NPM_OPTS="--unsafe-perm --prefix ${CANDY_RED_MODULE_ROOT}"
   if [ "${DEVEL}" == "dep" ]; then
