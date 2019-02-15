@@ -293,22 +293,6 @@ $ time sudo npm install -g --unsafe-perm ./candy-red-8.2.2.tgz
 $ sudo journalctl -f -u candy-red -o cat # to show logs
 ```
 
-## Vagrant
-
-### Version
-
- * v1.8.4+
-
-### Run on Vagrant Instance
-
-```
-(host)  $ vagrant up
-(host)  $ vagrant ssh
-(varant)$ cd /vagrant
-(varant)$ npm install
-(varant)$ npm run start
-```
-
 ### Local Installation Test
 
 ```
