@@ -69,6 +69,8 @@
     "vinyl-fs": "^2.4.4"
   },
   "dependencies": {
+    "@mindconnect/mindconnect-nodejs": "^3.3.0",
+    "@mindconnect/node-red-contrib-mindconnect": "^3.3.0",
     "authenticate-pam": "^1.0.2",
     "basic-auth": "^2.0.0",
     "chokidar": "^2.0.3",
