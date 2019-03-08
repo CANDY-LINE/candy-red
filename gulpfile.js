@@ -13,6 +13,7 @@ const symlink     = require('gulp-symlink');
 const fs          = require('fs');
 const path        = require('path');
 const rmdir       = require('rmdir');
+const yaml        = require('gulp-yaml');
 
 gulp.task('lint', () => {
   return gulp.src([
@@ -68,7 +69,10 @@ gulp.task('nodes', () => {
 });
 
 gulp.task('copyResources', () => {
-  gulp.src('./src/**/*.{css,ico,png,html,json,yaml,yml}')
+  gulp.src([
+    './src/**/*.{css,ico,png,html,json,yaml,yml}',
+    '!./src/mo/**/*.{yaml,yml}'
+  ])
   .pipe(gulp.dest('./dist'));
 });
 
@@ -77,7 +81,15 @@ gulp.task('favicons', () => {
     .pipe(gulp.dest('./node_modules/node-red-dashboard/dist'));
 });
 
-gulp.task('buildSrcs', ['copyResources', 'favicons'], () => {
+gulp.task('mo', () => {
+  return gulp.src([
+      './src/mo/**/*.{yaml,yml}'
+    ])
+    .pipe(yaml({ safe: true }))
+    .pipe(gulp.dest('./dist/mo'));
+});
+
+gulp.task('buildSrcs', ['copyResources', 'mo', 'favicons'], () => {
   return gulp.src('./src/**/*.es6.js')
     .pipe(sourcemaps.init())
     .pipe(babel({

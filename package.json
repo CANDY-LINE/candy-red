@@ -76,6 +76,7 @@
     "chokidar": "^2.0.3",
     "express": "^4.16.4",
     "follow-redirects": "^1.7.0",
+    "gulp-yaml": "^2.0.3",
     "lru-cache": "^4.0.2",
     "mkdirp": "^0.5.1",
     "mustache": "^2.3.0",
