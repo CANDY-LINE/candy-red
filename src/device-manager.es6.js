@@ -911,10 +911,31 @@ export class DeviceState {
   }
 }
 
+export class LwM2MDeviceManagement {
+  constructor() {
+    this.internalEventBus = new EventEmitter();
+  }
+
+  init(settings) {
+    this.internalEventBus.on('resolveClientName', (context) => {
+      let clientName = context.clientName;
+      if (settings.deviceId) {
+        if (settings.deviceId.indexOf('urn:') !== 0) {
+          clientName = `urn:${settings.deviceId}`;
+        } else {
+          clientName = settings.deviceId;
+        }
+      }
+      this.internalEventBus.emit('clientNameResolved', clientName);
+    });
+  }
+}
+
 export class DeviceManagerStore {
   constructor() {
     this.store = {};
     this.deviceState = new DeviceState(this._onFlowFileChangedFunc(), this._onFlowFileRemovedFunc());
+    this.lwm2m = new LwM2MDeviceManagement();
   }
 
   _onFlowFileChangedFunc() {

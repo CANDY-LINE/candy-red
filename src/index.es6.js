@@ -351,8 +351,11 @@ export class CandyRed {
           metrics: false,
           audit: false
         }
-      }
+      },
+      lwm2m: this.deviceManagerStore.lwm2m
     };
+    this.deviceManagerStore.lwm2m.init(settings);
+
     if (CANDY_RED_ADMIN_USER_ID && CANDY_RED_ADMIN_PASSWORD_ENC) {
       let userAuth = new SingleUserAuthenticator(
         CANDY_RED_SESSION_TIMEOUT, CANDY_RED_ADMIN_USER_ID, CANDY_RED_ADMIN_PASSWORD_ENC);
