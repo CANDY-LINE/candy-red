@@ -30,7 +30,6 @@ import RED from 'node-red';
 const REBOOT_DELAY_MS = 1000;
 const TRACE = process.env.DEBUG || false;
 
-const EDISON_YOCTO_SN_PATH = '/factory/serial_number';
 const PROC_CPUINFO_PATH = '/proc/cpuinfo';
 const PROC_DT_MODEL_PATH = '/proc/device-tree/model';
 
@@ -44,27 +43,7 @@ export class DeviceIdResolver {
 
   resolve() {
     return new Promise((resolve, reject) => {
-      return this._resolveCANDYIoT(resolve, reject);
-    });
-  }
-
-  _resolveCANDYIoT(resolve, reject) {
-    // CANDY IoT
-    return this._resolveEdison(resolve, reject);
-  }
-
-  _resolveEdison(resolve, reject) {
-    // Intel Edison Yocto
-    fs.stat(EDISON_YOCTO_SN_PATH, err => {
-      if (err) {
-        return this._resolveLinux(resolve, reject);
-      }
-      fs.readFile(EDISON_YOCTO_SN_PATH, (err, data) => {
-        if (err) {
-          return reject(err);
-        }
-        resolve('EDN:' + data.toString().trim());
-      });
+      return this._resolveLinux(resolve, reject);
     });
   }
 

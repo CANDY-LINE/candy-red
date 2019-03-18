@@ -66,23 +66,11 @@ describe('DeviceIdResolver', () => {
     });
   });
 
-  it('should return the serial number', done => {
-    let resolver = new DeviceIdResolver();
-    sandbox.stub(fs, 'stat').yields();
-    sandbox.stub(fs, 'readFile').yields(null, 'my-serial-number\n');
-    resolver.resolve().then(id => {
-      assert.equal('EDN:my-serial-number', id);
-      done();
-    }).catch(err => {
-      done(err);
-    });
-  });
-
   it('should return the cpuinfo serial if the device model is RPi', done => {
     let resolver = new DeviceIdResolver();
-    sandbox.stub(fs, 'stat').onFirstCall().yields(new Error())
-      .onSecondCall().yields()
-      .onThirdCall().yields();
+    sandbox.stub(fs, 'stat')
+      .onFirstCall().yields()
+      .onSecondCall().yields();
     let i = 0;
     let readStream = new stream.Readable();
     readStream._read = () => {
@@ -100,9 +88,9 @@ describe('DeviceIdResolver', () => {
 
   it('should return the cpuinfo serial if the device model is ATB', done => {
     let resolver = new DeviceIdResolver();
-    sandbox.stub(fs, 'stat').onFirstCall().yields(new Error())
-      .onSecondCall().yields()
-      .onThirdCall().yields();
+    sandbox.stub(fs, 'stat')
+      .onFirstCall().yields()
+      .onSecondCall().yields();
     let i = 0;
     let readStream = new stream.Readable();
     readStream._read = () => {
@@ -120,9 +108,9 @@ describe('DeviceIdResolver', () => {
 
   it('should return the cpuinfo serial if the device model is a generic Linux', done => {
     let resolver = new DeviceIdResolver();
-    sandbox.stub(fs, 'stat').onFirstCall().yields(new Error())
-      .onSecondCall().yields()
-      .onThirdCall().yields();
+    sandbox.stub(fs, 'stat')
+      .onFirstCall().yields()
+      .onSecondCall().yields();
     let i = 0;
     let readStream = new stream.Readable();
     readStream._read = () => {
@@ -141,8 +129,7 @@ describe('DeviceIdResolver', () => {
   it('should return the MAC address', done => {
     let resolver = new DeviceIdResolver();
     sandbox.stub(fs, 'stat').onFirstCall().yields(new Error())
-      .onSecondCall().yields(new Error())
-      .onThirdCall().yields()
+      .onSecondCall().yields()
       .onCall(4).yields();
     sandbox.stub(os, 'networkInterfaces').returns({
       'en0' : [
