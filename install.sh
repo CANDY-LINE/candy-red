@@ -236,7 +236,7 @@ function install_preinstalled_nodes {
       while IFS=',' read p v; do
         p=`echo -e ${p} | tr -d ' '`
         v=`echo -e ${v} | tr -d ' '`
-        if [ -z "${p}" ]; then
+        if [ -z "${p}" ] || [[ ${p} == "#"* ]]; then
           continue
         fi
         npm install --production ${NPM_OPTS} ${p}@${v}
