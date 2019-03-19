@@ -57,7 +57,7 @@ describe('CandyRed', () => {
   let cr = new CandyRed();
 
   beforeEach(() => {
-    sandbox = sinon.sandbox.create();
+    sandbox = sinon.createSandbox();
   });
 
   afterEach(() => {
@@ -80,7 +80,6 @@ describe('CandyRed', () => {
   describe('#_inspectBoardStatus()', () => {
     it('should not return any undefined values', done => {
       cr._inspectBoardStatus(__dirname + '/../package.json').then(versions => {
-        assert.equal('N/A', versions.candyBsv);
         assert.isDefined(versions.candyRedv);
         done();
       }).catch(err => {

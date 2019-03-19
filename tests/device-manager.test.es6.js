@@ -48,7 +48,7 @@ RED.init(server, settings);
 describe('DeviceIdResolver', () => {
   let sandbox;
   beforeEach(() => {
-    sandbox = sinon.sandbox.create();
+    sandbox = sinon.createSandbox();
   });
   afterEach(() => {
     sandbox.restore();
@@ -151,7 +151,7 @@ describe('DeviceState', () => {
   let state;
   beforeEach(() => {
     state = new DeviceState(() => {}, () => {});
-    sandbox = sinon.sandbox.create();
+    sandbox = sinon.createSandbox();
   });
   afterEach(() => {
     sandbox.restore();
@@ -167,7 +167,7 @@ describe('DeviceState', () => {
       });
     });
 
-    it('should return the installed CANDY Pi Lite Board version', done => {
+    it('should return the result output of candy modem show command', done => {
       let stubCproc = sandbox.stub(cproc);
       let systemctl = sandbox.stub({
         on: () => {}
@@ -178,9 +178,7 @@ describe('DeviceState', () => {
       let stdout = sandbox.stub({
         on: () => {}
       });
-      stdout.on.onFirstCall().yields(JSON.stringify({
-        version: '1234'
-      }));
+      stdout.on.onFirstCall().yields('\x1B[94m{ "counter": { "rx": "0", "tx": "0" }, "datetime": "80/01/06,00:55:11", "functionality": "Full", "imei": "861000000000000", "timezone": 9.0, "model": "UC20", "revision": "UC20GQBR03A14E1G", "manufacturer": "Quectel" }\x1B[0m');
       let candy = sandbox.stub({
         stdout: stdout,
         on: () => {}
@@ -189,8 +187,8 @@ describe('DeviceState', () => {
       candy.on.onFirstCall().yields(0);
 
       state.deviceId = 'my:deviceId';
-      state.testIfCANDYBoardServiceInstalled('candy-pi-lite').then(version => {
-        assert.deepEqual(['my:deviceId', '1234'], version);
+      state.testIfCANDYBoardServiceInstalled('candy-pi-lite').then(result => {
+        assert.deepEqual(['urn:imei:861000000000000'], result);
         assert.isTrue(candy.on.called);
         done();
       }).catch(err => {
@@ -198,7 +196,7 @@ describe('DeviceState', () => {
       });
     });
 
-    it('should return the empty version as candy service version command fails but the board is dtected', done => {
+    it('should return the empty version as candy modem show command fails but the board is dtected', done => {
       let stubCproc = sandbox.stub(cproc);
       let systemctl = sandbox.stub({
         on: () => {}
@@ -213,12 +211,12 @@ describe('DeviceState', () => {
         stdout: stdout,
         on: () => {}
       });
-      stubCproc.spawn.withArgs('candy', ['service', 'version'], { timeout: 1000 }).returns(candy);
+      stubCproc.spawn.withArgs('candy', ['modem', 'show'], { timeout: 1000 }).returns(candy);
       candy.on.onFirstCall().yields(1);
 
       state.deviceId = 'my:deviceId';
-      state.testIfCANDYBoardServiceInstalled('candy-pi-lite').then(version => {
-        assert.deepEqual(['my:deviceId', 'offline'], version);
+      state.testIfCANDYBoardServiceInstalled('candy-pi-lite').then(result => {
+        assert.deepEqual(['my:deviceId'], result);
         assert.isTrue(candy.on.called);
         done();
       }).catch(err => {
@@ -235,96 +233,8 @@ describe('DeviceState', () => {
       stubCproc.spawn.onFirstCall().returns(systemctl);
 
       state.deviceId = 'my:deviceId';
-      state.testIfCANDYBoardServiceInstalled('candy-pi-lite').then(version => {
-        assert.deepEqual(['my:deviceId', null], version);
-        assert.isTrue(systemctl.on.called);
-        done();
-      }).catch(err => {
-        done(err);
-      });
-    });
-  });
-
-  describe('#testIfCANDYBoardServiceInstalled("ltepi2")', () => {
-    it('should return whether or not LTEPi2 board is installed', done => {
-      state.testIfCANDYBoardServiceInstalled('ltepi2').then(version => {
-        console.log(`installed version? => [${version}]`);
-        done();
-      }).catch(err => {
-        done(err);
-      });
-    });
-
-    it('should return the installed LTEPi2 Board version', done => {
-      let stubCproc = sandbox.stub(cproc);
-      let systemctl = sandbox.stub({
-        on: () => {}
-      });
-      systemctl.on.onFirstCall().yields(0);
-      stubCproc.spawn.onFirstCall().returns(systemctl);
-
-      let stdout = sandbox.stub({
-        on: () => {}
-      });
-      stdout.on.onFirstCall().yields(JSON.stringify({
-        version: '1234'
-      }));
-      let candy = sandbox.stub({
-        stdout: stdout,
-        on: () => {}
-      });
-      stubCproc.spawn.onSecondCall().returns(candy);
-      candy.on.onFirstCall().yields(0);
-
-      state.deviceId = 'my:deviceId';
-      state.testIfCANDYBoardServiceInstalled('ltepi2').then(version => {
-        assert.deepEqual(['my:deviceId', '1234'], version);
-        assert.isTrue(candy.on.called);
-        done();
-      }).catch(err => {
-        done(err);
-      });
-    });
-
-    it('should return the empty version as candy service version command fails but the board is dtected', done => {
-      let stubCproc = sandbox.stub(cproc);
-      let systemctl = sandbox.stub({
-        on: () => {}
-      });
-      systemctl.on.onFirstCall().yields(0);
-      stubCproc.spawn.onFirstCall().returns(systemctl);
-
-      let stdout = sandbox.stub({
-        on: () => {}
-      });
-      let candy = sandbox.stub({
-        stdout: stdout,
-        on: () => {}
-      });
-      stubCproc.spawn.withArgs('candy', ['service', 'version'], { timeout: 1000 }).returns(candy);
-      candy.on.onFirstCall().yields(1);
-
-      state.deviceId = 'my:deviceId';
-      state.testIfCANDYBoardServiceInstalled('ltepi2').then(version => {
-        assert.deepEqual(['my:deviceId', 'offline'], version);
-        assert.isTrue(candy.on.called);
-        done();
-      }).catch(err => {
-        done(err);
-      });
-    });
-
-    it('should return the empty version as systemctl is-enabled ltepi2 fails', done => {
-      let stubCproc = sandbox.stub(cproc);
-      let systemctl = sandbox.stub({
-        on: () => {}
-      });
-      systemctl.on.onFirstCall().yields(1);
-      stubCproc.spawn.onFirstCall().returns(systemctl);
-
-      state.deviceId = 'my:deviceId';
-      state.testIfCANDYBoardServiceInstalled('ltepi2').then(version => {
-        assert.deepEqual(['my:deviceId', null], version);
+      state.testIfCANDYBoardServiceInstalled('candy-pi-lite').then(result => {
+        assert.deepEqual(['my:deviceId'], result);
         assert.isTrue(systemctl.on.called);
         done();
       }).catch(err => {
@@ -356,7 +266,7 @@ describe('DeviceState', () => {
 describe('DeviceManager', () => {
   let sandbox, manager;
   beforeEach(() => {
-    sandbox = sinon.sandbox.create();
+    sandbox = sinon.createSandbox();
     let listenerConfig = sandbox.stub({
       registerInputNode: () => {}
     });
@@ -446,7 +356,7 @@ describe('DeviceManager', () => {
 describe('DeviceManagerStore', () => {
   let sandbox, store;
   beforeEach(() => {
-    sandbox = sinon.sandbox.create();
+    sandbox = sinon.createSandbox();
     store = new DeviceManagerStore();
   });
   afterEach(() => {

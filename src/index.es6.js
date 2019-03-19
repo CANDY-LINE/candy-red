@@ -252,21 +252,13 @@ export class CandyRed {
   _inspectBoardStatus(inputPackageJsonPath) {
     return Promise.all([
       this.deviceManagerStore.deviceState.testIfCANDYBoardServiceInstalled('candy-pi-lite'),
-      this.deviceManagerStore.deviceState.testIfCANDYBoardServiceInstalled('ltepi2')
     ]).then(results => {
-      let candyBsv;
       let deviceId;
       if (results[0][0]) {
         deviceId = results[0][0];
       }
-      if (results[0][1]) {
-        candyBsv = results[0][1];
-      } else if (results[1][1]) {
-        candyBsv = results[1][1];
-      }
       this.editorTheme = this._createCandyRedEditorTheme(deviceId);
       deviceId = deviceId || 'N/A';
-      candyBsv = candyBsv || 'N/A';
       return new Promise((resolve, reject) => {
         fs.stat(inputPackageJsonPath, err => {
           if (err) {
@@ -279,14 +271,12 @@ export class CandyRed {
           fs.readFile(packageJsonPath, (err, data) => {
             if (err) {
               return resolve({
-                candyBsv: candyBsv,
                 candyRedv: 'N/A'
               });
             }
             let packageJson = JSON.parse(data);
             return resolve({
               deviceId: deviceId,
-              candyBsv: candyBsv,
               candyRedv: packageJson.version || 'N/A'
             });
           });
@@ -342,7 +332,6 @@ export class CandyRed {
       ],
       deviceManagerStore: this.deviceManagerStore,
       editorTheme: this.editorTheme,
-      candyBoardServiceVersion: versions.candyBsv,
       candyRedVersion: versions.candyRedv,
       deviceId: versions.deviceId,
       logging: {

@@ -33,8 +33,6 @@ const TRACE = process.env.DEBUG || false;
 const PROC_CPUINFO_PATH = '/proc/cpuinfo';
 const PROC_DT_MODEL_PATH = '/proc/device-tree/model';
 
-const MODEM_OFFLINE = 'offline';
-
 export class DeviceIdResolver {
   constructor() {
     this.hearbeatIntervalMs = -1;
@@ -709,7 +707,7 @@ export class DeviceState {
       let ret;
       candy.stdout.on('data', data => {
         try {
-          ret = JSON.parse(data);
+          ret = JSON.parse(data.replace(/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[mGK]/g, ''));
         } catch (e) {
           RED.log.error('** CANDY Board Service isn\'t running');
           RED.log.info(e.stack);
@@ -741,16 +739,16 @@ export class DeviceState {
       }).then(candyBoardServiceSupported => {
         this.candyBoardServiceSupported = candyBoardServiceSupported;
         return new Promise((resolve) => {
-          let version = process.env.DEBUG_CANDY_BOARD_VERSION || MODEM_OFFLINE;
           if (candyBoardServiceSupported) {
-            this._candyRun('service', 'version').then(versions => {
-              resolve([this.deviceId, versions.version]);
+            this._candyRun('modem', 'show').then(modemInfo => {
+              this.deviceId = `urn:imei:${modemInfo.imei}`;
+              resolve([this.deviceId]);
             }).catch(() => {
               // installed but offline or serialport busy
-              resolve([this.deviceId, version]);
+              resolve([this.deviceId]);
             });
           } else {
-            resolve([this.deviceId, null]);
+            resolve([this.deviceId]);
           }
         });
       });
