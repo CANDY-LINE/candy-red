@@ -703,25 +703,35 @@ export class DeviceState {
         args = [];
       }
       args.unshift(cat, act);
-      let candy = cproc.spawn('candy', args, { timeout: 1000 });
-      let ret;
-      candy.stdout.on('data', data => {
-        try {
-          ret = JSON.parse(data.replace(/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[mGK]/g, ''));
-        } catch (e) {
-          RED.log.error('** CANDY Board Service isn\'t running');
-          RED.log.info(e.stack);
-        }
-      });
-      candy.on('close', code => {
-        if (ret) {
-          return resolve(ret);
-        }
-        reject({ code: code });
-      });
-      candy.on('error', err => {
-        reject(err);
-      });
+
+      let retry = 0;
+      let runCandyCmd = () => {
+        let candy = cproc.spawn('candy', args, { timeout: 1000 });
+        let ret;
+        candy.stdout.on('data', data => {
+          try {
+            ret = JSON.parse(data.replace(/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[mGK]/g, ''));
+          } catch (e) {
+            RED.log.error('** CANDY Board Service isn\'t running');
+            RED.log.info(e.stack);
+          }
+        });
+        candy.on('close', code => {
+          if (ret) {
+            return resolve(ret);
+          }
+          reject({ code: code });
+        });
+        candy.on('error', err => {
+          ++retry;
+          if (retry > 5) {
+            return reject(err);
+          } else {
+            setTimeout(runCandyCmd, 10000);
+          }
+        });
+      };
+      setTimeout(runCandyCmd, 0);
     });
   }
 
