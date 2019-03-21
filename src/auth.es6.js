@@ -58,13 +58,18 @@ class Authenticator {
 
   testDefaultOrWeakCreds(username, password) {
     if (Authenticator.areDefaultOrWeakCreds(username, password)) {
-      setTimeout(() => {
+      let publisher = () => {
+        if (!RED.comms) {
+          setTimeout(publisher, 2000);
+          return;
+        }
         RED.comms.publish('notification/rpi-default-password-alert', {
           type: 'warning',
           timeout: 60 * 1000,
           text: `[SECURITY WARNING] Change default or weak [${username}] user password!!!`
         }, false);
-      }, 2000);
+      };
+      setTimeout(publisher, 2000);
     }
   }
 }
