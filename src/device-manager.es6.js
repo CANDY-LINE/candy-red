@@ -707,20 +707,24 @@ export class DeviceState {
       let retry = 0;
       let runCandyCmd = () => {
         let candy = cproc.spawn('candy', args, { timeout: 1000 });
-        let ret;
+        let output = '';
         candy.stdout.on('data', data => {
+          output += data.toString();
+          console.log(`data: ${data}`);
+          console.log(`output: ${output}`);
+        });
+        candy.on('close', code => {
+          if (code) {
+            return reject({ code: code });
+          }
+          let ret = '';
           try {
-            ret = JSON.parse(data.replace(/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[mGK]/g, ''));
+            ret = JSON.parse(output.replace(/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[mGK]/g, ''));
           } catch (e) {
             RED.log.error('** CANDY Board Service isn\'t running');
             RED.log.info(e.stack);
           }
-        });
-        candy.on('close', code => {
-          if (ret) {
-            return resolve(ret);
-          }
-          reject({ code: code });
+          return resolve(ret);
         });
         candy.on('error', err => {
           ++retry;
