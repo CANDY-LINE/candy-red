@@ -757,7 +757,10 @@ export class DeviceState {
             this._candyRun('modem', 'show').then(modemInfo => {
               this.deviceId = `urn:imei:${modemInfo.imei}`;
               resolve([this.deviceId]);
-            }).catch(() => {
+            }).catch((e) => {
+              console.log('** Error while running candy command');
+              console.log(e);
+              console.log(e.stack);
               // installed but offline or serialport busy
               resolve([this.deviceId]);
             });
