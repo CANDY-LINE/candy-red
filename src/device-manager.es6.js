@@ -32,6 +32,7 @@ const TRACE = process.env.DEBUG || false;
 
 const PROC_CPUINFO_PATH = '/proc/cpuinfo';
 const PROC_DT_MODEL_PATH = '/proc/device-tree/model';
+const MAX_CANDY_RUN_RETRY = 0; // 0 for disable retry
 
 export class DeviceIdResolver {
   constructor() {
@@ -728,7 +729,7 @@ export class DeviceState {
         });
         candy.on('error', err => {
           ++retry;
-          if (retry > 5) {
+          if (retry > MAX_CANDY_RUN_RETRY) {
             return reject(err);
           } else {
             setTimeout(runCandyCmd, 10000);
