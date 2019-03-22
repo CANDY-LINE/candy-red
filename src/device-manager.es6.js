@@ -34,7 +34,7 @@ const PROC_CPUINFO_PATH = '/proc/cpuinfo';
 const PROC_DT_MODEL_PATH = '/proc/device-tree/model';
 const MAX_CANDY_RUN_RETRY = 0; // 0 for disable retry
 
-export class DeviceIdResolver {
+export class DefaultDeviceIdResolver {
   constructor() {
     this.hearbeatIntervalMs = -1;
     this.candyBoardServiceSupported = false;
@@ -679,7 +679,7 @@ export class DeviceState {
     this.candyBoardServiceSupported = false;
     this.flowFileSignature = '';
     this.flowFilePath = '';
-    this.resolver = new DeviceIdResolver();
+    this.resolver = new DefaultDeviceIdResolver();
     this.wartcher = null;
     this.onFlowFileChanged = onFlowFileChanged;
     this.onFlowFileRemoved = onFlowFileRemoved;
