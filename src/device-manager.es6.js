@@ -500,7 +500,7 @@ export class DeviceManager {
 
   _performInspect(c) {
     return new Promise((resolve, reject) => {
-      if (!this.candyBoardServiceSupported) {
+      if (!this.deviceState.candyBoardServiceSupported) {
         return reject({ status: 405 });
       }
       if (!c) {

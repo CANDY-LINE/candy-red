@@ -335,7 +335,7 @@ describe('DeviceManager', () => {
       stubCproc.spawn.onFirstCall().returns(ciot);
       ciot.on.yields();
 
-      manager.candyBoardServiceSupported = true;
+      manager.deviceState.candyBoardServiceSupported = true;
       manager._performInspect({
         cat: 'sys',
         act: 'inspect'
