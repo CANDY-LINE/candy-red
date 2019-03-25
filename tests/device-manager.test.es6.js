@@ -23,7 +23,7 @@ import fs from 'fs';
 import stream from 'stream';
 import cproc from 'child_process';
 import RED from 'node-red';
-import { DeviceIdResolver, DeviceState, DeviceManager, DeviceManagerStore } from '../dist/device-manager';
+import { DefaultDeviceIdResolver, DeviceState, DeviceManager, DeviceManagerStore } from '../dist/device-manager';
 
 const PROC_CPUINFO = [
   'processor	: 0\n',
@@ -55,7 +55,7 @@ describe('DeviceIdResolver', () => {
   });
 
   it('should resolve the unique device identifier', done => {
-    let resolver = new DeviceIdResolver();
+    let resolver = new DefaultDeviceIdResolver();
     resolver.resolve().then(id => {
       console.log(`id = [${id}]`);
       assert.isDefined(id);
@@ -67,7 +67,7 @@ describe('DeviceIdResolver', () => {
   });
 
   it('should return the cpuinfo serial if the device model is RPi', done => {
-    let resolver = new DeviceIdResolver();
+    let resolver = new DefaultDeviceIdResolver();
     sandbox.stub(fs, 'stat')
       .onFirstCall().yields()
       .onSecondCall().yields();
@@ -87,7 +87,7 @@ describe('DeviceIdResolver', () => {
   });
 
   it('should return the cpuinfo serial if the device model is ATB', done => {
-    let resolver = new DeviceIdResolver();
+    let resolver = new DefaultDeviceIdResolver();
     sandbox.stub(fs, 'stat')
       .onFirstCall().yields()
       .onSecondCall().yields();
@@ -107,7 +107,7 @@ describe('DeviceIdResolver', () => {
   });
 
   it('should return the cpuinfo serial if the device model is a generic Linux', done => {
-    let resolver = new DeviceIdResolver();
+    let resolver = new DefaultDeviceIdResolver();
     sandbox.stub(fs, 'stat')
       .onFirstCall().yields()
       .onSecondCall().yields();
@@ -127,7 +127,7 @@ describe('DeviceIdResolver', () => {
   });
 
   it('should return the MAC address', done => {
-    let resolver = new DeviceIdResolver();
+    let resolver = new DefaultDeviceIdResolver();
     sandbox.stub(fs, 'stat').onFirstCall().yields(new Error())
       .onSecondCall().yields()
       .onCall(4).yields();
