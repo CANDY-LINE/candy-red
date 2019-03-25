@@ -506,8 +506,9 @@ export class DeviceManager {
       if (!c) {
         return reject({ status: 400 });
       }
-      this.deviceState._candyRun('modem', 'show').then(output => {
-        resolve({ status: 200, results: output });
+      this.deviceState._candyRun('modem', 'show').then(result => {
+        let modemInfo = result.output;
+        resolve({ status: 200, results: modemInfo });
       }).catch(err => {
         reject(err);
       });
@@ -697,8 +698,11 @@ export class DeviceState {
     });
   }
 
-  _candyRun(cat, act, maxRetry, ...args) {
+  _candyRun(cat, act, maxRetry, notJson, ...args) {
     return new Promise((resolve, reject) => {
+      if (!this.candyBoardServiceSupported) {
+        return reject({ code: -1, message: 'CANDY Board Service is missing' });
+      }
       maxRetry = maxRetry || 0;
       if (!args) {
         args = [];
@@ -715,17 +719,20 @@ export class DeviceState {
           console.log(`output: ${output}`);
         });
         candy.on('close', code => {
+          output = output.replace(/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[mGK]/g, '');
           if (code) {
-            return reject({ code: code });
+            return reject({ code: code, output: output });
           }
           let ret = '';
           try {
-            ret = JSON.parse(output.replace(/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[mGK]/g, ''));
+            ret = JSON.parse(output);
           } catch (e) {
-            RED.log.error('** CANDY Board Service isn\'t running');
-            RED.log.info(e.stack);
+            if (!notJson) {
+              RED.log.error(`** JSON Parse Error => ${ret}`);
+              RED.log.info(e.stack);
+            }
           }
-          return resolve(ret);
+          return resolve({ code: code, output: ret });
         });
         candy.on('error', err => {
           ++retry;
