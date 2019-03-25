@@ -167,35 +167,6 @@ describe('DeviceState', () => {
       });
     });
 
-    it('should return the result output of candy modem show command', done => {
-      let stubCproc = sandbox.stub(cproc);
-      let systemctl = sandbox.stub({
-        on: () => {}
-      });
-      systemctl.on.onFirstCall().yields(0);
-      stubCproc.spawn.onFirstCall().returns(systemctl);
-
-      let stdout = sandbox.stub({
-        on: () => {}
-      });
-      stdout.on.onFirstCall().yields('\x1B[94m{ "counter": { "rx": "0", "tx": "0" }, "datetime": "80/01/06,00:55:11", "functionality": "Full", "imei": "861000000000000", "timezone": 9.0, "model": "UC20", "revision": "UC20GQBR03A14E1G", "manufacturer": "Quectel" }\x1B[0m');
-      let candy = sandbox.stub({
-        stdout: stdout,
-        on: () => {}
-      });
-      stubCproc.spawn.onSecondCall().returns(candy);
-      candy.on.onFirstCall().yields(0);
-
-      state.deviceId = 'my:deviceId';
-      state.testIfCANDYBoardServiceInstalled('candy-pi-lite').then(result => {
-        assert.deepEqual(['urn:imei:861000000000000'], result);
-        assert.isTrue(candy.on.called);
-        done();
-      }).catch(err => {
-        done(err);
-      });
-    });
-
     it('should return the empty version as candy modem show command fails but the board is dtected', done => {
       let stubCproc = sandbox.stub(cproc);
       let systemctl = sandbox.stub({
@@ -204,20 +175,9 @@ describe('DeviceState', () => {
       systemctl.on.onFirstCall().yields(0);
       stubCproc.spawn.onFirstCall().returns(systemctl);
 
-      let stdout = sandbox.stub({
-        on: () => {}
-      });
-      let candy = sandbox.stub({
-        stdout: stdout,
-        on: () => {}
-      });
-      stubCproc.spawn.withArgs('candy', ['modem', 'show'], { timeout: 1000 }).returns(candy);
-      candy.on.onFirstCall().yields(1);
-
       state.deviceId = 'my:deviceId';
       state.testIfCANDYBoardServiceInstalled('candy-pi-lite').then(result => {
         assert.deepEqual(['my:deviceId'], result);
-        assert.isTrue(candy.on.called);
         done();
       }).catch(err => {
         done(err);
