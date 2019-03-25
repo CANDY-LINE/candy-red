@@ -23,7 +23,7 @@ import fs from 'fs';
 import stream from 'stream';
 import cproc from 'child_process';
 import RED from 'node-red';
-import { DefaultDeviceIdResolver, DeviceState, DeviceManager, DeviceManagerStore } from '../dist/device-manager';
+import { DefaultDeviceIdResolver, DeviceState, DeviceManager, DeviceManagerStore, LwM2MDeviceManagement } from '../dist/device-manager';
 
 const PROC_CPUINFO = [
   'processor	: 0\n',
@@ -167,7 +167,7 @@ describe('DeviceState', () => {
       });
     });
 
-    it('should return the empty version as candy modem show command fails but the board is dtected', done => {
+    it('should return the empty version', done => {
       let stubCproc = sandbox.stub(cproc);
       let systemctl = sandbox.stub({
         on: () => {}
@@ -418,5 +418,92 @@ describe('DeviceManagerStore', () => {
       });
     });
   }); /* #_onFlowFileRemovedFunc() */
+
+  describe('LwM2MDeviceManagement', () => {
+    let sandbox;
+    let lwm2mdm;
+    let state;
+    beforeEach(() => {
+      state = new DeviceState(() => {}, () => {});
+      lwm2mdm = new LwM2MDeviceManagement(state);
+      sandbox = sinon.createSandbox();
+    });
+    afterEach(() => {
+      delete process.env.DEVICE_MANAGEMENT_ENABLED;
+      sandbox.restore();
+    });
+
+    describe('#init', () => {
+      it('should define an event handler which does nothing when deviceState.candyBoardServiceSupported is false', () => {
+        state.candyBoardServiceSupported = false;
+        let stubEvent = sandbox.stub(lwm2mdm.internalEventBus);
+        stubEvent.on.onFirstCall().yields({
+          clientName: 'my-clientName'
+        });
+        lwm2mdm.init({
+          deviceId: 'deviceId'
+        });
+      });
+
+      it('should define an event handler which resolve a device id when process.env.DEVICE_MANAGEMENT_ENABLED is "true"', (done) => {
+        state.candyBoardServiceSupported = true;
+        process.env.DEVICE_MANAGEMENT_ENABLED = 'true';
+        let stubEvent = sandbox.stub(lwm2mdm.internalEventBus);
+        stubEvent.on.onFirstCall().yields({
+          clientName: 'my-clientName'
+        });
+
+        let stubCproc = sandbox.stub(cproc);
+        let stdout = sandbox.stub({
+          on: () => {}
+        });
+        stdout.on.onFirstCall().yields('\x1B[94m{ "counter": { "rx": "0", "tx": "0" }, "datetime": "80/01/06,00:55:11", "functionality": "Full", "imei": "861000000000000", "timezone": 9.0, "model": "UC20", "revision": "UC20GQBR03A14E1G", "manufacturer": "Quectel" }\x1B[0m');
+        let candy = sandbox.stub({
+          stdout: stdout,
+          on: () => {}
+        });
+        stubCproc.spawn.onFirstCall().returns(candy);
+        candy.on.onFirstCall().yields(0);
+
+        lwm2mdm.init({
+          deviceId: 'deviceId'
+        });
+        setTimeout(() => {
+          try {
+            assert.isTrue(candy.on.called);
+            assert.isTrue(stubEvent.emit.withArgs('clientNameResolved', `urn:imei:861000000000000`).called);
+            done();
+          } catch (err) {
+            done(err);
+          }
+        }, 10);
+      });
+
+      it('should define an event handler which resolve a device id when a modem info file exists', (done) => {
+        state.candyBoardServiceSupported = true;
+        process.env.DEVICE_MANAGEMENT_ENABLED = 'true';
+        let stubEvent = sandbox.stub(lwm2mdm.internalEventBus);
+        stubEvent.on.onFirstCall().yields({
+          clientName: 'my-clientName'
+        });
+
+        sandbox.stub(fs, 'readFile')
+          .onFirstCall().yields(null, '{"status":"OK","result":{ "counter": { "rx": "0", "tx": "0" }, "datetime": "80/01/06,00:55:11", "functionality": "Full", "imei": "861000000000000", "timezone": 9.0, "model": "UC20", "revision": "UC20GQBR03A14E1G", "manufacturer": "Quectel" }}');
+
+        lwm2mdm.init({
+          deviceId: 'deviceId'
+        });
+        setTimeout(() => {
+          try {
+            assert.isTrue(stubEvent.emit.withArgs('clientNameResolved', `urn:imei:861000000000000`).called);
+            done();
+          } catch (err) {
+            done(err);
+          }
+        }, 10);
+      });
+
+    });
+  });
 
 });

@@ -32,6 +32,7 @@ const TRACE = process.env.DEBUG || false;
 
 const PROC_CPUINFO_PATH = '/proc/cpuinfo';
 const PROC_DT_MODEL_PATH = '/proc/device-tree/model';
+const MODEM_INFO_FILE_PATH = '/opt/candy-line/candy-pi-lite/__modem_info';
 
 export class DefaultDeviceIdResolver {
   constructor() {
@@ -715,8 +716,6 @@ export class DeviceState {
         let output = '';
         candy.stdout.on('data', data => {
           output += data.toString();
-          console.log(`data: ${data}`);
-          console.log(`output: ${output}`);
         });
         candy.on('close', code => {
           output = output.replace(/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[mGK]/g, '');
@@ -899,8 +898,9 @@ export class DeviceState {
 }
 
 export class LwM2MDeviceManagement {
-  constructor() {
+  constructor(deviceState) {
     this.internalEventBus = new EventEmitter();
+    this.deviceState = deviceState;
   }
 
   init(settings) {
@@ -913,7 +913,35 @@ export class LwM2MDeviceManagement {
           clientName = settings.deviceId;
         }
       }
-      this.internalEventBus.emit('clientNameResolved', clientName);
+      if (this.deviceState.candyBoardServiceSupported &&
+          process.env.DEVICE_MANAGEMENT_ENABLED === 'true' &&
+          clientName.indexOf('urn:imei:') !== 0){
+        // Read a modem info file to retrieve IMEI when online
+        return new Promise((resolve, reject) => {
+          fs.readFile(MODEM_INFO_FILE_PATH, (err, data) => {
+            if (err) {
+              // Run candy modem show to retrieve IMEI when offline
+              return this.deviceState._candyRun('modem', 'show').then(result => {
+                let modemInfo = result.output;
+                resolve(modemInfo);
+              }).catch(err => {
+                reject(err);
+              });
+            } else {
+              let dataString = data.toString().trim();
+              try {
+                return resolve(JSON.parse(dataString).result);
+              } catch (_) {
+                return reject(`Unexpected modem info => [${dataString}]`);
+              }
+            }
+          });
+        }).then((modemInfo) => {
+          this.internalEventBus.emit('clientNameResolved', `urn:imei:${modemInfo.imei}`);
+        });
+      } else {
+        this.internalEventBus.emit('clientNameResolved', clientName);
+      }
     });
   }
 }
@@ -922,7 +950,7 @@ export class DeviceManagerStore {
   constructor() {
     this.store = {};
     this.deviceState = new DeviceState(this._onFlowFileChangedFunc(), this._onFlowFileRemovedFunc());
-    this.lwm2m = new LwM2MDeviceManagement();
+    this.lwm2m = new LwM2MDeviceManagement(this.deviceState);
   }
 
   _onFlowFileChangedFunc() {
