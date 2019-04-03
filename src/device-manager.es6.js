@@ -901,48 +901,69 @@ export class LwM2MDeviceManagement {
   constructor(deviceState) {
     this.internalEventBus = new EventEmitter();
     this.deviceState = deviceState;
+    this.objects = {};
+    this.modemInfo = {};
   }
 
   init(settings) {
-    this.internalEventBus.on('resolveClientName', (context) => {
-      let clientName = context.clientName;
-      if (settings.deviceId) {
-        if (settings.deviceId.indexOf('urn:') !== 0) {
-          clientName = `urn:${settings.deviceId}`;
-        } else {
-          clientName = settings.deviceId;
-        }
-      }
-      if (this.deviceState.candyBoardServiceSupported &&
-          process.env.DEVICE_MANAGEMENT_ENABLED === 'true' &&
-          clientName.indexOf('urn:imei:') !== 0){
-        // Read a modem info file to retrieve IMEI when online
-        return new Promise((resolve, reject) => {
-          fs.readFile(MODEM_INFO_FILE_PATH, (err, data) => {
-            if (err) {
-              // Run candy modem show to retrieve IMEI when offline
-              return this.deviceState._candyRun('modem', 'show').then(result => {
-                let modemInfo = result.output;
-                resolve(modemInfo);
-              }).catch(err => {
-                reject(err);
-              });
-            } else {
-              let dataString = data.toString().trim();
-              try {
-                return resolve(JSON.parse(dataString).result);
-              } catch (_) {
-                return reject(`Unexpected modem info => [${dataString}]`);
-              }
+    if (this.deviceState.candyBoardServiceSupported &&
+        process.env.DEVICE_MANAGEMENT_ENABLED === 'true') {
+
+      // prepare module based identifier
+      new Promise(resolve => {
+        fs.readFile(MODEM_INFO_FILE_PATH, (err, data) => {
+          // Read a modem info file to retrieve IMEI when online
+          if (err) {
+            // Run candy modem show to retrieve IMEI when offline
+            return this.deviceState._candyRun('modem', 'show').then(result => {
+              this.modemInfo = result.output;
+              resolve();
+            }).catch(err => {
+              resolve();
+              RED.log.error(`[CANDY RED] Failed to run candy modem show command => ${err.message || err}`);
+            });
+          } else {
+            let dataString = data.toString().trim();
+            try {
+              this.modemInfo = JSON.parse(dataString).result;
+            } catch (_) {
+              RED.log.error(`Unexpected modem info => [${dataString}]`);
             }
-          });
-        }).then((modemInfo) => {
-          this.internalEventBus.emit('clientNameResolved', `urn:imei:${modemInfo.imei}`);
+            resolve();
+          }
         });
-      } else {
-        this.internalEventBus.emit('clientNameResolved', clientName);
-      }
-    });
+      }).then(() => {
+        this.internalEventBus.on('resolveClientName', (context) => {
+          let clientName = context.clientName;
+          if (this.modemInfo.imei) {
+            clientName = `urn:imei:${this.modemInfo.imei}`;
+          } else if (settings.deviceId) {
+            if (settings.deviceId.indexOf('urn:') !== 0) {
+              clientName = `urn:${settings.deviceId}`;
+            } else {
+              clientName = settings.deviceId;
+            }
+          }
+          this.internalEventBus.emit('clientNameResolved', clientName);
+        });
+      });
+
+      // load MO files
+      fs.readdir(`${__dirname}/mo`, (err, dirs) => {
+        if (err) {
+          RED.log.error(`[CANDY RED] Failed to load MO files`);
+          return;
+        }
+        dirs.filter(name => name.indexOf('.json') > 0).forEach((name) => {
+          try {
+            let mo = require(`${__dirname}/mo/${name}`);
+            Object.assign(this.objects, mo);
+          } catch (err) {
+            RED.log.error(`[CANDY RED] Failed to load a MO file: ${name} (${err.message || err})`);
+          }
+        });
+      });
+    }
   }
 }
 

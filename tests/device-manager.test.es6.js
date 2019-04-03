@@ -434,7 +434,7 @@ describe('DeviceManagerStore', () => {
     });
 
     describe('#init', () => {
-      it('should define an event handler which does nothing when deviceState.candyBoardServiceSupported is false', () => {
+      it('should define an event handler which does nothing when deviceState.candyBoardServiceSupported is false', (done) => {
         state.candyBoardServiceSupported = false;
         let stubEvent = sandbox.stub(lwm2mdm.internalEventBus);
         stubEvent.on.onFirstCall().yields({
@@ -443,6 +443,15 @@ describe('DeviceManagerStore', () => {
         lwm2mdm.init({
           deviceId: 'deviceId'
         });
+        setTimeout(() => {
+          try {
+            assert.isFalse(stubEvent.emit.withArgs('clientNameResolved', `urn:imei:861000000000000`).called);
+            assert.equal(0, Object.keys(lwm2mdm.objects).length);
+            done();
+          } catch (err) {
+            done(err);
+          }
+        }, 10);
       });
 
       it('should define an event handler which resolve a device id when process.env.DEVICE_MANAGEMENT_ENABLED is "true"', (done) => {
@@ -472,6 +481,7 @@ describe('DeviceManagerStore', () => {
           try {
             assert.isTrue(candy.on.called);
             assert.isTrue(stubEvent.emit.withArgs('clientNameResolved', `urn:imei:861000000000000`).called);
+            assert.isTrue(Object.keys(lwm2mdm.objects).length > 0);
             done();
           } catch (err) {
             done(err);
