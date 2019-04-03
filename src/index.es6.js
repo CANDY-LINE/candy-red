@@ -186,6 +186,7 @@ export class CandyRed {
       // Initialise the runtime with a server and settings
       RED.init(this.server, settings);
       settings.version += ` [candy-red v${versions.candyRedv}]`;
+      this.deviceManagerStore.lwm2m.init(settings);
 
       // Serve the http nodes from /api
       this.app.use(settings.httpNodeRoot, RED.httpNode);
@@ -343,7 +344,6 @@ export class CandyRed {
       },
       lwm2m: this.deviceManagerStore.lwm2m
     };
-    this.deviceManagerStore.lwm2m.init(settings);
 
     if (CANDY_RED_ADMIN_USER_ID && CANDY_RED_ADMIN_PASSWORD_ENC) {
       let userAuth = new SingleUserAuthenticator(
