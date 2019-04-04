@@ -970,7 +970,13 @@ export class LwM2MDeviceManagement {
                 }
                 return value;
               });
+              Object.keys(mo).forEach((objectId) => {
+                if (this.objects[objectId]) {
+                  RED.log.warn(`[CANDY RED] DUPLICATE ENTRY for the same ObjectID: ${objectId}. This will cause unexpected behaviors.`);
+                }
+              });
               Object.assign(this.objects, mo);
+              RED.log.info(`[CANDY RED] Loaded ObjectIDs => ${Object.keys(mo)} from [${name}]`);
             } catch (err) {
               RED.log.error(`[CANDY RED] Failed to load a MO file: ${name} (${err.message || err})`);
             }
@@ -978,6 +984,12 @@ export class LwM2MDeviceManagement {
         });
       });
     }
+  }
+
+  connectivityStatisticsStart() {
+    RED.log.info(`[connectivityStatisticsStart] Start`);
+    // TODO reset tx/rx counter
+    RED.log.info(`[connectivityStatisticsStart] End`);
   }
 
 }

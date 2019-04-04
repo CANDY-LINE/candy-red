@@ -1,0 +1,10 @@
+---
+# This entry will be assigned to `lwm2m.objects` in RED.settings object.
+"28005": # CANDY RED
+  "0":
+    "0": # Client Version
+      type: 4           # String
+      acl: 1            # R
+      sensitive: false
+      value: ""
+# TBD

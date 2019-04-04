@@ -1,0 +1,158 @@
+---
+# This entry will be assigned to `lwm2m.objects` in RED.settings object.
+"3": # Device
+  "0":
+    "0": # Manufacturer
+      type: 4           # String
+      acl: 1            # R
+      sensitive: false
+      value: "CANDY LINE"
+    "1": # Model
+      type: 4           # String
+      acl: 1            # R
+      sensitive: false
+      value: "CANDY Pi Lite"
+
+"5": # Location
+  "0":
+    "0": # Latitude
+      type: 7           # Float
+      acl: 1            # R
+      sensitive: false
+      value: 0.0        # degree
+    "1": # Longitude
+      type: 7           # Float
+      acl: 1            # R
+      sensitive: false
+      value: 0.0        # degree
+    "2": # Altitude
+      type: 7           # Float
+      acl: 1            # R
+      sensitive: false
+      value: 0.0        # degree
+    "5": # Timestamp
+      type: 6           # Integer (Time)
+      acl: 1            # R
+      sensitive: false
+      value: 0          # Unix Time
+
+"7": # Connectivity Statistics
+  "0":
+    "2": # Tx Data
+      type: 6           # Integer
+      acl: 1            # R
+      sensitive: false
+      value: 0          # Kilo-Bytes
+    "3": # Rx Data
+      type: 6           # Integer
+      acl: 1            # R
+      sensitive: false
+      value: 0          # Kilo-Bytes
+    "7": # Start (Reset resources 0-5 to 0 and start to collect information)
+      type: 240         # Function
+      acl: 4            # E
+      sensitive: false
+      value: "[Function]connectivityStatisticsStart"
+
+"11": # APN connection profile
+  "0":
+    "0": # Profile name
+      type: 4           # String
+      acl: 3            # RW
+      sensitive: false
+      value: ""
+    "1": # APN
+      type: 4           # String
+      acl: 3            # RW
+      sensitive: false
+      value: ""
+    "2": # Auto select APN
+      type: 8           # Boolean
+      acl: 3            # RW
+      sensitive: false
+      value: false
+    "3": # Enable status
+      type: 8           # Boolean
+      acl: 3            # RW
+      sensitive: false
+      value: false
+    "4": # Authentication Type
+      type: 6           # Integer
+      acl: 3            # RW
+      sensitive: false
+      value: 2          # 0: PAP,1: CHAP,2: PAP or CHAP,3: None
+    "5": # User Name
+      type: 4           # String
+      acl: 3            # RW
+      sensitive: false
+      value: ""
+    "6": # Secret
+      type: 4           # String
+      acl: 3            # RW
+      sensitive: false
+      value: ""
+    "9": # Connection establishment time (1)
+      type: 6           # Integer
+      acl: 1            # R
+      sensitive: false
+      value: 0          # Time in seconds
+    "10": # Connection establishment result (1)
+      type: 6           # Integer
+      acl: 1            # R
+      sensitive: false
+      value: 0          # 0 = accepted, 1 = rejected
+    "11": # Connection establishment reject cause (1)
+      type: 6           # Integer
+      acl: 1            # R
+      sensitive: false
+      value: 0          # Reject cause
+    "12": # Connection end time (1)
+      type: 6           # Integer
+      acl: 1            # R
+      sensitive: false
+      value: 0          # UTC time of connection end
+    "13": # TotalBytesSent
+      type: 6           # Integer
+      acl: 1            # R
+      sensitive: false
+      value: 0          # Rolling counter for total number of bytes sent via this interface since last device reset
+    "14": # TotalBytesReceived
+      type: 6           # Integer
+      acl: 1            # R
+      sensitive: false
+      value: 0          # Rolling counter for total number of bytes received via this interface since last device reset
+    "15": # IP address (2)
+      type: 4           # String
+      acl: 1            # R
+      sensitive: false
+      value: ""         # May be IPv4 or IPv6 address
+    "16": # Prefix length(2)
+      type: 4           # String
+      acl: 1            # R
+      sensitive: false
+      value: ""         # Associated with IPv6 address
+    "17": # Subnet mask (2)
+      type: 4           # String
+      acl: 1            # R
+      sensitive: false
+      value: ""         # Subnet mask
+    "18": # Gateway (2)
+      type: 4           # String
+      acl: 1            # R
+      sensitive: false
+      value: ""         # Gateway
+    "19": # Primary DNS address (2)
+      type: 4           # String
+      acl: 1            # R
+      sensitive: false
+      value: ""         # Primary DNS address
+    "20": # Secondary DNS address (2)
+      type: 4           # String
+      acl: 1            # R
+      sensitive: false
+      value: ""         # Secondary DNS address
+    "24": # PDN Type
+      type: 6           # Integer
+      acl: 1            # R
+      sensitive: false
+      value: 0          # 0=Non-IP 1=IPv4 2=IPv6 3=IPv4v6

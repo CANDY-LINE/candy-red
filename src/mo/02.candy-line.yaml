@@ -1,0 +1,52 @@
+---
+# This entry will be assigned to `lwm2m.objects` in RED.settings object.
+"28001": # Product Information
+  "0":
+    "0": # Product Name
+      type: 4           # String
+      acl: 1            # R
+      sensitive: false
+      value: "CANDY Pi Lite"
+    "1": # Module Name
+      type: 4           # String
+      acl: 1            # R
+      sensitive: false
+      value: ""
+    "2": # Module Serial Number
+      type: 4           # String
+      acl: 1            # R
+      sensitive: false
+      value: ""
+    "3": # Module Firmware Version
+      type: 4           # String
+      acl: 1            # R
+      sensitive: false
+      value: ""
+
+"28002": # OS Configuration
+  "0":
+    "0": # User Name
+      type: 4           # String
+      acl: 3            # RW
+      sensitive: false
+      value: ""
+    "1": # Password
+      type: 4           # String
+      acl: 3            # RW
+      sensitive: false
+      value: ""
+    "2": # SSH Enabled
+      type: 8           # Boolean
+      acl: 3            # RW
+      sensitive: false
+      value: false
+    "3": # SSH Password Login Enabled
+      type: 8           # Boolean
+      acl: 3            # RW
+      sensitive: false
+      value: true
+    "4": # SSH Public Key (hex string)
+      type: 4           # String
+      acl: 3            # RW
+      sensitive: false
+      value: ""
