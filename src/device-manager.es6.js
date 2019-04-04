@@ -955,16 +955,31 @@ export class LwM2MDeviceManagement {
           return;
         }
         dirs.filter(name => name.indexOf('.json') > 0).forEach((name) => {
-          try {
-            let mo = require(`${__dirname}/mo/${name}`);
-            Object.assign(this.objects, mo);
-          } catch (err) {
-            RED.log.error(`[CANDY RED] Failed to load a MO file: ${name} (${err.message || err})`);
-          }
+          fs.readFile(`${__dirname}/mo/${name}`, (err, data) => {
+            try {
+              let mo = JSON.parse(data.toString(), (key, value) => {
+                if (key === 'value' && typeof(value) === 'string' && value.indexOf('[Function]') === 0) {
+                  let functionName = value.substring(10);
+                  let f = this[functionName];
+                  if (typeof(f) === 'function' && (functionName !== 'init')) {
+                    return f;
+                  } else {
+                    RED.log.error(`[CANDY RED] Failed to assign a function => ${functionName}`);
+                    return '';
+                  }
+                }
+                return value;
+              });
+              Object.assign(this.objects, mo);
+            } catch (err) {
+              RED.log.error(`[CANDY RED] Failed to load a MO file: ${name} (${err.message || err})`);
+            }
+          });
         });
       });
     }
   }
+
 }
 
 export class DeviceManagerStore {
