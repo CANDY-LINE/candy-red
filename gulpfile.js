@@ -29,16 +29,11 @@ gulp.task('clean', () => {
   gulp.src([
     './dist/*',
     './dist',
-    './tests/**/*.map',
-    './tests/**/*.js',
-    '!./tests/**/*.es6.js',
     './*.tgz',
     './services/environment',
     './services/start_systemd.sh',
     './services/systemd/candy-red.service',
     './services/systemd/environment',
-    './node_modules/node-red*/**/locales/!(en-US)',
-    './node_modules/node-red/**/locales/!(en-US)',
   ])
   .pipe(clean({force: true}))
 });
