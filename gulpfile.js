@@ -17,8 +17,8 @@ const yaml        = require('gulp-yaml');
 
 gulp.task('lint', () => {
   return gulp.src([
-    './tests/**/*.es6.js',
-    './src/**/*.es6.js'
+    './tests/**/*.js',
+    './src/**/*.js'
   ])
   .pipe(jshint())
   .pipe(jshint.reporter('jshint-stylish'))
@@ -85,7 +85,7 @@ gulp.task('mo', () => {
 });
 
 gulp.task('buildSrcs', ['copyResources', 'mo', 'favicons'], () => {
-  return gulp.src('./src/**/*.es6.js')
+  return gulp.src('./src/**/*.js')
     .pipe(sourcemaps.init())
     .pipe(babel({
       minified: true,
@@ -109,10 +109,6 @@ gulp.task('buildSrcs', ['copyResources', 'mo', 'favicons'], () => {
         unsafe: true
       },
     }))
-    .pipe(rename((path) => {
-      // truncate .es6 from basename
-      path.basename = path.basename.substring(0, path.basename.length - 4);
-    }))
     .pipe(sourcemaps.write())
     .pipe(gulp.dest('./dist'))
     .pipe(livereload());
@@ -128,7 +124,7 @@ gulp.task('copyTestResources', () => {
 });
 
 gulp.task('buldTests', ['buildSrcs','copyTestResources'], () => {
-  return gulp.src('./tests/**/*.es6.js')
+  return gulp.src('./tests/**/*.js')
     .pipe(sourcemaps.init())
     .pipe(babel({
       presets: ['es2015'],
@@ -145,7 +141,7 @@ gulp.task('watch', ['build'], () => {
 
 gulp.task('test', ['lint', 'buldTests'], () => {
   return gulp.src([
-    './dist/**/*.test.es6.js',
+    './dist/**/*.test.js',
   ], {read: false})
   .pipe(mocha({
     require: ['source-map-support/register'],
