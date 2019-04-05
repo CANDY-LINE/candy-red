@@ -50,7 +50,7 @@ function system_service_uninstall {
 
 function _lookup_system_service_type {
   SERVICES="${PROJECT_ROOT}/services"
-  START_SH=`ls ${SERVICES}/start_*`
+  START_SH=`ls ${SERVICES}/start_* 2>/dev/null`
   RET=$?
   if [ "${RET}" != "0" ]; then
     err "The service ${SERVICE_NAME} isn't installed yet."
