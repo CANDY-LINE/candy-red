@@ -15,6 +15,11 @@ CANDY RED is IoT gateway software designed for [CANDY Pi Lite board](https://tra
 * More builtin nodes
     * [OMA LwM2M client nodes](https://www.npmjs.com/package/node-red-contrib-lwm2m)
     * [Analog Devices SmartMesh IP™ nodes](https://www.npmjs.com/package/node-red-contrib-smartmesh)
+    * [m-pression EH-Terinal G2 node](https://www.npmjs.com/package/@candy-line/node-red-contrib-eh-terminal-g2)
+    * [Analog Devices ADXL1002 FFT node](https://www.npmjs.com/package/node-red-contrib-adxl-vibration-fft)
+    * [World Map node](https://www.npmjs.com/package/node-red-contrib-web-worldmap)
+    * [Sense HAT nodes](https://www.npmjs.com/package/node-red-node-pi-sense-hat)
+    * [Camera Pi nodes](https://www.npmjs.com/package/node-red-contrib-camerapi)
     * [EnOcean nodes (ESP3 over ERP2)](src/nodes/local-node-enocean)
     * [GATT BLE nodes](https://www.npmjs.com/package/node-red-contrib-generic-ble)
     * [Serialport node](https://www.npmjs.com/package/node-red-node-serialport)
