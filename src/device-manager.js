@@ -1040,6 +1040,12 @@ export class LwM2MDeviceManagement {
     // TODO Apply OS Configuration to the device
     RED.log.info(`[applyOSConfiguration] End`);
   }
+
+  updateAgentConfiguration() {
+    RED.log.info(`[updateAgentConfiguration] Start`);
+    // TODO Update Agent Configuration
+    RED.log.info(`[updateAgentConfiguration] End`);
+  }
 }
 
 export class DeviceManagerStore {

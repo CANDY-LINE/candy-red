@@ -1,0 +1,79 @@
+---
+# This entry will be assigned to `lwm2m.objects` in RED.settings object.
+"30001": # MindConnect for Siemens MindSphere
+  "0":
+    "0": # Base URL
+      type: 4           # String
+      acl: 3            # RW
+      sensitive: false
+      value: ""
+    "1": # Initial Access Token (IAT)
+      type: 4           # String
+      acl: 3            # RW
+      sensitive: false
+      value: ""
+    "2": # Client Credential Profile
+      type: 6           # Integer
+      acl: 3            # RW
+      sensitive: false
+      value: 2          # 1 for RSA_3072, 2 for SHARED_SECRET 4 for the future profile.
+    "3": # Client ID
+      type: 4           # String
+      acl: 3            # RW
+      sensitive: false
+      value: ""
+    "4": # Tenant Name
+      type: 4           # String
+      acl: 3            # RW
+      sensitive: false
+      value: ""
+    "5": # Expiration Time (ISO 8601 format)
+      type: 4           # String
+      acl: 3            # RW
+      sensitive: false
+      value: ""
+    "6": # Data Point Validation
+      type: 8           # Boolean
+      acl: 3            # RW
+      sensitive: false
+      value: false
+    "7": # Event Validation
+      type: 8           # Boolean
+      acl: 3            # RW
+      sensitive: false
+      value: false
+    "8": # Upload File Chunks
+      type: 8           # Boolean
+      acl: 3            # RW
+      sensitive: false
+      value: false
+    "9": # Retries
+      type: 6           # Integer
+      acl: 3            # RW
+      sensitive: false
+      value: 3          # Must be >0, 3 by default.
+    "10": # Node Name
+      type: 4           # String
+      acl: 3            # RW
+      sensitive: false
+      value: ""
+    "100": # Update Agent Configuration
+      type: 240         # Function
+      acl: 4            # E
+      sensitive: false
+      value: "[Function]updateAgentConfiguration"
+    "101": # Agent Configuration Update Status
+      type: 6           # Integer
+      acl: 1            # R
+      sensitive: false
+      value: 3          # 0 for Success
+    "102": # Agent Configuration Last Triggered At (ISO 8601 format)
+      type: 4           # String
+      acl: 1            # R
+      sensitive: false
+      value: ""
+    "103": # Agent Configuration Last Updated At (ISO 8601 format)
+      type: 4           # String
+      acl: 1            # R
+      sensitive: false
+      value: ""
