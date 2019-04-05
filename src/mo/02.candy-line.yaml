@@ -50,3 +50,13 @@
       acl: 3            # RW
       sensitive: false
       value: ""
+    "20": # Apply OS Configuration
+      type: 240         # Function
+      acl: 4            # E
+      sensitive: false
+      value: "[Function]applyOSConfiguration"
+    "21": # OS Configuration Application Result Code
+      type: 6           # Integer
+      acl: 1            # R
+      sensitive: false
+      value: 0          # 0 for Success

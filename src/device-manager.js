@@ -1034,6 +1034,12 @@ export class LwM2MDeviceManagement {
   resolveCANDYREDVersion() {
     return this.settings.version;
   }
+
+  applyOSConfiguration() {
+    RED.log.info(`[applyOSConfiguration] Start`);
+    // TODO Apply OS Configuration to the device
+    RED.log.info(`[applyOSConfiguration] End`);
+  }
 }
 
 export class DeviceManagerStore {
