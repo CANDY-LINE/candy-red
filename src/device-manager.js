@@ -897,15 +897,25 @@ export class DeviceState {
   }
 }
 
+const MODULE_MODEL_MAPPINGS = {
+  'EC21': 'CANDY Pi Lite LTE',
+  'UC20': 'CANDY Pi Lite 3G',
+  'EC25': 'CANDY Pi Lite+',
+  'BG96': 'CANDY Pi Lite LPWA',
+};
+
 export class LwM2MDeviceManagement {
   constructor(deviceState) {
     this.internalEventBus = new EventEmitter();
     this.deviceState = deviceState;
     this.objects = {};
     this.modemInfo = {};
+    this.tasks = {};
+    this.settings = {};
   }
 
   init(settings) {
+    this.settings = Object.assign(this.settings, settings);
     if (this.deviceState.candyBoardServiceSupported &&
         process.env.DEVICE_MANAGEMENT_ENABLED === 'true') {
 
@@ -962,7 +972,7 @@ export class LwM2MDeviceManagement {
                   let functionName = value.substring(10);
                   let f = this[functionName];
                   if (typeof(f) === 'function' && (functionName !== 'init')) {
-                    return f;
+                    return f.bind(this);
                   } else {
                     RED.log.error(`[CANDY RED] Failed to assign a function => ${functionName}`);
                     return '';
@@ -983,6 +993,7 @@ export class LwM2MDeviceManagement {
           });
         });
       });
+
     }
   }
 
@@ -992,6 +1003,37 @@ export class LwM2MDeviceManagement {
     RED.log.info(`[connectivityStatisticsStart] End`);
   }
 
+  resolveCANDYLINEManufacturer() {
+    return process.env.DEVICE_MANAGEMENT_MANUFACTURER || 'CANDY LINE';
+  }
+
+  resolveCANDYLINEModel() {
+    return process.env.DEVICE_MANAGEMENT_MODEL || this.resolveCANDYLINEProductName();
+  }
+
+  resolveCANDYLINEProductName() {
+    let name = MODULE_MODEL_MAPPINGS[this.modemInfo.model];
+    if (!name) {
+      name = `Unknown (${this.modemInfo.model})`;
+    }
+    return name;
+  }
+
+  resolveModuleName() {
+    return this.modemInfo.model;
+  }
+
+  resolveModuleIdentifier() {
+    return this.modemInfo.imei;
+  }
+
+  resolveModuleFirmwareVersion() {
+    return this.modemInfo.revision;
+  }
+
+  resolveCANDYREDVersion() {
+    return this.settings.version;
+  }
 }
 
 export class DeviceManagerStore {

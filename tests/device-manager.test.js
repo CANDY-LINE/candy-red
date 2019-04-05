@@ -482,6 +482,8 @@ describe('DeviceManagerStore', () => {
             assert.isTrue(candy.on.called);
             assert.isTrue(stubEvent.emit.withArgs('clientNameResolved', `urn:imei:861000000000000`).called);
             assert.isTrue(Object.keys(lwm2mdm.objects).length > 0);
+            assert.equal('CANDY LINE', lwm2mdm.objects['3']['0']['0'].value());
+            assert.equal('CANDY Pi Lite 3G', lwm2mdm.objects['28001']['0']['0'].value());
             done();
           } catch (err) {
             done(err);

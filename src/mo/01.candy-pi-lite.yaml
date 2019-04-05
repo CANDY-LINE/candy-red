@@ -6,12 +6,12 @@
       type: 4           # String
       acl: 1            # R
       sensitive: false
-      value: "CANDY LINE"
+      value: "[Function]resolveCANDYLINEManufacturer"
     "1": # Model
       type: 4           # String
       acl: 1            # R
       sensitive: false
-      value: "CANDY Pi Lite"
+      value: "[Function]resolveCANDYLINEModel"
 
 "5": # Location
   "0":

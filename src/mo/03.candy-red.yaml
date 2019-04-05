@@ -6,5 +6,5 @@
       type: 4           # String
       acl: 1            # R
       sensitive: false
-      value: ""
+      value: "[Function]resolveCANDYREDVersion"
 # TBD
