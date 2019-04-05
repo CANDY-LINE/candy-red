@@ -25,9 +25,11 @@ CANDY RED is IoT gateway software designed for [CANDY Pi Lite board](https://tra
     * [Serialport node](https://www.npmjs.com/package/node-red-node-serialport)
     * [Device Statistics node](https://www.npmjs.com/package/node-red-contrib-device-stats)
     * [CANDY Pi Lite/CANDY Pi Lite+ 3G/4G LTE board nodes](src/nodes/local-node-candy-pi-lite)
-    * [CANDY EGG cloud service nodes](src/nodes/local-node-candy-egg) \*
+    * [CANDY EGG cloud service nodes](src/nodes/local-node-candy-egg) \*1
+    * [MindConnect node for Siemens MindSphere](https://www.npmjs.com/package/@mindconnect/node-red-contrib-mindconnect) \*2
 
-_\* [CANDY EGG cloud service](https://www.candy-line.io/%E8%A3%BD%E5%93%81%E4%B8%80%E8%A6%A7/candy-red-egg/) account is required_
+_\*1 [CANDY EGG cloud service](https://www.candy-line.io/%E8%A3%BD%E5%93%81%E4%B8%80%E8%A6%A7/candy-red-egg/) account is required_<br>
+_\*2 [MindSphere IoT Value Plan](https://new.siemens.com/global/en/products/software/mindsphere.html) account is required_
 
 ## OS and Hardwares
 
