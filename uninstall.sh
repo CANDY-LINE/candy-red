@@ -56,7 +56,7 @@ function _lookup_system_service_type {
     err "The service ${SERVICE_NAME} isn't installed yet."
   else
     START_SH=$(basename ${START_SH})
-    SYSTEM_SERVICE_TYPE=${START_SH:6:`echo ${START_SH} | wc -c`-9}
+    SYSTEM_SERVICE_TYPE=${START_SH:6:`echo ${START_SH} | wc -c`-10}
   fi
 }
 
