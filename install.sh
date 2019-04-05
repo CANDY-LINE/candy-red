@@ -238,6 +238,7 @@ function install_preinstalled_nodes {
       fi
     fi
     info "Installing default nodes to ${CANDY_RED_MODULE_ROOT}..."
+    rm -f "${PROJECT_ROOT}/deps.txt"
     echo "${NODES}" | \
       while IFS=',' read p v; do
         p=`echo -e ${p} | tr -d ' '`
@@ -246,7 +247,11 @@ function install_preinstalled_nodes {
           continue
         fi
         npm install --production ${NPM_OPTS} ${p}@${v}
+        echo "\"${p}\":\"${v}\",${DEPS}" >> "${PROJECT_ROOT}/deps.txt"
       done
+    DEPS=`cat "${PROJECT_ROOT}/deps.txt"`
+    rm -f "${PROJECT_ROOT}/deps.txt"
+    DEPS=${DEPS:0:`echo ${DEPS} | wc -c`-2}
     # nodes are installed to {prefix}/lib directory
     # because -g flag is implicitly inherited on performing the above npm
     if [ -d "${CANDY_RED_MODULE_ROOT}/lib/node_modules" ]; then
@@ -257,8 +262,7 @@ function install_preinstalled_nodes {
     rm -f ${CANDY_RED_MODULE_ROOT}/.config.json
     rm -f ${CANDY_RED_MODULE_ROOT}/.config.json.backup
     cd ${CANDY_RED_MODULE_ROOT}
-    echo '{"name": "node-red-project","version": "0.0.1","description": "A Node-RED Project"}' > package.json
-    npm init --yes
+    echo "{\"name\":\"node-red-project\",\"version\":\"0.0.1\",\"description\":\"A Node-RED Project\",\"dependencies\":{${DEPS}}}" > package.json
     cd ${PROJECT_ROOT}
   else
     info "Skip to install nodes!!"
