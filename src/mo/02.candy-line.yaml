@@ -15,7 +15,7 @@
     "2": # Module Identifier
       type: 4           # String
       acl: 1            # R
-      sensitive: false
+      sensitive: true
       value: "[Function]resolveModuleIdentifier"
     "3": # Module Firmware Version
       type: 4           # String
@@ -33,7 +33,7 @@
     "1": # Password
       type: 4           # String
       acl: 3            # RW
-      sensitive: false
+      sensitive: true
       value: ""
     "2": # SSH Enabled
       type: 8           # Boolean

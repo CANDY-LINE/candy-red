@@ -5,17 +5,17 @@
     "0": # Base URL
       type: 4           # String
       acl: 3            # RW
-      sensitive: false
+      sensitive: true
       value: ""
     "1": # Initial Access Token (IAT)
       type: 4           # String
       acl: 3            # RW
-      sensitive: false
+      sensitive: true
       value: ""
     "2": # Client Credential Profile
       type: 6           # Integer
       acl: 3            # RW
-      sensitive: false
+      sensitive: true
       value: 2          # 1 for RSA_3072, 2 for SHARED_SECRET 4 for the future profile.
     "3": # Client ID
       type: 4           # String
