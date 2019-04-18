@@ -340,6 +340,8 @@ const CLIENT_CREDENTIAL_PROFILE = {
   '2': 'SHARED_SECRET',
 };
 
+const UPDATE_INTERVAL_MS = process.env.UPDATE_INTERVAL_MS || 60 * 1000;
+
 export class LwM2MDeviceManagement {
 
   static restart() {
@@ -379,6 +381,7 @@ export class LwM2MDeviceManagement {
         return value;
       }
     };
+    this.objectsLastSavedAt = 0;
   }
 
   init(settings) {
@@ -423,6 +426,14 @@ export class LwM2MDeviceManagement {
             }
           }
           this.internalEventBus.emit('clientNameResolved', clientName);
+        });
+        this.internalEventBus.on('object-event', (ev) => {
+          if ((ev.eventType === 'updated') || (ev.eventType === 'created')) {
+            if ((ev.uri.match(`^/(${Object.keys(this.objects).join('|')})/.*$`)) &&
+                (Date.now() - this.objectsLastSavedAt > UPDATE_INTERVAL_MS)) {
+              return this.saveObjects();
+            }
+          }
         });
 
         return new Promise((resolve, reject) => {
@@ -486,6 +497,7 @@ export class LwM2MDeviceManagement {
         fs.writeFileSync(`${this.objectFilePath}`, data);
       } catch (_) {
       }
+      this.objectsLastSavedAt = Date.now();
       resolve();
     });
   }
