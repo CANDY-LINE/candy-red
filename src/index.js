@@ -186,15 +186,18 @@ export class CandyRed {
       // Initialise the runtime with a server and settings
       RED.init(this.server, settings);
       settings.version += ` [candy-red v${versions.candyRedv}]`;
-      this.deviceManagerStore.lwm2m.init(settings);
 
       // Serve the http nodes from /api
       this.app.use(settings.httpNodeRoot, RED.httpNode);
 
-      let flowFilePath = settings.userDir + '/' + this.flowFile;
-      this.deviceManagerStore.deviceState.testIfUIisEnabled(flowFilePath).then(enabled => {
-        if (enabled) {
-          RED.log.info('[CANDY RED] Deploying Flow Editor UI...');
+      this.deviceManagerStore.lwm2m.init(settings).then(() => {
+        const flowFilePath = settings.userDir + '/' + this.flowFile;
+        return this.deviceManagerStore.deviceState.testIfUIisEnabled(flowFilePath);
+      }).then(() => {
+        const headlessEnabled = this.deviceManagerStore.lwm2m.getValue(28005, 0, 1);
+        RED.log.info(`[CANDY RED] Headless Enabled? => ${headlessEnabled}`);
+        if (!headlessEnabled) {
+          RED.log.info(`[CANDY RED] Deploying Flow Editor UI...`);
           // Add a simple route for static content served from 'public'
           this.app.use('/', express.static(__dirname + '/public'));
           if (settings.httpAdminRoot) {

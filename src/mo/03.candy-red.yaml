@@ -7,4 +7,9 @@
       acl: 1            # R
       sensitive: false
       value: "[Function]resolveCANDYREDVersion"
+    "1": # Headless Enabled
+      type: 8           # Boolean
+      acl: 3            # RW
+      sensitive: false
+      value: false
 # TBD
