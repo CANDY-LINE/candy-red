@@ -920,7 +920,7 @@ export class LwM2MDeviceManagement {
         process.env.DEVICE_MANAGEMENT_ENABLED === 'true') {
 
       // prepare module based identifier
-      new Promise(resolve => {
+      return new Promise(resolve => {
         fs.readFile(MODEM_INFO_FILE_PATH, (err, data) => {
           // Read a modem info file to retrieve IMEI when online
           if (err) {
@@ -956,44 +956,51 @@ export class LwM2MDeviceManagement {
           }
           this.internalEventBus.emit('clientNameResolved', clientName);
         });
-      });
 
-      // load MO files
-      fs.readdir(`${__dirname}/mo`, (err, dirs) => {
-        if (err) {
-          RED.log.error(`[CANDY RED] Failed to load MO files`);
-          return;
-        }
-        dirs.filter(name => name.indexOf('.json') > 0).forEach((name) => {
-          fs.readFile(`${__dirname}/mo/${name}`, (err, data) => {
-            try {
-              let mo = JSON.parse(data.toString(), (key, value) => {
-                if (key === 'value' && typeof(value) === 'string' && value.indexOf('[Function]') === 0) {
-                  let functionName = value.substring(10);
-                  let f = this[functionName];
-                  if (typeof(f) === 'function' && (functionName !== 'init')) {
-                    return f.bind(this);
-                  } else {
-                    RED.log.error(`[CANDY RED] Failed to assign a function => ${functionName}`);
-                    return '';
-                  }
-                }
-                return value;
-              });
-              Object.keys(mo).forEach((objectId) => {
-                if (this.objects[objectId]) {
-                  RED.log.warn(`[CANDY RED] DUPLICATE ENTRY for the same ObjectID: ${objectId}. This will cause unexpected behaviors.`);
-                }
-              });
-              Object.assign(this.objects, mo);
-              RED.log.info(`[CANDY RED] Loaded ObjectIDs => ${Object.keys(mo)} from [${name}]`);
-            } catch (err) {
-              RED.log.error(`[CANDY RED] Failed to load a MO file: ${name} (${err.message || err})`);
+        return new Promise((resolve, reject) => {
+          // load MO files
+          fs.readdir(`${__dirname}/mo`, (err, dirs) => {
+            if (err) {
+              RED.log.error(`[CANDY RED] Failed to load MO files`);
+              return reject(err);
             }
+            dirs.filter(name => name.indexOf('.json') > 0).forEach((name) => {
+              try {
+                const data = fs.readFileSync(`${__dirname}/mo/${name}`);
+                const mo = JSON.parse(data.toString(), (key, value) => {
+                  if (key === 'value' && typeof(value) === 'string' && value.indexOf('[Function]') === 0) {
+                    let functionName = value.substring(10);
+                    let f = this[functionName];
+                    if (typeof(f) === 'function' && (functionName !== 'init')) {
+                      return f.bind(this);
+                    } else {
+                      RED.log.error(`[CANDY RED] Failed to assign a function => ${functionName}`);
+                      return '';
+                    }
+                  }
+                  return value;
+                });
+                Object.keys(mo).forEach((objectId) => {
+                  if (this.objects[objectId]) {
+                    RED.log.warn(`[CANDY RED] DUPLICATE ENTRY for the same ObjectID: ${objectId}. This will cause unexpected behaviors.`);
+                  }
+                });
+                Object.assign(this.objects, mo);
+                RED.log.info(`[CANDY RED] Loaded ObjectIDs => ${Object.keys(mo)} from [${name}]`);
+              } catch (err) {
+                RED.log.error(`[CANDY RED] Failed to load a MO file: ${name} (${err.message || err})`);
+              }
+            });
+
+            return resolve();
           });
+
         });
+
       });
 
+    } else {
+      return Promise.resolve();
     }
   }
 

@@ -504,18 +504,22 @@ describe('DeviceManagerStore', () => {
 
         lwm2mdm.init({
           deviceId: 'deviceId'
+        }).then(() => {
+          setTimeout(() => {
+            try {
+              assert.isTrue(stubEvent.emit.withArgs('clientNameResolved', `urn:imei:861000000000000`).called);
+              done();
+            } catch (err) {
+              done(err);
+            }
+          }, 10);
+        }).catch((err) => {
+          done(err);
         });
-        setTimeout(() => {
-          try {
-            assert.isTrue(stubEvent.emit.withArgs('clientNameResolved', `urn:imei:861000000000000`).called);
-            done();
-          } catch (err) {
-            done(err);
-          }
-        }, 10);
       });
 
     });
+
   });
 
 });
