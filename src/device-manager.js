@@ -786,13 +786,7 @@ export class DeviceState {
     } else {
       flows = data;
     }
-    let accounts = DeviceManager.listAccounts(flows);
-    if (accounts.length > 0) {
-      accounts.forEach(a => {
-        delete a.lastDeliveredAt;
-      });
-      data = JSON.stringify(flows);
-    }
+    data = JSON.stringify(flows);
     let current = this.flowFileSignature;
     let sha1 = crypto.createHash('sha1');
     sha1.update(data);
@@ -902,6 +896,11 @@ const MODULE_MODEL_MAPPINGS = {
   'UC20': 'CANDY Pi Lite 3G',
   'EC25': 'CANDY Pi Lite+',
   'BG96': 'CANDY Pi Lite LPWA',
+};
+
+const CLIENT_CREDENTIAL_PROFILE = {
+  '1': 'RSA_3072',
+  '2': 'SHARED_SECRET',
 };
 
 export class LwM2MDeviceManagement {
@@ -1096,10 +1095,70 @@ export class LwM2MDeviceManagement {
     RED.log.info(`[applyOSConfiguration] End`);
   }
 
-  _updateAgentConfiguration() {
-    RED.log.info(`[updateAgentConfiguration] Start`);
-    // TODO Update Agent Configuration
-    RED.log.info(`[updateAgentConfiguration] End`);
+  _updateAgentConfiguration(flowFilePath) {
+    return new Promise((resolve, reject) => {
+      RED.log.info(`[updateAgentConfiguration] Start`);
+      // Update Agent Configuration
+      flowFilePath = flowFilePath || this.deviceState.flowFilePath;
+      if (Array.isArray(flowFilePath)) {
+        flowFilePath = flowFilePath[0];
+      }
+      fs.readFile(flowFilePath, (err, data) => {
+        if (err) {
+          RED.log.info(`[updateAgentConfiguration] ERROR End. err => ${err.message || err}`);
+          return reject(err);
+        }
+        try {
+          const flows = JSON.parse(data.toString());
+          let agents = flows.filter(f => {
+            if (f.type !== 'mindconnect') {
+              return false;
+            }
+            return true;
+          });
+          agents.forEach((agent) => {
+            const nodeName = this.getValue(30001, 0, 10);
+            agent.name = nodeName || '';
+            const clientCredentialProfile = CLIENT_CREDENTIAL_PROFILE[this.getValue(30001, 0, 2)];
+            agent.configtype = clientCredentialProfile || 'SHARED_SECRET';
+            const uploadFileChunks = this.getValue(30001, 0, 8);
+            agent.chunk = !!uploadFileChunks;
+            const retries = this.getValue(30001, 0, 9);
+            agent.retries = retries || 0;
+            const dataValidation = this.getValue(30001, 0, 6);
+            agent.validate = !!dataValidation;
+            const eventValidation = this.getValue(30001, 0, 7);
+            agent.validateevent = !!eventValidation;
+            const baseUrl = this.getValue(30001, 0, 0) || '';
+            const iat = this.getValue(30001, 0, 1) || '';
+            const clientId = this.getValue(30001, 0, 3) || '';
+            const tenant = this.getValue(30001, 0, 4) || '';
+            const expiration = this.getValue(30001, 0, 5) || '';
+            const agentconfig = {
+              'content': {
+                'baseUrl': baseUrl,
+                'iat': iat,
+                'clientCredentialProfile': [ clientCredentialProfile ],
+                'clientId': clientId,
+                'tenant': tenant
+              },
+              'expiration': expiration
+            };
+            agent.agentconfig = JSON.stringify(agentconfig);
+          });
+          RED.log.info(`[updateAgentConfiguration] End`);
+          return resolve(flows);
+        } catch (err) {
+          RED.log.info(`[updateAgentConfiguration] ERROR End. err => ${err.message || err}`);
+          return reject(err);
+        }
+      });
+    }).then((flows) => {
+      return this.deviceState.updateFlow(flows);
+    }).then(() => {
+      RED.log.warn('FLOW IS UPDATED! RELOAD THE PAGE AFTER RECONNECTING SERVER!!');
+      DeviceManager.restart();
+    });
   }
 }
 

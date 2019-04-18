@@ -555,6 +555,39 @@ describe('DeviceManagerStore', () => {
 
     });
 
+    describe('#_updateAgentConfiguration', () => {
+
+      it('should modify the existing mindconnect configuration in the flow file', (done) => {
+        state.candyBoardServiceSupported = true;
+        process.env.DEVICE_MANAGEMENT_ENABLED = 'true';
+        const stubRestart = sandbox.stub(DeviceManager, 'restart');
+        stubRestart.onFirstCall().returns();
+        lwm2mdm.init({
+          deviceId: 'deviceId'
+        }).then(() => {
+          return state.initWithFlowFilePath(`${__dirname}/test-flow-mindconnect-update.json`);
+        }).then(() => {
+          lwm2mdm.setResource(30001, 0, 0, { value: 'https://my-endpoint' });
+          lwm2mdm.setResource(30001, 0, 1, { value: 'my iat' });
+          lwm2mdm.setResource(30001, 0, 2, { value: 2 });
+          lwm2mdm.setResource(30001, 0, 3, { value: 'my client id' });
+          lwm2mdm.setResource(30001, 0, 4, { value: 'my tenant name' });
+          lwm2mdm.setResource(30001, 0, 5, { value: '2019-12-31T09:33:02.000Z' });
+          lwm2mdm.setResource(30001, 0, 6, { value: true });
+          lwm2mdm.setResource(30001, 0, 7, { value: true });
+          lwm2mdm.setResource(30001, 0, 8, { value: true });
+          lwm2mdm.setResource(30001, 0, 9, { value: 999 });
+          lwm2mdm.setResource(30001, 0, 10, { value: 'my node' });
+          return lwm2mdm.getValue(30001, 0, 100, `${__dirname}/test-flow-mindconnect.json`); // updateAgentConfiguration
+        }).then(() => {
+          done();
+        }).catch((err) => {
+          done(err);
+        });
+      });
+
+    });
+
   });
 
 });
