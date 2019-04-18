@@ -98,58 +98,7 @@ export class DefaultDeviceIdResolver {
   }
 }
 
-export class DeviceManager {
-  constructor(deviceState) {
-    this.deviceState = deviceState;
-    this.prefix = '[CANDY RED] {DeviceManager}: ';
-  }
-
-  _info(msg) {
-    RED.log.info(this.prefix  + msg);
-  }
-  _warn(msg) {
-    RED.log.warn(this.prefix  + msg);
-  }
-  _error(msg) {
-    RED.log.error(this.prefix  + msg);
-  }
-
-  static restart() {
-    // systemctl shuould restart the service
-    setTimeout(() => {
-      process.exit(219);
-    }, REBOOT_DELAY_MS);
-  }
-
-  _performInspect(c) {
-    return new Promise((resolve, reject) => {
-      if (!this.deviceState.candyBoardServiceSupported) {
-        return reject({ status: 405 });
-      }
-      if (!c) {
-        return reject({ status: 400 });
-      }
-      this.deviceState._candyRun('modem', 'show').then(result => {
-        let modemInfo = result.output;
-        resolve({ status: 200, results: modemInfo });
-      }).catch(err => {
-        reject(err);
-      });
-    });
-  }
-
-  _updateLocalFlows(flows) {
-    return new Promise((resolve, reject) => {
-      this.deviceState.updateFlow(flows).then(content => {
-        resolve({data:content, done: () => {
-          this._warn('FLOW IS UPDATED! RELOAD THE PAGE AFTER RECONNECTING SERVER!!');
-          DeviceManager.restart();
-        }});
-      }).catch(err => {
-        reject(err);
-      });
-    });
-  }
+export class DeviceState {
 
   static flowsToString(flows, content=null) {
     if (typeof(flows) === 'string') {
@@ -163,89 +112,6 @@ export class DeviceManager {
       return content;
     }
   }
-
-  _performSyncFlows(c) {
-    return new Promise((resolve, reject) => {
-      try {
-        if (c.args.flowUpdateRequired) {
-          if (this.deviceState.flowFileSignature !== c.args.expectedSignature) {
-            fs.readFile(this.deviceState.flowFilePath, (err, data) => {
-              if (err) {
-                return reject(err);
-              }
-              let flows = [];
-              try {
-                flows = JSON.parse(data);
-              } catch (_) {
-                return reject({ status: 500, message: 'My flow is invalid' });
-              }
-              if (c.args.publishable) {
-                this._updateLocalFlows(flows).then(result => {
-                  return resolve(result);
-                }).catch(err => {
-                  return reject(err);
-                });
-              } else {
-                return resolve({data: DeviceManager.flowsToString(flows)});
-              }
-            });
-          }
-        } else if (this.deviceState.flowFileSignature !== c.args.expectedSignature) {
-          // non-primary accounts are NOT allowed to download (to be delivered) flow files
-          if (!this.primary) {
-            return reject({ status: 405, message: 'not the primary account' });
-          }
-          return reject({ status: 202, commands: {
-            cat: 'sys',
-            act: 'deliverflows',
-            args: {
-              flowId: c.args.flowId
-            }
-          }});
-        } else {
-          // 304 Not Modified
-          return reject({ status: 304 });
-        }
-      } catch (err) {
-        return reject(err);
-      }
-    }).then(result => {
-      return new Promise(resolve => {
-        let status = { status: 202, commands: {
-          cat: 'sys',
-          act: 'updateflows',
-          args: {
-            name: path.basename(this.deviceState.flowFilePath),
-            signature: this.deviceState.flowFileSignature,
-            content: result.data
-          },
-          done: result.done
-        }};
-        return resolve(status);
-      });
-    });
-  }
-
-  _performUpdateFlows(c) {
-    // non-primary accounts are allowed to upload flow files
-    return new Promise((resolve, reject) => {
-      try {
-        if (!c.args.content) {
-          return reject({ status: 400 });
-        }
-        this.deviceState.updateFlow(c.args.content).then(() => {
-          resolve({ status: 200, restart: true });
-        }).catch(err => {
-          return reject(err);
-        });
-      } catch (err) {
-        return reject(err);
-      }
-    });
-  }
-}
-
-export class DeviceState {
 
   constructor(onFlowFileChanged, onFlowFileRemoved) {
     this.candyBoardServiceSupported = false;
@@ -383,7 +249,7 @@ export class DeviceState {
           content = null;
         }
       }
-      content = DeviceManager.flowsToString(flows, content);
+      content = DeviceState.flowsToString(flows, content);
       this._unwatchFlowFilePath();
       fs.writeFile(this.flowFilePath, content, err => {
         this._watchFlowFilePath();
@@ -475,6 +341,14 @@ const CLIENT_CREDENTIAL_PROFILE = {
 };
 
 export class LwM2MDeviceManagement {
+
+  static restart() {
+    // systemctl shuould restart the service
+    setTimeout(() => {
+      process.exit(219);
+    }, REBOOT_DELAY_MS);
+  }
+
   constructor(deviceState) {
     this.internalEventBus = new EventEmitter();
     this.deviceState = deviceState;
@@ -616,6 +490,68 @@ export class LwM2MDeviceManagement {
     }
   }
 
+  syncFlows(c) {
+    return new Promise((resolve, reject) => {
+      try {
+        if (c.args.flowUpdateRequired) {
+          if (this.deviceState.flowFileSignature !== c.args.expectedSignature) {
+            fs.readFile(this.deviceState.flowFilePath, (err, data) => {
+              if (err) {
+                return reject(err);
+              }
+              let flows = [];
+              try {
+                flows = JSON.parse(data);
+              } catch (_) {
+                return reject({ status: 500, message: 'My flow is invalid' });
+              }
+              if (c.args.publishable) {
+                this._updateLocalFlows(flows).then(result => {
+                  return resolve(result);
+                }).catch(err => {
+                  return reject(err);
+                });
+              } else {
+                return resolve({data: DeviceState.flowsToString(flows)});
+              }
+            });
+          }
+        } else if (this.deviceState.flowFileSignature !== c.args.expectedSignature) {
+          // non-primary accounts are NOT allowed to download (to be delivered) flow files
+          if (!this.primary) {
+            return reject({ status: 405, message: 'not the primary account' });
+          }
+          return reject({ status: 202, commands: {
+            cat: 'sys',
+            act: 'deliverflows',
+            args: {
+              flowId: c.args.flowId
+            }
+          }});
+        } else {
+          // 304 Not Modified
+          return reject({ status: 304 });
+        }
+      } catch (err) {
+        return reject(err);
+      }
+    }).then(result => {
+      return new Promise(resolve => {
+        let status = { status: 202, commands: {
+          cat: 'sys',
+          act: 'updateflows',
+          args: {
+            name: path.basename(this.deviceState.flowFilePath),
+            signature: this.deviceState.flowFileSignature,
+            content: result.data
+          },
+          done: result.done
+        }};
+        return resolve(status);
+      });
+    });
+  }
+
   _connectivityStatisticsStart() {
     RED.log.info(`[connectivityStatisticsStart] Start`);
     // TODO reset tx/rx counter
@@ -722,7 +658,7 @@ export class LwM2MDeviceManagement {
       return this.deviceState.updateFlow(flows);
     }).then(() => {
       RED.log.warn('FLOW IS UPDATED! RELOAD THE PAGE AFTER RECONNECTING SERVER!!');
-      DeviceManager.restart();
+      LwM2MDeviceManagement.restart();
     });
   }
 }
