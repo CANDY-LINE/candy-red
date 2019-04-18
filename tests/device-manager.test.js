@@ -520,6 +520,50 @@ describe('DeviceManagerStore', () => {
 
     });
 
+    describe('#getValue', () => {
+
+      it('should return the loaded MO values', (done) => {
+        state.candyBoardServiceSupported = true;
+        process.env.DEVICE_MANAGEMENT_ENABLED = 'true';
+        lwm2mdm.init({
+          deviceId: 'deviceId'
+        }).then(() => {
+          assert.equal('CANDY LINE', lwm2mdm.getValue(3, 0, 0));
+          assert.equal(0, lwm2mdm.getValue(11, 0, 24));
+          assert.equal('', lwm2mdm.getValue(30001, 0, 103));
+          assert.equal(null, lwm2mdm.getValue(90001, 0, 103));
+          done();
+        }).catch((err) => {
+          done(err);
+        });
+      });
+
+    });
+
+    describe('#setResource', () => {
+
+      it('should store a resource', (done) => {
+        state.candyBoardServiceSupported = true;
+        process.env.DEVICE_MANAGEMENT_ENABLED = 'true';
+        lwm2mdm.init({
+          deviceId: 'deviceId'
+        }).then(() => {
+          lwm2mdm.setResource(3, 0, 0, { value: 'MY MAN' });
+          assert.equal('MY MAN', lwm2mdm.getValue(3, 0, 0)); // ACL is ignored
+          lwm2mdm.setResource(11, 0, 24, { value: 9876, type: 6 });
+          assert.equal(9876, lwm2mdm.getValue(11, 0, 24));
+          lwm2mdm.setResource(30001, 0, 103, { value: '$$$$', type: 4 });
+          assert.equal('$$$$', lwm2mdm.getValue(30001, 0, 103));
+          lwm2mdm.setResource(90001, 0, 103, { value: true, type: 8 });
+          assert.equal(true, lwm2mdm.getValue(90001, 0, 103));
+          done();
+        }).catch((err) => {
+          done(err);
+        });
+      });
+
+    });
+
   });
 
 });

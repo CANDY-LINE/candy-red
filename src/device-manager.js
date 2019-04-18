@@ -1004,6 +1004,54 @@ export class LwM2MDeviceManagement {
     }
   }
 
+  getValue(objectId, instanceId, resourceId) {
+    const res = this.getResource(objectId, instanceId, resourceId);
+    if (!res) {
+      return null;
+    }
+    if (typeof(res.value) === 'function') {
+      return res.value();
+    }
+    return res.value;
+  }
+
+  getResource(objectId, instanceId, resourceId) {
+    objectId = String(objectId);
+    instanceId = String(instanceId);
+    resourceId = String(resourceId);
+    const obj = this.objects[objectId];
+    if (!obj) {
+      return null;
+    }
+    const instance = obj[instanceId];
+    if (!instance) {
+      return null;
+    }
+    const res = instance[resourceId];
+    return Object.assign({}, res);
+  }
+
+  setResource(objectId, instanceId, resourceId, newVal) {
+    objectId = String(objectId);
+    instanceId = String(instanceId);
+    resourceId = String(resourceId);
+    let obj = this.objects[objectId];
+    if (!obj) {
+      obj = {};
+      this.objects[objectId] = obj;
+    }
+    let instance = obj[instanceId];
+    if (!instance) {
+      instance = {};
+      obj[instanceId] = instance;
+    }
+    if (typeof(newVal) === 'object') {
+      instance[resourceId] = Object.assign({}, newVal);
+    } else {
+      throw new Error(`Unexpected resource object`);
+    }
+  }
+
   connectivityStatisticsStart() {
     RED.log.info(`[connectivityStatisticsStart] Start`);
     // TODO reset tx/rx counter
