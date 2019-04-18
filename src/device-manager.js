@@ -493,7 +493,12 @@ export class LwM2MDeviceManagement {
     return new Promise((resolve) => {
       // save current objects
       try {
-        const data = JSON.stringify(this.objects, this.functionReplacer);
+        let data;
+        if (RED.settings.flowFilePretty) {
+          data = JSON.stringify(this.objects, this.functionReplacer, 2);
+        } else {
+          data = JSON.stringify(this.objects, this.functionReplacer);
+        }
         fs.writeFileSync(`${this.objectFilePath}`, data);
       } catch (_) {
       }
