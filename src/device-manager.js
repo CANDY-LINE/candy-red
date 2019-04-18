@@ -758,6 +758,10 @@ export class DeviceState {
           resolve(false);
         });
       }).then(candyBoardServiceSupported => {
+        if (process.env.DEVICE_MANAGEMENT_ENABLED === 'true' &&
+            process.env.DEVEL === 'true' && !candyBoardServiceSupported) {
+          candyBoardServiceSupported = true;
+        }
         this.candyBoardServiceSupported = candyBoardServiceSupported;
         return Promise.resolve([this.deviceId]);
       });
