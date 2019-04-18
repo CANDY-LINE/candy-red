@@ -138,14 +138,6 @@ export class DeviceManager {
     });
   }
 
-  _performProvision(c) {
-    this.hearbeatIntervalMs = c.args.hearbeatIntervalMs;
-    return new Promise(resolve => {
-      // do stuff if any after provisioning
-      return resolve();
-    });
-  }
-
   _updateLocalFlows(flows) {
     return new Promise((resolve, reject) => {
       this.deviceState.updateFlow(flows).then(content => {
@@ -249,15 +241,6 @@ export class DeviceManager {
       } catch (err) {
         return reject(err);
       }
-    });
-  }
-
-  _performRestart(c) {
-    return new Promise((resolve, reject) => {
-      if (c) {
-        return resolve({ status: 200, restart: true });
-      }
-      return reject({ status: 400 });
     });
   }
 }
