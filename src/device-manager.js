@@ -784,9 +784,6 @@ export class LwM2MDeviceManagement {
   }
 
   getResource(objectId, instanceId, resourceId) {
-    objectId = String(objectId);
-    instanceId = String(instanceId);
-    resourceId = String(resourceId);
     const obj = this.objects[objectId];
     if (!obj) {
       return null;
@@ -800,9 +797,6 @@ export class LwM2MDeviceManagement {
   }
 
   setResource(objectId, instanceId, resourceId, newVal) {
-    objectId = String(objectId);
-    instanceId = String(instanceId);
-    resourceId = String(resourceId);
     let obj = this.objects[objectId];
     if (!obj) {
       obj = {};
