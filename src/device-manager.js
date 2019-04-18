@@ -28,7 +28,6 @@ import * as chokidar from 'chokidar';
 import RED from 'node-red';
 
 const REBOOT_DELAY_MS = 1000;
-const TRACE = process.env.DEBUG || false;
 
 const PROC_CPUINFO_PATH = '/proc/cpuinfo';
 const PROC_DT_MODEL_PATH = '/proc/device-tree/model';
@@ -100,98 +99,9 @@ export class DefaultDeviceIdResolver {
 }
 
 export class DeviceManager {
-  constructor(primary, listenerConfig, accountConfig, deviceState) {
-    if (!accountConfig) {
-      throw new Error('accountConfig is required');
-    }
-    this.primary = primary;
-    this.listenerConfig = listenerConfig;
-    this.accountConfig = accountConfig;
+  constructor(deviceState) {
     this.deviceState = deviceState;
-    this.prefix = '[CANDY RED] {DeviceManager}:[' + accountConfig.accountFqn + '] ';
-    this.cmdQueue = [];
-    this.events = new EventEmitter();
-    this.events.on('opened', () => {
-      this._warn('connected');
-      this._resume().then(empty => {
-        if (!empty) {
-          this._warn('flushed queued commands');
-        }
-      }).catch(err => {
-        this._error(err.stack);
-      });
-    });
-    this.events.on('closed', () => {
-      this._warn('disconnected');
-      this._reset();
-    });
-    this.events.on('erro', (err1, err2) => {
-      if (err2) {
-        this._warn('failed to connect' + (err2.status ? ' :' + err2.status : ''));
-      } else {
-        this._warn('connection error');
-      }
-      this._reset();
-    });
-    this.events.on('ping', () => {
-      if (this.pingTimeoutTimer) {
-        clearTimeout(this.pingTimeoutTimer);
-      }
-      this.pingTimeoutTimer = setTimeout(() => {
-        this._warn(`ping has not come for more than ${this.hearbeatIntervalMs * 1.5 / 1000} seconds`);
-        this.listenerConfig.server.close(); // close event will perform _reset() and start a new connection after 3+ seconds
-      }, this.hearbeatIntervalMs * 1.5);
-    });
-    // receiving an incoming message (sent from a source)
-    this.events.send = msg => {
-      let payload = msg.payload;
-      if (payload) {
-        try {
-          payload = JSON.parse(payload);
-        } catch (_) {
-        }
-      }
-      if (TRACE) {
-        this._info('Received!:' + JSON.stringify(payload));
-      }
-      if (!this.enrolled) {
-        if (!payload || !payload.status || Math.floor(payload.status / 100) !== 2) {
-          // Terminate everything and never retry
-          this.listenerConfig.close();
-          this._error('Enrollment error!' +
-            ' This device is not allowed to access the account:' +
-            accountConfig.accountFqn);
-          return;
-        } else {
-          payload = payload.commands;
-          this.enrolled = true;
-        }
-      }
-      this._performCommands(payload).then(result => {
-        this._sendToServer(result);
-      }).catch(result => {
-        if (result instanceof Error) {
-          let err = result;
-          result = {};
-          result.status = 500;
-          result.message = err.toString();
-          result.stack = err.stack;
-        } else if (result && !Array.isArray(result)) {
-          result = [result];
-        }
-        this._sendToServer(result);
-      }).catch(err => {
-        this._error(err.stack);
-      });
-    };
-    this.listenerConfig.registerInputNode(this.events);
-    this.listenerConfig.send = payload => {
-      if ((typeof(payload) === 'object') && !(payload instanceof Buffer)) {
-        payload = JSON.stringify(payload);
-      }
-      return this.listenerConfig.broadcast(payload);
-    };
-    this._reset();
+    this.prefix = '[CANDY RED] {DeviceManager}: ';
   }
 
   _info(msg) {
@@ -204,118 +114,11 @@ export class DeviceManager {
     RED.log.error(this.prefix  + msg);
   }
 
-  _resume() {
-    let current = this.cmdQueue;
-    if (current.length === 0) {
-      return new Promise(resolve => resolve(true));
-    }
-    this.cmdQueue = [];
-    current = current.map(c => {
-      return this.publish(c);
-    });
-    return Promise.all(current);
-  }
-
-  _enqueue(commands) {
-    if (commands) {
-      this.cmdQueue.push(commands);
-    }
-  }
-
-  _reset() {
-    this.cmdIdx = 0;
-    this.commands = {};
-    this.enrolled = false;
-    if (this.pingTimeoutTimer) {
-      clearTimeout(this.pingTimeoutTimer);
-      delete this.pingTimeoutTimer;
-    }
-  }
-
-  publish(commands) {
-    return this._sendToServer(commands);
-  }
-
   static restart() {
     // systemctl shuould restart the service
     setTimeout(() => {
       process.exit(219);
     }, REBOOT_DELAY_MS);
-  }
-
-  _sendToServer(result) {
-    return new Promise(resolve => {
-      if (!result || Array.isArray(result) && result.length === 0 || Object.keys(result) === 0) {
-        // do nothing
-        this._info('No commands to respond to');
-        return resolve();
-      }
-      result = this._numberResponseCommands(result);
-      let sent = this.listenerConfig.send(result);
-      if (TRACE && sent) {
-        this._info('Sent!:' + JSON.stringify(result));
-      }
-      if (!sent) {
-        this._info('Enqueue the commands in order to be sent later on');
-        this._enqueue(result);
-        return resolve();
-      }
-      if (!Array.isArray(result)) {
-        result = [result];
-      }
-      if (result.reduce((p, c) => {
-        return p || (c && c.restart);
-      }, false)) {
-        this._warn('Restarting this process!!');
-        DeviceManager.restart();
-      }
-      resolve();
-    });
-  }
-
-  _nextCmdIdx() {
-    this.cmdIdx = (this.cmdIdx + 1) % 65536;
-    return this.cmdIdx;
-  }
-
-  _numberResponseCommands(result) {
-    let processed = result;
-    if (!Array.isArray(result)) {
-      processed = [result];
-    }
-    processed.forEach(r => {
-      if (r.commands) {
-        this._numberRequestCommands(r.commands);
-      } else {
-        this._numberRequestCommands(r);
-      }
-    });
-    return result;
-  }
-
-  _numberRequestCommands(commands) {
-    let processed = commands;
-    if (!Array.isArray(commands)) {
-      processed = [commands];
-    }
-    processed.forEach(c => {
-      if (!c.id) {
-        c.id = this._nextCmdIdx();
-      }
-      this.commands[c.id] = c;
-      if (c.done) {
-        // done callback
-        if (!this.done) {
-          this.done = {};
-        }
-        this.done[c.id] = c.done;
-        delete c.done;
-      }
-      if (c.cat === 'ctrl' && (c.act === 'sequence' || c.act === 'parallel')) {
-        this._numberRequestCommands(c.args);
-      }
-    });
-    return commands;
   }
 
   _performCommands(commands) {
@@ -524,42 +327,8 @@ export class DeviceManager {
     });
   }
 
-  static listAccounts(flows) {
-    if (!Array.isArray(flows)) {
-      flows = [flows];
-    }
-    let accounts = flows.filter(f => {
-      if (f.type !== 'CANDY EGG account') {
-        return false;
-      }
-      if (!f.managed) {
-        return false;
-      }
-      if (!f.accountFqn) {
-        return false;
-      }
-      if (!f.loginUser) {
-        return false;
-      }
-      return true;
-    });
-    return accounts;
-  }
-
   _updateLocalFlows(flows) {
     return new Promise((resolve, reject) => {
-      let accounts = DeviceManager.listAccounts(flows);
-      if (accounts.length === 0) {
-        return reject({ status: 400, message: 'invalid flow content' });
-      }
-      accounts.forEach(a => {
-        if (!a.revision) {
-          a.revision = 1;
-        } else {
-          a.revision++;
-        }
-        a.originator = this.deviceState.deviceId;
-      });
       this.deviceState.updateFlow(flows).then(content => {
         resolve({data:content, done: () => {
           this._warn('FLOW IS UPDATED! RELOAD THE PAGE AFTER RECONNECTING SERVER!!');
@@ -1173,34 +942,9 @@ export class DeviceManagerStore {
     return (() => {
       let wip = false;
       return () => {
-        return new Promise((resolve, reject) => {
-          if (wip) {
-            return;
-          }
-          wip = true;
-          this.deviceState.loadAndSetFlowSignature().then(modified => {
-            if (!modified) {
-              wip = false;
-              return resolve();
-            }
-            let promises = Object.keys(this.store).map(accountFqn => {
-              return this.store[accountFqn].publish({
-                cat: 'sys',
-                act: 'syncflows',
-                args: {
-                  expectedSignature: this.deviceState.flowFileSignature
-                }
-              });
-            });
-            return Promise.all(promises);
-          }).then(() => {
-            wip = false;
-            return resolve();
-          }).catch(err => {
-            RED.log.warn(err.stack);
-            wip = false;
-            return reject(err);
-          });
+        return new Promise((resolve) => {
+          // TODO
+          return resolve();
         });
       };
     })();
@@ -1209,39 +953,11 @@ export class DeviceManagerStore {
   _onFlowFileRemovedFunc() {
     return (() => {
       return () => {
-        return new Promise((resolve, reject) => {
-          try {
-            if (this.deviceState.flowFileSignature) {
-              let promises = Object.keys(this.store).map(accountFqn => {
-                if (this.store[accountFqn].primary) {
-                  return this.store[accountFqn].publish({
-                    cat: 'sys',
-                    act: 'deliverflows'
-                  });
-                }
-              });
-              Promise.all(promises).then(() => {
-                return resolve();
-              }).catch(err => {
-                RED.log.warn(err.stack);
-                return reject(err);
-              });
-            } else {
-              return resolve();
-            }
-          } catch (err) {
-            return reject(err);
-          }
+        return new Promise((resolve) => {
+          // TODO
+          return resolve();
         });
       };
     })();
-  }
-
-  _get(accountFqn) {
-    return this.store[accountFqn];
-  }
-
-  _remove(accountFqn) {
-    delete this.store[accountFqn];
   }
 }
