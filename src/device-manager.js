@@ -831,7 +831,7 @@ export class LwM2MDeviceManagement {
   }
 
   _resolveCANDYLINEModel() {
-    return process.env.DEVICE_MANAGEMENT_MODEL || this.resolveCANDYLINEProductName();
+    return process.env.DEVICE_MANAGEMENT_MODEL || this._resolveCANDYLINEProductName();
   }
 
   _resolveCANDYLINEProductName() {
