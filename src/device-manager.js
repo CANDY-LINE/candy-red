@@ -353,13 +353,37 @@ export class LwM2MDeviceManagement {
     this.internalEventBus = new EventEmitter();
     this.deviceState = deviceState;
     this.objects = {};
+    this.objectFile = `objects_candy-red.json`;
     this.modemInfo = {};
     this.tasks = {};
     this.settings = {};
+    this.functionResolver = (key, value) => {
+      if (key === 'value' && typeof(value) === 'string' && value.indexOf('[Function]') === 0) {
+        const functionName = value.substring(10);
+        let f = this[`_${functionName}`];
+        if (typeof(f) === 'function') {
+          f = f.bind(this);
+          f.functionName = functionName;
+          return f;
+        } else {
+          RED.log.error(`[CANDY RED] Failed to assign a function => '_${functionName}'`);
+          return '';
+        }
+      }
+      return value;
+    };
+    this.functionReplacer = (_, value) => {
+      if (typeof(value) === 'function') {
+        return `[Function]${value.functionName}`;
+      } else {
+        return value;
+      }
+    };
   }
 
   init(settings) {
     this.settings = Object.assign(this.settings, settings);
+    this.objectFilePath = `${settings.userDir}/${this.objectFile}`;
     if (this.deviceState.candyBoardServiceSupported &&
         process.env.DEVICE_MANAGEMENT_ENABLED === 'true') {
 
@@ -411,19 +435,7 @@ export class LwM2MDeviceManagement {
             dirs.filter(name => name.indexOf('.json') > 0).forEach((name) => {
               try {
                 const data = fs.readFileSync(`${__dirname}/mo/${name}`);
-                const mo = JSON.parse(data.toString(), (key, value) => {
-                  if (key === 'value' && typeof(value) === 'string' && value.indexOf('[Function]') === 0) {
-                    let functionName = value.substring(10);
-                    let f = this[`_${functionName}`];
-                    if (typeof(f) === 'function') {
-                      return f.bind(this);
-                    } else {
-                      RED.log.error(`[CANDY RED] Failed to assign a function => '_${functionName}'`);
-                      return '';
-                    }
-                  }
-                  return value;
-                });
+                const mo = JSON.parse(data.toString(), this.functionResolver);
                 Object.keys(mo).forEach((objectId) => {
                   if (this.objects[objectId]) {
                     RED.log.warn(`[CANDY RED] DUPLICATE ENTRY for the same ObjectID: ${objectId}. This will cause unexpected behaviors.`);
@@ -441,11 +453,41 @@ export class LwM2MDeviceManagement {
 
         });
 
+      }).then(() => {
+        return this.loadObjects();
+      }).then(() => {
+        return this.saveObjects();
       });
 
     } else {
       return Promise.resolve();
     }
+  }
+
+  loadObjects() {
+    return new Promise((resolve) => {
+      // load object file
+      try {
+        const data = fs.readFileSync(`${this.objectFilePath}`);
+        const objects = JSON.parse(data.toString(), this.functionResolver);
+        Object.assign(this.objects, objects);
+        RED.log.info(`[CANDY RED] Overridden ObjectIDs => ${Object.keys(objects)}`);
+      } catch (_) {
+      }
+      resolve();
+    });
+  }
+
+  saveObjects() {
+    return new Promise((resolve) => {
+      // save current objects
+      try {
+        const data = JSON.stringify(this.objects, this.functionReplacer);
+        fs.writeFileSync(`${this.objectFilePath}`, data);
+      } catch (_) {
+      }
+      resolve();
+    });
   }
 
   getValue(objectId, instanceId, resourceId, ...args) {
@@ -656,6 +698,8 @@ export class LwM2MDeviceManagement {
       });
     }).then((flows) => {
       return this.deviceState.updateFlow(flows);
+    }).then(() => {
+      return this.saveObjects();
     }).then(() => {
       RED.log.warn('FLOW IS UPDATED! RELOAD THE PAGE AFTER RECONNECTING SERVER!!');
       LwM2MDeviceManagement.restart();
