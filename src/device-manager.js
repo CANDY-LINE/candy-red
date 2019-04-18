@@ -1004,13 +1004,13 @@ export class LwM2MDeviceManagement {
     }
   }
 
-  getValue(objectId, instanceId, resourceId) {
+  getValue(objectId, instanceId, resourceId, ...args) {
     const res = this.getResource(objectId, instanceId, resourceId);
     if (!res) {
       return null;
     }
     if (typeof(res.value) === 'function') {
-      return res.value();
+      return res.value(args);
     }
     return res.value;
   }
