@@ -203,18 +203,9 @@ describe('DeviceState', () => {
     });
   });
 
-  describe('#testIfUIisEnabled()', () => {
-    it('should tell the UI is enabled', done => {
-      state.testIfUIisEnabled(__dirname + '/test-flow-enabled.json').then(enabled => {
-        assert.isTrue(enabled);
-        done();
-      }).catch(err => {
-        done(err);
-      });
-    });
-    it('should tell the UI is DISABLED', done => {
-      state.testIfUIisEnabled(__dirname + '/test-flow-disabled.json').then(enabled => {
-        assert.isFalse(enabled);
+  describe('#initWithFlowFilePath()', () => {
+    it('should successfully init DeviceState object', done => {
+      state.initWithFlowFilePath(__dirname + '/test-flow.json').then(() => {
         done();
       }).catch(err => {
         done(err);

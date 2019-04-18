@@ -192,7 +192,7 @@ export class CandyRed {
 
       this.deviceManagerStore.lwm2m.init(settings).then(() => {
         const flowFilePath = settings.userDir + '/' + this.flowFile;
-        return this.deviceManagerStore.deviceState.testIfUIisEnabled(flowFilePath);
+        return this.deviceManagerStore.deviceState.initWithFlowFilePath(flowFilePath);
       }).then(() => {
         const headlessEnabled = this.deviceManagerStore.lwm2m.getValue(28005, 0, 1);
         RED.log.info(`[CANDY RED] Headless Enabled? => ${headlessEnabled}`);

@@ -847,7 +847,7 @@ export class DeviceState {
     this.watcher.on('unlink', this.onFlowFileRemoved);
   }
 
-  testIfUIisEnabled(flowFilePath) {
+  initWithFlowFilePath(flowFilePath) {
     return this.init().then(() => {
       if (flowFilePath && this.flowFilePath !== flowFilePath) {
         this.flowFilePath = flowFilePath;
@@ -881,18 +881,14 @@ export class DeviceState {
           if (!Array.isArray(flows)) {
             return resolve(true);
           }
-          resolve(flows.filter(f => {
-            return f.type === 'CANDY EGG account';
-          }).reduce((p, c) => {
-            return p && !c.headless;
-          }, true));
+          resolve();
         });
       });
-    }).then(enabled => {
+    }).then(() => {
       return new Promise((resolve, reject) => {
         try {
           this._watchFlowFilePath();
-          return resolve(enabled);
+          return resolve();
         } catch (err) {
           return reject(err);
         }
