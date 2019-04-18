@@ -970,11 +970,11 @@ export class LwM2MDeviceManagement {
                 const mo = JSON.parse(data.toString(), (key, value) => {
                   if (key === 'value' && typeof(value) === 'string' && value.indexOf('[Function]') === 0) {
                     let functionName = value.substring(10);
-                    let f = this[functionName];
-                    if (typeof(f) === 'function' && (functionName !== 'init')) {
+                    let f = this[`_${functionName}`];
+                    if (typeof(f) === 'function') {
                       return f.bind(this);
                     } else {
-                      RED.log.error(`[CANDY RED] Failed to assign a function => ${functionName}`);
+                      RED.log.error(`[CANDY RED] Failed to assign a function => '_${functionName}'`);
                       return '';
                     }
                   }
@@ -1052,21 +1052,21 @@ export class LwM2MDeviceManagement {
     }
   }
 
-  connectivityStatisticsStart() {
+  _connectivityStatisticsStart() {
     RED.log.info(`[connectivityStatisticsStart] Start`);
     // TODO reset tx/rx counter
     RED.log.info(`[connectivityStatisticsStart] End`);
   }
 
-  resolveCANDYLINEManufacturer() {
+  _resolveCANDYLINEManufacturer() {
     return process.env.DEVICE_MANAGEMENT_MANUFACTURER || 'CANDY LINE';
   }
 
-  resolveCANDYLINEModel() {
+  _resolveCANDYLINEModel() {
     return process.env.DEVICE_MANAGEMENT_MODEL || this.resolveCANDYLINEProductName();
   }
 
-  resolveCANDYLINEProductName() {
+  _resolveCANDYLINEProductName() {
     let name = MODULE_MODEL_MAPPINGS[this.modemInfo.model];
     if (!name) {
       name = `Unknown (${this.modemInfo.model})`;
@@ -1074,29 +1074,29 @@ export class LwM2MDeviceManagement {
     return name;
   }
 
-  resolveModuleName() {
+  _resolveModuleName() {
     return this.modemInfo.model;
   }
 
-  resolveModuleIdentifier() {
+  _resolveModuleIdentifier() {
     return this.modemInfo.imei;
   }
 
-  resolveModuleFirmwareVersion() {
+  _resolveModuleFirmwareVersion() {
     return this.modemInfo.revision;
   }
 
-  resolveCANDYREDVersion() {
+  _resolveCANDYREDVersion() {
     return this.settings.version;
   }
 
-  applyOSConfiguration() {
+  _applyOSConfiguration() {
     RED.log.info(`[applyOSConfiguration] Start`);
     // TODO Apply OS Configuration to the device
     RED.log.info(`[applyOSConfiguration] End`);
   }
 
-  updateAgentConfiguration() {
+  _updateAgentConfiguration() {
     RED.log.info(`[updateAgentConfiguration] Start`);
     // TODO Update Agent Configuration
     RED.log.info(`[updateAgentConfiguration] End`);
