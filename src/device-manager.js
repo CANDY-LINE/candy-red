@@ -433,6 +433,19 @@ export class LwM2MDeviceManagement {
                 (Date.now() - this.objectsLastSavedAt > UPDATE_INTERVAL_MS)) {
               return this.saveObjects();
             }
+          } else if (ev.eventType === 'executed') {
+            const uri = ev.uri.split('/');
+            const obj = this.objects[uri[1]];
+            if (obj) {
+              const ins = obj[uri[2]];
+              if (ins) {
+                const res = ins[uri[3]];
+                if (res.value && typeof(res.value) === 'function') {
+                  return res.value(ev.value);
+                }
+              }
+            }
+            RED.log.warn(`[CANDY RED] Failed to execute: ${JSON.stringify(ev)}`);
           }
         });
 
