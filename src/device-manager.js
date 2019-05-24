@@ -428,6 +428,7 @@ export class LwM2MDeviceManagement {
           this.internalEventBus.emit('clientNameResolved', clientName);
         });
         this.internalEventBus.on('object-event', (ev) => {
+          RED.log.debug(`[CANDY RED] object-event => ${JSON.stringify(ev)}`);
           if ((ev.eventType === 'updated') || (ev.eventType === 'created')) {
             if ((ev.uri.match(`^/(${Object.keys(this.objects).join('|')})/.*$`)) &&
                 (Date.now() - this.objectsLastSavedAt > UPDATE_INTERVAL_MS)) {
