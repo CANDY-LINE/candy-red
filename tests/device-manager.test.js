@@ -369,7 +369,7 @@ describe('DeviceManagerStore', () => {
 
     });
 
-    describe('#_updateAgentConfiguration', () => {
+    describe('#_updateMindConnectAgentConfiguration', () => {
 
       it('should modify the existing mindconnect configuration in the flow file', (done) => {
         state.candyBoardServiceSupported = true;
@@ -392,7 +392,7 @@ describe('DeviceManagerStore', () => {
           lwm2mdm.setResource(30001, 0, 8, { value: true });
           lwm2mdm.setResource(30001, 0, 9, { value: 999 });
           lwm2mdm.setResource(30001, 0, 10, { value: 'my node' });
-          return lwm2mdm.getValue(30001, 0, 100, `${__dirname}/test-flow-mindconnect.json`); // updateAgentConfiguration
+          return lwm2mdm.getValue(30001, 0, 100, `${__dirname}/test-flow-mindconnect.json`); // updateMindConnectAgentConfiguration
         }).then(() => {
           done();
         }).catch((err) => {

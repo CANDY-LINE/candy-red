@@ -61,7 +61,7 @@
       type: 240         # Function
       acl: 4            # E
       sensitive: false
-      value: "[Function]updateAgentConfiguration"
+      value: "[Function]updateMindConnectAgentConfiguration"
     "101": # Agent Configuration Update Status
       type: 6           # Integer
       acl: 1            # R

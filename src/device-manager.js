@@ -669,9 +669,9 @@ export class LwM2MDeviceManagement {
     RED.log.info(`[applyOSConfiguration] End`);
   }
 
-  _updateAgentConfiguration(flowFilePath) {
+  _updateMindConnectAgentConfiguration(flowFilePath) {
     return new Promise((resolve, reject) => {
-      RED.log.info(`[updateAgentConfiguration] Start`);
+      RED.log.info(`[updateMindConnectAgentConfiguration] Start`);
       // Update Agent Configuration
       flowFilePath = flowFilePath || this.deviceState.flowFilePath;
       if (Array.isArray(flowFilePath)) {
@@ -679,7 +679,7 @@ export class LwM2MDeviceManagement {
       }
       fs.readFile(flowFilePath, (err, data) => {
         if (err) {
-          RED.log.info(`[updateAgentConfiguration] ERROR End. err => ${err.message || err}`);
+          RED.log.info(`[updateMindConnectAgentConfiguration] ERROR End. err => ${err.message || err}`);
           return reject(err);
         }
         try {
@@ -720,10 +720,10 @@ export class LwM2MDeviceManagement {
             };
             agent.agentconfig = JSON.stringify(agentconfig);
           });
-          RED.log.info(`[updateAgentConfiguration] End`);
+          RED.log.info(`[updateMindConnectAgentConfiguration] End`);
           return resolve(flows);
         } catch (err) {
-          RED.log.info(`[updateAgentConfiguration] ERROR End. err => ${err.message || err}`);
+          RED.log.info(`[updateMindConnectAgentConfiguration] ERROR End. err => ${err.message || err}`);
           return reject(err);
         }
       });
