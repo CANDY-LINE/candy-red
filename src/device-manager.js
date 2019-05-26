@@ -414,19 +414,41 @@ export class LwM2MDeviceManagement {
           }
         });
       }).then(() => {
-        this.internalEventBus.on('resolveClientName', (context) => {
-          let clientName = context.clientName;
+        this.internalEventBus.on('configure', (context) => {
+          const config = {};
+          // EPN
+          config.clientName = context.clientName;
           if (this.modemInfo.imei) {
-            clientName = `urn:imei:${this.modemInfo.imei}`;
+            config.clientName = `urn:imei:${this.modemInfo.imei}`;
           } else if (settings.deviceId) {
             if (settings.deviceId.indexOf('urn:') !== 0) {
-              clientName = `urn:${settings.deviceId}`;
+              config.clientName = `urn:${settings.deviceId}`;
             } else {
-              clientName = settings.deviceId;
+              config.clientName = settings.deviceId;
             }
           }
-          this.internalEventBus.emit('clientNameResolved', clientName);
+
+          config.clientPort = parseInt(process.env.DEVICE_MANAGEMENT_CL_PORT || 57830);
+          config.reconnectSec = parseInt(process.env.DEVICE_MANAGEMENT_RECONNECT_SEC || 60);
+          config.serverHost = process.env.DEVICE_MANAGEMENT_BS_HOST;
+          config.serverPort = process.env.DEVICE_MANAGEMENT_BS_PORT;
+          config.enableDTLS = process.env.DEVICE_MANAGEMENT_BS_DTLS === 'PSK';
+          if (config.enableDTLS) {
+            config.pskIdentity = process.env.DEVICE_MANAGEMENT_BS_DTLS_PSK_ID;
+            config.presharedKey = process.env.DEVICE_MANAGEMENT_BS_DTLS_PSK;
+          }
+          config.requestBootstrap = true;
+          config.saveProvisionedConfig = true;
+          config.useIPv4 = process.env.DEVICE_MANAGEMENT_BS_HOST_IPV6 !== 'true';
+          if (this.settings.logging.console.level === 'debug') {
+            config.redirectLwm2mClientLog = true;
+            config.dumpLwm2mMessages = true;
+          }
+          config.hideSensitiveInfo = false;
+
+          this.internalEventBus.emit('configurationDone', config);
         });
+
         this.internalEventBus.on('object-event', (ev) => {
           RED.log.debug(`[CANDY RED] object-event => ${JSON.stringify(ev)}`);
           if ((ev.eventType === 'updated') || (ev.eventType === 'created')) {
