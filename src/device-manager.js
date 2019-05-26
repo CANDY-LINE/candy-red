@@ -663,12 +663,6 @@ export class LwM2MDeviceManagement {
     return this.settings.version;
   }
 
-  _applyOSConfiguration() {
-    RED.log.info(`[applyOSConfiguration] Start`);
-    // TODO Apply OS Configuration to the device
-    RED.log.info(`[applyOSConfiguration] End`);
-  }
-
   _updateMindConnectAgentConfiguration(flowFilePath) {
     return new Promise((resolve, reject) => {
       RED.log.info(`[updateMindConnectAgentConfiguration] Start`);
