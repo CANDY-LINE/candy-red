@@ -445,6 +445,7 @@ export class LwM2MDeviceManagement {
             config.dumpLwm2mMessages = true;
           }
           config.hideSensitiveInfo = false;
+          config.credentialFilePath = `${settings.userDir}/lwm2m_dm_cred.json`;
 
           this.internalEventBus.emit('configurationDone', config);
         });
