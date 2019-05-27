@@ -280,12 +280,23 @@ describe('DeviceManagerStore', () => {
         candy.on.onFirstCall().yields(0);
 
         lwm2mdm.init({
-          deviceId: 'deviceId'
+          deviceId: 'deviceId',
+          userDir: '/opt/candy-line'
         });
         setTimeout(() => {
           try {
             assert.isTrue(candy.on.called);
-            assert.isTrue(stubEvent.emit.withArgs('clientNameResolved', `urn:imei:861000000000000`).called);
+            assert.isTrue(stubEvent.emit.withArgs('configurationDone', sinon.match({
+              clientName: 'urn:imei:861000000000000',
+              clientPort: 57830,
+              reconnectSec: 60,
+              enableDTLS: false,
+              requestBootstrap: true,
+              saveProvisionedConfig: true,
+              useIPv4: true,
+              hideSensitiveInfo: false,
+              credentialFilePath: '/opt/candy-line/lwm2m_dm_cred.json'
+            })).called);
             assert.isTrue(Object.keys(lwm2mdm.objects).length > 0);
             assert.equal('CANDY LINE', lwm2mdm.objects['3']['0']['0'].value());
             assert.equal('CANDY Pi Lite 3G', lwm2mdm.objects['28001']['0']['0'].value());
@@ -308,11 +319,22 @@ describe('DeviceManagerStore', () => {
           .onFirstCall().yields(null, '{"status":"OK","result":{ "counter": { "rx": "0", "tx": "0" }, "datetime": "80/01/06,00:55:11", "functionality": "Full", "imei": "861000000000000", "timezone": 9.0, "model": "UC20", "revision": "UC20GQBR03A14E1G", "manufacturer": "Quectel" }}');
 
         lwm2mdm.init({
-          deviceId: 'deviceId'
+          deviceId: 'deviceId',
+          userDir: '/opt/candy-line'
         }).then(() => {
           setTimeout(() => {
             try {
-              assert.isTrue(stubEvent.emit.withArgs('clientNameResolved', `urn:imei:861000000000000`).called);
+              assert.isTrue(stubEvent.emit.withArgs('configurationDone', sinon.match({
+                clientName: 'urn:imei:861000000000000',
+                clientPort: 57830,
+                reconnectSec: 60,
+                enableDTLS: false,
+                requestBootstrap: true,
+                saveProvisionedConfig: true,
+                useIPv4: true,
+                hideSensitiveInfo: false,
+                credentialFilePath: '/opt/candy-line/lwm2m_dm_cred.json'
+              })).called);
               done();
             } catch (err) {
               done(err);
