@@ -440,7 +440,7 @@ export class LwM2MDeviceManagement {
           config.requestBootstrap = true;
           config.saveProvisionedConfig = true;
           config.useIPv4 = process.env.DEVICE_MANAGEMENT_BS_HOST_IPV6 !== 'true';
-          if (this.settings.logging.console.level === 'debug') {
+          if (this.settings.logging && this.settings.logging.console && this.settings.logging.console.level === 'debug') {
             config.redirectLwm2mClientLog = true;
             config.dumpLwm2mMessages = true;
           }
