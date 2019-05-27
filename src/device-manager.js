@@ -686,6 +686,10 @@ export class LwM2MDeviceManagement {
     return this.settings.version;
   }
 
+  /*
+   * Replace ALL mindconnect agent configurations embedded in the flow file.
+   * CANRY RED process will exit after update.
+   */
   _updateMindConnectAgentConfiguration(flowFilePath) {
     return new Promise((resolve, reject) => {
       RED.log.info(`[updateMindConnectAgentConfiguration] Start`);
