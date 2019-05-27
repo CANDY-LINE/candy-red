@@ -686,6 +686,11 @@ export class LwM2MDeviceManagement {
     return this.settings.version;
   }
 
+  _restartCANDYRED() {
+    RED.log.warn(`[CANDY RED] ** ** Process exits for restarting ** **`);
+    return LwM2MDeviceManagement.restart();
+  }
+
   /*
    * Replace ALL mindconnect agent configurations embedded in the flow file.
    * CANRY RED process will exit after update.

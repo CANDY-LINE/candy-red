@@ -12,4 +12,8 @@
       acl: 3            # RW
       sensitive: false
       value: false
-# TBD
+    "20": # Restart CANDY RED (Process exit)
+      type: 240         # Function
+      acl: 4            # E
+      sensitive: false
+      value: "[Function]restartCANDYRED"
