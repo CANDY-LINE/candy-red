@@ -1,0 +1,550 @@
+[
+    {
+        "id": "5e8a6e7d.727fb",
+        "type": "tab",
+        "label": "CANDY LINE DM",
+        "disabled": false,
+        "info": ""
+    },
+    {
+        "id": "77c07b48.45b7c4",
+        "type": "lwm2m client in",
+        "z": "5e8a6e7d.727fb",
+        "name": "DM Client",
+        "lwm2mClient": "5edf712f.8c24a",
+        "subscribeObjectEvents": true,
+        "x": 120,
+        "y": 120,
+        "wires": [
+            [
+                "707ff03d.761af"
+            ]
+        ]
+    },
+    {
+        "id": "5d1ac461.d7be04",
+        "type": "comment",
+        "z": "5e8a6e7d.727fb",
+        "name": "CANDY LINE Device Management Application",
+        "info": "### Summary\n\nThis flow offers Device Management functionalities through CANDY LINE DM Service.\nIt is designed for Raspbian Stretch and Debian Stretch.\n\n### Supported Boards\n\n- Raspberry Pi\n- ASUS Tinker Board",
+        "x": 190,
+        "y": 40,
+        "wires": []
+    },
+    {
+        "id": "a22bab5e.4c67f8",
+        "type": "exec",
+        "z": "5e8a6e7d.727fb",
+        "command": "reboot",
+        "addpay": false,
+        "append": "",
+        "useSpawn": "false",
+        "timer": "5",
+        "oldrc": false,
+        "name": "Reboot OS",
+        "x": 550,
+        "y": 120,
+        "wires": [
+            [
+                "25c44485.846cc4"
+            ],
+            [],
+            []
+        ]
+    },
+    {
+        "id": "707ff03d.761af",
+        "type": "switch",
+        "z": "5e8a6e7d.727fb",
+        "name": "Command Dispatching",
+        "property": "payload.uri",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "eq",
+                "v": "/28002/0/22",
+                "vt": "str"
+            },
+            {
+                "t": "eq",
+                "v": "/28002/0/20",
+                "vt": "str"
+            }
+        ],
+        "checkall": "false",
+        "repair": false,
+        "outputs": 2,
+        "x": 330,
+        "y": 120,
+        "wires": [
+            [
+                "a22bab5e.4c67f8"
+            ],
+            [
+                "c9016d1.485291",
+                "489602e6.2e3ee4"
+            ]
+        ]
+    },
+    {
+        "id": "25c44485.846cc4",
+        "type": "change",
+        "z": "5e8a6e7d.727fb",
+        "name": "Set Result Code",
+        "rules": [
+            {
+                "t": "set",
+                "p": "topic",
+                "pt": "msg",
+                "to": "/28002/0/23",
+                "tot": "str"
+            },
+            {
+                "t": "move",
+                "p": "rc.code",
+                "pt": "msg",
+                "to": "payload",
+                "tot": "msg"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 780,
+        "y": 120,
+        "wires": [
+            [
+                "d4730dd3.4602b8"
+            ]
+        ]
+    },
+    {
+        "id": "d4730dd3.4602b8",
+        "type": "lwm2m client out",
+        "z": "5e8a6e7d.727fb",
+        "name": "Write Result Code",
+        "lwm2mClient": "5edf712f.8c24a",
+        "x": 990,
+        "y": 120,
+        "wires": []
+    },
+    {
+        "id": "c9016d1.485291",
+        "type": "change",
+        "z": "5e8a6e7d.727fb",
+        "name": "Read SSH Enabled",
+        "rules": [
+            {
+                "t": "set",
+                "p": "topic",
+                "pt": "msg",
+                "to": "/28002/0/2",
+                "tot": "str"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 570,
+        "y": 180,
+        "wires": [
+            [
+                "34cf2822.b6fd08"
+            ]
+        ]
+    },
+    {
+        "id": "34cf2822.b6fd08",
+        "type": "lwm2m client in",
+        "z": "5e8a6e7d.727fb",
+        "name": "Read OS Config",
+        "lwm2mClient": "5edf712f.8c24a",
+        "subscribeObjectEvents": false,
+        "x": 780,
+        "y": 180,
+        "wires": [
+            [
+                "207c8aa9.e683f6"
+            ]
+        ]
+    },
+    {
+        "id": "207c8aa9.e683f6",
+        "type": "switch",
+        "z": "5e8a6e7d.727fb",
+        "name": "Dispatch Resource",
+        "property": "payload[0].uri",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "eq",
+                "v": "/28002/0/2",
+                "vt": "str"
+            },
+            {
+                "t": "eq",
+                "v": "/28002/0/1",
+                "vt": "str"
+            }
+        ],
+        "checkall": "false",
+        "repair": false,
+        "outputs": 2,
+        "x": 990,
+        "y": 180,
+        "wires": [
+            [
+                "c445a835.6df77"
+            ],
+            [
+                "109213b7.a5eaac"
+            ]
+        ]
+    },
+    {
+        "id": "c445a835.6df77",
+        "type": "switch",
+        "z": "5e8a6e7d.727fb",
+        "name": "Enable SSH?",
+        "property": "payload[0].value.value",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "true"
+            },
+            {
+                "t": "false"
+            }
+        ],
+        "checkall": "false",
+        "repair": false,
+        "outputs": 2,
+        "x": 1190,
+        "y": 180,
+        "wires": [
+            [
+                "b7c50dc7.aaef58"
+            ],
+            [
+                "3da7fdcc.4b9aea"
+            ]
+        ]
+    },
+    {
+        "id": "b7c50dc7.aaef58",
+        "type": "exec",
+        "z": "5e8a6e7d.727fb",
+        "command": "systemctl",
+        "addpay": false,
+        "append": "enable sshd",
+        "useSpawn": "false",
+        "timer": "5",
+        "oldrc": false,
+        "name": "Enable SSH",
+        "x": 1410,
+        "y": 180,
+        "wires": [
+            [
+                "58e3a6e0.7395f8"
+            ],
+            [],
+            []
+        ]
+    },
+    {
+        "id": "3da7fdcc.4b9aea",
+        "type": "exec",
+        "z": "5e8a6e7d.727fb",
+        "command": "systemctl",
+        "addpay": false,
+        "append": "disable sshd",
+        "useSpawn": "false",
+        "timer": "5",
+        "oldrc": false,
+        "name": "Disable SSH",
+        "x": 1410,
+        "y": 240,
+        "wires": [
+            [
+                "58e3a6e0.7395f8"
+            ],
+            [],
+            []
+        ]
+    },
+    {
+        "id": "759039fc.f7de8",
+        "type": "change",
+        "z": "5e8a6e7d.727fb",
+        "name": "Set Result Code",
+        "rules": [
+            {
+                "t": "set",
+                "p": "topic",
+                "pt": "msg",
+                "to": "/28002/0/21",
+                "tot": "str"
+            },
+            {
+                "t": "move",
+                "p": "rc.code",
+                "pt": "msg",
+                "to": "payload",
+                "tot": "msg"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 2420,
+        "y": 300,
+        "wires": [
+            [
+                "b79e75b1.11829"
+            ]
+        ]
+    },
+    {
+        "id": "58e3a6e0.7395f8",
+        "type": "join",
+        "z": "5e8a6e7d.727fb",
+        "name": "Concat Results",
+        "mode": "custom",
+        "build": "array",
+        "property": "rc.code",
+        "propertyType": "msg",
+        "key": "topic",
+        "joiner": "\\n",
+        "joinerType": "str",
+        "accumulate": false,
+        "timeout": "",
+        "count": "2",
+        "reduceRight": false,
+        "reduceExp": "",
+        "reduceInit": "0",
+        "reduceInitType": "num",
+        "reduceFixup": "",
+        "x": 1660,
+        "y": 300,
+        "wires": [
+            [
+                "b008b3c8.49612"
+            ]
+        ]
+    },
+    {
+        "id": "489602e6.2e3ee4",
+        "type": "change",
+        "z": "5e8a6e7d.727fb",
+        "name": "Read Password",
+        "rules": [
+            {
+                "t": "set",
+                "p": "topic",
+                "pt": "msg",
+                "to": "/28002/0/1",
+                "tot": "str"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 560,
+        "y": 220,
+        "wires": [
+            [
+                "34cf2822.b6fd08"
+            ]
+        ]
+    },
+    {
+        "id": "109213b7.a5eaac",
+        "type": "switch",
+        "z": "5e8a6e7d.727fb",
+        "name": "Password Exisits?",
+        "property": "payload[0].value.value",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "nempty"
+            },
+            {
+                "t": "empty"
+            }
+        ],
+        "checkall": "false",
+        "repair": false,
+        "outputs": 2,
+        "x": 1210,
+        "y": 320,
+        "wires": [
+            [
+                "bc199155.6a7688"
+            ],
+            [
+                "8ae28880.191208"
+            ]
+        ]
+    },
+    {
+        "id": "bc199155.6a7688",
+        "type": "exec",
+        "z": "5e8a6e7d.727fb",
+        "command": "echo",
+        "addpay": false,
+        "append": "\"username:\"$(openssl passwd -1 -salt \"$salt\" \"$password\") | chpasswd -e",
+        "useSpawn": "false",
+        "timer": "5",
+        "oldrc": false,
+        "name": "Update Password",
+        "x": 1430,
+        "y": 320,
+        "wires": [
+            [
+                "58e3a6e0.7395f8"
+            ],
+            [],
+            []
+        ]
+    },
+    {
+        "id": "8ae28880.191208",
+        "type": "change",
+        "z": "5e8a6e7d.727fb",
+        "name": "Skip to update password",
+        "rules": [
+            {
+                "t": "set",
+                "p": "rc",
+                "pt": "msg",
+                "to": "{\"code\":-1}",
+                "tot": "json"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 1450,
+        "y": 380,
+        "wires": [
+            [
+                "58e3a6e0.7395f8"
+            ]
+        ]
+    },
+    {
+        "id": "c9874e8.48ca3b",
+        "type": "join",
+        "z": "5e8a6e7d.727fb",
+        "name": "Merge Results",
+        "mode": "reduce",
+        "build": "string",
+        "property": "payload",
+        "propertyType": "msg",
+        "key": "topic",
+        "joiner": "\\n",
+        "joinerType": "str",
+        "accumulate": false,
+        "timeout": "",
+        "count": "",
+        "reduceRight": false,
+        "reduceExp": "$A = 0 &  payload = 0 ? 0 : 1",
+        "reduceInit": "0",
+        "reduceInitType": "num",
+        "reduceFixup": "",
+        "x": 2220,
+        "y": 300,
+        "wires": [
+            [
+                "759039fc.f7de8"
+            ]
+        ]
+    },
+    {
+        "id": "e18304d2.e492a8",
+        "type": "split",
+        "z": "5e8a6e7d.727fb",
+        "name": "Split payload",
+        "splt": "\\n",
+        "spltType": "str",
+        "arraySplt": 1,
+        "arraySpltType": "len",
+        "stream": false,
+        "addname": "",
+        "x": 2030,
+        "y": 300,
+        "wires": [
+            [
+                "c9874e8.48ca3b"
+            ]
+        ]
+    },
+    {
+        "id": "b008b3c8.49612",
+        "type": "change",
+        "z": "5e8a6e7d.727fb",
+        "name": "Move Value",
+        "rules": [
+            {
+                "t": "move",
+                "p": "rc.code",
+                "pt": "msg",
+                "to": "payload",
+                "tot": "msg"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 1850,
+        "y": 300,
+        "wires": [
+            [
+                "e18304d2.e492a8"
+            ]
+        ]
+    },
+    {
+        "id": "b79e75b1.11829",
+        "type": "lwm2m client out",
+        "z": "5e8a6e7d.727fb",
+        "name": "Write Result Code",
+        "lwm2mClient": "5edf712f.8c24a",
+        "x": 2630,
+        "y": 300,
+        "wires": []
+    },
+    {
+        "id": "5edf712f.8c24a",
+        "type": "lwm2m client",
+        "z": "5e8a6e7d.727fb",
+        "disabled": false,
+        "clientName": "CANDY-LINE-DM",
+        "enableDTLS": false,
+        "clientPort": "56830",
+        "lifetimeSec": "300",
+        "reconnectSec": "300",
+        "requestBootstrap": false,
+        "saveProvisionedConfig": false,
+        "useIPv4": false,
+        "serverHost": "localhost",
+        "serverPort": "0",
+        "redirectLwm2mClientLog": false,
+        "dumpLwm2mMessages": false,
+        "hideSensitiveInfo": false,
+        "propagateInternalEvents": true,
+        "objects": "{}"
+    }
+]
