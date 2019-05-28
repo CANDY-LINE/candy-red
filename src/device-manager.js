@@ -452,24 +452,28 @@ export class LwM2MDeviceManagement {
 
         this.internalEventBus.on('object-event', (ev) => {
           RED.log.debug(`[CANDY RED] object-event => ${JSON.stringify(ev)}`);
-          if ((ev.eventType === 'updated') || (ev.eventType === 'created')) {
-            if ((ev.uri.match(`^/(${Object.keys(this.objects).join('|')})/.*$`)) &&
-                (Date.now() - this.objectsLastSavedAt > UPDATE_INTERVAL_MS)) {
-              return this.saveObjects();
+          switch (ev.eventType) {
+            case 'updated':
+            case 'created': {
+              this.triggerSaveObjectsTask();
+              break;
             }
-          } else if (ev.eventType === 'executed') {
-            const uri = ev.uri.split('/');
-            const obj = this.objects[uri[1]];
-            if (obj) {
-              const ins = obj[uri[2]];
-              if (ins) {
-                const res = ins[uri[3]];
-                if (res.value && typeof(res.value) === 'function') {
-                  return res.value(ev.value);
+            case 'executed': {
+              const uri = ev.uri.split('/');
+              const obj = this.objects[uri[1]];
+              if (obj) {
+                const ins = obj[uri[2]];
+                if (ins) {
+                  const res = ins[uri[3]];
+                  if (res.value && typeof(res.value) === 'function') {
+                    return res.value(ev.value);
+                  }
                 }
               }
+              RED.log.debug(`[CANDY RED] Internal function associated with ${ev.uri} is missing.: ${JSON.stringify(ev)}`);
+              break;
             }
-            RED.log.debug(`[CANDY RED] Internal function associated with ${ev.uri} is missing.: ${JSON.stringify(ev)}`);
+            default:
           }
         });
 
@@ -510,6 +514,42 @@ export class LwM2MDeviceManagement {
     } else {
       return Promise.resolve();
     }
+  }
+
+  triggerSaveObjectsTask() {
+    if (this.triggerSaveObjectsTaskHandle) {
+      return;
+    }
+    let timeout = UPDATE_INTERVAL_MS;
+    if (Date.now() - this.objectsLastSavedAt > UPDATE_INTERVAL_MS) {
+      timeout = 0;
+    }
+    this.triggerSaveObjectsTaskHandle = setTimeout(() => {
+      this.triggerSaveObjectsTaskHandle = 0;
+      const requestId = Date.now();
+      this.internalEventBus.emit('object-read', { id: requestId, topic: `^/(${Object.keys(this.objects).join('|')})/.*$` });
+      this.internalEventBus.once('object-result', (result) => {
+        if (result.id === requestId && result.type === 'object-read') {
+          result.payload.forEach((r) => {
+            const uri = r.uri.split('/');
+            const objectId = uri[1];
+            const instanceId = uri[2];
+            const resourceId = uri[3];
+            const object = this.objects[objectId];
+            let instance = object[instanceId];
+            if (!instance) {
+              object[instanceId] = {};
+              instance = object[instanceId];
+            }
+            let resource = instance[resourceId];
+            if (!resource || (resource.acl && resource.acl.indexOf('W') >= 0) && resource.type !== 'FUNCTION') {
+              instance[resourceId] = r.value;
+            }
+          });
+          this.saveObjects();
+        }
+      });
+    }, UPDATE_INTERVAL_MS);
   }
 
   loadObjects() {
