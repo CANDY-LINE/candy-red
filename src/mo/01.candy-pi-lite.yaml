@@ -67,12 +67,12 @@
       sensitive: false
       value: ""
     "2": # Auto select APN
-      type: "BOOLEAN"   # Boolean
+      type: "BOOLEAN"
       acl: "RW"
       sensitive: false
       value: false
     "3": # Enable status
-      type: "BOOLEAN"   # Boolean
+      type: "BOOLEAN"
       acl: "RW"
       sensitive: false
       value: false

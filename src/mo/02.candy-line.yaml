@@ -36,12 +36,12 @@
       sensitive: true
       value: ""
     "2": # SSH Enabled
-      type: "BOOLEAN"   # Boolean
+      type: "BOOLEAN"
       acl: "RW"
       sensitive: false
       value: false
     "3": # SSH Password Login Enabled
-      type: "BOOLEAN"   # Boolean
+      type: "BOOLEAN"
       acl: "RW"
       sensitive: false
       value: true
@@ -68,3 +68,26 @@
       acl: "R"
       sensitive: false
       value: ''          # Empty string for Success
+
+"28005": # CANDY RED
+  "0":
+    "0": # Client Version
+      type: "STRING"
+      acl: "R"
+      sensitive: false
+      value: "[Function]resolveCANDYREDVersion"
+    "1": # Headless Enabled
+      type: "BOOLEAN"
+      acl: "RW"
+      sensitive: false
+      value: false
+    "20": # Restart CANDY RED (Process exit)
+      type: "FUNCTION"
+      acl: "E"
+      sensitive: false
+      value: "[Function]restartCANDYRED"
+    "21": # Restart CANDY RED Result Code
+      type: "INTEGER"
+      acl: "R"
+      sensitive: false
+      value: 0          # 0 for Success

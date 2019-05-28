@@ -33,17 +33,17 @@
       sensitive: false
       value: ""
     "6": # Data Point Validation
-      type: "BOOLEAN"   # Boolean
+      type: "BOOLEAN"
       acl: "RW"
       sensitive: false
       value: false
     "7": # Event Validation
-      type: "BOOLEAN"   # Boolean
+      type: "BOOLEAN"
       acl: "RW"
       sensitive: false
       value: false
     "8": # Upload File Chunks
-      type: "BOOLEAN"   # Boolean
+      type: "BOOLEAN"
       acl: "RW"
       sensitive: false
       value: false
