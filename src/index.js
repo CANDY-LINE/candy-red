@@ -190,9 +190,9 @@ export class CandyRed {
       // Serve the http nodes from /api
       this.app.use(settings.httpNodeRoot, RED.httpNode);
 
-      this.deviceManagerStore.lwm2m.init(settings).then(() => {
-        const flowFilePath = settings.userDir + '/' + this.flowFile;
-        return this.deviceManagerStore.deviceState.initWithFlowFilePath(flowFilePath);
+      const flowFilePath = settings.userDir + '/' + this.flowFile;
+      this.deviceManagerStore.deviceState.initWithFlowFilePath(flowFilePath).then(() => {
+        return this.deviceManagerStore.lwm2m.init(settings);
       }).then(() => {
         const headlessEnabled = this.deviceManagerStore.lwm2m.getValue(28005, 0, 1);
         RED.log.info(`[CANDY RED] Headless Enabled? => ${headlessEnabled}`);

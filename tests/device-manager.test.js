@@ -228,19 +228,29 @@ describe('DeviceManagerStore', () => {
     let sandbox;
     let lwm2mdm;
     let state;
+    let restart;
     beforeEach(() => {
       state = new DeviceState(() => {}, () => {});
       lwm2mdm = new LwM2MDeviceManagement(state);
       sandbox = sinon.createSandbox();
+      restart = LwM2MDeviceManagement.restart;
+      LwM2MDeviceManagement.restart = () => {};
     });
     afterEach(() => {
       delete process.env.DEVICE_MANAGEMENT_ENABLED;
       sandbox.restore();
+      LwM2MDeviceManagement.restart = restart;
     });
 
     describe('#init', () => {
       it('should define an event handler which does nothing when deviceState.candyBoardServiceSupported is false', (done) => {
         state.candyBoardServiceSupported = false;
+
+        sandbox.stub(fs, 'readFile')
+          .onFirstCall().yields(null, '[]');
+        sandbox.stub(fs, 'unlinkSync')
+          .onFirstCall().returns();
+
         let stubEvent = sandbox.stub(lwm2mdm.internalEventBus);
         stubEvent.on.onFirstCall().yields({
           clientName: 'my-clientName'
@@ -261,11 +271,21 @@ describe('DeviceManagerStore', () => {
 
       it('should define an event handler which resolve a device id when process.env.DEVICE_MANAGEMENT_ENABLED is "true"', (done) => {
         state.candyBoardServiceSupported = true;
+        state.flowFilePath = `${__dirname}/test-flow.json`;
         process.env.DEVICE_MANAGEMENT_ENABLED = 'true';
         let stubEvent = sandbox.stub(lwm2mdm.internalEventBus);
         stubEvent.on.onFirstCall().yields({
           clientName: 'my-clientName'
         });
+
+        sandbox.stub(fs, 'readFile')
+          .onFirstCall().yields(null, '[{"type":"tab","label":"CANDY LINE DM"}]')
+          .onSecondCall().yields('error!');
+        sandbox.stub(fs, 'readFileSync')
+          .onFirstCall().returns('[]')
+          .onSecondCall().returns('[]');
+        sandbox.stub(fs, 'readdir')
+          .yields(null, ['test.json']);
 
         let stubCproc = sandbox.stub(cproc);
         let stdout = sandbox.stub({
@@ -297,9 +317,7 @@ describe('DeviceManagerStore', () => {
               hideSensitiveInfo: false,
               credentialFilePath: '/opt/candy-line/lwm2m_dm_cred.json'
             })).called);
-            assert.isTrue(Object.keys(lwm2mdm.objects).length > 0);
-            assert.equal('CANDY LINE', lwm2mdm.objects['3']['0']['0'].value());
-            assert.equal('CANDY Pi Lite 3G', lwm2mdm.objects['28001']['0']['0'].value());
+            assert.isTrue(Object.keys(lwm2mdm.objects).length === 0); // as fake empty array loaded
             done();
           } catch (err) {
             done(err);
@@ -309,6 +327,7 @@ describe('DeviceManagerStore', () => {
 
       it('should define an event handler which resolve a device id when a modem info file exists', (done) => {
         state.candyBoardServiceSupported = true;
+        state.flowFilePath = `${__dirname}/test-flow.json`;
         process.env.DEVICE_MANAGEMENT_ENABLED = 'true';
         let stubEvent = sandbox.stub(lwm2mdm.internalEventBus);
         stubEvent.on.onFirstCall().yields({
@@ -316,7 +335,13 @@ describe('DeviceManagerStore', () => {
         });
 
         sandbox.stub(fs, 'readFile')
-          .onFirstCall().yields(null, '{"status":"OK","result":{ "counter": { "rx": "0", "tx": "0" }, "datetime": "80/01/06,00:55:11", "functionality": "Full", "imei": "861000000000000", "timezone": 9.0, "model": "UC20", "revision": "UC20GQBR03A14E1G", "manufacturer": "Quectel" }}');
+          .onFirstCall().yields(null, '[{"type":"tab","label":"CANDY LINE DM"}]')
+          .onSecondCall().yields(null, '{"status":"OK","result":{ "counter": { "rx": "0", "tx": "0" }, "datetime": "80/01/06,00:55:11", "functionality": "Full", "imei": "861000000000000", "timezone": 9.0, "model": "UC20", "revision": "UC20GQBR03A14E1G", "manufacturer": "Quectel" }}');
+        sandbox.stub(fs, 'readFileSync')
+          .onFirstCall().returns('[]')
+          .onSecondCall().returns('[]');
+        sandbox.stub(fs, 'readdir')
+          .yields(null, ['test.json']);
 
         lwm2mdm.init({
           deviceId: 'deviceId',
@@ -351,6 +376,7 @@ describe('DeviceManagerStore', () => {
 
       it('should return the loaded MO values', (done) => {
         state.candyBoardServiceSupported = true;
+        state.flowFilePath = `${__dirname}/test-flow.json`;
         process.env.DEVICE_MANAGEMENT_ENABLED = 'true';
         lwm2mdm.init({
           deviceId: 'deviceId'
@@ -371,6 +397,7 @@ describe('DeviceManagerStore', () => {
 
       it('should store a resource', (done) => {
         state.candyBoardServiceSupported = true;
+        state.flowFilePath = `${__dirname}/test-flow.json`;
         process.env.DEVICE_MANAGEMENT_ENABLED = 'true';
         lwm2mdm.init({
           deviceId: 'deviceId'
@@ -395,6 +422,7 @@ describe('DeviceManagerStore', () => {
 
       it('should modify the existing mindconnect configuration in the flow file', (done) => {
         state.candyBoardServiceSupported = true;
+        state.flowFilePath = `${__dirname}/test-flow.json`;
         process.env.DEVICE_MANAGEMENT_ENABLED = 'true';
         const stubRestart = sandbox.stub(LwM2MDeviceManagement, 'restart');
         stubRestart.onFirstCall().returns();

@@ -32,6 +32,7 @@ const REBOOT_DELAY_MS = 1000;
 const PROC_CPUINFO_PATH = '/proc/cpuinfo';
 const PROC_DT_MODEL_PATH = '/proc/device-tree/model';
 const MODEM_INFO_FILE_PATH = '/opt/candy-line/candy-pi-lite/__modem_info';
+const DM_FLOW = `${__dirname}/device-management-flow.json`;
 
 export class DefaultDeviceIdResolver {
   constructor() {
@@ -387,38 +388,42 @@ export class LwM2MDeviceManagement {
   init(settings) {
     this.settings = Object.assign(this.settings, settings);
     this.objectFilePath = `${settings.userDir}/${this.objectFile}`;
+    this.credentialFilePath = `${settings.userDir}/lwm2m_dm_cred.json`;
     if (this.deviceState.candyBoardServiceSupported &&
         process.env.DEVICE_MANAGEMENT_ENABLED === 'true') {
 
-      // prepare module based identifier
-      return new Promise(resolve => {
-        fs.readFile(MODEM_INFO_FILE_PATH, (err, data) => {
-          // Read a modem info file to retrieve IMEI when online
-          if (err) {
-            // Run candy modem show to retrieve IMEI when offline
-            return this.deviceState._candyRun('modem', 'show').then(result => {
-              this.modemInfo = result.output;
+      // setup DM flow
+      return this.setupDMFlow().then(() => {
+        // prepare module based identifier
+        return new Promise(resolve => {
+          fs.readFile(MODEM_INFO_FILE_PATH, (err, data) => {
+            // Read a modem info file to retrieve IMEI when online
+            if (err) {
+              // Run candy modem show to retrieve IMEI when offline
+              return this.deviceState._candyRun('modem', 'show').then(result => {
+                this.modemInfo = result.output;
+                resolve();
+              }).catch(err => {
+                resolve();
+                RED.log.error(`[CANDY RED] Failed to run candy modem show command => ${err.message || err}`);
+              });
+            } else {
+              let dataString = data.toString().trim();
+              try {
+                this.modemInfo = JSON.parse(dataString).result;
+              } catch (_) {
+                RED.log.error(`Unexpected modem info => [${dataString}]`);
+              }
               resolve();
-            }).catch(err => {
-              resolve();
-              RED.log.error(`[CANDY RED] Failed to run candy modem show command => ${err.message || err}`);
-            });
-          } else {
-            let dataString = data.toString().trim();
-            try {
-              this.modemInfo = JSON.parse(dataString).result;
-            } catch (_) {
-              RED.log.error(`Unexpected modem info => [${dataString}]`);
             }
-            resolve();
-          }
+          });
         });
       }).then(() => {
         this.internalEventBus.on('configure', (context) => {
           const config = {};
           // EPN
           config.clientName = context.clientName;
-          if (this.modemInfo.imei) {
+          if (this.modemInfo && this.modemInfo.imei) {
             config.clientName = `urn:imei:${this.modemInfo.imei}`;
           } else if (settings.deviceId) {
             if (settings.deviceId.indexOf('urn:') !== 0) {
@@ -445,7 +450,7 @@ export class LwM2MDeviceManagement {
             config.dumpLwm2mMessages = true;
           }
           config.hideSensitiveInfo = false;
-          config.credentialFilePath = `${settings.userDir}/lwm2m_dm_cred.json`;
+          config.credentialFilePath = this.credentialFilePath;
 
           this.internalEventBus.emit('configurationDone', config);
         });
@@ -512,8 +517,92 @@ export class LwM2MDeviceManagement {
       });
 
     } else {
-      return Promise.resolve();
+      // Reset DM flow if exists
+      return this.stripDMFlow();
     }
+  }
+
+  setupDMFlow() {
+    return new Promise((resolve, reject) => {
+      RED.log.debug(`[setupDMFlow] Start`);
+      // Setup DM Flow
+      let flowFilePath = this.deviceState.flowFilePath;
+      if (Array.isArray(flowFilePath)) {
+        flowFilePath = flowFilePath[0];
+      }
+      fs.readFile(flowFilePath, (err, data) => {
+        if (err) {
+          RED.log.info(`[setupDMFlow] flowFilePath: ${flowFilePath}, ERROR End. err => ${err.message || err}`);
+          return reject(err);
+        }
+        try {
+          let flows = JSON.parse(data.toString());
+          if (!Array.isArray(flows)) {
+            flows = [flows];
+          }
+          const dmFlowExists = flows.filter(f => f.type === 'tab' && f.label === 'CANDY LINE DM').length > 0;
+          if (dmFlowExists) {
+            RED.log.info(`[setupDMFlow] DM flow is aleady installed`);
+            return resolve();
+          }
+          const dmFlow = JSON.parse(fs.readFileSync(DM_FLOW).toString());
+          RED.log.debug(`[setupDMFlow] End`);
+          return resolve(flows.concat(dmFlow));
+        } catch (err) {
+          RED.log.info(`[setupDMFlow] ERROR End. err => ${err.message || err}`);
+          return reject(err);
+        }
+      });
+    }).then((flows) => {
+      if (flows) {
+        return this.deviceState.updateFlow(flows).then(() => {
+          RED.log.warn('FLOW IS UPDATED! RELOAD THE PAGE AFTER RECONNECTING SERVER!!');
+          LwM2MDeviceManagement.restart();
+        });
+      }
+    });
+  }
+
+  stripDMFlow() {
+    return new Promise((resolve, reject) => {
+      RED.log.debug(`[stripDMFlow] Start`);
+      // Setup DM Flow
+      let flowFilePath = this.deviceState.flowFilePath;
+      if (Array.isArray(flowFilePath)) {
+        flowFilePath = flowFilePath[0];
+      }
+      fs.readFile(flowFilePath, (err, data) => {
+        if (err) {
+          RED.log.info(`[stripDMFlow] flowFilePath: ${flowFilePath}, ERROR End. err => ${err.message || err}`);
+          return reject(err);
+        }
+        try {
+          const flows = JSON.parse(data.toString());
+          const dmFlowTab = flows.filter(f => (f.type === 'tab' && f.label === 'CANDY LINE DM'))[0];
+          if (!dmFlowTab) {
+            RED.log.info(`[stripDMFlow] DM flow is aleady gone`);
+            return resolve();
+          }
+          const newFlow = flows.filter(f => (f.z !== dmFlowTab.id && f.id !== dmFlowTab.id));
+          RED.log.debug(`[stripDMFlow] End`);
+          return resolve(newFlow);
+        } catch (err) {
+          RED.log.info(`[stripDMFlow] ERROR End. err => ${err.message || err}`);
+          return reject(err);
+        }
+      });
+    }).then((flows) => {
+      if (flows) {
+        return this.deviceState.updateFlow(flows).then(() => {
+          try {
+            // Remove Credentials file as well
+            fs.unlinkSync(this.credentialFilePath);
+          } catch (_) {}
+          RED.log.warn('FLOW IS UPDATED! RELOAD THE PAGE AFTER RECONNECTING SERVER!!');
+          LwM2MDeviceManagement.restart();
+        });
+      }
+    });
   }
 
   triggerSaveObjectsTask() {
