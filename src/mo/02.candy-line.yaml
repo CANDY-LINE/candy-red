@@ -3,59 +3,68 @@
 "28001": # Product Information
   "0":
     "0": # Product Name
-      type: 4           # String
-      acl: 1            # R
+      type: "STRING"
+      acl: "R"
       sensitive: false
       value: "[Function]resolveCANDYLINEProductName"
     "1": # Module Name
-      type: 4           # String
-      acl: 1            # R
+      type: "STRING"
+      acl: "R"
       sensitive: false
       value: "[Function]resolveModuleName"
     "2": # Module Identifier
-      type: 4           # String
-      acl: 1            # R
+      type: "STRING"
+      acl: "R"
       sensitive: true
       value: "[Function]resolveModuleIdentifier"
     "3": # Module Firmware Version
-      type: 4           # String
-      acl: 1            # R
+      type: "STRING"
+      acl: "R"
       sensitive: false
       value: "[Function]resolveModuleFirmwareVersion"
 
 "28002": # OS Configuration
   "0":
     "0": # User Name
-      type: 4           # String
-      acl: 3            # RW
+      type: "STRING"
+      acl: "RW"
       sensitive: false
       value: ""
     "1": # Password
-      type: 4           # String
-      acl: 3            # RW
+      type: "STRING"
+      acl: "RW"
       sensitive: true
       value: ""
     "2": # SSH Enabled
-      type: 8           # Boolean
-      acl: 3            # RW
+      type: "BOOLEAN"   # Boolean
+      acl: "RW"
       sensitive: false
       value: false
     "3": # SSH Password Login Enabled
-      type: 8           # Boolean
-      acl: 3            # RW
+      type: "BOOLEAN"   # Boolean
+      acl: "RW"
       sensitive: false
       value: true
     "4": # SSH Public Key (hex string)
-      type: 4           # String
-      acl: 3            # RW
+      type: "STRING"
+      acl: "RW"
       sensitive: false
       value: ""
     "20": # Apply OS Configuration
-      type: 240         # Function
-      acl: 4            # E
+      type: "FUNCTION"
+      acl: "E"
       sensitive: false
     "21": # OS Configuration Application Result Code
-      type: 6           # Integer
-      acl: 1            # R
+      type: "INTEGER"
+      acl: "R"
       sensitive: false
       value: 0          # 0 for Success
+    "22": # Reboot OS
+      type: "FUNCTION"
+      acl: "E"
+      sensitive: false
+    "23": # Reboot OS Result Status
+      type: "STRING"
+      acl: "R"
+      sensitive: false
+      value: ''          # Empty string for Success

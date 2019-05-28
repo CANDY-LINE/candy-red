@@ -3,17 +3,17 @@
 "28005": # CANDY RED
   "0":
     "0": # Client Version
-      type: 4           # String
-      acl: 1            # R
+      type: "STRING"
+      acl: "R"
       sensitive: false
       value: "[Function]resolveCANDYREDVersion"
     "1": # Headless Enabled
-      type: 8           # Boolean
-      acl: 3            # RW
+      type: "BOOLEAN"   # Boolean
+      acl: "RW"
       sensitive: false
       value: false
     "20": # Restart CANDY RED (Process exit)
-      type: 240         # Function
-      acl: 4            # E
+      type: "FUNCTION"
+      acl: "E"
       sensitive: false
       value: "[Function]restartCANDYRED"
