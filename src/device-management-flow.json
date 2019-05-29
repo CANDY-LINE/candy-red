@@ -62,18 +62,23 @@
         "rules": [
             {
                 "t": "eq",
-                "v": "/28002/0/22",
+                "v": "/3/0/4",
                 "vt": "str"
             },
             {
                 "t": "eq",
                 "v": "/28002/0/20",
                 "vt": "str"
+            },
+            {
+                "t": "eq",
+                "v": "/28001/0/20",
+                "vt": "str"
             }
         ],
         "checkall": "false",
         "repair": false,
-        "outputs": 2,
+        "outputs": 3,
         "x": 330,
         "y": 120,
         "wires": [
@@ -83,6 +88,9 @@
             [
                 "c9016d1.485291",
                 "489602e6.2e3ee4"
+            ],
+            [
+                "3ca34572.c6b8b2"
             ]
         ]
     },
@@ -524,6 +532,71 @@
         "lwm2mClient": "5edf712f.8c24a",
         "x": 2630,
         "y": 300,
+        "wires": []
+    },
+    {
+        "id": "3ca34572.c6b8b2",
+        "type": "exec",
+        "z": "5e8a6e7d.727fb",
+        "command": "systemctl",
+        "addpay": false,
+        "append": "restart candy-pi-lite",
+        "useSpawn": "false",
+        "timer": "5",
+        "oldrc": false,
+        "name": "Restart CANDY Pi Board Service",
+        "x": 620,
+        "y": 280,
+        "wires": [
+            [
+                "9ac72dca.ac42"
+            ],
+            [],
+            []
+        ]
+    },
+    {
+        "id": "9ac72dca.ac42",
+        "type": "change",
+        "z": "5e8a6e7d.727fb",
+        "name": "Set Result Code",
+        "rules": [
+            {
+                "t": "set",
+                "p": "topic",
+                "pt": "msg",
+                "to": "/28001/0/21",
+                "tot": "str"
+            },
+            {
+                "t": "move",
+                "p": "rc.code",
+                "pt": "msg",
+                "to": "payload",
+                "tot": "msg"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 780,
+        "y": 340,
+        "wires": [
+            [
+                "329bf1bd.42f216"
+            ]
+        ]
+    },
+    {
+        "id": "329bf1bd.42f216",
+        "type": "lwm2m client out",
+        "z": "5e8a6e7d.727fb",
+        "name": "Write Result Code",
+        "lwm2mClient": "5edf712f.8c24a",
+        "x": 990,
+        "y": 340,
         "wires": []
     },
     {
