@@ -436,6 +436,7 @@ export class LwM2MDeviceManagement {
             }
           }
 
+          config.serverId = 97;
           config.clientPort = parseInt(process.env.DEVICE_MANAGEMENT_CL_PORT || 57830);
           config.reconnectSec = parseInt(process.env.DEVICE_MANAGEMENT_RECONNECT_SEC || 60);
           config.serverHost = process.env.DEVICE_MANAGEMENT_BS_HOST;
