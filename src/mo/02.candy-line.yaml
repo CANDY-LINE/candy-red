@@ -59,6 +59,11 @@
       acl: "RW"
       sensitive: false
       value: ""
+    "5": # Log content (64KiB)
+      type: "STRING"
+      acl: "RW"
+      sensitive: false
+      value: ""
     "20": # Apply OS Configuration
       type: "FUNCTION"
       acl: "E"
@@ -68,6 +73,20 @@
       acl: "R"
       sensitive: false
       value: 0          # 0 for Success
+    "22": # Get the tail end of a text file. 2 parameters available, `path` for the path to the file, `lines` for fetching lines.
+      type: "FUNCTION"
+      acl: "E"
+      sensitive: false
+    "23": # Get the tail end of a text file Result Code
+      type: "INTEGER"
+      acl: "R"
+      sensitive: false
+      value: 0
+    "24": # OS Reboot Result Code
+      type: "INTEGER"
+      acl: "R"
+      sensitive: false
+      value: 0
 
 "28005": # CANDY RED
   "0":
