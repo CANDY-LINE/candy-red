@@ -33,6 +33,9 @@ const PROC_CPUINFO_PATH = '/proc/cpuinfo';
 const PROC_DT_MODEL_PATH = '/proc/device-tree/model';
 const MODEM_INFO_FILE_PATH = '/opt/candy-line/candy-pi-lite/__modem_info';
 const DM_FLOW = `${__dirname}/device-management-flow.json`;
+const EXCLUDED_URI_LIST = [
+  '/3/0/2', '/3/0/3', '/3/0/6', '/3/0/9', '/3/0/10', '/3/0/13', '/3/0/14', '/3/0/15', '/3/0/18', '/3/0/20', '/3/0/21'
+];
 
 export class DefaultDeviceIdResolver {
   constructor() {
@@ -619,7 +622,7 @@ export class LwM2MDeviceManagement {
       this.internalEventBus.emit('object-read', { id: requestId, topic: `^/(${Object.keys(this.objects).join('|')})/.*$` });
       this.internalEventBus.once('object-result', (result) => {
         if (result.id === requestId && result.type === 'object-read') {
-          result.payload.forEach((r) => {
+          result.payload.filter(r => EXCLUDED_URI_LIST.indexOf(r.uri) < 0).forEach((r) => {
             const uri = r.uri.split('/');
             const objectId = uri[1];
             const instanceId = uri[2];
