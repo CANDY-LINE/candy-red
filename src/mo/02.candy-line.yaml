@@ -68,15 +68,6 @@
       acl: "R"
       sensitive: false
       value: 0          # 0 for Success
-    "22": # Reboot OS
-      type: "FUNCTION"
-      acl: "E"
-      sensitive: false
-    "23": # Reboot OS Result Status
-      type: "STRING"
-      acl: "R"
-      sensitive: false
-      value: ''          # Empty string for Success
 
 "28005": # CANDY RED
   "0":
