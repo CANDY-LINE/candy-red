@@ -687,9 +687,28 @@ export class LwM2MDeviceManagement {
       // load object file
       try {
         const data = fs.readFileSync(`${this.objectFilePath}`);
-        const objects = JSON.parse(data.toString(), this.functionResolver);
-        Object.assign(this.objects, objects);
-        RED.log.info(`[CANDY RED] <loadObjects> Overridden ObjectIDs => ${Object.keys(objects)}`);
+        const savedObjects = JSON.parse(data.toString(), this.functionResolver);
+        const mergedObjectIds = [];
+        Object.keys(savedObjects).forEach((objectId) => {
+          mergedObjectIds.push(objectId);
+          const object = savedObjects[objectId];
+          if (!this.objects[objectId]) {
+            this.objects[objectId] = object;
+            return;
+          }
+          Object.keys(object).forEach((instanceId) => {
+            const instance = object[instanceId];
+            if (!this.objects[objectId][instanceId]) {
+              this.objects[objectId][instanceId] = instance;
+              return;
+            }
+            Object.keys(instance).forEach((resourceId) => {
+              const resource = instance[resourceId];
+              this.objects[objectId][instanceId][resourceId] = resource;
+            });
+          });
+        });
+        RED.log.info(`[CANDY RED] <loadObjects> Merged ObjectIDs => ${mergedObjectIds}`);
       } catch (_) {
       }
       resolve();
