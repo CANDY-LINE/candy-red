@@ -685,18 +685,18 @@ export class LwM2MDeviceManagement {
     });
   }
 
-  getValue(objectId, instanceId, resourceId, ...args) {
-    const res = this.getResource(objectId, instanceId, resourceId);
+  peekLocalValue(objectId, instanceId, resourceId) {
+    const res = this._getLocalResource(objectId, instanceId, resourceId);
     if (!res) {
       return null;
     }
     if (typeof(res.value) === 'function') {
-      return res.value(args);
+      return res.value();
     }
     return res.value;
   }
 
-  getResource(objectId, instanceId, resourceId) {
+  _getLocalResource(objectId, instanceId, resourceId) {
     const obj = this.objects[objectId];
     if (!obj) {
       return null;

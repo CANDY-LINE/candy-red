@@ -194,7 +194,7 @@ export class CandyRed {
       this.deviceManagerStore.deviceState.initWithFlowFilePath(flowFilePath).then(() => {
         return this.deviceManagerStore.lwm2m.init(settings);
       }).then(() => {
-        const headlessEnabled = this.deviceManagerStore.lwm2m.getValue(28005, 0, 1);
+        const headlessEnabled = this.deviceManagerStore.lwm2m.peekLocalValue(28005, 0, 1);
         RED.log.info(`[CANDY RED] Headless Enabled? => ${headlessEnabled}`);
         if (!headlessEnabled) {
           RED.log.info(`[CANDY RED] Deploying Flow Editor UI...`);
