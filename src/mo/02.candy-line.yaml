@@ -120,6 +120,11 @@
           acl: "RW"
           sensitive: false
           value: "Accept: */*"
+    "5": # Installed Application Flow List
+      type: "MULTIPLE_RESOURCE"
+      acl: "R"
+      sensitive: false
+      value:
     "20": # Restart CANDY RED (Process exit)
       type: "FUNCTION"
       acl: "E"
@@ -146,6 +151,16 @@
       sensitive: false
       value: "[Function]uninstallApplicationFlow"
     "25": # Uninstall Application Flow Result Code
+      type: "INTEGER"
+      acl: "R"
+      sensitive: false
+      value: 0          # 0 for Idle, 1 for Success, 2+ for Errors
+    "26": # Update Application Flow List
+      type: "FUNCTION"
+      acl: "E"
+      sensitive: false
+      value: "[Function]updateApplicationFlowList"
+    "27": # Update Application Flow List Result Code
       type: "INTEGER"
       acl: "R"
       sensitive: false

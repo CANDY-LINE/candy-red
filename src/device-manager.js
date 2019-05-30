@@ -1044,6 +1044,33 @@ export class LwM2MDeviceManagement {
     });
   }
 
+  _updateApplicationFlowList() {
+    return new Promise((resolve, reject) => {
+      RED.log.info(`[CANDY RED] <_updateApplicationFlowList> Start`);
+      fs.readFile(this.deviceState.flowFilePath, (err, data) => {
+        if (err) {
+          return reject(err);
+        }
+        try {
+          const flows = JSON.parse(data.toString());
+          return this.writeResource('/28005/0/5', flows.filter(f => f.type === 'tab').map((f) => {
+            return f.label;
+          }));
+        } catch (err) {
+          return reject(err);
+        }
+      });
+    }).then(() => {
+      return this.writeResource('/28005/0/27', 1);
+    }).catch((err) => {
+      RED.log.error(`[CANDY RED] <_updateApplicationFlowList> err=>${err ? (err.message ? err.message : err) : '(uknown)'}`);
+      return this.writeResource('/28005/0/27', 3);
+    }).then(() => {
+      RED.log.info(`[CANDY RED] <_updateApplicationFlowList> End`);
+      return this.saveObjects();
+    });
+  }
+
   /*
    * Replace ALL mindconnect agent configurations embedded in the flow file.
    * CANRY RED process will exit after update.
