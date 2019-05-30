@@ -199,6 +199,7 @@ export class DeviceState {
           resolve(false);
         });
       }).then(candyBoardServiceSupported => {
+        // DEBUG USE ONLY
         if (process.env.DEVICE_MANAGEMENT_ENABLED === 'true' &&
             process.env.DEVEL === 'true' && !candyBoardServiceSupported) {
           candyBoardServiceSupported = true;
@@ -392,9 +393,15 @@ export class LwM2MDeviceManagement {
     this.settings = Object.assign(this.settings, settings);
     this.objectFilePath = `${settings.userDir}/${this.objectFile}`;
     this.credentialFilePath = `${settings.userDir}/lwm2m_dm_cred.json`;
+    let enableDM = false;
     if (this.deviceState.candyBoardServiceSupported &&
         process.env.DEVICE_MANAGEMENT_ENABLED === 'true') {
-
+      enableDM = true;
+    }
+    if (process.env.DEVEL !== 'true' && process.env.DEVICE_MANAGEMENT_BS_DTLS !== 'PSK') {
+      enableDM = false;
+    }
+    if (enableDM) {
       // setup DM flow
       return this.setupDMFlow().then(() => {
         // prepare module based identifier
