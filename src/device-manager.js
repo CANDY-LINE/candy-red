@@ -634,28 +634,26 @@ export class LwM2MDeviceManagement {
     }
     this.triggerSaveObjectsTaskHandle = setTimeout(() => {
       this.triggerSaveObjectsTaskHandle = 0;
-      const requestId = Date.now();
-      this.internalEventBus.emit('object-read', { id: requestId, topic: `^/(${Object.keys(this.objects).join('|')})/.*$` });
-      this.internalEventBus.once('object-result', (result) => {
-        if (result.id === requestId && result.type === 'object-read') {
-          result.payload.filter(r => EXCLUDED_URI_LIST.indexOf(r.uri) < 0).forEach((r) => {
-            const uri = r.uri.split('/');
-            const objectId = uri[1];
-            const instanceId = uri[2];
-            const resourceId = uri[3];
-            const object = this.objects[objectId];
-            let instance = object[instanceId];
-            if (!instance) {
-              object[instanceId] = {};
-              instance = object[instanceId];
-            }
-            let resource = instance[resourceId];
-            if (!resource || (resource.acl && resource.acl.indexOf('W') >= 0) && resource.type !== 'FUNCTION') {
-              instance[resourceId] = r.value;
-            }
-          });
-          this.saveObjects();
-        }
+      this.readResources(`^/(${Object.keys(this.objects).join('|')})/.*$`).then((result) => {
+        result.filter(r => EXCLUDED_URI_LIST.indexOf(r.uri) < 0).forEach((r) => {
+          const uri = r.uri.split('/');
+          const objectId = uri[1];
+          const instanceId = uri[2];
+          const resourceId = uri[3];
+          const object = this.objects[objectId];
+          let instance = object[instanceId];
+          if (!instance) {
+            object[instanceId] = {};
+            instance = object[instanceId];
+          }
+          let resource = instance[resourceId];
+          if (!resource || (resource.acl && resource.acl.indexOf('W') >= 0) && resource.type !== 'FUNCTION') {
+            instance[resourceId] = r.value;
+          }
+        });
+        this.saveObjects();
+      }).catch((err) => {
+        RED.log.warn(`[CANDY RED] <triggerSaveObjectsTask> Error => ${JSON.stringify(err)}`);
       });
     }, UPDATE_INTERVAL_MS);
   }
