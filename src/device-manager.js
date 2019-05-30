@@ -533,7 +533,28 @@ export class LwM2MDeviceManagement {
     }
   }
 
-  setupDMFlow() {
+  toPackageInfo(flowTab) {
+    const info = flowTab.info;
+    if (!info) {
+      return {};
+    }
+    const parts = info.split('\n');
+    let i = -1;
+    for (i = parts.length - 1; i > 0; i--) {
+      if (parts[i].trim() === '---') {
+        break;
+      }
+    }
+    if (i >= 0) {
+      try {
+        return JSON.parse(parts.slice(i + 1).join(''));
+      } catch (_) {
+        return {};
+      }
+    }
+  }
+
+  installFlow(newFlowTabName, newFlowPath) {
     return new Promise((resolve, reject) => {
       RED.log.debug(`[CANDY RED] <installFlow> Start`);
       // Setup DM Flow
@@ -551,14 +572,16 @@ export class LwM2MDeviceManagement {
           if (!Array.isArray(flows)) {
             flows = [flows];
           }
-          const dmFlowExists = flows.filter(f => f.type === 'tab' && f.label === 'CANDY LINE DM').length > 0;
-          if (dmFlowExists) {
-            RED.log.info(`[setupDMFlow] DM flow is aleady installed`);
+          const newFlowExists = flows.filter(f => f.type === 'tab' && f.label === newFlowTabName).length > 0;
+          if (newFlowExists) {
+            RED.log.info(`[CANDY RED] <installFlow> The given flow (${newFlowTabName}) is aleady installed`);
             return resolve();
           }
-          const dmFlow = JSON.parse(fs.readFileSync(DM_FLOW).toString());
-          RED.log.debug(`[setupDMFlow] End`);
-          return resolve(flows.concat(dmFlow));
+          const newFlow = JSON.parse(fs.readFileSync(newFlowPath).toString());
+          const newFlowTab = newFlow.filter(f => f.type === 'tab' && f.label === newFlowTabName)[0];
+          const packageInfo = this.toPackageInfo(newFlowTab);
+          RED.log.debug(`[CANDY RED] <installFlow> End; Installed App: ${newFlowTabName}@${packageInfo.version}`);
+          return resolve(flows.concat(newFlow));
         } catch (err) {
           RED.log.info(`[CANDY RED] <installFlow> ERROR End. err => ${err.message || err}`);
           return reject(err);
@@ -589,13 +612,14 @@ export class LwM2MDeviceManagement {
         }
         try {
           const flows = JSON.parse(data.toString());
-          const dmFlowTab = flows.filter(f => (f.type === 'tab' && f.label === 'CANDY LINE DM'))[0];
-          if (!dmFlowTab) {
-            RED.log.info(`[stripDMFlow] DM flow is aleady gone`);
+          const flowTab = flows.filter(f => (f.type === 'tab' && f.label === flowTabName))[0];
+          if (!flowTab) {
+            RED.log.info(`[CANDY RED] <uninstallFlow> The given flow (${flowTabName}) is aleady gone`);
             return resolve();
           }
-          const newFlow = flows.filter(f => (f.z !== dmFlowTab.id && f.id !== dmFlowTab.id));
-          RED.log.debug(`[stripDMFlow] End`);
+          const newFlow = flows.filter(f => (f.z !== flowTab.id && f.id !== flowTab.id));
+          const packageInfo = this.toPackageInfo(flowTab);
+          RED.log.debug(`[CANDY RED] <uninstallFlow> End; Uninstalled App: ${flowTabName}@${packageInfo.version}`);
           return resolve(newFlow);
         } catch (err) {
           RED.log.info(`[CANDY RED] <uninstallFlow> ERROR End. err => ${err.message || err}`);
