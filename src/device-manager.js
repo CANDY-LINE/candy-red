@@ -25,6 +25,7 @@ import cproc from 'child_process';
 import crypto from 'crypto';
 import path from 'path';
 import * as chokidar from 'chokidar';
+import request from 'request';
 import RED from 'node-red';
 
 const REBOOT_DELAY_MS = 1000;
@@ -554,10 +555,18 @@ export class LwM2MDeviceManagement {
     }
   }
 
-  installFlow(newFlowTabName, newFlowPath) {
+  installFlow(newFlowTabName, newFlowOrPath) {
     return new Promise((resolve, reject) => {
       RED.log.debug(`[CANDY RED] <installFlow> Start`);
-      // Setup DM Flow
+      let newFlow = newFlowOrPath;
+      if (typeof(newFlowOrPath) === 'string') {
+        try {
+          newFlow = JSON.parse(fs.readFileSync(newFlowOrPath).toString());
+        } catch (err) {
+          RED.log.info(`[CANDY RED] <installFlow> Invalid JSON format, ERROR End. err => ${err.message || err}`);
+          return reject(err);
+        }
+      }
       let flowFilePath = this.deviceState.flowFilePath;
       if (Array.isArray(flowFilePath)) {
         flowFilePath = flowFilePath[0];
@@ -577,8 +586,16 @@ export class LwM2MDeviceManagement {
             RED.log.info(`[CANDY RED] <installFlow> The given flow (${newFlowTabName}) is aleady installed`);
             return resolve();
           }
-          const newFlow = JSON.parse(fs.readFileSync(newFlowPath).toString());
           const newFlowTab = newFlow.filter(f => f.type === 'tab' && f.label === newFlowTabName)[0];
+          const newFlowVal = {
+            id: newFlowTab.id
+          };
+          while (flows.some(f => (f.z === newFlowVal.id || f.id === newFlowVal.id))) {
+            newFlowVal.id = `${crypto.randomBytes(4).toString('hex')}.${crypto.randomBytes(4).toString('hex')}`;
+          }
+          newFlow.filter(f => (f.z === newFlowTab.id)).forEach(f => f.z = newFlowVal.id);
+          newFlowTab.id = newFlowVal.id;
+          RED.log.info(`[CANDY RED] <installFlow> id collision was resolved! New id => ${newFlowTab.id}`);
           const packageInfo = this.toPackageInfo(newFlowTab);
           RED.log.debug(`[CANDY RED] <installFlow> End; Installed App: ${newFlowTabName}@${packageInfo.version}`);
           return resolve(flows.concat(newFlow));
@@ -600,7 +617,6 @@ export class LwM2MDeviceManagement {
   uninstallFlow(flowTabName) {
     return new Promise((resolve, reject) => {
       RED.log.debug(`[CANDY RED] <uninstallFlow> Start`);
-      // Setup DM Flow
       let flowFilePath = this.deviceState.flowFilePath;
       if (Array.isArray(flowFilePath)) {
         flowFilePath = flowFilePath[0];
@@ -890,11 +906,153 @@ export class LwM2MDeviceManagement {
     return LwM2MDeviceManagement.restart();
   }
 
+  _argsToString(src) {
+    switch (typeof(src)) {
+      case 'string': {
+        return src;
+      }
+      case 'object': {
+        if (src.type === 'Buffer') {
+          return Buffer.from(src.data).toString();
+        }
+        return src.toString();
+      }
+      default: {
+        return src.toString();
+      }
+    }
+  }
+
+  _argsToObject(src) {
+    try {
+      return JSON.parse(this._argsToString(src));
+    } catch (_) {
+      return null;
+    }
+  }
+
+  _downloadFlowOrParse(args) {
+    let pkg = this._argsToObject(args);
+    if (!pkg) {
+      pkg = {};
+    }
+    return this.readResources('^/28005/0/(2|3|4)$').then((resources) => {
+      const downloadInfo = resources.reduce((accumulator, currentValue) => {
+        accumulator[currentValue.uri] = currentValue.value.value;
+        return accumulator;
+      }, {});
+      pkg.flowTabName = pkg.flowTabName || downloadInfo['/28005/0/2'];
+      if (!pkg.flowTabName) {
+        return Promise.reject({ message: `Flow tab name is missing`});
+      }
+      if (pkg.flow) {
+        if (typeof(pkg.flow) === 'string') {
+          try {
+            pkg.flow = JSON.parse(pkg.flow);
+            return Promise.resolve(pkg);
+          } catch (_) {}
+        }
+      }
+      if (!downloadInfo['/28005/0/3']) {
+        return Promise.reject({ message: `Cannot download flow`});
+      }
+      const headers = {};
+      if (downloadInfo['/28005/0/4']) {
+        Object.keys(downloadInfo['/28005/0/4']).forEach((id) => {
+          const headerDef = downloadInfo['/28005/0/4'][id].value;
+          if (headerDef) {
+            const elements = headerDef.split(':');
+            headers[elements[0].trim()] = elements[1].trim();
+          }
+        });
+      }
+      return new Promise((resolve, reject) => {
+        const url = downloadInfo['/28005/0/3'];
+        if ((process.env.DEVEL === 'true' && url.indexOf('http://') >= 0) || url.indexOf('https://') >= 0) {
+          request(url, {
+            headers: headers
+          }, (err, res, body) => {
+            if (err) {
+              return reject(err);
+            }
+            const { statusCode } = res;
+            if (statusCode !== 200) {
+              return reject(`Invalid Status Code: ${statusCode}`);
+            }
+            if (!body) {
+              return reject(`Empty body`);
+            }
+            try {
+              pkg.flow = JSON.parse(body);
+              return resolve(pkg);
+            } catch(_) {
+              return reject(`Invalid JSON: ${body}`);
+            }
+          });
+        } else if (url.indexOf('file://') >= 0) {
+          fs.readFile(url.substring(7), (err, data) => {
+            if (err) {
+              return reject(`Invalid Path: ${url}`);
+            }
+            try {
+              pkg.flow = JSON.parse(data);
+              return resolve(pkg);
+            } catch(_) {
+              return reject(`Invalid JSON: ${data.toString()}`);
+            }
+          });
+        } else {
+          return reject({ message: `Unsupported protocol scheme: ${url}`});
+        }
+      });
+    });
+
+  }
+
+  _downloadAndInstallApplicationFlow(args) {
+    RED.log.info(`[CANDY RED] <_downloadAndInstallApplicationFlow> Start; args => ${JSON.stringify(args)}`);
+    return this._downloadFlowOrParse(args).then((result) => {
+      return this.installFlow(result.flowTabName, result.flow); // process.exit() on success
+    }).then(() => {
+      return this.writeResource('/28005/0/23', 1);
+    }).catch((err) => {
+      RED.log.error(`[CANDY RED] <_downloadAndInstallApplicationFlow> err=>${err ? (err.message ? err.message : err) : '(uknown)'}`);
+      return this.writeResource('/28005/0/23', 2);
+    }).then(() => {
+      RED.log.info(`[CANDY RED] <_downloadAndInstallApplicationFlow> End`);
+      return this.saveObjects();
+    });
+  }
+
+  _uninstallApplicationFlow(args) {
+    RED.log.info(`[CANDY RED] <_uninstallApplicationFlow> Start; args => ${JSON.stringify(args)}`);
+    const flowTabName = this._argsToString(args);
+    let p;
+    if (flowTabName) {
+      p = this.uninstallFlow(flowTabName).then(() => {
+        return this.writeResource('/28005/0/25', 1);
+      });
+    } else {
+      p = this.writeResource('/28005/0/25', 2);
+    }
+    return p.catch((err) => {
+      RED.log.error(`[CANDY RED] <_uninstallApplicationFlow> err=>${err ? (err.message ? err.message : err) : '(uknown)'}`);
+      return this.writeResource('/28005/0/25', 3);
+    }).then(() => {
+      RED.log.info(`[CANDY RED] <_uninstallApplicationFlow> End`);
+      return this.saveObjects();
+    });
+  }
+
   /*
    * Replace ALL mindconnect agent configurations embedded in the flow file.
    * CANRY RED process will exit after update.
    */
   _updateMindConnectAgentConfiguration(flowFilePath) {
+    if (typeof(flowFilePath) !== 'string') {
+      // Ignore invalid values
+      flowFilePath = null;
+    }
     return this.writeResource('/30001/0/102', new Date().toISOString()).then(() => {
       return new Promise((resolve, reject) => {
         RED.log.info(`[CANDY RED] <updateMindConnectAgentConfiguration> Start`);
@@ -961,14 +1119,14 @@ export class LwM2MDeviceManagement {
     }).then(() => {
       return this.writeResource('/30001/0/103', new Date().toISOString());
     }).then(() => {
-      RED.log.info(`[CANDY RED] <updateMindConnectAgentConfiguration> End`);
-      return this.saveObjects();
-    }).then(() => {
       RED.log.warn('[CANDY RED] <updateMindConnectAgentConfiguration> FLOW IS UPDATED! RELOAD THE PAGE AFTER RECONNECTING SERVER!!');
       LwM2MDeviceManagement.restart();
     }).catch((err) => {
       RED.log.error(`[CANDY RED] <updateMindConnectAgentConfiguration> err=>${err ? err.message : '(uknown)'}`);
       return this.writeResource('/30001/0/101', 1);
+    }).then(() => {
+      RED.log.info(`[CANDY RED] <updateMindConnectAgentConfiguration> End`);
+      return this.saveObjects();
     });
   }
 }

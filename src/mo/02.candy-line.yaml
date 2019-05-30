@@ -100,6 +100,26 @@
       acl: "RW"
       sensitive: false
       value: false
+    "2": # Application Flow Tab Name
+      type: "STRING"
+      acl: "RW"
+      sensitive: false
+      value: ''
+    "3": # Application Flow Download URL
+      type: "STRING"
+      acl: "RW"
+      sensitive: false
+      value: ''
+    "4": # Download/Upload Access HTTP Headers
+      type: "MULTIPLE_RESOURCE"
+      acl: "RW"
+      sensitive: false
+      value:
+        "0":
+          type: "STRING"
+          acl: "RW"
+          sensitive: false
+          value: "Accept: */*"
     "20": # Restart CANDY RED (Process exit)
       type: "FUNCTION"
       acl: "E"
@@ -110,3 +130,23 @@
       acl: "R"
       sensitive: false
       value: 0          # 0 for Success
+    "22": # Download And Install Application Flow
+      type: "FUNCTION"
+      acl: "E"
+      sensitive: false
+      value: "[Function]downloadAndInstallApplicationFlow"
+    "23": # Download And Install Application Flow Result Code
+      type: "INTEGER"
+      acl: "R"
+      sensitive: false
+      value: 0          # 0 for Idle, 1 for Success, 2+ for Errors
+    "24": # Uninstall Application Flow
+      type: "FUNCTION"
+      acl: "E"
+      sensitive: false
+      value: "[Function]uninstallApplicationFlow"
+    "25": # Uninstall Application Flow Result Code
+      type: "INTEGER"
+      acl: "R"
+      sensitive: false
+      value: 0          # 0 for Idle, 1 for Success, 2+ for Errors
