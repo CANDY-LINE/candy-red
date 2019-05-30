@@ -854,70 +854,80 @@ export class LwM2MDeviceManagement {
    * CANRY RED process will exit after update.
    */
   _updateMindConnectAgentConfiguration(flowFilePath) {
-    return new Promise((resolve, reject) => {
-      RED.log.info(`[updateMindConnectAgentConfiguration] Start`);
-      // Update Agent Configuration
-      flowFilePath = flowFilePath || this.deviceState.flowFilePath;
-      if (Array.isArray(flowFilePath)) {
-        flowFilePath = flowFilePath[0];
-      }
-      fs.readFile(flowFilePath, (err, data) => {
-        if (err) {
-          RED.log.info(`[updateMindConnectAgentConfiguration] ERROR End. err => ${err.message || err}`);
-          return reject(err);
+    return this.writeResource('/30001/0/102', new Date().toISOString()).then(() => {
+      return new Promise((resolve, reject) => {
+        RED.log.info(`[CANDY RED] <updateMindConnectAgentConfiguration> Start`);
+        flowFilePath = flowFilePath || this.deviceState.flowFilePath;
+        if (Array.isArray(flowFilePath)) {
+          flowFilePath = flowFilePath[0];
         }
-        try {
-          const flows = JSON.parse(data.toString());
-          let agents = flows.filter(f => {
-            if (f.type !== 'mindconnect') {
-              return false;
+        fs.readFile(flowFilePath, (err, data) => {
+          if (err) {
+            return reject(err);
+          }
+          try {
+            const flows = JSON.parse(data.toString());
+            let agents = flows.filter(f => f.type === 'mindconnect');
+            if (agents.length === 0) {
+              return reject({ message: 'Nothing to update'});
             }
-            return true;
-          });
-          agents.forEach((agent) => {
-            const nodeName = this.getValue(30001, 0, 10);
-            agent.name = nodeName || '';
-            const clientCredentialProfile = CLIENT_CREDENTIAL_PROFILE[this.getValue(30001, 0, 2)];
-            agent.configtype = clientCredentialProfile || 'SHARED_SECRET';
-            const uploadFileChunks = this.getValue(30001, 0, 8);
-            agent.chunk = !!uploadFileChunks;
-            const retries = this.getValue(30001, 0, 9);
-            agent.retries = retries || 0;
-            const dataValidation = this.getValue(30001, 0, 6);
-            agent.validate = !!dataValidation;
-            const eventValidation = this.getValue(30001, 0, 7);
-            agent.validateevent = !!eventValidation;
-            const baseUrl = this.getValue(30001, 0, 0) || '';
-            const iat = this.getValue(30001, 0, 1) || '';
-            const clientId = this.getValue(30001, 0, 3) || '';
-            const tenant = this.getValue(30001, 0, 4) || '';
-            const expiration = this.getValue(30001, 0, 5) || '';
-            const agentconfig = {
-              'content': {
-                'baseUrl': baseUrl,
-                'iat': iat,
-                'clientCredentialProfile': [ clientCredentialProfile ],
-                'clientId': clientId,
-                'tenant': tenant
-              },
-              'expiration': expiration
-            };
-            agent.agentconfig = JSON.stringify(agentconfig);
-          });
-          RED.log.info(`[updateMindConnectAgentConfiguration] End`);
-          return resolve(flows);
-        } catch (err) {
-          RED.log.info(`[updateMindConnectAgentConfiguration] ERROR End. err => ${err.message || err}`);
-          return reject(err);
-        }
+            this.readResources(`/30001/.*`).then((result) => {
+              const mindconnect = result.reduce((accumulator, currentValue) => {
+                accumulator[currentValue.uri] = currentValue.value.value;
+                return accumulator;
+              }, {});
+              agents.forEach((agent) => {
+                const nodeName = mindconnect['/30001/0/10'];
+                agent.name = nodeName || '';
+                const clientCredentialProfile = CLIENT_CREDENTIAL_PROFILE[mindconnect['/30001/0/2']];
+                agent.configtype = clientCredentialProfile || 'SHARED_SECRET';
+                const uploadFileChunks = mindconnect['/30001/0/8'];
+                agent.chunk = !!uploadFileChunks;
+                const retries = mindconnect['/30001/0/9'];
+                agent.retries = retries || 0;
+                const dataValidation = mindconnect['/30001/0/6'];
+                agent.validate = !!dataValidation;
+                const eventValidation = mindconnect['/30001/0/7'];
+                agent.validateevent = !!eventValidation;
+                const baseUrl = mindconnect['/30001/0/0'] || '';
+                const iat = mindconnect['/30001/0/1'] || '';
+                const clientId = mindconnect['/30001/0/3'] || '';
+                const tenant = mindconnect['/30001/0/4'] || '';
+                const expiration = mindconnect['/30001/0/5'] || '';
+                const agentconfig = {
+                  'content': {
+                    'baseUrl': baseUrl,
+                    'iat': iat,
+                    'clientCredentialProfile': [ clientCredentialProfile ],
+                    'clientId': clientId,
+                    'tenant': tenant
+                  },
+                  'expiration': expiration
+                };
+                agent.agentconfig = JSON.stringify(agentconfig);
+              });
+              return resolve(flows);
+            });
+          } catch (err) {
+            return reject(err);
+          }
+        });
       });
     }).then((flows) => {
       return this.deviceState.updateFlow(flows);
     }).then(() => {
+      return this.writeResource('/30001/0/101', 0);
+    }).then(() => {
+      return this.writeResource('/30001/0/103', new Date().toISOString());
+    }).then(() => {
+      RED.log.info(`[CANDY RED] <updateMindConnectAgentConfiguration> End`);
       return this.saveObjects();
     }).then(() => {
       RED.log.warn('[CANDY RED] <updateMindConnectAgentConfiguration> FLOW IS UPDATED! RELOAD THE PAGE AFTER RECONNECTING SERVER!!');
       LwM2MDeviceManagement.restart();
+    }).catch((err) => {
+      RED.log.error(`[CANDY RED] <updateMindConnectAgentConfiguration> err=>${err ? err.message : '(uknown)'}`);
+      return this.writeResource('/30001/0/101', 1);
     });
   }
 }
