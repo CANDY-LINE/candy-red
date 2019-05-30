@@ -191,7 +191,7 @@ export class CandyRed {
       this.app.use(settings.httpNodeRoot, RED.httpNode);
 
       const flowFilePath = settings.userDir + '/' + this.flowFile;
-      this.deviceManagerStore.deviceState.initWithFlowFilePath(flowFilePath).then(() => {
+      return this.deviceManagerStore.deviceState.initWithFlowFilePath(flowFilePath).then(() => {
         return this.deviceManagerStore.lwm2m.init(settings);
       }).then(() => {
         const headlessEnabled = this.deviceManagerStore.lwm2m.peekLocalValue(28005, 0, 1);
@@ -210,9 +210,9 @@ export class CandyRed {
         }
 
         // Start the runtime
-        RED.start().then(() => {
-          RED.log.info(`Listen port=${PORT}`);
-        });
+        return RED.start();
+      }).then(() => {
+        RED.log.info(`[CANDY RED] Listen port=${PORT}`);
       });
     });
   }
