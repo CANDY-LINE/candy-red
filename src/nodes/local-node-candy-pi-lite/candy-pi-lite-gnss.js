@@ -50,7 +50,7 @@ export default function(RED) {
       this.initialized = true;
       return this.loadGNSSConfig().then(() => {
         if (this.isEnabled()) {
-          RED.log.info('CANDY Pi Lite GNSS Client is enabled');
+          RED.log.info('[CANDY RED] CANDY Pi Lite GNSS Client is enabled');
           if (this.runOnStartup) {
             this.scheduleRunCommand(5000);
           }
@@ -60,7 +60,7 @@ export default function(RED) {
             return this.setupNMEAPort();
           });
         } else {
-          RED.log.info('CANDY Pi Lite GNSS Client is disabled');
+          RED.log.info('[CANDY RED] CANDY Pi Lite GNSS Client is disabled');
           return Promise.resolve();
         }
       });
@@ -76,7 +76,7 @@ export default function(RED) {
             this.scheduleRunCommand();
           }
         }).catch((err) => {
-          RED.log.error(err.message || err);
+          RED.log.error(`[CANDY RED] <scheduleRunCommand> ${err.message || err}`);
           if (err.code !== 'ENOENT') {
             this.scheduleRunCommand(10000);
           }
@@ -156,8 +156,8 @@ export default function(RED) {
           runOnStartup: this.runOnStartup
         }), (err) => {
           if (err) {
-            RED.log.error(err);
-            return reject('Failed to write GNSS config');
+            RED.log.error(`[CANDY RED] <saveGNSSConfig> ${err} ${err.stack}`);
+            return reject('[CANDY RED] <saveGNSSConfig> Failed to write GNSS config');
           }
         });
       });
