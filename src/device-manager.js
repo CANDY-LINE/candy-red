@@ -716,22 +716,32 @@ export class LwM2MDeviceManagement {
     return Object.assign({}, res);
   }
 
-  setResource(objectId, instanceId, resourceId, newVal) {
-    let obj = this.objects[objectId];
-    if (!obj) {
-      obj = {};
-      this.objects[objectId] = obj;
-    }
-    let instance = obj[instanceId];
-    if (!instance) {
-      instance = {};
-      obj[instanceId] = instance;
-    }
-    if (typeof(newVal) === 'object') {
-      instance[resourceId] = Object.assign({}, newVal);
-    } else {
-      throw new Error(`Unexpected resource object`);
-    }
+  readResources(uriRegExp) {
+    RED.log.debug(`[CANDY RED] <readResources> uriRegExp: ${uriRegExp}`);
+    return new Promise((resolve, reject) => {
+      const msgId = crypto.randomBytes(8).toString('hex');
+      this.internalEventBus.emit('object-read', { id: msgId, topic: uriRegExp });
+      this.internalEventBus.once(`object-read-${msgId}`, (result) => {
+        if (result.error) {
+          return reject(result.payload); // Array
+        }
+        return resolve(result.payload); // Array
+      });
+    });
+  }
+
+  writeResource(uri, value) {
+    RED.log.debug(`[CANDY RED] <writeResource> uri: ${uri}, value: ${value}`);
+    return new Promise((resolve, reject) => {
+      const msgId = crypto.randomBytes(8).toString('hex');
+      this.internalEventBus.emit('object-write', { id: msgId, topic: uri, payload: value });
+      this.internalEventBus.once(`object-write-${msgId}`, (result) => {
+        if (result.error) {
+          return reject(result.payload);
+        }
+        return resolve(result.payload);
+      });
+    });
   }
 
   syncFlows(c) {
