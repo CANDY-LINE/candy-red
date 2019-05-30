@@ -72,12 +72,12 @@ export class CandyRed {
           let oldPath = `${userDir}/flows_candy-box_${os.hostname()}.json`;
           fs.rename(oldPath, newPath, err => {
             if (!err) {
-              console.log(`[MIGRATED] ${oldPath} => ${newPath}`);
+              console.log(`[CANDY RED] {MIGRATED} ${oldPath} => ${newPath}`);
             }
             resolve();
           });
         } else {
-          console.log(`[MIGRATED] ${oldPath} => ${newPath}`);
+          console.log(`[CANDY RED] {MIGRATED} ${oldPath} => ${newPath}`);
           resolve();
         }
       });
@@ -135,14 +135,14 @@ export class CandyRed {
                   }
                   try {
                     JSON.parse(data);
-                    console.log('[INFO] Default welcome flow has been created');
+                    console.log('[CANDY RED] Default welcome flow has been created');
                     resolve();
                   } catch (_) {
                     fs.writeFile(flowFile, '[]', { flag : 'w' }, err => {
                       if (err) {
                         return reject(err);
                       }
-                      console.log('[WARN] Wrong JSON format in thhe welcome flow');
+                      console.log('[CANDY RED] {WARN} Wrong JSON format in thhe welcome flow');
                       resolve();
                     });
                   }
@@ -299,8 +299,8 @@ export class CandyRed {
           try {
             handler(RED);
           } catch (err) {
-            console.log(`The error [${err}] is ignored`);
-            console.log(err.stack);
+            console.log(`[CANDY RED] The error [${err}] is ignored`);
+            console.log(`[CANDY RED] ${err.stack}`);
           }
         });
       }
@@ -316,7 +316,7 @@ export class CandyRed {
     process.on('SIGINT', exitHandler);
     process.on('uncaughtException', exitHandler);
     process.on('unhandledRejection', (err) => {
-      console.log('unhandledRejection', err);
+      console.log('[CANDY RED] {FATAL} unhandledRejection', err);
     });
   }
 
@@ -353,14 +353,14 @@ export class CandyRed {
         CANDY_RED_SESSION_TIMEOUT, CANDY_RED_ADMIN_USER_ID, CANDY_RED_ADMIN_PASSWORD_ENC);
       settings.adminAuth = userAuth.init();
       this.app.use(settings.httpNodeRoot, userAuth.apiBasicAuthMiddleware.bind(userAuth));
-      console.log(`[INFO] Using the user:${CANDY_RED_ADMIN_USER_ID} credentials for authentication, session expires after ${CANDY_RED_SESSION_TIMEOUT} seconds`);
+      console.log(`[CANDY RED] Using the user:${CANDY_RED_ADMIN_USER_ID} credentials for authentication, session expires after ${CANDY_RED_SESSION_TIMEOUT} seconds`);
     } else if (NODE_ENV === 'production') {
       let pamAuth = new PAMAuthenticator(CANDY_RED_SESSION_TIMEOUT);
       settings.adminAuth = pamAuth.init();
       this.app.use(settings.httpNodeRoot, pamAuth.apiBasicAuthMiddleware.bind(pamAuth));
-      console.log(`[INFO] Using PAM for authentication`);
+      console.log(`[CANDY RED] Using PAM for authentication`);
     } else {
-      console.log(`[WARN] Authentication is disabled`);
+      console.log(`[CANDY RED] Authentication is disabled`);
     }
 
     return settings;
