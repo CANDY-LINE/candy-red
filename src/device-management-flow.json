@@ -4,7 +4,7 @@
         "type": "tab",
         "label": "CANDY LINE DM",
         "disabled": false,
-        "info": ""
+        "info": "# Package Info\nThe following part is flow meta information.\n---\n{\n    \"version\": \"1.0.0\"\n}"
     },
     {
         "id": "77c07b48.45b7c4",
