@@ -234,7 +234,7 @@ describe('DeviceManagerStore', () => {
       lwm2mdm = new LwM2MDeviceManagement(state);
       sandbox = sinon.createSandbox();
       restart = LwM2MDeviceManagement.restart;
-      LwM2MDeviceManagement.restart = () => {};
+      LwM2MDeviceManagement.restart = () => { console.log('>>>>>>>>>> FAKE REBOOT!!'); };
     });
     afterEach(() => {
       delete process.env.DEVICE_MANAGEMENT_ENABLED;
@@ -273,6 +273,7 @@ describe('DeviceManagerStore', () => {
         state.candyBoardServiceSupported = true;
         state.flowFilePath = `${__dirname}/test-flow.json`;
         process.env.DEVICE_MANAGEMENT_ENABLED = 'true';
+        process.env.DEVEL = 'true';
         let stubEvent = sandbox.stub(lwm2mdm.internalEventBus);
         stubEvent.on.onFirstCall().yields({
           clientName: 'my-clientName'
@@ -305,8 +306,9 @@ describe('DeviceManagerStore', () => {
         });
         setTimeout(() => {
           try {
-            assert.isTrue(candy.on.called);
+            assert.isTrue(candy.on.called, 'candy.on.called');
             assert.isTrue(stubEvent.emit.withArgs('configurationDone', sinon.match({
+              serverId: 97,
               clientName: 'urn:imei:861000000000000',
               clientPort: 57830,
               reconnectSec: 60,
@@ -316,8 +318,9 @@ describe('DeviceManagerStore', () => {
               useIPv4: true,
               hideSensitiveInfo: false,
               credentialFilePath: '/opt/candy-line/lwm2m_dm_cred.json'
-            })).called);
-            assert.isTrue(Object.keys(lwm2mdm.objects).length === 0); // as fake empty array loaded
+            })).called, 'stubEvent.emit.withArgs("configurationDone") ...');
+            assert.isTrue(Object.keys(lwm2mdm.objects).length === 0,
+              'Object.keys(lwm2mdm.objects).length === 0'); // as fake empty array loaded
             done();
           } catch (err) {
             done(err);
@@ -329,6 +332,7 @@ describe('DeviceManagerStore', () => {
         state.candyBoardServiceSupported = true;
         state.flowFilePath = `${__dirname}/test-flow.json`;
         process.env.DEVICE_MANAGEMENT_ENABLED = 'true';
+        process.env.DEVEL = 'true';
         let stubEvent = sandbox.stub(lwm2mdm.internalEventBus);
         stubEvent.on.onFirstCall().yields({
           clientName: 'my-clientName'
@@ -350,6 +354,7 @@ describe('DeviceManagerStore', () => {
           setTimeout(() => {
             try {
               assert.isTrue(stubEvent.emit.withArgs('configurationDone', sinon.match({
+                serverId: 97,
                 clientName: 'urn:imei:861000000000000',
                 clientPort: 57830,
                 reconnectSec: 60,
@@ -359,7 +364,7 @@ describe('DeviceManagerStore', () => {
                 useIPv4: true,
                 hideSensitiveInfo: false,
                 credentialFilePath: '/opt/candy-line/lwm2m_dm_cred.json'
-              })).called);
+              })).called, 'stubEvent.emit.withArgs("configurationDone") ...');
               done();
             } catch (err) {
               done(err);
@@ -372,19 +377,43 @@ describe('DeviceManagerStore', () => {
 
     });
 
-    describe('#getValue', () => {
+    describe('#readResources', () => {
 
       it('should return the loaded MO values', (done) => {
         state.candyBoardServiceSupported = true;
         state.flowFilePath = `${__dirname}/test-flow.json`;
         process.env.DEVICE_MANAGEMENT_ENABLED = 'true';
+        process.env.DEVICE_MANAGEMENT_BS_DTLS = 'PSK';
+
+        let stubEvent = sandbox.stub(lwm2mdm.internalEventBus);
+        stubEvent.once.onCall(0).yields({
+          payload: [
+            {
+              uri: '/3/0/0',
+              value: {
+                value: 'CANDY LINE'
+              }
+            }
+          ]
+        });
+        stubEvent.once.onCall(1).yields({
+          error: true,
+          payload: 'Expected Error'
+        });
+
         lwm2mdm.init({
           deviceId: 'deviceId'
+        }).then((enableDM) => {
+          assert.equal(enableDM, true);
+          return lwm2mdm.readResources('/3/0/0');
+        }).then((res) => {
+          assert.equal('CANDY LINE', res[0].value.value);
+          return lwm2mdm.readResources('/11/0/24');
         }).then(() => {
-          assert.equal('CANDY LINE', lwm2mdm.getValue(3, 0, 0));
-          assert.equal(0, lwm2mdm.getValue(11, 0, 24));
-          assert.equal('', lwm2mdm.getValue(30001, 0, 103));
-          assert.equal(null, lwm2mdm.getValue(90001, 0, 103));
+          done('should catch an error!');
+        }).catch((err) => {
+          assert.equal(err, 'Expected Error');
+        }).then(() => {
           done();
         }).catch((err) => {
           done(err);
@@ -393,23 +422,33 @@ describe('DeviceManagerStore', () => {
 
     });
 
-    describe('#setResource', () => {
+    describe('#writeResource', () => {
 
       it('should store a resource', (done) => {
         state.candyBoardServiceSupported = true;
         state.flowFilePath = `${__dirname}/test-flow.json`;
         process.env.DEVICE_MANAGEMENT_ENABLED = 'true';
+        process.env.DEVICE_MANAGEMENT_BS_DTLS = 'PSK';
+
+        let stubEvent = sandbox.stub(lwm2mdm.internalEventBus);
+        stubEvent.once.onCall(0).yields({
+        });
+        stubEvent.once.onCall(1).yields({
+          error: true,
+          payload: 'Expected Error'
+        });
+
         lwm2mdm.init({
           deviceId: 'deviceId'
         }).then(() => {
-          lwm2mdm.setResource(3, 0, 0, { value: 'MY MAN' });
-          assert.equal('MY MAN', lwm2mdm.getValue(3, 0, 0)); // ACL is ignored
-          lwm2mdm.setResource(11, 0, 24, { value: 9876, type: 6 });
-          assert.equal(9876, lwm2mdm.getValue(11, 0, 24));
-          lwm2mdm.setResource(30001, 0, 103, { value: '$$$$', type: 4 });
-          assert.equal('$$$$', lwm2mdm.getValue(30001, 0, 103));
-          lwm2mdm.setResource(90001, 0, 103, { value: true, type: 8 });
-          assert.equal(true, lwm2mdm.getValue(90001, 0, 103));
+          return lwm2mdm.writeResource('/3/0/0', 'MY MAN');
+        }).then(() => {
+          return lwm2mdm.writeResource('/no-such-obj/0/0', 'MY MAN');
+        }).then(() => {
+          done('should fail!');
+        }).catch((err) => {
+          assert.equal(err, 'Expected Error');
+        }).then(() => {
           done();
         }).catch((err) => {
           done(err);
@@ -424,25 +463,37 @@ describe('DeviceManagerStore', () => {
         state.candyBoardServiceSupported = true;
         state.flowFilePath = `${__dirname}/test-flow.json`;
         process.env.DEVICE_MANAGEMENT_ENABLED = 'true';
-        const stubRestart = sandbox.stub(LwM2MDeviceManagement, 'restart');
-        stubRestart.onFirstCall().returns();
+        process.env.DEVICE_MANAGEMENT_BS_DTLS = 'PSK';
+
+        let stubEvent = sandbox.stub(lwm2mdm.internalEventBus);
+        let call = 0;
+        stubEvent.once.onCall(call++).yields({}); // writeResource
+        stubEvent.once.onCall(call++).yields({
+          payload: [
+            { uri: '/30001/0/0', value: { value: 'https://my-endpoint' }},
+            { uri: '/30001/0/1', value: { value: 'my iat' }},
+            { uri: '/30001/0/2', value: { value: 2 }},
+            { uri: '/30001/0/3', value: { value: 'my client id' }},
+            { uri: '/30001/0/4', value: { value: 'my tenant name' }},
+            { uri: '/30001/0/5', value: { value: '2019-12-31T09:33:02.000Z' }},
+            { uri: '/30001/0/6', value: { value: true }},
+            { uri: '/30001/0/7', value: { value: true }},
+            { uri: '/30001/0/8', value: { value: true }},
+            { uri: '/30001/0/9', value: { value: 999 }},
+            { uri: '/30001/0/10', value: { value: 'my node' }},
+          ]
+        }); // readResources
+        stubEvent.once.onCall(call++).yields({}); // writeResource
+        stubEvent.once.onCall(call++).yields({}); // writeResource
+
         lwm2mdm.init({
           deviceId: 'deviceId'
+        }).then((enableDM) => {
+          assert.equal(enableDM, true);
         }).then(() => {
-          return state.initWithFlowFilePath(`${__dirname}/test-flow-mindconnect-update.json`);
+          return lwm2mdm._updateMindConnectAgentConfiguration(`${__dirname}/test-flow-mindconnect.json`);
         }).then(() => {
-          lwm2mdm.setResource(30001, 0, 0, { value: 'https://my-endpoint' });
-          lwm2mdm.setResource(30001, 0, 1, { value: 'my iat' });
-          lwm2mdm.setResource(30001, 0, 2, { value: 2 });
-          lwm2mdm.setResource(30001, 0, 3, { value: 'my client id' });
-          lwm2mdm.setResource(30001, 0, 4, { value: 'my tenant name' });
-          lwm2mdm.setResource(30001, 0, 5, { value: '2019-12-31T09:33:02.000Z' });
-          lwm2mdm.setResource(30001, 0, 6, { value: true });
-          lwm2mdm.setResource(30001, 0, 7, { value: true });
-          lwm2mdm.setResource(30001, 0, 8, { value: true });
-          lwm2mdm.setResource(30001, 0, 9, { value: 999 });
-          lwm2mdm.setResource(30001, 0, 10, { value: 'my node' });
-          return lwm2mdm.getValue(30001, 0, 100, `${__dirname}/test-flow-mindconnect.json`); // updateMindConnectAgentConfiguration
+          assert.equal(stubEvent.once.callCount, call);
         }).then(() => {
           done();
         }).catch((err) => {
