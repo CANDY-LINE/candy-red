@@ -78,7 +78,7 @@ export class DefaultDeviceIdResolver {
           } else if (model === 'Tinker Board') {
             return resolve('ATB:' + id);
           } else {
-            RED.log.warn(`Unknown Linux Device Model: [${model}]`);
+            RED.log.warn(`[CANDY RED] Unknown Linux Device Model: [${model}]`);
             return resolve('DEV:' + id);
           }
         });
@@ -168,8 +168,8 @@ export class DeviceState {
             ret = JSON.parse(output);
           } catch (e) {
             if (!notJson) {
-              RED.log.error(`** JSON Parse Error => ${ret}`);
-              RED.log.info(e.stack);
+              RED.log.error(`[CANDY RED] ** JSON Parse Error => ${ret}`);
+              RED.log.info(`[CANDY RED] ${e.stack}`);
             }
           }
           return resolve({ code: code, output: ret });
@@ -415,7 +415,7 @@ export class LwM2MDeviceManagement {
               try {
                 this.modemInfo = JSON.parse(dataString).result;
               } catch (_) {
-                RED.log.error(`Unexpected modem info => [${dataString}]`);
+                RED.log.error(`[CANDY RED] Unexpected modem info => [${dataString}]`);
               }
               resolve();
             }
@@ -528,7 +528,7 @@ export class LwM2MDeviceManagement {
 
   setupDMFlow() {
     return new Promise((resolve, reject) => {
-      RED.log.debug(`[setupDMFlow] Start`);
+      RED.log.debug(`[CANDY RED] <installFlow> Start`);
       // Setup DM Flow
       let flowFilePath = this.deviceState.flowFilePath;
       if (Array.isArray(flowFilePath)) {
@@ -536,7 +536,7 @@ export class LwM2MDeviceManagement {
       }
       fs.readFile(flowFilePath, (err, data) => {
         if (err) {
-          RED.log.info(`[setupDMFlow] flowFilePath: ${flowFilePath}, ERROR End. err => ${err.message || err}`);
+          RED.log.info(`[CANDY RED] <installFlow> flowFilePath: ${flowFilePath}, ERROR End. err => ${err.message || err}`);
           return reject(err);
         }
         try {
@@ -553,23 +553,23 @@ export class LwM2MDeviceManagement {
           RED.log.debug(`[setupDMFlow] End`);
           return resolve(flows.concat(dmFlow));
         } catch (err) {
-          RED.log.info(`[setupDMFlow] ERROR End. err => ${err.message || err}`);
+          RED.log.info(`[CANDY RED] <installFlow> ERROR End. err => ${err.message || err}`);
           return reject(err);
         }
       });
     }).then((flows) => {
       if (flows) {
         return this.deviceState.updateFlow(flows).then(() => {
-          RED.log.warn('FLOW IS UPDATED! RELOAD THE PAGE AFTER RECONNECTING SERVER!!');
+          RED.log.warn('[CANDY RED] <installFlow> FLOW IS UPDATED! RELOAD THE PAGE AFTER RECONNECTING SERVER!!');
           LwM2MDeviceManagement.restart();
         });
       }
     });
   }
 
-  stripDMFlow() {
+  uninstallFlow(flowTabName) {
     return new Promise((resolve, reject) => {
-      RED.log.debug(`[stripDMFlow] Start`);
+      RED.log.debug(`[CANDY RED] <uninstallFlow> Start`);
       // Setup DM Flow
       let flowFilePath = this.deviceState.flowFilePath;
       if (Array.isArray(flowFilePath)) {
@@ -577,7 +577,7 @@ export class LwM2MDeviceManagement {
       }
       fs.readFile(flowFilePath, (err, data) => {
         if (err) {
-          RED.log.info(`[stripDMFlow] flowFilePath: ${flowFilePath}, ERROR End. err => ${err.message || err}`);
+          RED.log.info(`[CANDY RED] <uninstallFlow> flowFilePath: ${flowFilePath}, ERROR End. err => ${err.message || err}`);
           return reject(err);
         }
         try {
@@ -591,7 +591,7 @@ export class LwM2MDeviceManagement {
           RED.log.debug(`[stripDMFlow] End`);
           return resolve(newFlow);
         } catch (err) {
-          RED.log.info(`[stripDMFlow] ERROR End. err => ${err.message || err}`);
+          RED.log.info(`[CANDY RED] <uninstallFlow> ERROR End. err => ${err.message || err}`);
           return reject(err);
         }
       });
@@ -602,11 +602,19 @@ export class LwM2MDeviceManagement {
             // Remove Credentials file as well
             fs.unlinkSync(this.credentialFilePath);
           } catch (_) {}
-          RED.log.warn('FLOW IS UPDATED! RELOAD THE PAGE AFTER RECONNECTING SERVER!!');
+          RED.log.warn('[CANDY RED] <uninstallFlow> FLOW IS UPDATED! RELOAD THE PAGE AFTER RECONNECTING SERVER!!');
           LwM2MDeviceManagement.restart();
         });
       }
     });
+  }
+
+  setupDMFlow() {
+    return this.installFlow('CANDY LINE DM', DM_FLOW);
+  }
+
+  stripDMFlow() {
+    return this.uninstallFlow('CANDY LINE DM');
   }
 
   triggerSaveObjectsTask() {
@@ -652,7 +660,7 @@ export class LwM2MDeviceManagement {
         const data = fs.readFileSync(`${this.objectFilePath}`);
         const objects = JSON.parse(data.toString(), this.functionResolver);
         Object.assign(this.objects, objects);
-        RED.log.info(`[CANDY RED] Overridden ObjectIDs => ${Object.keys(objects)}`);
+        RED.log.info(`[CANDY RED] <loadObjects> Overridden ObjectIDs => ${Object.keys(objects)}`);
       } catch (_) {
       }
       resolve();
@@ -782,9 +790,9 @@ export class LwM2MDeviceManagement {
   }
 
   _connectivityStatisticsStart() {
-    RED.log.info(`[connectivityStatisticsStart] Start`);
+    RED.log.info(`[CANDY RED] <connectivityStatisticsStart> Start`);
     // TODO reset tx/rx counter
-    RED.log.info(`[connectivityStatisticsStart] End`);
+    RED.log.info(`[CANDY RED] <connectivityStatisticsStart> End`);
   }
 
   _resolveCANDYLINEManufacturer() {
@@ -891,7 +899,7 @@ export class LwM2MDeviceManagement {
     }).then(() => {
       return this.saveObjects();
     }).then(() => {
-      RED.log.warn('FLOW IS UPDATED! RELOAD THE PAGE AFTER RECONNECTING SERVER!!');
+      RED.log.warn('[CANDY RED] <updateMindConnectAgentConfiguration> FLOW IS UPDATED! RELOAD THE PAGE AFTER RECONNECTING SERVER!!');
       LwM2MDeviceManagement.restart();
     });
   }
