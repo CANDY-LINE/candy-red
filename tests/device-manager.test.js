@@ -403,8 +403,7 @@ describe('DeviceManagerStore', () => {
 
         lwm2mdm.init({
           deviceId: 'deviceId'
-        }).then((enableDM) => {
-          assert.equal(enableDM, true);
+        }).then(() => {
           return lwm2mdm.readResources('/3/0/0');
         }).then((res) => {
           assert.equal('CANDY LINE', res[0].value.value);
@@ -488,8 +487,6 @@ describe('DeviceManagerStore', () => {
 
         lwm2mdm.init({
           deviceId: 'deviceId'
-        }).then((enableDM) => {
-          assert.equal(enableDM, true);
         }).then(() => {
           return lwm2mdm._updateMindConnectAgentConfiguration(`${__dirname}/test-flow-mindconnect.json`);
         }).then(() => {
