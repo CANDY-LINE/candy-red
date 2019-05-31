@@ -90,7 +90,7 @@ gulp.task('buildSrcs', ['copyResources', 'mo', 'favicons'], () => {
     .pipe(babel({
       minified: true,
       compact: true,
-      presets: ['es2015'],
+      presets: ['env'],
       plugins: ['add-module-exports']
     }))
     .pipe(uglify({
@@ -127,7 +127,7 @@ gulp.task('buldTests', ['buildSrcs','copyTestResources'], () => {
   return gulp.src('./tests/**/*.js')
     .pipe(sourcemaps.init())
     .pipe(babel({
-      presets: ['es2015'],
+      presets: ['env'],
       plugins: ['add-module-exports']
     }))
     .pipe(sourcemaps.write('.'))
