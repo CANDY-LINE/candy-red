@@ -762,7 +762,9 @@ export class LwM2MDeviceManagement {
         });
         RED.log.info(`[CANDY RED] <loadObjects> Merged ObjectIDs => ${mergedObjectIds}`);
       } catch (err) {
-        return reject(err);
+        if (err.code !== 'ENOENT') {
+          return reject(err);
+        }
       }
       resolve();
     });

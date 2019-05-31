@@ -283,8 +283,9 @@ describe('DeviceManagerStore', () => {
           .onFirstCall().yields(null, '[{"type":"tab","label":"CANDY LINE DM"}]')
           .onSecondCall().yields('error!');
         sandbox.stub(fs, 'readFileSync')
-          .onFirstCall().returns('[]')
-          .onSecondCall().returns('[]');
+          .onCall(0).returns('[]')
+          .onCall(1).returns('[]')
+          .onCall(2).returns('[]');
         sandbox.stub(fs, 'readdir')
           .yields(null, ['test.json']);
 
@@ -342,8 +343,9 @@ describe('DeviceManagerStore', () => {
           .onFirstCall().yields(null, '[{"type":"tab","label":"CANDY LINE DM"}]')
           .onSecondCall().yields(null, '{"status":"OK","result":{ "counter": { "rx": "0", "tx": "0" }, "datetime": "80/01/06,00:55:11", "functionality": "Full", "imei": "861000000000000", "timezone": 9.0, "model": "UC20", "revision": "UC20GQBR03A14E1G", "manufacturer": "Quectel" }}');
         sandbox.stub(fs, 'readFileSync')
-          .onFirstCall().returns('[]')
-          .onSecondCall().returns('[]');
+          .onCall(0).returns('[]')
+          .onCall(1).returns('[]')
+          .onCall(2).returns('[]');
         sandbox.stub(fs, 'readdir')
           .yields(null, ['test.json']);
 
