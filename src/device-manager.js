@@ -1003,12 +1003,12 @@ export class LwM2MDeviceManagement {
     if (!pkg) {
       pkg = {};
     }
-    return this.readResources('^/28005/0/(2|3|4)$').then((resources) => {
+    return this.readResources('^/428005/0/(2|3|4)$').then((resources) => {
       const downloadInfo = resources.reduce((accumulator, currentValue) => {
         accumulator[currentValue.uri] = currentValue.value.value;
         return accumulator;
       }, {});
-      pkg.flowTabName = pkg.flowTabName || downloadInfo['/28005/0/2'];
+      pkg.flowTabName = pkg.flowTabName || downloadInfo['/428005/0/2'];
       if (!pkg.flowTabName) {
         return Promise.reject({ message: `Flow tab name is missing`});
       }
@@ -1020,13 +1020,13 @@ export class LwM2MDeviceManagement {
           } catch (_) {}
         }
       }
-      if (!downloadInfo['/28005/0/3']) {
+      if (!downloadInfo['/428005/0/3']) {
         return Promise.reject({ message: `Cannot download flow`});
       }
       const headers = {};
-      if (downloadInfo['/28005/0/4']) {
-        Object.keys(downloadInfo['/28005/0/4']).forEach((id) => {
-          const headerDef = downloadInfo['/28005/0/4'][id].value;
+      if (downloadInfo['/428005/0/4']) {
+        Object.keys(downloadInfo['/428005/0/4']).forEach((id) => {
+          const headerDef = downloadInfo['/428005/0/4'][id].value;
           if (headerDef) {
             const elements = headerDef.split(':');
             headers[elements[0].trim()] = elements[1].trim();
@@ -1034,7 +1034,7 @@ export class LwM2MDeviceManagement {
         });
       }
       return new Promise((resolve, reject) => {
-        const url = downloadInfo['/28005/0/3'];
+        const url = downloadInfo['/428005/0/3'];
         if ((process.env.DEVEL === 'true' && url.indexOf('http://') >= 0) || url.indexOf('https://') >= 0) {
           request(url, {
             headers: headers
@@ -1081,10 +1081,10 @@ export class LwM2MDeviceManagement {
     return this._downloadFlowOrParse(args).then((result) => {
       return this.installFlow(result.flowTabName, result.flow); // process.exit() on success
     }).then(() => {
-      return this.writeResource('/28005/0/23', 1);
+      return this.writeResource('/428005/0/23', 1);
     }).catch((err) => {
       RED.log.error(`[CANDY RED] <_downloadAndInstallApplicationFlow> err=>${err ? (err.message ? err.message : err) : '(uknown)'}`);
-      return this.writeResource('/28005/0/23', 2);
+      return this.writeResource('/428005/0/23', 2);
     }).then(() => {
       RED.log.info(`[CANDY RED] <_downloadAndInstallApplicationFlow> End`);
       return this.saveObjects();
@@ -1097,14 +1097,14 @@ export class LwM2MDeviceManagement {
     let p;
     if (flowTabName) {
       p = this.uninstallFlow(flowTabName).then(() => {
-        return this.writeResource('/28005/0/25', 1);
+        return this.writeResource('/428005/0/25', 1);
       });
     } else {
-      p = this.writeResource('/28005/0/25', 2);
+      p = this.writeResource('/428005/0/25', 2);
     }
     return p.catch((err) => {
       RED.log.error(`[CANDY RED] <_uninstallApplicationFlow> err=>${err ? (err.message ? err.message : err) : '(uknown)'}`);
-      return this.writeResource('/28005/0/25', 3);
+      return this.writeResource('/428005/0/25', 3);
     }).then(() => {
       RED.log.info(`[CANDY RED] <_uninstallApplicationFlow> End`);
       return this.saveObjects();
@@ -1120,7 +1120,7 @@ export class LwM2MDeviceManagement {
         }
         try {
           const flows = JSON.parse(data.toString());
-          return this.writeResource('/28005/0/5', flows.filter(f => f.type === 'tab').map((f) => {
+          return this.writeResource('/428005/0/5', flows.filter(f => f.type === 'tab').map((f) => {
             return f.label;
           }));
         } catch (err) {
@@ -1128,10 +1128,10 @@ export class LwM2MDeviceManagement {
         }
       });
     }).then(() => {
-      return this.writeResource('/28005/0/27', 1);
+      return this.writeResource('/428005/0/27', 1);
     }).catch((err) => {
       RED.log.error(`[CANDY RED] <_updateApplicationFlowList> err=>${err ? (err.message ? err.message : err) : '(uknown)'}`);
-      return this.writeResource('/28005/0/27', 3);
+      return this.writeResource('/428005/0/27', 3);
     }).then(() => {
       RED.log.info(`[CANDY RED] <_updateApplicationFlowList> End`);
       return this.saveObjects();
