@@ -431,6 +431,7 @@ export class LwM2MDeviceManagement {
         });
       }).then(() => {
         this.internalEventBus.on('configure', (context) => {
+          this.decryptObjects();
           const config = {};
           // EPN
           config.clientName = context.clientName;
@@ -698,8 +699,43 @@ export class LwM2MDeviceManagement {
     }, UPDATE_INTERVAL_MS);
   }
 
+  getSecret() {
+    const secret = RED.settings.get('credentialSecret');
+    if (secret) {
+      return secret;
+    } else {
+      return RED.settings.get('_credentialSecret');
+    }
+  }
+
+  decrypt(enc) {
+    if (!enc || !enc.$) {
+      return enc;
+    }
+    const value = enc.$;
+    const iv = Buffer.from(value.substring(0, 32),'hex');
+    const secret = crypto.createHash('sha256').update(this.getSecret()).digest();
+    const creds = value.substring(32);
+    const decipher = crypto.createDecipheriv('aes-256-ctr', secret, iv);
+    const data = decipher.update(creds, 'base64', 'utf8') + decipher.final('utf8');
+    return JSON.parse(data);
+  }
+
+  encrypt(value) {
+    if (!value) {
+      return null;
+    }
+    const iv = crypto.randomBytes(16);
+    const secret = crypto.createHash('sha256').update(this.getSecret()).digest();
+    const cipher = crypto.createCipheriv('aes-256-ctr', secret, iv);
+    return {
+      '$': iv.toString('hex') +
+        cipher.update(JSON.stringify(value), 'utf8', 'base64') +
+        cipher.final('base64')};
+  }
+
   loadObjects() {
-    return new Promise((resolve) => {
+    return new Promise((resolve, reject) => {
       // load object file
       try {
         const data = fs.readFileSync(`${this.objectFilePath}`);
@@ -725,9 +761,24 @@ export class LwM2MDeviceManagement {
           });
         });
         RED.log.info(`[CANDY RED] <loadObjects> Merged ObjectIDs => ${mergedObjectIds}`);
-      } catch (_) {
+      } catch (err) {
+        return reject(err);
       }
       resolve();
+    });
+  }
+
+  decryptObjects() {
+    Object.keys(this.objects).forEach((objectId) => {
+      Object.keys(this.objects[objectId]).forEach((instanceId) => {
+        Object.keys(this.objects[objectId][instanceId]).forEach((resourceId) => {
+          const resource = this.objects[objectId][instanceId][resourceId];
+          console.log(`/${objectId}/${instanceId}/${resourceId} => sensitive? ${resource.sensitive}, resource.sensitive && resource.value =>${resource.sensitive && resource.value}, ${JSON.stringify(resource.value)}`);
+          if (resource.sensitive && resource.value) {
+            resource.value = this.decrypt(resource.value);
+          }
+        });
+      });
     });
   }
 
@@ -735,11 +786,27 @@ export class LwM2MDeviceManagement {
     return new Promise((resolve) => {
       // save current objects
       try {
+        // Clone
+        const objects = JSON.parse(JSON.stringify(this.objects, this.functionReplacer));
+        Object.keys(objects).forEach((objectId) => {
+          const object = objects[objectId];
+          Object.keys(object).forEach((instanceId) => {
+            const instance = object[instanceId];
+            Object.keys(instance).forEach((resourceId) => {
+              const resource = instance[resourceId];
+              if (resource.sensitive && resource.value && resource.type !== 'FUNCTION') {
+                if (resource.value.toString().indexOf('[Function]') !== 0) {
+                  resource.value = this.encrypt(resource.value);
+                }
+              }
+            });
+          });
+        });
         let data;
         if (RED.settings.flowFilePretty) {
-          data = JSON.stringify(this.objects, this.functionReplacer, 2);
+          data = JSON.stringify(objects, this.functionReplacer, 2);
         } else {
-          data = JSON.stringify(this.objects, this.functionReplacer);
+          data = JSON.stringify(objects, this.functionReplacer);
         }
         fs.writeFileSync(`${this.objectFilePath}`, data);
       } catch (_) {
