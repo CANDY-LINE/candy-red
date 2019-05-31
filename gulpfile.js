@@ -109,7 +109,7 @@ gulp.task('buildSrcs', ['copyResources', 'mo', 'favicons'], () => {
         unsafe: true
       },
     }))
-    .pipe(sourcemaps.write())
+    .pipe(sourcemaps.write('.'))
     .pipe(gulp.dest('./dist'))
     .pipe(livereload());
 });
