@@ -775,7 +775,6 @@ export class LwM2MDeviceManagement {
       Object.keys(this.objects[objectId]).forEach((instanceId) => {
         Object.keys(this.objects[objectId][instanceId]).forEach((resourceId) => {
           const resource = this.objects[objectId][instanceId][resourceId];
-          console.log(`/${objectId}/${instanceId}/${resourceId} => sensitive? ${resource.sensitive}, resource.sensitive && resource.value =>${resource.sensitive && resource.value}, ${JSON.stringify(resource.value)}`);
           if (resource.sensitive && resource.value) {
             resource.value = this.decrypt(resource.value);
           }
