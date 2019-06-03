@@ -411,13 +411,22 @@ export class LwM2MDeviceManagement {
             // Read a modem info file to retrieve IMEI when online
             if (err) {
               // Run candy modem show to retrieve IMEI when offline
-              return this.deviceState._candyRun('modem', 'show').then(result => {
-                this.modemInfo = result.output;
-                resolve();
-              }).catch(err => {
-                resolve();
-                RED.log.error(`[CANDY RED] Failed to run candy modem show command => ${err.message || err}`);
-              });
+              let retry = 0;
+              const command = () => {
+                this.deviceState._candyRun('modem', 'show').then(result => {
+                  this.modemInfo = result.output;
+                  resolve();
+                }).catch(err => {
+                  if (retry < 120 && err.code === 1) {
+                    setTimeout(command, 5000);
+                    retry++;
+                  } else {
+                    resolve();
+                    RED.log.error(`[CANDY RED] Failed to run candy modem show command => ${err.message || JSON.stringify(err)}`);
+                  }
+                });
+              };
+              process.nextTick(command);
             } else {
               let dataString = data.toString().trim();
               try {
