@@ -57,6 +57,11 @@
       acl: "RW"
       sensitive: false
       value: ""
+    "11": # Data Point ID Mappings
+      type: "STRING"
+      acl: "RW"
+      sensitive: false
+      value: ""
     "100": # Update Agent Configuration
       type: "FUNCTION"
       acl: "E"
