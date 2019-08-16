@@ -36,6 +36,21 @@
       acl: "R"
       sensitive: false
       value: 0          # 0 for Success
+    "22": # Apply CANDY Pi Board Service Configuration Changes
+      type: "FUNCTION"
+      acl: "E"
+      sensitive: false
+      value: "[Function]applyConfigChanges"
+    "23": # Apply CANDY Pi Board Service Configuration Changes Result Code
+      type: "INTEGER"
+      acl: "R"
+      sensitive: false
+      value: 0          # 0 for Success
+    "24": # OS Reboot Result Code Result Code
+      type: "INTEGER"
+      acl: "R"
+      sensitive: false
+      value: 0          # 0 for Success
 
 "428002": # OS Configuration
   "0":
