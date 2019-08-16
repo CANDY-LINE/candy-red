@@ -125,6 +125,46 @@
       acl: "R"
       sensitive: false
       value:
+    "6": # Bootstrap Server Host
+      type: "STRING"
+      acl: "RW"
+      sensitive: false
+      value: ""
+    "7": # Bootstrap Server Port
+      type: "INTEGER"
+      acl: "RW"
+      sensitive: false
+      value: 0
+    "8": # Bootstrap Security Mode
+      type: "INTEGER"
+      acl: "RW"
+      sensitive: false
+      value: 0
+    "9": # Bootstrap Public Key or ID
+      type: "OPAQUE"
+      acl: "RW"
+      sensitive: true
+      value: ""
+    "10": # Bootstrap Server Public Key or ID
+      type: "OPAQUE"
+      acl: "RW"
+      sensitive: true
+      value: ""
+    "11": # Bootstrap Secret Key
+      type: "OPAQUE"
+      acl: "RW"
+      sensitive: true
+      value: ""
+    "12": # Bootstrap Short Server ID
+      type: "INTEGER"
+      acl: "RW"
+      sensitive: false
+      value: 0
+    "13": # Exclusive to Mobile Network
+      type: "BOOLEAN"
+      acl: "RW"
+      sensitive: false
+      value: false
     "20": # Restart CANDY RED (Process exit)
       type: "FUNCTION"
       acl: "E"
