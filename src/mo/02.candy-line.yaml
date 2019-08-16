@@ -138,6 +138,49 @@
       sensitive: false
       value: 0
 
+"428003": # APN vendor specific extensions
+  "0":
+    "0": # ops
+      type: "BOOLEAN"
+      acl: "RW"
+      sensitive: false
+      value: false
+    "1": # mcc
+      type: "STRING"
+      acl: "RW"
+      sensitive: false
+      value: ""
+    "2": # mnc
+      type: "STRING"
+      acl: "RW"
+      sensitive: false
+      value: ""
+    "3": # nw
+      type: "STRING"
+      acl: "RW"
+      sensitive: false
+      value: ""
+    "4": # ipv6dns1
+      type: "STRING"
+      acl: "RW"
+      sensitive: false
+      value: ""
+    "5": # ipv6dns2
+      type: "STRING"
+      acl: "RW"
+      sensitive: false
+      value: ""
+    "6": # cs
+      type: "BOOLEAN"
+      acl: "RW"
+      sensitive: false
+      value: false
+    "7": # pu
+      type: "BOOLEAN"
+      acl: "RW"
+      sensitive: false
+      value: false
+
 "428005": # CANDY RED
   "0":
     "0": # Client Version
