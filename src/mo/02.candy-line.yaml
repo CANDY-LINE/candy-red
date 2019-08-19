@@ -46,43 +46,8 @@
       acl: "R"
       sensitive: false
       value: 0          # 0 for Success
-    "24": # OS Reboot Result Code Result Code
-      type: "INTEGER"
-      acl: "R"
-      sensitive: false
-      value: 0          # 0 for Success
-    "30": # OS Name
-      type: "STRING"
-      acl: "R"
-      sensitive: false
-      value: "[Function]resolveOSName"
-    "31": # OS Version
-      type: "STRING"
-      acl: "R"
-      sensitive: false
-      value: "[Function]resolveOSVersion"
-    "32": # OS ID
-      type: "STRING"
-      acl: "R"
-      sensitive: false
-      value: "[Function]resolveOSID"
-    "33": # Linux Kernel Release
-      type: "STRING"
-      acl: "R"
-      sensitive: false
-      value: "[Function]resolveLinuxKernelRelease"
-    "34": # Processor Architecture
-      type: "STRING"
-      acl: "R"
-      sensitive: false
-      value: "[Function]resolveProcessorArchitecture"
-    "35": # Board Product Name
-      type: "STRING"
-      acl: "R"
-      sensitive: false
-      value: "[Function]resolveBoardProductName"
 
-"428002": # OS Configuration
+"428002": # OS Configuration/Information
   "0":
     "0": # User Name
       type: "STRING"
@@ -137,6 +102,36 @@
       acl: "R"
       sensitive: false
       value: 0
+    "30": # OS Name
+      type: "STRING"
+      acl: "R"
+      sensitive: false
+      value: "[Function]resolveOSName"
+    "31": # OS Version
+      type: "STRING"
+      acl: "R"
+      sensitive: false
+      value: "[Function]resolveOSVersion"
+    "32": # OS ID
+      type: "STRING"
+      acl: "R"
+      sensitive: false
+      value: "[Function]resolveOSID"
+    "33": # Linux Kernel Release
+      type: "STRING"
+      acl: "R"
+      sensitive: false
+      value: "[Function]resolveLinuxKernelRelease"
+    "34": # Processor Architecture
+      type: "STRING"
+      acl: "R"
+      sensitive: false
+      value: "[Function]resolveProcessorArchitecture"
+    "35": # Board Product Name
+      type: "STRING"
+      acl: "R"
+      sensitive: false
+      value: "[Function]resolveBoardProductName"
 
 "428003": # APN vendor specific extensions
   "0":
