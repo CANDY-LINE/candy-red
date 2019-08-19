@@ -24,7 +24,7 @@
       value: "[Function]resolveModuleFirmwareVersion"
     "4": # Serial Port Type
       type: "INTEGER"
-      acl: "R"
+      acl: "RW"
       sensitive: false
       value: 0          # 0 for auto, 1 for usb, 2 for uart
     "20": # Restart CANDY Pi Board Service
