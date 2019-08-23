@@ -1,6 +1,6 @@
 ---
 # This entry will be assigned to `lwm2m.objects` in RED.settings object.
-"428001": # CANDY Pi Board Object
+"42801": # CANDY Pi Board Object
   "0":
     "0": # Product Name
       type: "STRING"
@@ -47,7 +47,7 @@
       sensitive: false
       value: 0          # 0 for Success
 
-"428002": # OS Configuration/Information
+"42802": # OS Configuration/Information
   "0":
     "0": # User Name
       type: "STRING"
@@ -133,7 +133,7 @@
       sensitive: false
       value: "[Function]resolveBoardProductName"
 
-"428003": # APN vendor specific extensions
+"42803": # APN vendor specific extensions
   "0":
     "0": # ops
       type: "BOOLEAN"
@@ -176,7 +176,7 @@
       sensitive: false
       value: false
 
-"428005": # CANDY RED
+"42805": # CANDY RED
   "0":
     "0": # Client Version
       type: "STRING"

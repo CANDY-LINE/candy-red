@@ -1,6 +1,6 @@
 ---
 # This entry will be assigned to `lwm2m.objects` in RED.settings object.
-"430001": # MindConnect for Siemens MindSphere
+"43001": # MindConnect for Siemens MindSphere
   "0":
     "0": # Base URL
       type: "STRING"
