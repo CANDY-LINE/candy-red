@@ -32,6 +32,31 @@
       acl: "R"
       sensitive: false
       value: "[Function]resolveBoardProductName"
+    "6": # OS Name
+      type: "STRING"
+      acl: "R"
+      sensitive: false
+      value: "[Function]resolveOSName"
+    "7": # OS Version
+      type: "STRING"
+      acl: "R"
+      sensitive: false
+      value: "[Function]resolveOSVersion"
+    "8": # OS ID
+      type: "STRING"
+      acl: "R"
+      sensitive: false
+      value: "[Function]resolveOSID"
+    "9": # Linux Kernel Release
+      type: "STRING"
+      acl: "R"
+      sensitive: false
+      value: "[Function]resolveLinuxKernelRelease"
+    "10": # Processor Architecture
+      type: "STRING"
+      acl: "R"
+      sensitive: false
+      value: "[Function]resolveProcessorArchitecture"
     "20": # Restart CANDY Pi Board Service
       type: "FUNCTION"
       acl: "E"
@@ -117,31 +142,6 @@
       acl: "R"
       sensitive: false
       value: 0
-    "30": # OS Name
-      type: "STRING"
-      acl: "R"
-      sensitive: false
-      value: "[Function]resolveOSName"
-    "31": # OS Version
-      type: "STRING"
-      acl: "R"
-      sensitive: false
-      value: "[Function]resolveOSVersion"
-    "32": # OS ID
-      type: "STRING"
-      acl: "R"
-      sensitive: false
-      value: "[Function]resolveOSID"
-    "33": # Linux Kernel Release
-      type: "STRING"
-      acl: "R"
-      sensitive: false
-      value: "[Function]resolveLinuxKernelRelease"
-    "34": # Processor Architecture
-      type: "STRING"
-      acl: "R"
-      sensitive: false
-      value: "[Function]resolveProcessorArchitecture"
 
 "42803": # APN vendor specific extensions
   "0":
