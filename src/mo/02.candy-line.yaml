@@ -27,6 +27,11 @@
       acl: "RW"
       sensitive: false
       value: 0          # 0 for auto, 1 for usb, 2 for uart
+    "5": # Board Product Name
+      type: "STRING"
+      acl: "R"
+      sensitive: false
+      value: "[Function]resolveBoardProductName"
     "20": # Restart CANDY Pi Board Service
       type: "FUNCTION"
       acl: "E"
@@ -42,6 +47,16 @@
       sensitive: false
       value: "[Function]applyConfigChanges"
     "23": # Apply CANDY Pi Board Service Configuration Changes Result Code
+      type: "INTEGER"
+      acl: "R"
+      sensitive: false
+      value: 0          # 0 for Success
+    "24": # Terminate Device
+      type: "FUNCTION"
+      acl: "E"
+      sensitive: false
+      value: "[Function]applyConfigChanges"
+    "25": # Terminate Device Result Code
       type: "INTEGER"
       acl: "R"
       sensitive: false
@@ -127,11 +142,6 @@
       acl: "R"
       sensitive: false
       value: "[Function]resolveProcessorArchitecture"
-    "35": # Board Product Name
-      type: "STRING"
-      acl: "R"
-      sensitive: false
-      value: "[Function]resolveBoardProductName"
 
 "42803": # APN vendor specific extensions
   "0":
