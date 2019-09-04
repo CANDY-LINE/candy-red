@@ -303,32 +303,32 @@
       acl: "R"
       sensitive: false
       value: 0          # 0 for Idle, 1 for Success, 2+ for Errors
-    "26": # Update Application Flow List
-      type: "FUNCTION"
-      acl: "E"
-      sensitive: false
-      value: "[Function]updateApplicationFlowList"
-    "27": # Update Application Flow List Result Code
-      type: "INTEGER"
-      acl: "R"
-      sensitive: false
-      value: 0          # 0 for Idle, 1 for Success, 2+ for Errors
-    "28": # Enable Application Flow
+    "26": # Enable Application Flow
       type: "FUNCTION"
       acl: "E"
       sensitive: false
       value: "[Function]enableApplicationFlow"
-    "29": # Enable Application Flow Result Code
+    "27": # Enable Application Flow Result Code
       type: "INTEGER"
       acl: "R"
       sensitive: false
       value: 0          # 0 for Idle, 1 for Success, 2+ for Errors
-    "30": # Disable Application Flow
+    "28": # Disable Application Flow
       type: "FUNCTION"
       acl: "E"
       sensitive: false
       value: "[Function]disableApplicationFlow"
-    "31": # Disable Application Flow Result Code
+    "29": # Disable Application Flow Result Code
+      type: "INTEGER"
+      acl: "R"
+      sensitive: false
+      value: 0          # 0 for Idle, 1 for Success, 2+ for Errors
+    "30": # Stop CANDY RED service (but not disable it)
+      type: "FUNCTION"
+      acl: "E"
+      sensitive: false
+      value: "[Function]stopCANDYREDService"
+    "31": # Stop CANDY RED service Result Code
       type: "INTEGER"
       acl: "R"
       sensitive: false
