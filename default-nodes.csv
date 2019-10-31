@@ -6,3 +6,4 @@ node-red-node-pi-sense-hat,^0.0.18
 node-red-contrib-camerapi,^0.0.38
 node-red-contrib-adxl-vibration-fft,^1.0.1
 @candy-line/node-red-contrib-eh-terminal-g2,^1.0.0
+node-red-contrib-keiganmotor,^0.3.0
