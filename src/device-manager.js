@@ -165,10 +165,12 @@ export class DeviceState {
             return reject({ code: code, output: output });
           }
           let ret = '';
-          try {
-            ret = JSON.parse(output);
-          } catch (e) {
-            if (!notJson) {
+          if (notJson) {
+            ret = output;
+          } else {
+            try {
+              ret = JSON.parse(output);
+            } catch (e) {
               RED.log.error(`[CANDY RED] ** JSON Parse Error => ${ret}`);
               RED.log.info(`[CANDY RED] ${e.stack}`);
             }
@@ -357,6 +359,13 @@ export class LwM2MDeviceManagement {
     }, REBOOT_DELAY_MS);
   }
 
+  static stop() {
+    // systemctl shuould stop the service
+    setTimeout(() => {
+      process.exit(10);
+    }, REBOOT_DELAY_MS);
+  }
+
   constructor(deviceState) {
     this.internalEventBus = new EventEmitter();
     this.deviceState = deviceState;
@@ -474,7 +483,41 @@ export class LwM2MDeviceManagement {
           config.hideSensitiveInfo = false;
           config.credentialFilePath = this.credentialFilePath;
 
-          this.internalEventBus.emit('configurationDone', config);
+          // Wait until ppp0 goes online when DEVICE_MANAGEMENT_EXCLUSIVE_TO_MOBILE_NETWORK is true
+          let p;
+          if (process.env.DEVICE_MANAGEMENT_EXCLUSIVE_TO_MOBILE_NETWORK === 'true') {
+            p = new Promise(resolve => {
+              let retry = 0;
+              const command = () => {
+                this.deviceState._candyRun('connection', 'status', 0, true).then(result => {
+                  if (result === 'ONLINE') {
+                    resolve();
+                  } else {
+                    const err = {
+                      code: 1,
+                      message: 'Still OFFLINE'
+                    };
+                    throw err;
+                  }
+                }).catch(err => {
+                  if (retry < 120 && err.code === 1) {
+                    setTimeout(command, 5000);
+                    retry++;
+                  } else {
+                    RED.log.error(`[CANDY RED] Connection Timeout => ${err.message || JSON.stringify(err)}`);
+                    RED.log.error(`[CANDY RED] This service is terminated.`);
+                    return process.exit(10); // RestartPreventExitStatus=10
+                  }
+                });
+              };
+              process.nextTick(command);
+            });
+          } else {
+            p = Promise.resolve();
+          }
+          p.then(() => {
+            this.internalEventBus.emit('configurationDone', config);
+          });
         });
 
         this.internalEventBus.on('object-event', (ev) => {
@@ -981,6 +1024,11 @@ export class LwM2MDeviceManagement {
   _restartCANDYRED() {
     RED.log.warn(`[CANDY RED] ** ** Process exits for restarting ** **`);
     return LwM2MDeviceManagement.restart();
+  }
+
+  _stopCANDYRED() {
+    RED.log.warn(`[CANDY RED] ** ** Process exits for stopping service ** **`);
+    return LwM2MDeviceManagement.stop();
   }
 
   _argsToString(src) {
