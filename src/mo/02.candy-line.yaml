@@ -327,7 +327,7 @@
       type: "FUNCTION"
       acl: "E"
       sensitive: false
-      value: "[Function]stopCANDYREDService"
+      value: "[Function]stopCANDYRED"
     "31": # Stop CANDY RED service Result Code
       type: "INTEGER"
       acl: "R"
