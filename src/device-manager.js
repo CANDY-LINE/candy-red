@@ -470,8 +470,8 @@ export class LwM2MDeviceManagement {
           config.serverPort = process.env.DEVICE_MANAGEMENT_BS_PORT;
           config.enableDTLS = process.env.DEVICE_MANAGEMENT_BS_DTLS === 'PSK';
           if (config.enableDTLS) {
-            config.pskIdentity = process.env.DEVICE_MANAGEMENT_BS_DTLS_PSK_ID;
-            config.presharedKey = process.env.DEVICE_MANAGEMENT_BS_DTLS_PSK;
+            config.pskIdentity = process.env.DEVICE_MANAGEMENT_BS_DTLS_PSK_ID || config.clientName;
+            config.presharedKey = process.env.DEVICE_MANAGEMENT_BS_DTLS_PSK || config.clientName;
           }
           config.requestBootstrap = true;
           config.saveProvisionedConfig = true;
