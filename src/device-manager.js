@@ -412,6 +412,7 @@ export class LwM2MDeviceManagement {
       enableDM = false;
     }
     if (enableDM) {
+      RED.log.info(`[CANDY RED] DM enabled. Setup started.`);
       // setup DM flow
       return this.setupDMFlow().then(() => {
         // prepare module based identifier
@@ -449,6 +450,7 @@ export class LwM2MDeviceManagement {
         });
       }).then(() => {
         this.internalEventBus.on('configure', (context) => {
+          RED.log.info(`[CANDY RED] Starting DM configuration.`);
           this.decryptObjects();
           const config = {};
           // EPN
