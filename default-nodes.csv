@@ -7,3 +7,4 @@ node-red-contrib-camerapi,^0.0.38
 node-red-contrib-adxl-vibration-fft,^1.0.1
 @candy-line/node-red-contrib-eh-terminal-g2,^1.0.0
 node-red-contrib-keiganmotor,^0.3.0
+@candy-line/node-red-contrib-omron-2jcie-bu,^1.0.0
