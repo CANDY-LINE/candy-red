@@ -865,7 +865,7 @@
         "disabled": false,
         "clientName": "CANDY-LINE-DM",
         "enableDTLS": false,
-        "clientPort": "56830",
+        "clientPort": "0",
         "lifetimeSec": "300",
         "reconnectSec": "300",
         "requestBootstrap": false,
