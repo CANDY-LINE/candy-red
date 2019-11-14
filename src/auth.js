@@ -2,7 +2,7 @@
 
 import 'source-map-support/register';
 import basicAuth from 'basic-auth';
-import bcrypt from 'bcrypt';
+import bcrypt from 'bcryptjs';
 import pam from 'authenticate-pam';
 import RED from 'node-red';
 
