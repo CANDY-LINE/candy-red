@@ -1,6 +1,6 @@
 {
   "name": "candy-red",
-  "version": "8.2.2",
+  "version": "8.2.3",
   "description": "CANDY RED :: Visual Programming Editor and Runtime for CANDY Pi Lite powered by Node-RED",
   "main": "./dist/index.js",
   "scripts": {
@@ -70,10 +70,11 @@
     "vinyl-fs": "^2.4.4"
   },
   "dependencies": {
-    "@mindconnect/mindconnect-nodejs": "^3.5.3",
-    "@mindconnect/node-red-contrib-mindconnect": "^3.5.0",
+    "@mindconnect/mindconnect-nodejs": "^3.6.1",
+    "@mindconnect/node-red-contrib-mindconnect": "^3.6.2",
     "authenticate-pam": "^1.0.2",
     "basic-auth": "^2.0.0",
+    "bcryptjs": "^2.4.3",
     "chokidar": "^2.0.3",
     "event-stream": "^4.0.1",
     "express": "^4.16.4",
@@ -85,7 +86,7 @@
     "nan": "^2.4.0",
     "node-red": "^1.0.2",
     "node-red-contrib-device-stats": ">=1.1.2",
-    "node-red-contrib-lwm2m": "^2.3.0",
+    "node-red-contrib-lwm2m": ">=2.3.0",
     "node-red-contrib-moment": "^3.0.1",
     "node-red-dashboard": "^2.17.1",
     "node-red-node-base64": "^0.1.3",
