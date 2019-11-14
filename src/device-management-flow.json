@@ -72,6 +72,11 @@
             },
             {
                 "t": "eq",
+                "v": "/428001/0/24",
+                "vt": "str"
+            },
+            {
+                "t": "eq",
                 "v": "/428002/0/20",
                 "vt": "str"
             },
@@ -83,7 +88,7 @@
         ],
         "checkall": "false",
         "repair": false,
-        "outputs": 4,
+        "outputs": 5,
         "x": 550,
         "y": 120,
         "wires": [
@@ -92,6 +97,9 @@
             ],
             [
                 "3ca34572.c6b8b2"
+            ],
+            [
+                "4b9a2a2.63be6d4"
             ],
             [
                 "c9016d1.485291",
@@ -112,7 +120,7 @@
                 "t": "set",
                 "p": "topic",
                 "pt": "msg",
-                "to": "/428002/0/24",
+                "to": "/428002/0/21",
                 "tot": "str"
             },
             {
@@ -166,7 +174,7 @@
         "to": "",
         "reg": false,
         "x": 830,
-        "y": 380,
+        "y": 460,
         "wires": [
             [
                 "34cf2822.b6fd08"
@@ -181,7 +189,7 @@
         "lwm2mClient": "5edf712f.8c24a",
         "subscribeObjectEvents": false,
         "x": 1040,
-        "y": 380,
+        "y": 460,
         "wires": [
             [
                 "207c8aa9.e683f6"
@@ -211,7 +219,7 @@
         "repair": false,
         "outputs": 2,
         "x": 1250,
-        "y": 380,
+        "y": 460,
         "wires": [
             [
                 "c445a835.6df77"
@@ -240,7 +248,7 @@
         "repair": false,
         "outputs": 2,
         "x": 1450,
-        "y": 380,
+        "y": 460,
         "wires": [
             [
                 "b7c50dc7.aaef58"
@@ -262,7 +270,7 @@
         "oldrc": false,
         "name": "Enable SSH",
         "x": 1670,
-        "y": 380,
+        "y": 460,
         "wires": [
             [
                 "58e3a6e0.7395f8"
@@ -283,7 +291,7 @@
         "oldrc": false,
         "name": "Disable SSH",
         "x": 1670,
-        "y": 440,
+        "y": 520,
         "wires": [
             [
                 "58e3a6e0.7395f8"
@@ -319,7 +327,7 @@
         "to": "",
         "reg": false,
         "x": 2680,
-        "y": 500,
+        "y": 580,
         "wires": [
             [
                 "b79e75b1.11829"
@@ -347,7 +355,7 @@
         "reduceInitType": "num",
         "reduceFixup": "",
         "x": 1920,
-        "y": 500,
+        "y": 580,
         "wires": [
             [
                 "b008b3c8.49612"
@@ -374,7 +382,7 @@
         "to": "",
         "reg": false,
         "x": 820,
-        "y": 420,
+        "y": 500,
         "wires": [
             [
                 "34cf2822.b6fd08"
@@ -400,7 +408,7 @@
         "repair": false,
         "outputs": 2,
         "x": 1470,
-        "y": 520,
+        "y": 600,
         "wires": [
             [
                 "bc199155.6a7688"
@@ -422,7 +430,7 @@
         "oldrc": false,
         "name": "Update Password",
         "x": 1690,
-        "y": 520,
+        "y": 600,
         "wires": [
             [
                 "58e3a6e0.7395f8"
@@ -451,7 +459,7 @@
         "to": "",
         "reg": false,
         "x": 1710,
-        "y": 580,
+        "y": 660,
         "wires": [
             [
                 "58e3a6e0.7395f8"
@@ -479,7 +487,7 @@
         "reduceInitType": "num",
         "reduceFixup": "",
         "x": 2480,
-        "y": 500,
+        "y": 580,
         "wires": [
             [
                 "759039fc.f7de8"
@@ -498,7 +506,7 @@
         "stream": false,
         "addname": "",
         "x": 2290,
-        "y": 500,
+        "y": 580,
         "wires": [
             [
                 "c9874e8.48ca3b"
@@ -525,7 +533,7 @@
         "to": "",
         "reg": false,
         "x": 2110,
-        "y": 500,
+        "y": 580,
         "wires": [
             [
                 "e18304d2.e492a8"
@@ -539,7 +547,7 @@
         "name": "Write Result Code",
         "lwm2mClient": "5edf712f.8c24a",
         "x": 2890,
-        "y": 500,
+        "y": 580,
         "wires": []
     },
     {
@@ -554,7 +562,7 @@
         "oldrc": false,
         "name": "Restart CANDY Pi Board Service",
         "x": 880,
-        "y": 240,
+        "y": 220,
         "wires": [
             [
                 "9ac72dca.ac42"
@@ -590,7 +598,7 @@
         "to": "",
         "reg": false,
         "x": 1160,
-        "y": 240,
+        "y": 220,
         "wires": [
             [
                 "329bf1bd.42f216"
@@ -604,7 +612,7 @@
         "name": "Write Result Code",
         "lwm2mClient": "5edf712f.8c24a",
         "x": 1390,
-        "y": 240,
+        "y": 220,
         "wires": []
     },
     {
@@ -664,7 +672,7 @@
         "action": "",
         "pretty": false,
         "x": 1030,
-        "y": 740,
+        "y": 820,
         "wires": [
             [
                 "81d90d0c.492da8"
@@ -683,7 +691,7 @@
         "template": "-{{payload.lines}} {{{payload.path}}}",
         "output": "str",
         "x": 1250,
-        "y": 740,
+        "y": 820,
         "wires": [
             [
                 "cd1f8c2b.b163f"
@@ -702,7 +710,7 @@
         "template": "{{{payload.value}}}",
         "output": "str",
         "x": 820,
-        "y": 740,
+        "y": 820,
         "wires": [
             [
                 "7af001e9.98caf8"
@@ -721,7 +729,7 @@
         "oldrc": false,
         "name": "Collect Content",
         "x": 1460,
-        "y": 740,
+        "y": 820,
         "wires": [
             [
                 "36a41a0d.16bc6e"
@@ -739,7 +747,7 @@
         "outputs": 1,
         "noerr": 0,
         "x": 1700,
-        "y": 740,
+        "y": 820,
         "wires": [
             [
                 "db0c5bea.fe2808",
@@ -774,7 +782,7 @@
         "to": "",
         "reg": false,
         "x": 1920,
-        "y": 740,
+        "y": 820,
         "wires": [
             [
                 "ffdff35e.191c18"
@@ -788,7 +796,7 @@
         "name": "Write Result",
         "lwm2mClient": "5edf712f.8c24a",
         "x": 2110,
-        "y": 740,
+        "y": 820,
         "wires": []
     },
     {
@@ -811,7 +819,7 @@
         "to": "",
         "reg": false,
         "x": 1910,
-        "y": 800,
+        "y": 880,
         "wires": [
             [
                 "ffdff35e.191c18"
@@ -825,7 +833,7 @@
         "name": "Restart CANDY Pi Board Service",
         "info": "",
         "x": 870,
-        "y": 200,
+        "y": 180,
         "wires": []
     },
     {
@@ -845,7 +853,7 @@
         "name": "Apply OS Configuration",
         "info": "",
         "x": 840,
-        "y": 340,
+        "y": 420,
         "wires": []
     },
     {
@@ -855,7 +863,105 @@
         "name": "Get the tail end of a text file",
         "info": "",
         "x": 860,
-        "y": 700,
+        "y": 780,
+        "wires": []
+    },
+    {
+        "id": "caf11d56.06d008",
+        "type": "lwm2m client out",
+        "z": "5e8a6e7d.727fb",
+        "name": "Write Result Code",
+        "lwm2mClient": "5edf712f.8c24a",
+        "x": 1470,
+        "y": 340,
+        "wires": []
+    },
+    {
+        "id": "1ce668de.f756b7",
+        "type": "change",
+        "z": "5e8a6e7d.727fb",
+        "name": "Set Result Code",
+        "rules": [
+            {
+                "t": "set",
+                "p": "topic",
+                "pt": "msg",
+                "to": "/428002/0/25",
+                "tot": "str"
+            },
+            {
+                "t": "move",
+                "p": "rc.code",
+                "pt": "msg",
+                "to": "payload",
+                "tot": "msg"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 1240,
+        "y": 340,
+        "wires": [
+            [
+                "caf11d56.06d008"
+            ]
+        ]
+    },
+    {
+        "id": "6ed8c6d1.bfe498",
+        "type": "exec",
+        "z": "5e8a6e7d.727fb",
+        "command": "halt",
+        "addpay": false,
+        "append": "",
+        "useSpawn": "false",
+        "timer": "5",
+        "oldrc": false,
+        "name": "Terminate OS",
+        "x": 1040,
+        "y": 340,
+        "wires": [
+            [
+                "1ce668de.f756b7"
+            ],
+            [],
+            []
+        ]
+    },
+    {
+        "id": "4b9a2a2.63be6d4",
+        "type": "delay",
+        "z": "5e8a6e7d.727fb",
+        "name": "",
+        "pauseType": "delay",
+        "timeout": "30",
+        "timeoutUnits": "seconds",
+        "rate": "1",
+        "nbRateUnits": "1",
+        "rateUnits": "second",
+        "randomFirst": "1",
+        "randomLast": "5",
+        "randomUnits": "seconds",
+        "drop": false,
+        "x": 800,
+        "y": 340,
+        "wires": [
+            [
+                "6ed8c6d1.bfe498"
+            ]
+        ]
+    },
+    {
+        "id": "2dca0f86.a0491",
+        "type": "comment",
+        "z": "5e8a6e7d.727fb",
+        "name": "Terminate OS",
+        "info": "",
+        "x": 810,
+        "y": 300,
         "wires": []
     },
     {
