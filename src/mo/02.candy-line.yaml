@@ -79,8 +79,6 @@
     "24": # Terminate Device
       type: "FUNCTION"
       acl: "E"
-      sensitive: false
-      value: "[Function]applyConfigChanges"
     "25": # Terminate Device Result Code
       type: "INTEGER"
       acl: "R"
