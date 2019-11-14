@@ -195,7 +195,7 @@ Either a single space` ` or `\n` can be a delimiter of `NODE_CSV` value.
 
 ### Supported Node.js versions
 
-* v8.15.0 (Maintenance LTS)
+* v10.x (Active LTS)
 
 ## Setup for Building
 
