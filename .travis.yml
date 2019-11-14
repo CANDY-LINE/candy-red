@@ -18,8 +18,7 @@ sudo: require
 install:
   - if [[ $TRAVIS_OS_NAME == "linux" ]]; then export CXX=g++-4.8; fi
   - $CXX --version
-  - npm install --unsafe-perm
-  - npm install
+  - DEVEL=true npm install --unsafe-perm
 
 notifications:
   slack:
