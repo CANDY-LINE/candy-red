@@ -1,4 +1,7 @@
 ## Revision History
+* 8.2.3
+  - Add support for Node.js v10
+
 * 8.2.2
   - Fix an issue where cwd was not reverted after installing default nodes
 
