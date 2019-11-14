@@ -85,7 +85,7 @@
     "nan": "^2.4.0",
     "node-red": "^1.0.2",
     "node-red-contrib-device-stats": ">=1.1.2",
-    "node-red-contrib-lwm2m": "^2.2.1",
+    "node-red-contrib-lwm2m": "^2.3.0",
     "node-red-contrib-moment": "^3.0.1",
     "node-red-dashboard": "^2.17.1",
     "node-red-node-base64": "^0.1.3",
