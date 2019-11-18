@@ -214,8 +214,8 @@ function install_preinstalled_nodes {
     exit 1
   fi
   if [ ! -d "${CANDY_RED_MODULE_ROOT}" ]; then
-    err "The path [${CANDY_RED_MODULE_ROOT}] is missing."
-    exit 1
+    mkdir -p "${CANDY_RED_MODULE_ROOT}"
+    info "The path [${CANDY_RED_MODULE_ROOT}] has been created."
   fi
   if [ -n "${NODES}" ]; then
     if [ "${DEVEL}" == "dep" ]; then
