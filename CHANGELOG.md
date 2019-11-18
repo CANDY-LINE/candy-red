@@ -1,4 +1,9 @@
 ## Revision History
+* 8.3.0-8.3.2
+  - Add new preinstalled nodes
+    - @candy-line/node-red-contrib-eh-terminal-g2
+    - @candy-line/node-red-contrib-omron-2jcie-bu
+
 * 8.2.3
   - Add support for Node.js v10
 
