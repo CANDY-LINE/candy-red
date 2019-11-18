@@ -15,21 +15,14 @@ CANDY RED is IoT gateway software designed for [CANDY Pi Lite board](https://tra
 * More builtin nodes
     * [OMA LwM2M client nodes](https://www.npmjs.com/package/node-red-contrib-lwm2m)
     * [Analog Devices SmartMesh IP™ nodes](https://www.npmjs.com/package/node-red-contrib-smartmesh)
-    * [m-pression EH-Terinal G2 node](https://www.npmjs.com/package/@candy-line/node-red-contrib-eh-terminal-g2)
-    * [Analog Devices ADXL1002 FFT node](https://www.npmjs.com/package/node-red-contrib-adxl-vibration-fft)
-    * [World Map node](https://www.npmjs.com/package/node-red-contrib-web-worldmap)
-    * [Sense HAT nodes](https://www.npmjs.com/package/node-red-node-pi-sense-hat)
-    * [Camera Pi nodes](https://www.npmjs.com/package/node-red-contrib-camerapi)
     * [EnOcean nodes (ESP3 over ERP2)](src/nodes/local-node-enocean)
     * [GATT BLE nodes](https://www.npmjs.com/package/node-red-contrib-generic-ble)
     * [Serialport node](https://www.npmjs.com/package/node-red-node-serialport)
     * [Device Statistics node](https://www.npmjs.com/package/node-red-contrib-device-stats)
     * [CANDY Pi Lite/CANDY Pi Lite+ 3G/4G LTE board nodes](src/nodes/local-node-candy-pi-lite)
-    * [CANDY EGG cloud service nodes](src/nodes/local-node-candy-egg) \*1
-    * [MindConnect node for Siemens MindSphere](https://www.npmjs.com/package/@mindconnect/node-red-contrib-mindconnect) \*2
+    * [CANDY EGG cloud service nodes](src/nodes/local-node-candy-egg) \*
 
-_\*1 [CANDY EGG cloud service](https://www.candy-line.io/%E8%A3%BD%E5%93%81%E4%B8%80%E8%A6%A7/candy-red-egg/) account is required_<br>
-_\*2 [MindSphere IoT Value Plan](https://new.siemens.com/global/en/products/software/mindsphere.html) account is required_
+_\* [CANDY EGG cloud service](https://www.candy-line.io/%E8%A3%BD%E5%93%81%E4%B8%80%E8%A6%A7/candy-red-egg/) account is required_
 
 ## OS and Hardwares
 
@@ -50,23 +43,15 @@ This is the default screen theme.
 
 ### Raspbian version
 
- * STRETCH/STRETCH LITE Kernel Version: 4.9 (2018-11-13)
+ * 2019-07-10-raspbian-buster
 
 ### Tested Node.js versions
 
-* v8.15.0 (Active LTS)
-
-The preinstalled version of Node.js v0.10.29 won't work because of the [header file issue](http://dustinbolton.com/replace_invalid_utf8-is-not-a-member-of-v8string-installing-nodejs-packages-on-raspbian-debian-on-raspberry-pi-2-b/) appearing on installing native addons.
-
-I highly recommend you to uninstall the preinstalled version of Node.js, Node-RED (which depends on `nodejs` and `nodejs-legacy` packages) and npm by the following command, and to install another version instead.
-
-```
-$ sudo apt-get remove -y nodered nodejs nodejs-legacy npm
-```
+* v10.15.0 (Active LTS)
 
 ### Supported npm version
 
-* v5.x+
+* v6.x+
 
 ## Install/Version-up
 
@@ -158,7 +143,7 @@ You can find the installation instruction in the [article](http://www.elinux.org
 
 Here is a brief instruction. (Check the latest version of BlueZ at www.bluez.org)
 ```
-$ BLUEZ_VER=5.49
+$ BLUEZ_VER=5.52
 $ sudo apt-get install -y build-essential libdbus-1-dev \
     libdbus-glib-1-dev libglib2.0-dev libical-dev \
     libreadline-dev libudev-dev libusb-dev make
@@ -195,7 +180,7 @@ Either a single space` ` or `\n` can be a delimiter of `NODE_CSV` value.
 
 ### Supported Node.js versions
 
-* v10.x (Active LTS)
+* v10.15.0+ (Active LTS)
 
 ## Setup for Building
 
