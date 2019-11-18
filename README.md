@@ -43,23 +43,15 @@ This is the default screen theme.
 
 ### Raspbian version
 
- * STRETCH/STRETCH LITE Kernel Version: 4.9 (2018-03-29)
+ * 2019-07-10-raspbian-buster
 
 ### Tested Node.js versions
 
-* v8.12.0 (Active LTS)
-
-The preinstalled version of Node.js v0.10.29 won't work because of the [header file issue](http://dustinbolton.com/replace_invalid_utf8-is-not-a-member-of-v8string-installing-nodejs-packages-on-raspbian-debian-on-raspberry-pi-2-b/) appearing on installing native addons.
-
-I highly recommend you to uninstall the preinstalled version of Node.js, Node-RED (which depends on `nodejs` and `nodejs-legacy` packages) and npm by the following command, and to install another version instead.
-
-```
-$ sudo apt-get remove -y nodered nodejs nodejs-legacy npm
-```
+* v10.15.0 (Active LTS)
 
 ### Supported npm version
 
-* v5.x+
+* v6.x+
 
 ## Install/Version-up
 
@@ -151,7 +143,7 @@ You can find the installation instruction in the [article](http://www.elinux.org
 
 Here is a brief instruction. (Check the latest version of BlueZ at www.bluez.org)
 ```
-$ BLUEZ_VER=5.49
+$ BLUEZ_VER=5.52
 $ sudo apt-get install -y build-essential libdbus-1-dev \
     libdbus-glib-1-dev libglib2.0-dev libical-dev \
     libreadline-dev libudev-dev libusb-dev make
@@ -188,7 +180,7 @@ Either a single space` ` or `\n` can be a delimiter of `NODE_CSV` value.
 
 ### Supported Node.js versions
 
-* v8.15.0 (Maintenance LTS)
+* v10.15.0+ (Active LTS)
 
 ## Setup for Building
 
@@ -293,22 +285,6 @@ $ time sudo npm install -g --unsafe-perm ./candy-red-8.2.2.tgz
 $ sudo journalctl -f -u candy-red -o cat # to show logs
 ```
 
-## Vagrant
-
-### Version
-
- * v1.8.4+
-
-### Run on Vagrant Instance
-
-```
-(host)  $ vagrant up
-(host)  $ vagrant ssh
-(varant)$ cd /vagrant
-(varant)$ npm install
-(varant)$ npm run start
-```
-
 ### Local Installation Test
 
 ```
@@ -399,7 +375,7 @@ $ rm -fr node_modules; \
 
 ## Source Code License
 
-Copyright (c) 2018 [CANDY LINE INC.](https://www.candy-line.io)
+Copyright (c) 2019 [CANDY LINE INC.](https://www.candy-line.io)
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -415,4 +391,4 @@ limitations under the License.
 
 ## Creative works
 
-PNG/ICO images under src/public folder are released under [CC BY-NC-SA](http://creativecommons.org/licenses/by-nc-sa/4.0/), Copyright (c) 2018 [CANDY LINE INC.](https://www.candy-line.io)
+PNG/ICO images under src/public folder are released under [CC BY-NC-SA](http://creativecommons.org/licenses/by-nc-sa/4.0/), Copyright (c) 2019 [CANDY LINE INC.](https://www.candy-line.io)

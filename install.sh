@@ -45,6 +45,10 @@ function setup {
     info "Skip to perform install.sh!"
     exit 0
   elif [ "${DEVEL}" == "dep" ]; then
+    if [ ! -d "${CANDY_RED_HOME}" ]; then
+      CANDY_RED_HOME=${PROJECT_ROOT}
+      CANDY_RED_MODULE_ROOT="${PROJECT_ROOT}/.node-red"
+    fi
     info "Installing dependencies..."
     install_preinstalled_nodes
     exit 0
@@ -205,27 +209,34 @@ function install_preinstalled_nodes {
     NODES=`echo ${NODES_CSV} | tr ' ' '\n'`
   elif [ -f "${NODES_CSV_PATH}" ]; then
     NODES=`cat ${NODES_CSV_PATH} | tr -d '\r'`
+  else
+    err "The path [${NODES_CSV_PATH}] is missing."
+    exit 1
   fi
-  NPM_OPTS="--unsafe-perm --prefix ${CANDY_RED_MODULE_ROOT}"
-  if [ "${DEVEL}" == "dep" ]; then
-    NPM_OPTS=""
-    cd ${CANDY_RED_MODULE_ROOT}
+  if [ ! -d "${CANDY_RED_MODULE_ROOT}" ]; then
+    err "The path [${CANDY_RED_MODULE_ROOT}] is missing."
+    exit 1
   fi
   if [ -n "${NODES}" ]; then
-    mkdir -p ${CANDY_RED_MODULE_ROOT}
-    if [ -d "${CANDY_RED_MODULE_ROOT}/node_modules" ]; then
-      mkdir -p ${CANDY_RED_MODULE_ROOT}/lib
-      rm -fr ${CANDY_RED_MODULE_ROOT}/lib/node_modules
-      mv ${CANDY_RED_MODULE_ROOT}/node_modules/ ${CANDY_RED_MODULE_ROOT}/lib
-    elif [ -e "${CANDY_RED_MODULE_ROOT}/node_modules" ]; then
-      rm -f ${CANDY_RED_MODULE_ROOT}/node_modules
+    if [ "${DEVEL}" == "dep" ]; then
+      cd ${CANDY_RED_MODULE_ROOT}
+    else
+      NPM_OPTS="--unsafe-perm --prefix ${CANDY_RED_MODULE_ROOT}"
+      mkdir -p ${CANDY_RED_MODULE_ROOT}
+      if [ -d "${CANDY_RED_MODULE_ROOT}/node_modules" ]; then
+        mkdir -p ${CANDY_RED_MODULE_ROOT}/lib
+        rm -fr ${CANDY_RED_MODULE_ROOT}/lib/node_modules
+        mv ${CANDY_RED_MODULE_ROOT}/node_modules/ ${CANDY_RED_MODULE_ROOT}/lib
+      elif [ -e "${CANDY_RED_MODULE_ROOT}/node_modules" ]; then
+        rm -f ${CANDY_RED_MODULE_ROOT}/node_modules
+      fi
     fi
     info "Installing default nodes to ${CANDY_RED_MODULE_ROOT}..."
     echo "${NODES}" | \
       while IFS=',' read p v; do
         p=`echo -e ${p} | tr -d ' '`
         v=`echo -e ${v} | tr -d ' '`
-        if [ -z "${p}" ]; then
+        if [ -z "${p}" ] || [[ ${p} == "#"* ]]; then
           continue
         fi
         npm install --production ${NPM_OPTS} ${p}@${v}
