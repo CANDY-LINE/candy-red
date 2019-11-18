@@ -43,23 +43,15 @@ This is the default screen theme.
 
 ### Raspbian version
 
- * STRETCH/STRETCH LITE Kernel Version: 4.9 (2018-11-13)
+ * 2019-07-10-raspbian-buster
 
 ### Tested Node.js versions
 
-* v8.15.0 (Active LTS)
-
-The preinstalled version of Node.js v0.10.29 won't work because of the [header file issue](http://dustinbolton.com/replace_invalid_utf8-is-not-a-member-of-v8string-installing-nodejs-packages-on-raspbian-debian-on-raspberry-pi-2-b/) appearing on installing native addons.
-
-I highly recommend you to uninstall the preinstalled version of Node.js, Node-RED (which depends on `nodejs` and `nodejs-legacy` packages) and npm by the following command, and to install another version instead.
-
-```
-$ sudo apt-get remove -y nodered nodejs nodejs-legacy npm
-```
+* v10.15.0 (Active LTS)
 
 ### Supported npm version
 
-* v5.x+
+* v6.x+
 
 ## Install/Version-up
 
@@ -151,7 +143,7 @@ You can find the installation instruction in the [article](http://www.elinux.org
 
 Here is a brief instruction. (Check the latest version of BlueZ at www.bluez.org)
 ```
-$ BLUEZ_VER=5.49
+$ BLUEZ_VER=5.52
 $ sudo apt-get install -y build-essential libdbus-1-dev \
     libdbus-glib-1-dev libglib2.0-dev libical-dev \
     libreadline-dev libudev-dev libusb-dev make
@@ -188,7 +180,7 @@ Either a single space` ` or `\n` can be a delimiter of `NODE_CSV` value.
 
 ### Supported Node.js versions
 
-* v8.15.0 (Maintenance LTS)
+* v10.15.0+ (Active LTS)
 
 ## Setup for Building
 
