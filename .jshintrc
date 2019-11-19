@@ -1,8 +1,8 @@
 {
   "node": true,
+  "esversion": 8,
   "browser": false,
   "mocha": true,
-  "esnext": true,
   "module": true,
   "bitwise": true,
   "camelcase": true,

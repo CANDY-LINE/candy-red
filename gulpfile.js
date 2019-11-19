@@ -1,6 +1,6 @@
 const gulp        = require('gulp');
 const babel       = require('gulp-babel');
-const uglify      = require('gulp-uglify');
+const uglify      = require('gulp-uglify-es').default;
 const rename      = require('gulp-rename');
 const clean       = require('gulp-clean');
 const jshint      = require('gulp-jshint');
@@ -14,6 +14,20 @@ const fs          = require('fs');
 const path        = require('path');
 const rmdir       = require('rmdir');
 const yaml        = require('gulp-yaml');
+
+const babelOptions = {
+  presets: [
+    [
+      'env',
+      {
+        targets: {
+          node: 'current'
+        }
+      }
+    ]
+  ],
+  plugins: ['add-module-exports']
+};
 
 gulp.task('lint', () => {
   return gulp.src([
@@ -90,8 +104,8 @@ gulp.task('buildSrcs', ['copyResources', 'mo', 'favicons'], () => {
     .pipe(babel({
       minified: true,
       compact: true,
-      presets: ['env'],
-      plugins: ['add-module-exports']
+      presets: babelOptions.presets,
+      plugins: babelOptions.plugins,
     }))
     .pipe(uglify({
       mangle: {
@@ -127,8 +141,8 @@ gulp.task('buldTests', ['buildSrcs','copyTestResources'], () => {
   return gulp.src('./tests/**/*.js')
     .pipe(sourcemaps.init())
     .pipe(babel({
-      presets: ['env'],
-      plugins: ['add-module-exports']
+      presets: babelOptions.presets,
+      plugins: babelOptions.plugins,
     }))
     .pipe(sourcemaps.write('.'))
     .pipe(gulp.dest('./dist'));
