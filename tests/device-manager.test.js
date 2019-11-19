@@ -204,12 +204,9 @@ describe('DeviceState', () => {
   });
 
   describe('#initWithFlowFilePath()', () => {
-    it('should successfully init DeviceState object', done => {
-      state.initWithFlowFilePath(__dirname + '/test-flow.json').then(() => {
-        done();
-      }).catch(err => {
-        done(err);
-      });
+    it('should successfully init DeviceState object', async () => {
+      await state.initWithFlowFilePath(__dirname + '/test-flow.json');
+      state._unwatchFlowFilePath();
     });
   });
 });
