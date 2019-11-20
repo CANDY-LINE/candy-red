@@ -28,7 +28,7 @@ describe('ERP2Parser', () => {
         assert.equal('', ctx.destinationId);
         assert.equal('RPS', ctx.telegramType);
         assert.equal(0xf6, ctx.rorg);
-        assert.equal('88', new Buffer(ctx.dataDl).toString('hex'));
+        assert.equal('88', Buffer.from(ctx.dataDl).toString('hex'));
         done();
       }).catch(e => {
         done(e); // for showing assertion errors
@@ -40,7 +40,7 @@ describe('ERP2Parser', () => {
         assert.equal('', ctx.destinationId);
         assert.equal('RPS', ctx.telegramType);
         assert.equal(0xf6, ctx.rorg);
-        assert.equal('00', new Buffer(ctx.dataDl).toString('hex'));
+        assert.equal('00', Buffer.from(ctx.dataDl).toString('hex'));
         done();
       }).catch(e => {
         done(e); // for showing assertion errors
@@ -54,7 +54,7 @@ describe('ERP2Parser', () => {
           assert.equal('', ctx.destinationId);
           assert.equal('RPS', ctx.telegramType);
           assert.equal(0xf6, ctx.rorg);
-          assert.equal('00', new Buffer(ctx.dataDl).toString('hex'));
+          assert.equal('00', Buffer.from(ctx.dataDl).toString('hex'));
           assert.isUndefined(ctx.container);
           done();
       }).catch(e => {
@@ -69,7 +69,7 @@ describe('ERP2Parser', () => {
           assert.equal('', ctx.destinationId);
           assert.equal('RPS', ctx.telegramType);
           assert.equal(0xf6, ctx.rorg);
-          assert.equal('00', new Buffer(ctx.dataDl).toString('hex'));
+          assert.equal('00', Buffer.from(ctx.dataDl).toString('hex'));
           assert.equal(0x32, ctx.container.dBm);
           done();
       }).catch(e => {
@@ -86,7 +86,7 @@ describe('ESP3RadioERP2Parser', () => {
       parser.parse('550007020a0a20002bcaa9886101328b').then(ctx => {
         assert.equal(0x01, ctx.subTelNum);
         assert.equal(0x32, ctx.dBm);
-        assert.equal('20002bcaa98861', new Buffer(ctx.payload).toString('hex'));
+        assert.equal('20002bcaa98861', Buffer.from(ctx.payload).toString('hex'));
         done();
       }).catch(e => {
         done(e); // for showing assertion errors
@@ -96,7 +96,7 @@ describe('ESP3RadioERP2Parser', () => {
       parser.parse('550007020a0a20002bcaa900d001328b').then(ctx => {
         assert.equal(0x01, ctx.subTelNum);
         assert.equal(0x32, ctx.dBm);
-        assert.equal('20002bcaa900d0', new Buffer(ctx.payload).toString('hex'));
+        assert.equal('20002bcaa900d0', Buffer.from(ctx.payload).toString('hex'));
         done();
       }).catch(e => {
         done(e); // for showing assertion errors

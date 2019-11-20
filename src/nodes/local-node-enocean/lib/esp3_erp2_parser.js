@@ -102,7 +102,7 @@ export class ERP2Parser {
       dataPl = payload.payload;
       c = payload;
     } else if (typeof(payload) === 'string') {
-      dataPl = new Uint8Array(new Buffer(payload, 'hex'));
+      dataPl = new Uint8Array(Buffer.from(payload, 'hex'));
     } else if (ERP2Parser.isArray(payload)) {
       dataPl = payload;
     } else if (payload instanceof Buffer) {
@@ -213,7 +213,7 @@ export class ESP3RadioERP2Parser {
   parse(payload) {
     let len, esp3;
     if (typeof(payload) === 'string') {
-      esp3 = new Uint8Array(new Buffer(payload, 'hex'));
+      esp3 = new Uint8Array(Buffer.from(payload, 'hex'));
     } else if (payload instanceof Array) {
       esp3 = payload;
     } else if (payload instanceof Buffer) {
@@ -223,7 +223,7 @@ export class ESP3RadioERP2Parser {
     }
     len = esp3.length;
     if (ESP3_DUMP) {
-      console.log(`ENOCEAN LEN[${len}] RAW[${new Buffer(esp3).toString('hex')}]`);
+      console.log(`ENOCEAN LEN[${len}] RAW[${Buffer.from(esp3).toString('hex')}]`);
     }
     return new Promise((resolve, reject) => {
       try {
