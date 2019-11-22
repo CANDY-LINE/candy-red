@@ -128,17 +128,10 @@ export class DeviceState {
     this.onFlowFileRemoved = onFlowFileRemoved;
   }
 
-  init() {
-    return new Promise(resolve => {
-      if (this.deviceId) {
-        resolve();
-      } else {
-        this.resolver.resolve().then(id => {
-          this.deviceId = id;
-          resolve();
-        });
-      }
-    });
+  async init() {
+    if (!this.deviceId) {
+      this.deviceId = await this.resolver.resolve();
+    }
   }
 
   _candyRun(cat, act, maxRetry, notJson, ...args) {
