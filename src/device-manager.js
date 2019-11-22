@@ -1207,7 +1207,7 @@ export class LwM2MDeviceManagement {
       // Ignore invalid values
       flowFilePath = null;
     }
-    return this.writeResource('/30001/0/102', new Date().toISOString()).then(() => {
+    return this.writeResource('/43001/0/102', new Date().toISOString()).then(() => {
       return new Promise((resolve, reject) => {
         RED.log.info(`[CANDY RED] <updateMindConnectAgentConfiguration> Start`);
         flowFilePath = flowFilePath || this.deviceState.flowFilePath;
@@ -1224,29 +1224,29 @@ export class LwM2MDeviceManagement {
             if (agents.length === 0) {
               return reject({ message: 'Nothing to update'});
             }
-            this.readResources(`/30001/.*`).then((result) => {
+            this.readResources(`/43001/.*`).then((result) => {
               const mindconnect = result.reduce((accumulator, currentValue) => {
                 accumulator[currentValue.uri] = currentValue.value.value;
                 return accumulator;
               }, {});
               agents.forEach((agent) => {
-                const nodeName = mindconnect['/30001/0/10'];
+                const nodeName = mindconnect['/43001/0/10'];
                 agent.name = nodeName || '';
-                const clientCredentialProfile = CLIENT_CREDENTIAL_PROFILE[mindconnect['/30001/0/2']];
+                const clientCredentialProfile = CLIENT_CREDENTIAL_PROFILE[mindconnect['/43001/0/2']];
                 agent.configtype = clientCredentialProfile || 'SHARED_SECRET';
-                const uploadFileChunks = mindconnect['/30001/0/8'];
+                const uploadFileChunks = mindconnect['/43001/0/8'];
                 agent.chunk = !!uploadFileChunks;
-                const retries = mindconnect['/30001/0/9'];
+                const retries = mindconnect['/43001/0/9'];
                 agent.retries = retries || 0;
-                const dataValidation = mindconnect['/30001/0/6'];
+                const dataValidation = mindconnect['/43001/0/6'];
                 agent.validate = !!dataValidation;
-                const eventValidation = mindconnect['/30001/0/7'];
+                const eventValidation = mindconnect['/43001/0/7'];
                 agent.validateevent = !!eventValidation;
-                const baseUrl = mindconnect['/30001/0/0'] || '';
-                const iat = mindconnect['/30001/0/1'] || '';
-                const clientId = mindconnect['/30001/0/3'] || '';
-                const tenant = mindconnect['/30001/0/4'] || '';
-                const expiration = mindconnect['/30001/0/5'] || '';
+                const baseUrl = mindconnect['/43001/0/0'] || '';
+                const iat = mindconnect['/43001/0/1'] || '';
+                const clientId = mindconnect['/43001/0/3'] || '';
+                const tenant = mindconnect['/43001/0/4'] || '';
+                const expiration = mindconnect['/43001/0/5'] || '';
                 const agentconfig = {
                   'content': {
                     'baseUrl': baseUrl,
@@ -1269,15 +1269,15 @@ export class LwM2MDeviceManagement {
     }).then((flows) => {
       return this.deviceState.updateFlow(flows);
     }).then(() => {
-      return this.writeResource('/30001/0/101', 0);
+      return this.writeResource('/43001/0/101', 0);
     }).then(() => {
-      return this.writeResource('/30001/0/103', new Date().toISOString());
+      return this.writeResource('/43001/0/103', new Date().toISOString());
     }).then(() => {
       RED.log.warn('[CANDY RED] <updateMindConnectAgentConfiguration> FLOW IS UPDATED! RELOAD THE PAGE AFTER RECONNECTING SERVER!!');
       LwM2MDeviceManagement.restart();
     }).catch((err) => {
       RED.log.error(`[CANDY RED] <updateMindConnectAgentConfiguration> err=>${err ? err.message : '(uknown)'}`);
-      return this.writeResource('/30001/0/101', 1);
+      return this.writeResource('/43001/0/101', 1);
     }).then(() => {
       RED.log.info(`[CANDY RED] <updateMindConnectAgentConfiguration> End`);
       return this.saveObjects();

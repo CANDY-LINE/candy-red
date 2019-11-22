@@ -468,17 +468,17 @@ describe('DeviceManagerStore', () => {
         stubEvent.once.onCall(call++).yields({}); // writeResource
         stubEvent.once.onCall(call++).yields({
           payload: [
-            { uri: '/30001/0/0', value: { value: 'https://my-endpoint' }},
-            { uri: '/30001/0/1', value: { value: 'my iat' }},
-            { uri: '/30001/0/2', value: { value: 2 }},
-            { uri: '/30001/0/3', value: { value: 'my client id' }},
-            { uri: '/30001/0/4', value: { value: 'my tenant name' }},
-            { uri: '/30001/0/5', value: { value: '2019-12-31T09:33:02.000Z' }},
-            { uri: '/30001/0/6', value: { value: true }},
-            { uri: '/30001/0/7', value: { value: true }},
-            { uri: '/30001/0/8', value: { value: true }},
-            { uri: '/30001/0/9', value: { value: 999 }},
-            { uri: '/30001/0/10', value: { value: 'my node' }},
+            { uri: '/43001/0/0', value: { value: 'https://my-endpoint' }},
+            { uri: '/43001/0/1', value: { value: 'my iat' }},
+            { uri: '/43001/0/2', value: { value: 2 }},
+            { uri: '/43001/0/3', value: { value: 'my client id' }},
+            { uri: '/43001/0/4', value: { value: 'my tenant name' }},
+            { uri: '/43001/0/5', value: { value: '2019-12-31T09:33:02.000Z' }},
+            { uri: '/43001/0/6', value: { value: true }},
+            { uri: '/43001/0/7', value: { value: true }},
+            { uri: '/43001/0/8', value: { value: true }},
+            { uri: '/43001/0/9', value: { value: 999 }},
+            { uri: '/43001/0/10', value: { value: 'my node' }},
           ]
         }); // readResources
         stubEvent.once.onCall(call++).yields({}); // writeResource
