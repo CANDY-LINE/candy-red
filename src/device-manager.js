@@ -603,22 +603,22 @@ export class LwM2MDeviceManagement {
     }
   }
 
-  installFlow(newFlowTabName, newFlowOrPath) {
-    return new Promise((resolve, reject) => {
-      RED.log.debug(`[CANDY RED] <installFlow> Start`);
-      let newFlow = newFlowOrPath;
-      if (typeof(newFlowOrPath) === 'string') {
-        try {
-          newFlow = JSON.parse(fs.readFileSync(newFlowOrPath).toString());
-        } catch (err) {
-          RED.log.info(`[CANDY RED] <installFlow> Invalid JSON format, ERROR End. err => ${err.message || err}`);
-          return reject(err);
-        }
+  async installFlow(newFlowTabName, newFlowOrPath) {
+    RED.log.debug(`[CANDY RED] <installFlow> Start`);
+    let newFlow = newFlowOrPath;
+    if (typeof(newFlowOrPath) === 'string') {
+      try {
+        newFlow = JSON.parse(fs.readFileSync(newFlowOrPath).toString());
+      } catch (err) {
+        RED.log.info(`[CANDY RED] <installFlow> Invalid JSON format, ERROR End. err => ${err.message || err}`);
+        throw err;
       }
-      let flowFilePath = this.deviceState.flowFilePath;
-      if (Array.isArray(flowFilePath)) {
-        flowFilePath = flowFilePath[0];
-      }
+    }
+    let flowFilePath = this.deviceState.flowFilePath;
+    if (Array.isArray(flowFilePath)) {
+      flowFilePath = flowFilePath[0];
+    }
+    const flows = await new Promise((resolve, reject) => {
       fs.readFile(flowFilePath, (err, data) => {
         if (err) {
           RED.log.info(`[CANDY RED] <installFlow> flowFilePath: ${flowFilePath}, ERROR End. err => ${err.message || err}`);
@@ -645,30 +645,31 @@ export class LwM2MDeviceManagement {
           newFlowTab.id = newFlowVal.id;
           RED.log.info(`[CANDY RED] <installFlow> id collision was resolved! New id => ${newFlowTab.id}`);
           const packageInfo = this.toPackageInfo(newFlowTab);
-          RED.log.debug(`[CANDY RED] <installFlow> End; Installed App: ${newFlowTabName}@${packageInfo.version}`);
+          RED.log.info(`[CANDY RED] <installFlow> End; Installed App: ${newFlowTabName}@${packageInfo.version}`);
           return resolve(flows.concat(newFlow));
         } catch (err) {
           RED.log.info(`[CANDY RED] <installFlow> ERROR End. err => ${err.message || err}`);
           return reject(err);
         }
       });
-    }).then((flows) => {
-      if (flows) {
-        return this.deviceState.updateFlow(flows).then(() => {
-          RED.log.warn('[CANDY RED] <installFlow> FLOW IS UPDATED! RELOAD THE PAGE AFTER RECONNECTING SERVER!!');
-          LwM2MDeviceManagement.restart();
-        });
-      }
     });
+    if (flows) {
+      await this.deviceState.updateFlow(flows);
+      RED.log.warn('[CANDY RED] <installFlow> FLOW IS UPDATED! RELOAD THE PAGE AFTER RECONNECTING SERVER!!');
+      LwM2MDeviceManagement.restart();
+    } else {
+      RED.log.warn('[CANDY RED] <installFlow> Valid flow is missing. Installation skipped.');
+    }
+    return flows;
   }
 
-  uninstallFlow(flowTabName) {
-    return new Promise((resolve, reject) => {
-      RED.log.debug(`[CANDY RED] <uninstallFlow> Start`);
-      let flowFilePath = this.deviceState.flowFilePath;
-      if (Array.isArray(flowFilePath)) {
-        flowFilePath = flowFilePath[0];
-      }
+  async uninstallFlow(flowTabName) {
+    RED.log.debug(`[CANDY RED] <uninstallFlow> Start`);
+    let flowFilePath = this.deviceState.flowFilePath;
+    if (Array.isArray(flowFilePath)) {
+      flowFilePath = flowFilePath[0];
+    }
+    const flows = await new Promise((resolve, reject) => {
       fs.readFile(flowFilePath, (err, data) => {
         if (err) {
           RED.log.info(`[CANDY RED] <uninstallFlow> flowFilePath: ${flowFilePath}, ERROR End. err => ${err.message || err}`);
@@ -683,25 +684,24 @@ export class LwM2MDeviceManagement {
           }
           const newFlow = flows.filter(f => (f.z !== flowTab.id && f.id !== flowTab.id));
           const packageInfo = this.toPackageInfo(flowTab);
-          RED.log.debug(`[CANDY RED] <uninstallFlow> End; Uninstalled App: ${flowTabName}@${packageInfo.version}`);
+          RED.log.info(`[CANDY RED] <uninstallFlow> End; Uninstalled App: ${flowTabName}@${packageInfo.version}`);
           return resolve(newFlow);
         } catch (err) {
           RED.log.info(`[CANDY RED] <uninstallFlow> ERROR End. err => ${err.message || err}`);
           return reject(err);
         }
       });
-    }).then((flows) => {
-      if (flows) {
-        return this.deviceState.updateFlow(flows).then(() => {
-          try {
-            // Remove Credentials file as well
-            fs.unlinkSync(this.credentialFilePath);
-          } catch (_) {}
-          RED.log.warn('[CANDY RED] <uninstallFlow> FLOW IS UPDATED! RELOAD THE PAGE AFTER RECONNECTING SERVER!!');
-          LwM2MDeviceManagement.restart();
-        });
-      }
     });
+    if (flows) {
+      await this.deviceState.updateFlow(flows);
+      try {
+        // Remove Credentials file as well
+        fs.unlinkSync(this.credentialFilePath);
+      } catch (_) {}
+      RED.log.warn('[CANDY RED] <uninstallFlow> FLOW IS UPDATED! RELOAD THE PAGE AFTER RECONNECTING SERVER!!');
+      LwM2MDeviceManagement.restart();
+    }
+    return flows;
   }
 
   setupDMFlow() {

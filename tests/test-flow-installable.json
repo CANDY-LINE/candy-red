@@ -1,0 +1,801 @@
+[
+    {
+        "id": "4e97ed24.1880fc",
+        "type": "tab",
+        "label": "c+ 2JCIE-BU",
+        "disabled": false,
+        "info": "conect+ with CANDY RED and OMRON 2JCIE-BU01 Starter App\n---\n{\n  \"version\": \"1.0.0\"\n}"
+    },
+    {
+        "id": "dfff2b61.de076",
+        "type": "inject",
+        "z": "4e97ed24.1880fc",
+        "name": "",
+        "topic": "getLatestSensorData",
+        "payload": "",
+        "payloadType": "str",
+        "repeat": "30",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "x": 180,
+        "y": 80,
+        "wires": [
+            [
+                "252bc169.8353de"
+            ]
+        ]
+    },
+    {
+        "id": "252bc169.8353de",
+        "type": "2JCIE-BU out",
+        "z": "4e97ed24.1880fc",
+        "name": "",
+        "x": 460,
+        "y": 80,
+        "wires": [
+            [
+                "32b539e4.0ad9f6"
+            ]
+        ]
+    },
+    {
+        "id": "32b539e4.0ad9f6",
+        "type": "serial out",
+        "z": "4e97ed24.1880fc",
+        "name": "",
+        "serial": "7160868b.b09f8",
+        "x": 750,
+        "y": 80,
+        "wires": []
+    },
+    {
+        "id": "e03aef42.2687c8",
+        "type": "serial in",
+        "z": "4e97ed24.1880fc",
+        "name": "",
+        "serial": "7160868b.b09f8",
+        "x": 160,
+        "y": 160,
+        "wires": [
+            [
+                "7df4c96d.bb3e6"
+            ]
+        ]
+    },
+    {
+        "id": "7df4c96d.bb3e6",
+        "type": "2JCIE-BU in",
+        "z": "4e97ed24.1880fc",
+        "name": "",
+        "messageFormat": "standard",
+        "ttl": "10000",
+        "x": 450,
+        "y": 160,
+        "wires": [
+            [
+                "59d55744.dfd928",
+                "ca76c3fa.2052f8"
+            ]
+        ]
+    },
+    {
+        "id": "ff5056dc.4a58d8",
+        "type": "http request",
+        "z": "4e97ed24.1880fc",
+        "name": "c+ Cloud",
+        "method": "POST",
+        "ret": "obj",
+        "url": "https://api.conect.plus/v1/my-web-key/data",
+        "tls": "",
+        "x": 979.4285888671875,
+        "y": 746.857177734375,
+        "wires": [
+            [
+                "b703c1bb.dba9b"
+            ]
+        ]
+    },
+    {
+        "id": "b703c1bb.dba9b",
+        "type": "debug",
+        "z": "4e97ed24.1880fc",
+        "name": "c+ results",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "x": 1059.4285888671875,
+        "y": 826.857177734375,
+        "wires": []
+    },
+    {
+        "id": "33f8d667.95d322",
+        "type": "moment",
+        "z": "4e97ed24.1880fc",
+        "name": "タイムスタンプのフォーマット",
+        "topic": "",
+        "input": "payload.timestamp",
+        "inputType": "msg",
+        "inTz": "ETC/GMT",
+        "adjAmount": 0,
+        "adjType": "days",
+        "adjDir": "add",
+        "format": "YYYY-MM-DD HH:mm:ss",
+        "locale": "POSIX",
+        "output": "payload.timestamp",
+        "outputType": "msg",
+        "outTz": "ETC/GMT",
+        "x": 419.4285888671875,
+        "y": 536.857177734375,
+        "wires": [
+            [
+                "a85adda9.f63468",
+                "bb8acbc.1f176b8",
+                "9a00a536.1eea68",
+                "eca0cca1.ec395",
+                "be5e1cab.c9a0e",
+                "18c8d99.3876726",
+                "e9127db0.ee34c8",
+                "399bf343.27b54c",
+                "67725b04.2696e4",
+                "ea7ab66b.7d0bb8",
+                "1f52840c.87ea84",
+                "a4f80ca1.f0c84"
+            ]
+        ]
+    },
+    {
+        "id": "a85adda9.f63468",
+        "type": "template",
+        "z": "4e97ed24.1880fc",
+        "name": "temperature",
+        "field": "payload",
+        "fieldType": "msg",
+        "format": "handlebars",
+        "syntax": "mustache",
+        "template": "{\n    \"deviceUuid\": \"{{payload.deviceName}}\",\n    \"sensingAt\": \"{{payload.timestamp}}\",\n    \"key\": \"temperature\",\n    \"value1\": \"{{payload.data.temperature}}\"\n}",
+        "output": "json",
+        "x": 689.4285888671875,
+        "y": 506.857177734375,
+        "wires": [
+            [
+                "ff5056dc.4a58d8"
+            ]
+        ]
+    },
+    {
+        "id": "bb8acbc.1f176b8",
+        "type": "template",
+        "z": "4e97ed24.1880fc",
+        "name": "humidity",
+        "field": "payload",
+        "fieldType": "msg",
+        "format": "handlebars",
+        "syntax": "mustache",
+        "template": "{\n    \"deviceUuid\": \"{{payload.deviceName}}\",\n    \"sensingAt\": \"{{payload.timestamp}}\",\n    \"key\": \"humidity\",\n    \"value1\": \"{{payload.data.humidity}}\"\n}",
+        "output": "json",
+        "x": 679.4285888671875,
+        "y": 546.857177734375,
+        "wires": [
+            [
+                "ff5056dc.4a58d8"
+            ]
+        ]
+    },
+    {
+        "id": "9a00a536.1eea68",
+        "type": "template",
+        "z": "4e97ed24.1880fc",
+        "name": "illuminance",
+        "field": "payload",
+        "fieldType": "msg",
+        "format": "handlebars",
+        "syntax": "mustache",
+        "template": "{\n    \"deviceUuid\": \"{{payload.deviceName}}\",\n    \"sensingAt\": \"{{payload.timestamp}}\",\n    \"key\": \"illuminance\",\n    \"value1\": \"{{payload.data.illuminance}}\"\n}",
+        "output": "json",
+        "x": 689.4285888671875,
+        "y": 586.857177734375,
+        "wires": [
+            [
+                "ff5056dc.4a58d8"
+            ]
+        ]
+    },
+    {
+        "id": "eca0cca1.ec395",
+        "type": "template",
+        "z": "4e97ed24.1880fc",
+        "name": "barometricPressure",
+        "field": "payload",
+        "fieldType": "msg",
+        "format": "handlebars",
+        "syntax": "mustache",
+        "template": "{\n    \"deviceUuid\": \"{{payload.deviceName}}\",\n    \"sensingAt\": \"{{payload.timestamp}}\",\n    \"key\": \"barometricPressure\",\n    \"value1\": \"{{payload.data.barometricPressure}}\"\n}",
+        "output": "json",
+        "x": 709.4285888671875,
+        "y": 626.857177734375,
+        "wires": [
+            [
+                "ff5056dc.4a58d8"
+            ]
+        ]
+    },
+    {
+        "id": "be5e1cab.c9a0e",
+        "type": "template",
+        "z": "4e97ed24.1880fc",
+        "name": "soundNoise",
+        "field": "payload",
+        "fieldType": "msg",
+        "format": "handlebars",
+        "syntax": "mustache",
+        "template": "{\n    \"deviceUuid\": \"{{payload.deviceName}}\",\n    \"sensingAt\": \"{{payload.timestamp}}\",\n    \"key\": \"soundNoise\",\n    \"value1\": \"{{payload.data.soundNoise}}\"\n}",
+        "output": "json",
+        "x": 689.4285888671875,
+        "y": 666.857177734375,
+        "wires": [
+            [
+                "ff5056dc.4a58d8"
+            ]
+        ]
+    },
+    {
+        "id": "18c8d99.3876726",
+        "type": "template",
+        "z": "4e97ed24.1880fc",
+        "name": "etvoc",
+        "field": "payload",
+        "fieldType": "msg",
+        "format": "handlebars",
+        "syntax": "mustache",
+        "template": "{\n    \"deviceUuid\": \"{{payload.deviceName}}\",\n    \"sensingAt\": \"{{payload.timestamp}}\",\n    \"key\": \"etvoc\",\n    \"value1\": \"{{payload.data.etvoc}}\"\n}",
+        "output": "json",
+        "x": 669.4285888671875,
+        "y": 706.857177734375,
+        "wires": [
+            [
+                "ff5056dc.4a58d8"
+            ]
+        ]
+    },
+    {
+        "id": "e9127db0.ee34c8",
+        "type": "template",
+        "z": "4e97ed24.1880fc",
+        "name": "eco2",
+        "field": "payload",
+        "fieldType": "msg",
+        "format": "handlebars",
+        "syntax": "mustache",
+        "template": "{\n    \"deviceUuid\": \"{{payload.deviceName}}\",\n    \"sensingAt\": \"{{payload.timestamp}}\",\n    \"key\": \"eco2\",\n    \"value1\": \"{{payload.data.eco2}}\"\n}",
+        "output": "json",
+        "x": 669.4285888671875,
+        "y": 746.857177734375,
+        "wires": [
+            [
+                "ff5056dc.4a58d8"
+            ]
+        ]
+    },
+    {
+        "id": "399bf343.27b54c",
+        "type": "template",
+        "z": "4e97ed24.1880fc",
+        "name": "discomfortIndex",
+        "field": "payload",
+        "fieldType": "msg",
+        "format": "handlebars",
+        "syntax": "mustache",
+        "template": "{\n    \"deviceUuid\": \"{{payload.deviceName}}\",\n    \"sensingAt\": \"{{payload.timestamp}}\",\n    \"key\": \"discomfortIndex\",\n    \"value1\": \"{{payload.data.discomfortIndex}}\"\n}",
+        "output": "json",
+        "x": 699.4285888671875,
+        "y": 786.857177734375,
+        "wires": [
+            [
+                "ff5056dc.4a58d8"
+            ]
+        ]
+    },
+    {
+        "id": "67725b04.2696e4",
+        "type": "template",
+        "z": "4e97ed24.1880fc",
+        "name": "heatStroke",
+        "field": "payload",
+        "fieldType": "msg",
+        "format": "handlebars",
+        "syntax": "mustache",
+        "template": "{\n    \"deviceUuid\": \"{{payload.deviceName}}\",\n    \"sensingAt\": \"{{payload.timestamp}}\",\n    \"key\": \"heatStroke\",\n    \"value1\": \"{{payload.data.heatStroke}}\"\n}",
+        "output": "json",
+        "x": 689.4285888671875,
+        "y": 826.857177734375,
+        "wires": [
+            [
+                "ff5056dc.4a58d8"
+            ]
+        ]
+    },
+    {
+        "id": "d0c5f1d0.df16b",
+        "type": "template",
+        "z": "4e97ed24.1880fc",
+        "name": "vibrationStatus(Code)",
+        "field": "payload",
+        "fieldType": "msg",
+        "format": "handlebars",
+        "syntax": "mustache",
+        "template": "{\n    \"deviceUuid\": \"{{payload.deviceName}}\",\n    \"sensingAt\": \"{{payload.timestamp}}\",\n    \"key\": \"vibrationStatus\",\n    \"value1\": \"{{payload.data.vibrationStatusCode}}\"\n}",
+        "output": "json",
+        "x": 722.7619018554688,
+        "y": 1050.1904907226562,
+        "wires": [
+            [
+                "ff5056dc.4a58d8"
+            ]
+        ]
+    },
+    {
+        "id": "ea7ab66b.7d0bb8",
+        "type": "template",
+        "z": "4e97ed24.1880fc",
+        "name": "spectralIntensity",
+        "field": "payload",
+        "fieldType": "msg",
+        "format": "handlebars",
+        "syntax": "mustache",
+        "template": "{\n    \"deviceUuid\": \"{{payload.deviceName}}\",\n    \"sensingAt\": \"{{payload.timestamp}}\",\n    \"key\": \"spectralIntensity\",\n    \"value1\": \"{{payload.data.spectralIntensity}}\"\n}",
+        "output": "json",
+        "x": 699.4285888671875,
+        "y": 906.857177734375,
+        "wires": [
+            [
+                "ff5056dc.4a58d8"
+            ]
+        ]
+    },
+    {
+        "id": "1f52840c.87ea84",
+        "type": "template",
+        "z": "4e97ed24.1880fc",
+        "name": "seismicIntensity",
+        "field": "payload",
+        "fieldType": "msg",
+        "format": "handlebars",
+        "syntax": "mustache",
+        "template": "{\n    \"deviceUuid\": \"{{payload.deviceName}}\",\n    \"sensingAt\": \"{{payload.timestamp}}\",\n    \"key\": \"seismicIntensity\",\n    \"value1\": \"{{payload.data.seismicIntensity}}\"\n}",
+        "output": "json",
+        "x": 699.4285888671875,
+        "y": 946.857177734375,
+        "wires": [
+            [
+                "ff5056dc.4a58d8"
+            ]
+        ]
+    },
+    {
+        "id": "7f1d048f.a9db0c",
+        "type": "Cache in",
+        "z": "4e97ed24.1880fc",
+        "name": "デバイス名取得",
+        "cache": "9c252633.0fe61",
+        "keyType": "msg",
+        "keyProperty": "topic",
+        "valueType": "msg",
+        "valueProperty": "payload",
+        "useString": false,
+        "outputs": 2,
+        "x": 453.5714416503906,
+        "y": 297.5,
+        "wires": [
+            [
+                "ca76c3fa.2052f8"
+            ],
+            [
+                "1fa63aad.1bbc3d"
+            ]
+        ]
+    },
+    {
+        "id": "59d55744.dfd928",
+        "type": "change",
+        "z": "4e97ed24.1880fc",
+        "name": "キャッシュキーをセット",
+        "rules": [
+            {
+                "t": "set",
+                "p": "topic",
+                "pt": "msg",
+                "to": "modem",
+                "tot": "str"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 457.8572082519531,
+        "y": 233.928466796875,
+        "wires": [
+            [
+                "7f1d048f.a9db0c"
+            ]
+        ]
+    },
+    {
+        "id": "1fa63aad.1bbc3d",
+        "type": "exec",
+        "z": "4e97ed24.1880fc",
+        "command": "candy",
+        "addpay": false,
+        "append": "modem show -r -s",
+        "useSpawn": "false",
+        "timer": "",
+        "oldrc": false,
+        "name": "モジュール情報取得",
+        "x": 720,
+        "y": 300,
+        "wires": [
+            [
+                "68a1fb82.941f54"
+            ],
+            [],
+            []
+        ]
+    },
+    {
+        "id": "68a1fb82.941f54",
+        "type": "function",
+        "z": "4e97ed24.1880fc",
+        "name": "カラー文字列情報削除",
+        "func": "msg.payload = msg.payload.toString();\nmsg.payload = msg.payload.substring(5, msg.payload.length - 5);\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 980,
+        "y": 300,
+        "wires": [
+            [
+                "a54b2751.ac7b1"
+            ]
+        ]
+    },
+    {
+        "id": "a54b2751.ac7b1",
+        "type": "json",
+        "z": "4e97ed24.1880fc",
+        "name": "",
+        "property": "payload",
+        "action": "",
+        "pretty": false,
+        "x": 1190,
+        "y": 300,
+        "wires": [
+            [
+                "40ff67f5.735d98"
+            ]
+        ]
+    },
+    {
+        "id": "7b39d9f8.cd7c48",
+        "type": "Cache out",
+        "z": "4e97ed24.1880fc",
+        "name": "デバイス名保存",
+        "cache": "9c252633.0fe61",
+        "keyType": "msg",
+        "keyProperty": "topic",
+        "valueType": "msg",
+        "valueProperty": "payload",
+        "ttlType": "msg",
+        "ttlProperty": "",
+        "useString": false,
+        "x": 1044.428955078125,
+        "y": 424.7142333984375,
+        "wires": []
+    },
+    {
+        "id": "40ff67f5.735d98",
+        "type": "change",
+        "z": "4e97ed24.1880fc",
+        "name": "キャッシュキーをセット",
+        "rules": [
+            {
+                "t": "set",
+                "p": "topic",
+                "pt": "msg",
+                "to": "modem",
+                "tot": "str"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 810.4287109375,
+        "y": 420.4999084472656,
+        "wires": [
+            [
+                "7b39d9f8.cd7c48",
+                "832e5239.174208"
+            ]
+        ]
+    },
+    {
+        "id": "ca76c3fa.2052f8",
+        "type": "join",
+        "z": "4e97ed24.1880fc",
+        "name": "",
+        "mode": "custom",
+        "build": "array",
+        "property": "payload",
+        "propertyType": "msg",
+        "key": "topic",
+        "joiner": "\\n",
+        "joinerType": "str",
+        "accumulate": false,
+        "timeout": "",
+        "count": "2",
+        "reduceRight": false,
+        "reduceExp": "",
+        "reduceInit": "",
+        "reduceInitType": "",
+        "reduceFixup": "",
+        "x": 139.16666666666666,
+        "y": 401.24999999999994,
+        "wires": [
+            [
+                "8d8fc731.f28cf"
+            ]
+        ]
+    },
+    {
+        "id": "8d8fc731.f28cf",
+        "type": "function",
+        "z": "4e97ed24.1880fc",
+        "name": "merge",
+        "func": "msg.payload = Object.assign(msg.payload[0], msg.payload[1])\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 300.83331298828125,
+        "y": 417.9166564941406,
+        "wires": [
+            [
+                "c4609df8.bcb2a"
+            ]
+        ]
+    },
+    {
+        "id": "c4609df8.bcb2a",
+        "type": "change",
+        "z": "4e97ed24.1880fc",
+        "name": "IMEIをdeviceNameに",
+        "rules": [
+            {
+                "t": "move",
+                "p": "payload.imei",
+                "pt": "msg",
+                "to": "payload.deviceName",
+                "tot": "msg"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 499.1666666666666,
+        "y": 426.24999999999994,
+        "wires": [
+            [
+                "33f8d667.95d322"
+            ]
+        ]
+    },
+    {
+        "id": "a4f80ca1.f0c84",
+        "type": "switch",
+        "z": "4e97ed24.1880fc",
+        "name": "文字列を数値へ変換",
+        "property": "payload.data.vibrationStatus",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "eq",
+                "v": "Vibration Detected",
+                "vt": "str"
+            },
+            {
+                "t": "eq",
+                "v": "Earthquake Detected",
+                "vt": "str"
+            },
+            {
+                "t": "else"
+            }
+        ],
+        "checkall": "false",
+        "repair": false,
+        "outputs": 3,
+        "x": 340,
+        "y": 980,
+        "wires": [
+            [
+                "ecc5ee81.b22ef8"
+            ],
+            [
+                "991735e6.ae6328"
+            ],
+            [
+                "ede4306b.2ee9d"
+            ]
+        ]
+    },
+    {
+        "id": "ecc5ee81.b22ef8",
+        "type": "change",
+        "z": "4e97ed24.1880fc",
+        "name": "Vibration Detected=1",
+        "rules": [
+            {
+                "t": "set",
+                "p": "payload.data.vibrationStatusCode",
+                "pt": "msg",
+                "to": "1",
+                "tot": "str"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 462.49993896484375,
+        "y": 1057.9166259765625,
+        "wires": [
+            [
+                "d0c5f1d0.df16b"
+            ]
+        ]
+    },
+    {
+        "id": "991735e6.ae6328",
+        "type": "change",
+        "z": "4e97ed24.1880fc",
+        "name": "Vibration Detected=2",
+        "rules": [
+            {
+                "t": "set",
+                "p": "payload.data.vibrationStatusCode",
+                "pt": "msg",
+                "to": "2",
+                "tot": "str"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 456.66668701171875,
+        "y": 1106.6666870117188,
+        "wires": [
+            [
+                "d0c5f1d0.df16b"
+            ]
+        ]
+    },
+    {
+        "id": "ede4306b.2ee9d",
+        "type": "change",
+        "z": "4e97ed24.1880fc",
+        "name": "Vibration Detected=0",
+        "rules": [
+            {
+                "t": "set",
+                "p": "payload.data.vibrationStatusCode",
+                "pt": "msg",
+                "to": "0",
+                "tot": "str"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 460,
+        "y": 1160,
+        "wires": [
+            [
+                "d0c5f1d0.df16b"
+            ]
+        ]
+    },
+    {
+        "id": "832e5239.174208",
+        "type": "exec",
+        "z": "4e97ed24.1880fc",
+        "command": "candy",
+        "addpay": false,
+        "append": "connection status",
+        "useSpawn": "false",
+        "timer": "",
+        "oldrc": false,
+        "name": "接続状態取得",
+        "x": 1040,
+        "y": 220,
+        "wires": [
+            [
+                "49b69e0c.810168"
+            ],
+            [],
+            []
+        ]
+    },
+    {
+        "id": "49b69e0c.810168",
+        "type": "switch",
+        "z": "4e97ed24.1880fc",
+        "name": "ONLINE?",
+        "property": "payload",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "cont",
+                "v": "ONLINE",
+                "vt": "str"
+            },
+            {
+                "t": "else"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 2,
+        "x": 1040,
+        "y": 120,
+        "wires": [
+            [
+                "59d55744.dfd928"
+            ],
+            [
+                "832e5239.174208"
+            ]
+        ]
+    },
+    {
+        "id": "24ec4269.e5c1ee",
+        "type": "comment",
+        "z": "4e97ed24.1880fc",
+        "name": "ONLINEになるまで待機",
+        "info": "USBなしの接続の場合にc+に送信するためにONLINE状態になるのを待つ。",
+        "x": 1060,
+        "y": 60,
+        "wires": []
+    },
+    {
+        "id": "7160868b.b09f8",
+        "type": "serial-port",
+        "z": "",
+        "serialport": "/dev/2JCIE-BU01",
+        "serialbaud": "115200",
+        "databits": "8",
+        "parity": "none",
+        "stopbits": "1",
+        "newline": "0",
+        "bin": "bin",
+        "out": "time",
+        "addchar": "",
+        "responsetimeout": "10000"
+    },
+    {
+        "id": "9c252633.0fe61",
+        "type": "Cache",
+        "z": "",
+        "name": "Device Name Cache",
+        "defaultTtl": "",
+        "checkPeriod": ""
+    }
+]

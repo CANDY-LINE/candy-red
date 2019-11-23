@@ -499,6 +499,38 @@ describe('DeviceManagerStore', () => {
 
     });
 
+    describe('#installFlow', () => {
+
+      it('should install a new flow', async () => {
+        let stubUninstallFlow = sandbox.stub(lwm2mdm, 'uninstallFlow');
+        stubUninstallFlow.returns();
+        state.candyBoardServiceSupported = true;
+        state.flowFilePath = `${__dirname}/test-flow.json`;
+
+        await lwm2mdm.init({
+          deviceId: 'deviceId'
+        });
+        const flows = await lwm2mdm.installFlow('c+ 2JCIE-BU', `${__dirname}/test-flow-installable.json`);
+        assert.equal(flows.filter(n => n.type === 'tab' && n.label === 'c+ 2JCIE-BU').length, 1);
+      });
+
+    });
+
+    describe('#uninstallFlow', () => {
+
+      it('should uninstall a new flow', async () => {
+        state.candyBoardServiceSupported = true;
+        state.flowFilePath = `${__dirname}/test-flow-uninstallable.json`;
+
+        await lwm2mdm.init({
+          deviceId: 'deviceId'
+        });
+        const flows = await lwm2mdm.uninstallFlow('c+ 2JCIE-BU');
+        assert.equal(flows.filter(n => n.type === 'tab' && n.label === 'c+ 2JCIE-BU').length, 0);
+      });
+
+    });
+
   });
 
 });
