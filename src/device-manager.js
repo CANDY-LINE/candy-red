@@ -1198,15 +1198,16 @@ export class LwM2MDeviceManagement {
 
   /*
    * Replace ALL mindconnect agent configurations embedded in the flow file.
-   * CANRY RED process will exit after update.
+   * CANRY RED process should exit after update (not restart in this function though)
    */
-  _updateMindConnectAgentConfiguration(flowFilePath) {
+  async _updateMindConnectAgentConfiguration(flowFilePath) {
     if (typeof(flowFilePath) !== 'string') {
       // Ignore invalid values
       flowFilePath = null;
     }
-    return this.writeResource('/43001/0/102', new Date().toISOString()).then(() => {
-      return new Promise((resolve, reject) => {
+    try {
+      await this.writeResource('/43001/0/102', new Date().toISOString());
+      const flows = await new Promise((resolve, reject) => {
         RED.log.info(`[CANDY RED] <updateMindConnectAgentConfiguration> Start`);
         flowFilePath = flowFilePath || this.deviceState.flowFilePath;
         if (Array.isArray(flowFilePath)) {
@@ -1264,22 +1265,16 @@ export class LwM2MDeviceManagement {
           }
         });
       });
-    }).then((flows) => {
-      return this.deviceState.updateFlow(flows);
-    }).then(() => {
-      return this.writeResource('/43001/0/101', 0);
-    }).then(() => {
-      return this.writeResource('/43001/0/103', new Date().toISOString());
-    }).then(() => {
+      await this.deviceState.updateFlow(flows);
+      await this.writeResource('/43001/0/101', 0);
+      await this.writeResource('/43001/0/103', new Date().toISOString());
       RED.log.warn('[CANDY RED] <updateMindConnectAgentConfiguration> FLOW IS UPDATED! RELOAD THE PAGE AFTER RECONNECTING SERVER!!');
-      LwM2MDeviceManagement.restart();
-    }).catch((err) => {
+    } catch(err) {
       RED.log.error(`[CANDY RED] <updateMindConnectAgentConfiguration> err=>${err ? err.message : '(uknown)'}`);
-      return this.writeResource('/43001/0/101', 1);
-    }).then(() => {
-      RED.log.info(`[CANDY RED] <updateMindConnectAgentConfiguration> End`);
-      return this.saveObjects();
-    });
+      await this.writeResource('/43001/0/101', 1);
+    }
+    RED.log.info(`[CANDY RED] <updateMindConnectAgentConfiguration> End`);
+    await this.saveObjects();
   }
 }
 
