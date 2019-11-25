@@ -656,11 +656,10 @@ export class LwM2MDeviceManagement {
     if (flows) {
       await this.deviceState.updateFlow(flows);
       RED.log.warn('[CANDY RED] <installFlow> FLOW IS UPDATED! RELOAD THE PAGE AFTER RECONNECTING SERVER!!');
-      LwM2MDeviceManagement.restart();
-    } else {
-      RED.log.warn('[CANDY RED] <installFlow> Valid flow is missing. Installation skipped.');
+      return true;
     }
-    return flows;
+    RED.log.warn('[CANDY RED] <installFlow> Valid flow is missing. Installation skipped.');
+    return false;
   }
 
   async uninstallFlow(flowTabName) {
@@ -699,17 +698,23 @@ export class LwM2MDeviceManagement {
         fs.unlinkSync(this.credentialFilePath);
       } catch (_) {}
       RED.log.warn('[CANDY RED] <uninstallFlow> FLOW IS UPDATED! RELOAD THE PAGE AFTER RECONNECTING SERVER!!');
+      return true;
+    }
+    return false;
+  }
+
+  async setupDMFlow() {
+    const installed = await this.installFlow('CANDY LINE DM', DM_FLOW);
+    if (installed) {
       LwM2MDeviceManagement.restart();
     }
-    return flows;
   }
 
-  setupDMFlow() {
-    return this.installFlow('CANDY LINE DM', DM_FLOW);
-  }
-
-  stripDMFlow() {
-    return this.uninstallFlow('CANDY LINE DM');
+  async stripDMFlow() {
+    const uninstalled = await this.uninstallFlow('CANDY LINE DM');
+    if (uninstalled) {
+      LwM2MDeviceManagement.restart();
+    }
   }
 
   triggerSaveObjectsTask() {

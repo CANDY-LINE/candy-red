@@ -510,8 +510,8 @@ describe('DeviceManagerStore', () => {
         await lwm2mdm.init({
           deviceId: 'deviceId'
         });
-        const flows = await lwm2mdm.installFlow('c+ 2JCIE-BU', `${__dirname}/test-flow-installable.json`);
-        assert.equal(flows.filter(n => n.type === 'tab' && n.label === 'c+ 2JCIE-BU').length, 1);
+        const installed = await lwm2mdm.installFlow('c+ 2JCIE-BU', `${__dirname}/test-flow-installable.json`);
+        assert.isTrue(installed);
       });
 
     });
@@ -525,8 +525,8 @@ describe('DeviceManagerStore', () => {
         await lwm2mdm.init({
           deviceId: 'deviceId'
         });
-        const flows = await lwm2mdm.uninstallFlow('c+ 2JCIE-BU');
-        assert.equal(flows.filter(n => n.type === 'tab' && n.label === 'c+ 2JCIE-BU').length, 0);
+        const uninstalled = await lwm2mdm.uninstallFlow('c+ 2JCIE-BU');
+        assert.isTrue(uninstalled);
       });
 
     });
