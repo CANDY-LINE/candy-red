@@ -217,7 +217,7 @@
           sensitive: false
           value: "Accept: */*"
     "5": # Application Flow Content
-      type: "OPQAUE"
+      type: "OPAQUE"
       acl: "RW"
       sensitive: false
       value: null
