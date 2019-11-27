@@ -16,6 +16,8 @@
  */
 'use strict';
 
+/* global describe, it */
+
 import { assert } from 'chai';
 import { ERP2_HANDLERS } from '../../../dist/nodes/local-node-enocean/lib/eep_handlers';
 

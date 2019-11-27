@@ -38,9 +38,9 @@ import querystring from 'querystring';
 
 export default function(RED) {
   function HTTPRequest(n) {
-    RED.nodes.createNode(this,n);
+    RED.nodes.createNode(this, n);
     this.path = n.path;
-    let isTemplatedPath = (this.path||'').indexOf('{{') !== -1;
+    let isTemplatedPath = (this.path || '').indexOf('{{') !== -1;
     let nodeMethod = n.method || 'GET';
     this.ret = n.ret || 'obj';
     this.status({});
@@ -51,22 +51,31 @@ export default function(RED) {
 
     let prox, noprox;
     ['http_proxy', 'HTTP_PROXY'].forEach(k => {
-      if (process.env[k]) { prox = process.env[k]; }
+      if (process.env[k]) {
+        prox = process.env[k];
+      }
     });
     ['no_proxy', 'NO_PROXY'].forEach(k => {
-      if (process.env[k]) { noprox = process.env[k].split(','); }
+      if (process.env[k]) {
+        noprox = process.env[k].split(',');
+      }
     });
 
     this.on('input', msg => {
       let preRequestTimestamp = process.hrtime();
-      node.status({fill:'blue',shape:'dot',text:'candy-egg-httpreq.status.requesting'});
+      node.status({
+        fill: 'blue',
+        shape: 'dot',
+        text: 'candy-egg-httpreq.status.requesting'
+      });
       let conf = node.accountConfig;
       let url = (conf.secure ? 'https' : 'http') + '://';
       let accountId = conf.accountFqn.split('@');
       url += accountId[1] + '/' + accountId[0] + '/api';
 
       let path = msg.path || node.path;
-      if (msg.path && node.path && (msg.path !== node.path)) {   // warn if override option not set
+      if (msg.path && node.path && msg.path !== node.path) {
+        // warn if override option not set
         node.warn(RED._('common.errors.nooverride'));
       }
       if (path && path.length > 0 && path.charAt(0) !== '/') {
@@ -80,16 +89,17 @@ export default function(RED) {
       }
 
       let method = nodeMethod.toUpperCase() || 'GET';
-      if (msg.method && n.method && (n.method !== 'use')) {   // warn if override option not set
+      if (msg.method && n.method && n.method !== 'use') {
+        // warn if override option not set
         node.warn(RED._('common.errors.nooverride'));
-        method = msg.method.toUpperCase();      // use the msg parameter
+        method = msg.method.toUpperCase(); // use the msg parameter
       }
       let opts = urllib.parse(url);
       opts.method = method;
       opts.headers = {};
       if (msg.headers) {
-        for (let v in msg.headers) {
-          if (msg.headers.hasOwnProperty(v)) {
+        for (const v in msg.headers) {
+          if (Object.prototype.hasOwnProperty.call(msg.headers, v)) {
             let name = v.toLowerCase();
             if (name !== 'content-type' && name !== 'content-length') {
               // only normalise the known headers used later in this
@@ -103,13 +113,18 @@ export default function(RED) {
       opts.auth = conf.loginUser + ':' + conf.loginPassword;
 
       let payload = null;
-      if (msg.payload && (method === 'POST' || method === 'PUT' || method === 'PATCH' ) ) {
+      if (
+        msg.payload &&
+        (method === 'POST' || method === 'PUT' || method === 'PATCH')
+      ) {
         if (typeof msg.payload === 'string' || Buffer.isBuffer(msg.payload)) {
           payload = msg.payload;
         } else if (typeof msg.payload === 'number') {
-          payload = msg.payload+'';
+          payload = msg.payload + '';
         } else {
-          if (opts.headers['content-type'] === 'application/x-www-form-urlencoded') {
+          if (
+            opts.headers['content-type'] === 'application/x-www-form-urlencoded'
+          ) {
             payload = querystring.stringify(msg.payload);
           } else {
             payload = JSON.stringify(msg.payload);
@@ -130,7 +145,9 @@ export default function(RED) {
       let noproxy;
       if (noprox) {
         for (let i in noprox) {
-          if (url.indexOf(noprox[i]) !== -1) { noproxy=true; }
+          if (url.indexOf(noprox[i]) !== -1) {
+            noproxy = true;
+          }
         }
       }
       if (prox && !noproxy) {
@@ -141,17 +158,18 @@ export default function(RED) {
           //opts.port = (match[3] !== null ? match[3] : 80);
           opts.headers.Host = opts.host;
           let heads = opts.headers;
-          let path = opts.pathname = opts.href;
+          let path = (opts.pathname = opts.href);
           opts = urllib.parse(prox);
           opts.path = opts.pathname = path;
           opts.headers = heads;
           opts.method = method;
           //console.log(opts);
           urltotest = match[0];
+        } else {
+          node.warn('Bad proxy url: ' + prox);
         }
-        else { node.warn('Bad proxy url: '+prox); }
       }
-      let req = ((/^https/.test(urltotest))?https:http).request(opts, res => {
+      let req = (/^https/.test(urltotest) ? https : http).request(opts, res => {
         if (node.ret === 'bin') {
           res.setEncoding('binary');
         } else {
@@ -176,11 +194,13 @@ export default function(RED) {
             }
           }
           if (node.ret === 'bin') {
-            msg.payload = Buffer.from(msg.payload,'binary');
-          }
-          else if (node.ret === 'obj') {
-            try { msg.payload = JSON.parse(msg.payload); }
-            catch(e) { node.warn(RED._('candy-egg-httpreq.errors.json-error')); }
+            msg.payload = Buffer.from(msg.payload, 'binary');
+          } else if (node.ret === 'obj') {
+            try {
+              msg.payload = JSON.parse(msg.payload);
+            } catch (e) {
+              node.warn(RED._('candy-egg-httpreq.errors.json-error'));
+            }
           }
           node.send(msg);
           node.status({});
@@ -190,7 +210,7 @@ export default function(RED) {
         msg.payload = err.toString() + ' : ' + url;
         msg.statusCode = err.code;
         node.send(msg);
-        node.status({fill:'red',shape:'ring',text:err.code});
+        node.status({ fill: 'red', shape: 'ring', text: err.code });
       });
       if (payload) {
         req.write(payload);
@@ -199,5 +219,5 @@ export default function(RED) {
     });
   }
 
-  RED.nodes.registerType('CANDY EGG http request',HTTPRequest);
+  RED.nodes.registerType('CANDY EGG http request', HTTPRequest);
 }

@@ -16,6 +16,8 @@
  */
 'use strict';
 
+/* global describe, beforeEach, afterEach, it */
+
 import * as sinon from 'sinon';
 import { assert } from 'chai';
 import { spawn } from 'child_process';
@@ -30,13 +32,11 @@ describe('index.js executable script', () => {
     }
   });
   it('should start Node-RED properly', function(done) {
-    let stdout = '';
-    let env = Object.create(process.env);
+    const env = Object.create(process.env);
     env.HOME = __dirname;
     candyred = spawn('node', [`${__dirname}/../dist/index.js`], { env: env });
     candyred.stdout.on('data', data => {
-      let line = data.toString();
-      stdout += line;
+      const line = data.toString();
       if (line.indexOf('[info] Started flows') >= 0) {
         candyred.kill('SIGKILL');
       } else {
@@ -73,18 +73,23 @@ describe('CandyRed', () => {
     it('should return titles containing deviceId as well as hostname', () => {
       let theme = cr._createCandyRedEditorTheme('my:deviceId');
       assert.equal('CANDY RED@my:deviceId', theme.page.title);
-      assert.equal(' ** ' + os.hostname() + ' (my:deviceId) **', theme.header.title);
+      assert.equal(
+        ' ** ' + os.hostname() + ' (my:deviceId) **',
+        theme.header.title
+      );
     });
   });
 
   describe('#_inspectBoardStatus()', () => {
     it('should not return any undefined values', done => {
-      cr._inspectBoardStatus(__dirname + '/../package.json').then(versions => {
-        assert.isDefined(versions.candyRedv);
-        done();
-      }).catch(err => {
-        done(err);
-      });
+      cr._inspectBoardStatus(__dirname + '/../package.json')
+        .then(versions => {
+          assert.isDefined(versions.candyRedv);
+          done();
+        })
+        .catch(err => {
+          done(err);
+        });
     });
   });
 });

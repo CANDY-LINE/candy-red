@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-'use strict';
 
 import 'source-map-support/register';
 import os from 'os';
@@ -35,7 +34,17 @@ const PROC_DT_MODEL_PATH = '/proc/device-tree/model';
 const MODEM_INFO_FILE_PATH = '/opt/candy-line/candy-pi-lite/__modem_info';
 const DM_FLOW = `${__dirname}/device-management-flow.json`;
 const EXCLUDED_URI_LIST = [
-  '/3/0/2', '/3/0/3', '/3/0/6', '/3/0/9', '/3/0/10', '/3/0/13', '/3/0/14', '/3/0/15', '/3/0/18', '/3/0/20', '/3/0/21'
+  '/3/0/2',
+  '/3/0/3',
+  '/3/0/6',
+  '/3/0/9',
+  '/3/0/10',
+  '/3/0/13',
+  '/3/0/14',
+  '/3/0/15',
+  '/3/0/18',
+  '/3/0/20',
+  '/3/0/21'
 ];
 
 export class DefaultDeviceIdResolver {
@@ -73,7 +82,11 @@ export class DefaultDeviceIdResolver {
           if (err || !id) {
             return this._resolveMAC(resolve, reject);
           }
-          let model = fs.readFileSync(PROC_DT_MODEL_PATH).toString().replace(/\0/g, '').trim();
+          let model = fs
+            .readFileSync(PROC_DT_MODEL_PATH)
+            .toString()
+            .replace(/\0/g, '')
+            .trim();
           if (model.match('Raspberry Pi')) {
             return resolve('RPi:' + id);
           } else if (model === 'Tinker Board') {
@@ -88,13 +101,18 @@ export class DefaultDeviceIdResolver {
   }
 
   _resolveMAC(resolve, reject) {
-    let ifs = os.networkInterfaces();
-    for (let key in ifs) {
-      if (ifs.hasOwnProperty(key)) {
-        for (let i in ifs[key]) {
-          let mac = ifs[key][i].mac;
+    const ifs = os.networkInterfaces();
+    for (const key in ifs) {
+      if (Object.prototype.hasOwnProperty.call(ifs, key)) {
+        for (const i in ifs[key]) {
+          const mac = ifs[key][i].mac;
           if (mac && mac !== '00:00:00:00:00:00') {
-            return resolve('MAC:' + key + ':' + mac.replace(new RegExp(':', 'g'), '-').toLowerCase());
+            return resolve(
+              'MAC:' +
+                key +
+                ':' +
+                mac.replace(new RegExp(':', 'g'), '-').toLowerCase()
+            );
           }
         }
       }
@@ -104,9 +122,8 @@ export class DefaultDeviceIdResolver {
 }
 
 export class DeviceState {
-
-  static flowsToString(flows, content=null) {
-    if (typeof(flows) === 'string') {
+  static flowsToString(flows, content = null) {
+    if (typeof flows === 'string') {
       return flows;
     }
     if (RED.settings.flowFilePretty) {
@@ -153,7 +170,10 @@ export class DeviceState {
           output += data.toString();
         });
         candy.on('close', code => {
-          output = output.replace(/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[mGK]/g, '');
+          output = output.replace(
+            /\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[mGK]/g, // eslint-disable-line no-control-regex
+            ''
+          );
           if (code) {
             return reject({ code: code, output: output });
           }
@@ -186,9 +206,11 @@ export class DeviceState {
   testIfCANDYBoardServiceInstalled(service) {
     return this.init().then(() => {
       return new Promise(resolve => {
-        let systemctl = cproc.spawn('systemctl', ['is-enabled', service], { timeout: 1000 });
+        let systemctl = cproc.spawn('systemctl', ['is-enabled', service], {
+          timeout: 1000
+        });
         systemctl.on('close', code => {
-          let candyBoardServiceSupported = (code === 0);
+          let candyBoardServiceSupported = code === 0;
           resolve(candyBoardServiceSupported);
         });
         systemctl.on('error', () => {
@@ -196,8 +218,11 @@ export class DeviceState {
         });
       }).then(candyBoardServiceSupported => {
         // DEBUG USE ONLY
-        if (process.env.DEVICE_MANAGEMENT_ENABLED === 'true' &&
-            process.env.DEVEL === 'true' && !candyBoardServiceSupported) {
+        if (
+          process.env.DEVICE_MANAGEMENT_ENABLED === 'true' &&
+          process.env.DEVEL === 'true' &&
+          !candyBoardServiceSupported
+        ) {
           candyBoardServiceSupported = true;
         }
         this.candyBoardServiceSupported = candyBoardServiceSupported;
@@ -219,7 +244,7 @@ export class DeviceState {
 
   setFlowSignature(data) {
     let flows;
-    if (typeof(data) === 'string') {
+    if (typeof data === 'string') {
       flows = JSON.parse(data);
     } else {
       flows = data;
@@ -230,13 +255,13 @@ export class DeviceState {
     sha1.update(data);
     this.flowFileSignature = sha1.digest('hex');
     // true for modified
-    return (current !== this.flowFileSignature);
+    return current !== this.flowFileSignature;
   }
 
   updateFlow(flows) {
     return new Promise((resolve, reject) => {
       let content;
-      if (typeof(flows) === 'string') {
+      if (typeof flows === 'string') {
         content = flows;
         try {
           flows = JSON.parse(content);
@@ -280,71 +305,76 @@ export class DeviceState {
   }
 
   initWithFlowFilePath(flowFilePath) {
-    return this.init().then(() => {
-      if (flowFilePath && this.flowFilePath !== flowFilePath) {
-        this.flowFilePath = flowFilePath;
-        if (this.watcher) {
-          this.watcher.close();
+    return this.init()
+      .then(() => {
+        if (flowFilePath && this.flowFilePath !== flowFilePath) {
+          this.flowFilePath = flowFilePath;
+          if (this.watcher) {
+            this.watcher.close();
+          }
+          this.watcher = null;
+        } else {
+          flowFilePath = this.flowFilePath;
         }
-        this.watcher = null;
-      } else {
-        flowFilePath = this.flowFilePath;
-      }
-      return new Promise((resolve, reject) => {
-        fs.readFile(flowFilePath, (err, data) => {
-          if (err) {
-            return resolve(true);
-          }
-          let flows;
-          data = String(data);
-          if (!data || !data.trim()) {
-            data = '[]';
-          }
+        return new Promise((resolve, reject) => {
+          fs.readFile(flowFilePath, (err, data) => {
+            if (err) {
+              return resolve(true);
+            }
+            let flows;
+            data = String(data);
+            if (!data || !data.trim()) {
+              data = '[]';
+            }
+            try {
+              flows = JSON.parse(data);
+            } catch (e) {
+              RED.log.error(
+                `[CANDY RED] Wrong JSON format => ${flowFilePath}. Correct the error or remove it`
+              );
+              return reject(e);
+            }
+
+            this.setFlowSignature(data);
+            RED.log.info(
+              `[CANDY RED] flowFileSignature: ${this.flowFileSignature}`
+            );
+
+            if (!Array.isArray(flows)) {
+              return resolve(true);
+            }
+            resolve();
+          });
+        });
+      })
+      .then(() => {
+        return new Promise((resolve, reject) => {
           try {
-            flows = JSON.parse(data);
-          } catch (e) {
-            RED.log.error(`[CANDY RED] Wrong JSON format => ${flowFilePath}. Correct the error or remove it`);
-            return reject(e);
+            this._watchFlowFilePath();
+            return resolve();
+          } catch (err) {
+            return reject(err);
           }
-
-          this.setFlowSignature(data);
-          RED.log.info(`[CANDY RED] flowFileSignature: ${this.flowFileSignature}`);
-
-          if (!Array.isArray(flows)) {
-            return resolve(true);
-          }
-          resolve();
         });
       });
-    }).then(() => {
-      return new Promise((resolve, reject) => {
-        try {
-          this._watchFlowFilePath();
-          return resolve();
-        } catch (err) {
-          return reject(err);
-        }
-      });
-    });
   }
 }
 
 const MODULE_MODEL_MAPPINGS = {
-  'EC21': 'CANDY Pi Lite LTE',
-  'UC20': 'CANDY Pi Lite 3G',
-  'EC25': 'CANDY Pi Lite+',
-  'BG96': 'CANDY Pi Lite LPWA',
+  EC21: 'CANDY Pi Lite LTE',
+  UC20: 'CANDY Pi Lite 3G',
+  EC25: 'CANDY Pi Lite+',
+  BG96: 'CANDY Pi Lite LPWA'
 };
 
 const CLIENT_CREDENTIAL_PROFILE = {
   '1': 'RSA_3072',
-  '2': 'SHARED_SECRET',
+  '2': 'SHARED_SECRET'
 };
 
 const UPDATE_INTERVAL_MS = process.env.UPDATE_INTERVAL_MS || 60 * 1000;
 
 export class LwM2MDeviceManagement {
-
   static restart() {
     // systemctl shuould restart the service
     setTimeout(() => {
@@ -368,22 +398,28 @@ export class LwM2MDeviceManagement {
     this.tasks = {};
     this.settings = {};
     this.functionResolver = (key, value) => {
-      if (key === 'value' && typeof(value) === 'string' && value.indexOf('[Function]') === 0) {
+      if (
+        key === 'value' &&
+        typeof value === 'string' &&
+        value.indexOf('[Function]') === 0
+      ) {
         const functionName = value.substring(10);
         let f = this[`_${functionName}`];
-        if (typeof(f) === 'function') {
+        if (typeof f === 'function') {
           f = f.bind(this);
           f.functionName = functionName;
           return f;
         } else {
-          RED.log.error(`[CANDY RED] Failed to assign a function => '_${functionName}'`);
+          RED.log.error(
+            `[CANDY RED] Failed to assign a function => '_${functionName}'`
+          );
           return '';
         }
       }
       return value;
     };
     this.functionReplacer = (_, value) => {
-      if (typeof(value) === 'function') {
+      if (typeof value === 'function') {
         return `[Function]${value.functionName}`;
       } else {
         return value;
@@ -397,185 +433,240 @@ export class LwM2MDeviceManagement {
     this.objectFilePath = `${settings.userDir}/${this.objectFile}`;
     this.credentialFilePath = `${settings.userDir}/lwm2m_dm_cred.json`;
     let enableDM = false;
-    if (this.deviceState.candyBoardServiceSupported &&
-        process.env.DEVICE_MANAGEMENT_ENABLED === 'true') {
+    if (
+      this.deviceState.candyBoardServiceSupported &&
+      process.env.DEVICE_MANAGEMENT_ENABLED === 'true'
+    ) {
       enableDM = true;
     }
-    if (process.env.DEVEL !== 'true' && process.env.DEVICE_MANAGEMENT_BS_DTLS !== 'PSK') {
+    if (
+      process.env.DEVEL !== 'true' &&
+      process.env.DEVICE_MANAGEMENT_BS_DTLS !== 'PSK'
+    ) {
       enableDM = false;
     }
     if (enableDM) {
       RED.log.info(`[CANDY RED] DM enabled. Setup started.`);
       // setup DM flow
-      return this.setupDMFlow().then(() => {
-        // prepare module based identifier
-        return new Promise(resolve => {
-          fs.readFile(MODEM_INFO_FILE_PATH, (err, data) => {
-            // Read a modem info file to retrieve IMEI when online
-            if (err) {
-              // Run candy modem show to retrieve IMEI when offline
-              let retry = 0;
-              const command = () => {
-                this.deviceState._candyRun('modem', 'show').then(result => {
-                  this.modemInfo = result.output;
-                  resolve();
-                }).catch(err => {
-                  if (retry < 120 && err.code === 1) {
-                    setTimeout(command, 5000);
-                    retry++;
-                  } else {
-                    resolve();
-                    RED.log.error(`[CANDY RED] Failed to run candy modem show command => ${err.message || JSON.stringify(err)}`);
-                  }
-                });
-              };
-              process.nextTick(command);
-            } else {
-              let dataString = data.toString().trim();
-              try {
-                this.modemInfo = JSON.parse(dataString).result;
-              } catch (_) {
-                RED.log.error(`[CANDY RED] Unexpected modem info => [${dataString}]`);
+      return this.setupDMFlow()
+        .then(() => {
+          // prepare module based identifier
+          return new Promise(resolve => {
+            fs.readFile(MODEM_INFO_FILE_PATH, (err, data) => {
+              // Read a modem info file to retrieve IMEI when online
+              if (err) {
+                // Run candy modem show to retrieve IMEI when offline
+                let retry = 0;
+                const command = () => {
+                  this.deviceState
+                    ._candyRun('modem', 'show')
+                    .then(result => {
+                      this.modemInfo = result.output;
+                      resolve();
+                    })
+                    .catch(err => {
+                      if (retry < 120 && err.code === 1) {
+                        setTimeout(command, 5000);
+                        retry++;
+                      } else {
+                        resolve();
+                        RED.log.error(
+                          `[CANDY RED] Failed to run candy modem show command => ${err.message ||
+                            JSON.stringify(err)}`
+                        );
+                      }
+                    });
+                };
+                process.nextTick(command);
+              } else {
+                let dataString = data.toString().trim();
+                try {
+                  this.modemInfo = JSON.parse(dataString).result;
+                } catch (_) {
+                  RED.log.error(
+                    `[CANDY RED] Unexpected modem info => [${dataString}]`
+                  );
+                }
+                resolve();
               }
-              resolve();
-            }
-          });
-        });
-      }).then(() => {
-        this.internalEventBus.on('configure', (context) => {
-          RED.log.info(`[CANDY RED] Starting DM configuration.`);
-          this.decryptObjects();
-          const config = {};
-          // EPN
-          config.clientName = context.clientName;
-          if (this.modemInfo && this.modemInfo.imei) {
-            config.clientName = `urn:imei:${this.modemInfo.imei}`;
-          } else if (settings.deviceId) {
-            if (settings.deviceId.indexOf('urn:') !== 0) {
-              config.clientName = `urn:${settings.deviceId}`;
-            } else {
-              config.clientName = settings.deviceId;
-            }
-          }
-
-          config.serverId = 97;
-          config.clientPort = parseInt(process.env.DEVICE_MANAGEMENT_CL_PORT || 57830);
-          config.reconnectSec = parseInt(process.env.DEVICE_MANAGEMENT_RECONNECT_SEC || 60);
-          config.serverHost = process.env.DEVICE_MANAGEMENT_BS_HOST;
-          config.serverPort = process.env.DEVICE_MANAGEMENT_BS_PORT;
-          config.enableDTLS = process.env.DEVICE_MANAGEMENT_BS_DTLS === 'PSK';
-          if (config.enableDTLS) {
-            config.pskIdentity = process.env.DEVICE_MANAGEMENT_BS_DTLS_PSK_ID || config.clientName;
-            config.presharedKey = process.env.DEVICE_MANAGEMENT_BS_DTLS_PSK || config.clientName;
-          }
-          config.requestBootstrap = true;
-          config.saveProvisionedConfig = true;
-          config.useIPv4 = process.env.DEVICE_MANAGEMENT_BS_HOST_IPV6 !== 'true';
-          if (this.settings.logging && this.settings.logging.console && this.settings.logging.console.level === 'debug') {
-            config.redirectLwm2mClientLog = true;
-            config.dumpLwm2mMessages = true;
-          }
-          config.hideSensitiveInfo = false;
-          config.credentialFilePath = this.credentialFilePath;
-
-          // Wait until ppp0 goes online when DEVICE_MANAGEMENT_EXCLUSIVE_TO_MOBILE_NETWORK is true
-          let p;
-          if (process.env.DEVICE_MANAGEMENT_EXCLUSIVE_TO_MOBILE_NETWORK === 'true') {
-            p = new Promise(resolve => {
-              let retry = 0;
-              const command = () => {
-                this.deviceState._candyRun('connection', 'status', 0, true).then(result => {
-                  if (result === 'ONLINE') {
-                    resolve();
-                  } else {
-                    const err = {
-                      code: 1,
-                      message: 'Still OFFLINE'
-                    };
-                    throw err;
-                  }
-                }).catch(err => {
-                  if (retry < 120 && err.code === 1) {
-                    setTimeout(command, 5000);
-                    retry++;
-                  } else {
-                    RED.log.error(`[CANDY RED] Connection Timeout => ${err.message || JSON.stringify(err)}`);
-                    RED.log.error(`[CANDY RED] This service is terminated.`);
-                    return process.exit(10); // RestartPreventExitStatus=10
-                  }
-                });
-              };
-              process.nextTick(command);
             });
-          } else {
-            p = Promise.resolve();
-          }
-          p.then(() => {
-            this.internalEventBus.emit('configurationDone', config);
           });
-        });
-
-        this.internalEventBus.on('object-event', (ev) => {
-          RED.log.debug(`[CANDY RED] object-event => ${JSON.stringify(ev)}`);
-          switch (ev.eventType) {
-            case 'updated':
-            case 'created': {
-              this.triggerSaveObjectsTask();
-              break;
+        })
+        .then(() => {
+          this.internalEventBus.on('configure', context => {
+            RED.log.info(`[CANDY RED] Starting DM configuration.`);
+            this.decryptObjects();
+            const config = {};
+            // EPN
+            config.clientName = context.clientName;
+            if (this.modemInfo && this.modemInfo.imei) {
+              config.clientName = `urn:imei:${this.modemInfo.imei}`;
+            } else if (settings.deviceId) {
+              if (settings.deviceId.indexOf('urn:') !== 0) {
+                config.clientName = `urn:${settings.deviceId}`;
+              } else {
+                config.clientName = settings.deviceId;
+              }
             }
-            case 'executed': {
-              const uri = ev.uri.split('/');
-              const obj = this.objects[uri[1]];
-              if (obj) {
-                const ins = obj[uri[2]];
-                if (ins) {
-                  const res = ins[uri[3]];
-                  if (res.value && typeof(res.value) === 'function') {
-                    return res.value(ev.value);
+
+            config.serverId = 97;
+            config.clientPort = parseInt(
+              process.env.DEVICE_MANAGEMENT_CL_PORT || 57830
+            );
+            config.reconnectSec = parseInt(
+              process.env.DEVICE_MANAGEMENT_RECONNECT_SEC || 60
+            );
+            config.serverHost = process.env.DEVICE_MANAGEMENT_BS_HOST;
+            config.serverPort = process.env.DEVICE_MANAGEMENT_BS_PORT;
+            config.enableDTLS = process.env.DEVICE_MANAGEMENT_BS_DTLS === 'PSK';
+            if (config.enableDTLS) {
+              config.pskIdentity =
+                process.env.DEVICE_MANAGEMENT_BS_DTLS_PSK_ID ||
+                config.clientName;
+              config.presharedKey =
+                process.env.DEVICE_MANAGEMENT_BS_DTLS_PSK || config.clientName;
+            }
+            config.requestBootstrap = true;
+            config.saveProvisionedConfig = true;
+            config.useIPv4 =
+              process.env.DEVICE_MANAGEMENT_BS_HOST_IPV6 !== 'true';
+            if (
+              this.settings.logging &&
+              this.settings.logging.console &&
+              this.settings.logging.console.level === 'debug'
+            ) {
+              config.redirectLwm2mClientLog = true;
+              config.dumpLwm2mMessages = true;
+            }
+            config.hideSensitiveInfo = false;
+            config.credentialFilePath = this.credentialFilePath;
+
+            // Wait until ppp0 goes online when DEVICE_MANAGEMENT_EXCLUSIVE_TO_MOBILE_NETWORK is true
+            let p;
+            if (
+              process.env.DEVICE_MANAGEMENT_EXCLUSIVE_TO_MOBILE_NETWORK ===
+              'true'
+            ) {
+              p = new Promise(resolve => {
+                let retry = 0;
+                const command = () => {
+                  this.deviceState
+                    ._candyRun('connection', 'status', 0, true)
+                    .then(result => {
+                      if (result === 'ONLINE') {
+                        resolve();
+                      } else {
+                        const err = {
+                          code: 1,
+                          message: 'Still OFFLINE'
+                        };
+                        throw err;
+                      }
+                    })
+                    .catch(err => {
+                      if (retry < 120 && err.code === 1) {
+                        setTimeout(command, 5000);
+                        retry++;
+                      } else {
+                        RED.log.error(
+                          `[CANDY RED] Connection Timeout => ${err.message ||
+                            JSON.stringify(err)}`
+                        );
+                        RED.log.error(
+                          `[CANDY RED] This service is terminated.`
+                        );
+                        return process.exit(10); // RestartPreventExitStatus=10
+                      }
+                    });
+                };
+                process.nextTick(command);
+              });
+            } else {
+              p = Promise.resolve();
+            }
+            p.then(() => {
+              this.internalEventBus.emit('configurationDone', config);
+            });
+          });
+
+          this.internalEventBus.on('object-event', ev => {
+            RED.log.debug(`[CANDY RED] object-event => ${JSON.stringify(ev)}`);
+            switch (ev.eventType) {
+              case 'updated':
+              case 'created': {
+                this.triggerSaveObjectsTask();
+                break;
+              }
+              case 'executed': {
+                const uri = ev.uri.split('/');
+                const obj = this.objects[uri[1]];
+                if (obj) {
+                  const ins = obj[uri[2]];
+                  if (ins) {
+                    const res = ins[uri[3]];
+                    if (res.value && typeof res.value === 'function') {
+                      return res.value(ev.value);
+                    }
                   }
                 }
+                RED.log.debug(
+                  `[CANDY RED] Internal function associated with ${
+                    ev.uri
+                  } is missing.: ${JSON.stringify(ev)}`
+                );
+                break;
               }
-              RED.log.debug(`[CANDY RED] Internal function associated with ${ev.uri} is missing.: ${JSON.stringify(ev)}`);
-              break;
+              default:
             }
-            default:
-          }
-        });
-
-        return new Promise((resolve, reject) => {
-          // load MO files
-          fs.readdir(`${__dirname}/mo`, (err, dirs) => {
-            if (err) {
-              RED.log.error(`[CANDY RED] Failed to load MO files`);
-              return reject(err);
-            }
-            dirs.filter(name => name.indexOf('.json') > 0).forEach((name) => {
-              try {
-                const data = fs.readFileSync(`${__dirname}/mo/${name}`);
-                const mo = JSON.parse(data.toString(), this.functionResolver);
-                Object.keys(mo).forEach((objectId) => {
-                  if (this.objects[objectId]) {
-                    RED.log.warn(`[CANDY RED] DUPLICATE ENTRY for the same ObjectID: ${objectId}. This will cause unexpected behaviors.`);
-                  }
-                });
-                Object.assign(this.objects, mo);
-                RED.log.info(`[CANDY RED] Loaded ObjectIDs => ${Object.keys(mo)} from [${name}]`);
-              } catch (err) {
-                RED.log.error(`[CANDY RED] Failed to load a MO file: ${name} (${err.message || err})`);
-              }
-            });
-
-            return resolve();
           });
 
+          return new Promise((resolve, reject) => {
+            // load MO files
+            fs.readdir(`${__dirname}/mo`, (err, dirs) => {
+              if (err) {
+                RED.log.error(`[CANDY RED] Failed to load MO files`);
+                return reject(err);
+              }
+              dirs
+                .filter(name => name.indexOf('.json') > 0)
+                .forEach(name => {
+                  try {
+                    const data = fs.readFileSync(`${__dirname}/mo/${name}`);
+                    const mo = JSON.parse(
+                      data.toString(),
+                      this.functionResolver
+                    );
+                    Object.keys(mo).forEach(objectId => {
+                      if (this.objects[objectId]) {
+                        RED.log.warn(
+                          `[CANDY RED] DUPLICATE ENTRY for the same ObjectID: ${objectId}. This will cause unexpected behaviors.`
+                        );
+                      }
+                    });
+                    Object.assign(this.objects, mo);
+                    RED.log.info(
+                      `[CANDY RED] Loaded ObjectIDs => ${Object.keys(
+                        mo
+                      )} from [${name}]`
+                    );
+                  } catch (err) {
+                    RED.log.error(
+                      `[CANDY RED] Failed to load a MO file: ${name} (${err.message ||
+                        err})`
+                    );
+                  }
+                });
+
+              return resolve();
+            });
+          });
+        })
+        .then(() => {
+          return this.loadObjects();
+        })
+        .then(() => {
+          return this.saveObjects();
         });
-
-      }).then(() => {
-        return this.loadObjects();
-      }).then(() => {
-        return this.saveObjects();
-      });
-
     } else {
       // Reset DM flow if exists
       return this.stripDMFlow();
@@ -606,11 +697,14 @@ export class LwM2MDeviceManagement {
   async installFlow(newFlowTabName, newFlowOrPath) {
     RED.log.debug(`[CANDY RED] <installFlow> Start`);
     let newFlow = newFlowOrPath;
-    if (typeof(newFlowOrPath) === 'string') {
+    if (typeof newFlowOrPath === 'string') {
       try {
         newFlow = JSON.parse(fs.readFileSync(newFlowOrPath).toString());
       } catch (err) {
-        RED.log.info(`[CANDY RED] <installFlow> Invalid JSON format, ERROR End. err => ${err.message || err}`);
+        RED.log.info(
+          `[CANDY RED] <installFlow> Invalid JSON format, ERROR End. err => ${err.message ||
+            err}`
+        );
         throw err;
       }
     }
@@ -621,7 +715,10 @@ export class LwM2MDeviceManagement {
     const flows = await new Promise((resolve, reject) => {
       fs.readFile(flowFilePath, (err, data) => {
         if (err) {
-          RED.log.info(`[CANDY RED] <installFlow> flowFilePath: ${flowFilePath}, ERROR End. err => ${err.message || err}`);
+          RED.log.info(
+            `[CANDY RED] <installFlow> flowFilePath: ${flowFilePath}, ERROR End. err => ${err.message ||
+              err}`
+          );
           return reject(err);
         }
         try {
@@ -629,36 +726,58 @@ export class LwM2MDeviceManagement {
           if (!Array.isArray(flows)) {
             flows = [flows];
           }
-          const newFlowExists = flows.filter(f => f.type === 'tab' && f.label === newFlowTabName).length > 0;
+          const newFlowExists =
+            flows.filter(f => f.type === 'tab' && f.label === newFlowTabName)
+              .length > 0;
           if (newFlowExists) {
-            RED.log.info(`[CANDY RED] <installFlow> The given flow (${newFlowTabName}) is aleady installed`);
+            RED.log.info(
+              `[CANDY RED] <installFlow> The given flow (${newFlowTabName}) is aleady installed`
+            );
             return resolve();
           }
-          const newFlowTab = newFlow.filter(f => f.type === 'tab' && f.label === newFlowTabName)[0];
+          const newFlowTab = newFlow.filter(
+            f => f.type === 'tab' && f.label === newFlowTabName
+          )[0];
           const newFlowVal = {
             id: newFlowTab.id
           };
-          while (flows.some(f => (f.z === newFlowVal.id || f.id === newFlowVal.id))) {
-            newFlowVal.id = `${crypto.randomBytes(4).toString('hex')}.${crypto.randomBytes(4).toString('hex')}`;
+          while (
+            flows.some(f => f.z === newFlowVal.id || f.id === newFlowVal.id)
+          ) {
+            newFlowVal.id = `${crypto
+              .randomBytes(4)
+              .toString('hex')}.${crypto.randomBytes(4).toString('hex')}`;
           }
-          newFlow.filter(f => (f.z === newFlowTab.id)).forEach(f => f.z = newFlowVal.id);
+          newFlow
+            .filter(f => f.z === newFlowTab.id)
+            .forEach(f => (f.z = newFlowVal.id));
           newFlowTab.id = newFlowVal.id;
-          RED.log.info(`[CANDY RED] <installFlow> id collision was resolved! New id => ${newFlowTab.id}`);
+          RED.log.info(
+            `[CANDY RED] <installFlow> id collision was resolved! New id => ${newFlowTab.id}`
+          );
           const packageInfo = this.toPackageInfo(newFlowTab);
-          RED.log.info(`[CANDY RED] <installFlow> End; Installed App: ${newFlowTabName}@${packageInfo.version}`);
+          RED.log.info(
+            `[CANDY RED] <installFlow> End; Installed App: ${newFlowTabName}@${packageInfo.version}`
+          );
           return resolve(flows.concat(newFlow));
         } catch (err) {
-          RED.log.info(`[CANDY RED] <installFlow> ERROR End. err => ${err.message || err}`);
+          RED.log.info(
+            `[CANDY RED] <installFlow> ERROR End. err => ${err.message || err}`
+          );
           return reject(err);
         }
       });
     });
     if (flows) {
       await this.deviceState.updateFlow(flows);
-      RED.log.warn('[CANDY RED] <installFlow> FLOW IS UPDATED! RELOAD THE PAGE AFTER RECONNECTING SERVER!!');
+      RED.log.warn(
+        '[CANDY RED] <installFlow> FLOW IS UPDATED! RELOAD THE PAGE AFTER RECONNECTING SERVER!!'
+      );
       return true;
     }
-    RED.log.warn('[CANDY RED] <installFlow> Valid flow is missing. Installation skipped.');
+    RED.log.warn(
+      '[CANDY RED] <installFlow> Valid flow is missing. Installation skipped.'
+    );
     return false;
   }
 
@@ -671,22 +790,36 @@ export class LwM2MDeviceManagement {
     const flows = await new Promise((resolve, reject) => {
       fs.readFile(flowFilePath, (err, data) => {
         if (err) {
-          RED.log.info(`[CANDY RED] <uninstallFlow> flowFilePath: ${flowFilePath}, ERROR End. err => ${err.message || err}`);
+          RED.log.info(
+            `[CANDY RED] <uninstallFlow> flowFilePath: ${flowFilePath}, ERROR End. err => ${err.message ||
+              err}`
+          );
           return reject(err);
         }
         try {
           const flows = JSON.parse(data.toString());
-          const flowTab = flows.filter(f => (f.type === 'tab' && f.label === flowTabName))[0];
+          const flowTab = flows.filter(
+            f => f.type === 'tab' && f.label === flowTabName
+          )[0];
           if (!flowTab) {
-            RED.log.info(`[CANDY RED] <uninstallFlow> The given flow (${flowTabName}) is aleady gone`);
+            RED.log.info(
+              `[CANDY RED] <uninstallFlow> The given flow (${flowTabName}) is aleady gone`
+            );
             return resolve();
           }
-          const newFlow = flows.filter(f => (f.z !== flowTab.id && f.id !== flowTab.id));
+          const newFlow = flows.filter(
+            f => f.z !== flowTab.id && f.id !== flowTab.id
+          );
           const packageInfo = this.toPackageInfo(flowTab);
-          RED.log.info(`[CANDY RED] <uninstallFlow> End; Uninstalled App: ${flowTabName}@${packageInfo.version}`);
+          RED.log.info(
+            `[CANDY RED] <uninstallFlow> End; Uninstalled App: ${flowTabName}@${packageInfo.version}`
+          );
           return resolve(newFlow);
         } catch (err) {
-          RED.log.info(`[CANDY RED] <uninstallFlow> ERROR End. err => ${err.message || err}`);
+          RED.log.info(
+            `[CANDY RED] <uninstallFlow> ERROR End. err => ${err.message ||
+              err}`
+          );
           return reject(err);
         }
       });
@@ -696,8 +829,12 @@ export class LwM2MDeviceManagement {
       try {
         // Remove Credentials file as well
         fs.unlinkSync(this.credentialFilePath);
-      } catch (_) {}
-      RED.log.warn('[CANDY RED] <uninstallFlow> FLOW IS UPDATED! RELOAD THE PAGE AFTER RECONNECTING SERVER!!');
+      } catch (_) {
+        // ignore
+      }
+      RED.log.warn(
+        '[CANDY RED] <uninstallFlow> FLOW IS UPDATED! RELOAD THE PAGE AFTER RECONNECTING SERVER!!'
+      );
       return true;
     }
     return false;
@@ -727,28 +864,41 @@ export class LwM2MDeviceManagement {
     }
     this.triggerSaveObjectsTaskHandle = setTimeout(() => {
       this.triggerSaveObjectsTaskHandle = 0;
-      this.readResources(`^/(${Object.keys(this.objects).join('|')})/.*$`).then((result) => {
-        result.filter(r => EXCLUDED_URI_LIST.indexOf(r.uri) < 0).forEach((r) => {
-          const uri = r.uri.split('/');
-          const objectId = uri[1];
-          const instanceId = uri[2];
-          const resourceId = uri[3];
-          const object = this.objects[objectId];
-          let instance = object[instanceId];
-          if (!instance) {
-            object[instanceId] = {};
-            instance = object[instanceId];
-          }
-          let resource = instance[resourceId];
-          if (!resource || (resource.acl && resource.acl.indexOf('W') >= 0) && resource.type !== 'FUNCTION') {
-            instance[resourceId] = r.value;
-          }
+      this.readResources(`^/(${Object.keys(this.objects).join('|')})/.*$`)
+        .then(result => {
+          result
+            .filter(r => EXCLUDED_URI_LIST.indexOf(r.uri) < 0)
+            .forEach(r => {
+              const uri = r.uri.split('/');
+              const objectId = uri[1];
+              const instanceId = uri[2];
+              const resourceId = uri[3];
+              const object = this.objects[objectId];
+              let instance = object[instanceId];
+              if (!instance) {
+                object[instanceId] = {};
+                instance = object[instanceId];
+              }
+              let resource = instance[resourceId];
+              if (
+                !resource ||
+                (resource.acl &&
+                  resource.acl.indexOf('W') >= 0 &&
+                  resource.type !== 'FUNCTION')
+              ) {
+                instance[resourceId] = r.value;
+              }
+            });
+          this.saveObjects();
+        })
+        .catch(err => {
+          RED.log.warn(
+            `[CANDY RED] <triggerSaveObjectsTask> Error => ${JSON.stringify(
+              err
+            )}`
+          );
         });
-        this.saveObjects();
-      }).catch((err) => {
-        RED.log.warn(`[CANDY RED] <triggerSaveObjectsTask> Error => ${JSON.stringify(err)}`);
-      });
-    }, UPDATE_INTERVAL_MS);
+    }, timeout);
   }
 
   getSecret() {
@@ -765,11 +915,15 @@ export class LwM2MDeviceManagement {
       return enc;
     }
     const value = enc.$;
-    const iv = Buffer.from(value.substring(0, 32),'hex');
-    const secret = crypto.createHash('sha256').update(this.getSecret()).digest();
+    const iv = Buffer.from(value.substring(0, 32), 'hex');
+    const secret = crypto
+      .createHash('sha256')
+      .update(this.getSecret())
+      .digest();
     const creds = value.substring(32);
     const decipher = crypto.createDecipheriv('aes-256-ctr', secret, iv);
-    const data = decipher.update(creds, 'base64', 'utf8') + decipher.final('utf8');
+    const data =
+      decipher.update(creds, 'base64', 'utf8') + decipher.final('utf8');
     return JSON.parse(data);
   }
 
@@ -778,12 +932,17 @@ export class LwM2MDeviceManagement {
       return null;
     }
     const iv = crypto.randomBytes(16);
-    const secret = crypto.createHash('sha256').update(this.getSecret()).digest();
+    const secret = crypto
+      .createHash('sha256')
+      .update(this.getSecret())
+      .digest();
     const cipher = crypto.createCipheriv('aes-256-ctr', secret, iv);
     return {
-      '$': iv.toString('hex') +
+      $:
+        iv.toString('hex') +
         cipher.update(JSON.stringify(value), 'utf8', 'base64') +
-        cipher.final('base64')};
+        cipher.final('base64')
+    };
   }
 
   loadObjects() {
@@ -793,26 +952,28 @@ export class LwM2MDeviceManagement {
         const data = fs.readFileSync(`${this.objectFilePath}`);
         const savedObjects = JSON.parse(data.toString(), this.functionResolver);
         const mergedObjectIds = [];
-        Object.keys(savedObjects).forEach((objectId) => {
+        Object.keys(savedObjects).forEach(objectId => {
           mergedObjectIds.push(objectId);
           const object = savedObjects[objectId];
           if (!this.objects[objectId]) {
             this.objects[objectId] = object;
             return;
           }
-          Object.keys(object).forEach((instanceId) => {
+          Object.keys(object).forEach(instanceId => {
             const instance = object[instanceId];
             if (!this.objects[objectId][instanceId]) {
               this.objects[objectId][instanceId] = instance;
               return;
             }
-            Object.keys(instance).forEach((resourceId) => {
+            Object.keys(instance).forEach(resourceId => {
               const resource = instance[resourceId];
               this.objects[objectId][instanceId][resourceId] = resource;
             });
           });
         });
-        RED.log.info(`[CANDY RED] <loadObjects> Merged ObjectIDs => ${mergedObjectIds}`);
+        RED.log.info(
+          `[CANDY RED] <loadObjects> Merged ObjectIDs => ${mergedObjectIds}`
+        );
       } catch (err) {
         if (err.code !== 'ENOENT') {
           return reject(err);
@@ -823,9 +984,9 @@ export class LwM2MDeviceManagement {
   }
 
   decryptObjects() {
-    Object.keys(this.objects).forEach((objectId) => {
-      Object.keys(this.objects[objectId]).forEach((instanceId) => {
-        Object.keys(this.objects[objectId][instanceId]).forEach((resourceId) => {
+    Object.keys(this.objects).forEach(objectId => {
+      Object.keys(this.objects[objectId]).forEach(instanceId => {
+        Object.keys(this.objects[objectId][instanceId]).forEach(resourceId => {
           const resource = this.objects[objectId][instanceId][resourceId];
           if (resource.sensitive && resource.value) {
             resource.value = this.decrypt(resource.value);
@@ -836,18 +997,24 @@ export class LwM2MDeviceManagement {
   }
 
   saveObjects() {
-    return new Promise((resolve) => {
+    return new Promise(resolve => {
       // save current objects
       try {
         // Clone
-        const objects = JSON.parse(JSON.stringify(this.objects, this.functionReplacer));
-        Object.keys(objects).forEach((objectId) => {
+        const objects = JSON.parse(
+          JSON.stringify(this.objects, this.functionReplacer)
+        );
+        Object.keys(objects).forEach(objectId => {
           const object = objects[objectId];
-          Object.keys(object).forEach((instanceId) => {
+          Object.keys(object).forEach(instanceId => {
             const instance = object[instanceId];
-            Object.keys(instance).forEach((resourceId) => {
+            Object.keys(instance).forEach(resourceId => {
               const resource = instance[resourceId];
-              if (resource.sensitive && resource.value && resource.type !== 'FUNCTION') {
+              if (
+                resource.sensitive &&
+                resource.value &&
+                resource.type !== 'FUNCTION'
+              ) {
                 if (resource.value.toString().indexOf('[Function]') !== 0) {
                   resource.value = this.encrypt(resource.value);
                 }
@@ -862,7 +1029,10 @@ export class LwM2MDeviceManagement {
           data = JSON.stringify(objects, this.functionReplacer);
         }
         fs.writeFileSync(`${this.objectFilePath}`, data);
-      } catch (_) {
+      } catch (err) {
+        RED.log.error(
+          `[CANDY RED] <saveObjects> ${err.message || JSON.stringify(err)}`
+        );
       }
       this.objectsLastSavedAt = Date.now();
       resolve();
@@ -874,7 +1044,7 @@ export class LwM2MDeviceManagement {
     if (!res) {
       return null;
     }
-    if (typeof(res.value) === 'function') {
+    if (typeof res.value === 'function') {
       return res.value();
     }
     return res.value;
@@ -897,8 +1067,11 @@ export class LwM2MDeviceManagement {
     RED.log.debug(`[CANDY RED] <readResources> uriRegExp: ${uriRegExp}`);
     return new Promise((resolve, reject) => {
       const msgId = crypto.randomBytes(8).toString('hex');
-      this.internalEventBus.emit('object-read', { id: msgId, topic: uriRegExp });
-      this.internalEventBus.once(`object-read-${msgId}`, (result) => {
+      this.internalEventBus.emit('object-read', {
+        id: msgId,
+        topic: uriRegExp
+      });
+      this.internalEventBus.once(`object-read-${msgId}`, result => {
         if (result.error) {
           return reject(result.payload); // Array
         }
@@ -911,8 +1084,12 @@ export class LwM2MDeviceManagement {
     RED.log.debug(`[CANDY RED] <writeResource> uri: ${uri}, value: ${value}`);
     return new Promise((resolve, reject) => {
       const msgId = crypto.randomBytes(8).toString('hex');
-      this.internalEventBus.emit('object-write', { id: msgId, topic: uri, payload: value });
-      this.internalEventBus.once(`object-write-${msgId}`, (result) => {
+      this.internalEventBus.emit('object-write', {
+        id: msgId,
+        topic: uri,
+        payload: value
+      });
+      this.internalEventBus.once(`object-write-${msgId}`, result => {
         if (result.error) {
           return reject(result.payload);
         }
@@ -937,28 +1114,35 @@ export class LwM2MDeviceManagement {
                 return reject({ status: 500, message: 'My flow is invalid' });
               }
               if (c.args.publishable) {
-                this._updateLocalFlows(flows).then(result => {
-                  return resolve(result);
-                }).catch(err => {
-                  return reject(err);
-                });
+                this._updateLocalFlows(flows)
+                  .then(result => {
+                    return resolve(result);
+                  })
+                  .catch(err => {
+                    return reject(err);
+                  });
               } else {
-                return resolve({data: DeviceState.flowsToString(flows)});
+                return resolve({ data: DeviceState.flowsToString(flows) });
               }
             });
           }
-        } else if (this.deviceState.flowFileSignature !== c.args.expectedSignature) {
+        } else if (
+          this.deviceState.flowFileSignature !== c.args.expectedSignature
+        ) {
           // non-primary accounts are NOT allowed to download (to be delivered) flow files
           if (!this.primary) {
             return reject({ status: 405, message: 'not the primary account' });
           }
-          return reject({ status: 202, commands: {
-            cat: 'sys',
-            act: 'deliverflows',
-            args: {
-              flowId: c.args.flowId
+          return reject({
+            status: 202,
+            commands: {
+              cat: 'sys',
+              act: 'deliverflows',
+              args: {
+                flowId: c.args.flowId
+              }
             }
-          }});
+          });
         } else {
           // 304 Not Modified
           return reject({ status: 304 });
@@ -968,16 +1152,19 @@ export class LwM2MDeviceManagement {
       }
     }).then(result => {
       return new Promise(resolve => {
-        let status = { status: 202, commands: {
-          cat: 'sys',
-          act: 'updateflows',
-          args: {
-            name: path.basename(this.deviceState.flowFilePath),
-            signature: this.deviceState.flowFileSignature,
-            content: result.data
-          },
-          done: result.done
-        }};
+        let status = {
+          status: 202,
+          commands: {
+            cat: 'sys',
+            act: 'updateflows',
+            args: {
+              name: path.basename(this.deviceState.flowFilePath),
+              signature: this.deviceState.flowFileSignature,
+              content: result.data
+            },
+            done: result.done
+          }
+        };
         return resolve(status);
       });
     });
@@ -994,7 +1181,9 @@ export class LwM2MDeviceManagement {
   }
 
   _resolveCANDYLINEModel() {
-    return process.env.DEVICE_MANAGEMENT_MODEL || this._resolveCANDYLINEProductName();
+    return (
+      process.env.DEVICE_MANAGEMENT_MODEL || this._resolveCANDYLINEProductName()
+    );
   }
 
   _resolveCANDYLINEProductName() {
@@ -1032,7 +1221,7 @@ export class LwM2MDeviceManagement {
   }
 
   _argsToString(src) {
-    switch (typeof(src)) {
+    switch (typeof src) {
       case 'string': {
         return src;
       }
@@ -1061,29 +1250,31 @@ export class LwM2MDeviceManagement {
     if (!pkg) {
       pkg = {};
     }
-    return this.readResources('^/42805/0/(2|3|4)$').then((resources) => {
+    return this.readResources('^/42805/0/(2|3|4)$').then(resources => {
       const downloadInfo = resources.reduce((accumulator, currentValue) => {
         accumulator[currentValue.uri] = currentValue.value.value;
         return accumulator;
       }, {});
       pkg.flowTabName = pkg.flowTabName || downloadInfo['/42805/0/2'];
       if (!pkg.flowTabName) {
-        return Promise.reject({ message: `Flow tab name is missing`});
+        return Promise.reject({ message: `Flow tab name is missing` });
       }
       if (pkg.flow) {
-        if (typeof(pkg.flow) === 'string') {
+        if (typeof pkg.flow === 'string') {
           try {
             pkg.flow = JSON.parse(pkg.flow);
             return Promise.resolve(pkg);
-          } catch (_) {}
+          } catch (_) {
+            // Ignore parse error
+          }
         }
       }
       if (!downloadInfo['/42805/0/3']) {
-        return Promise.reject({ message: `Cannot download flow`});
+        return Promise.reject({ message: `Cannot download flow` });
       }
       const headers = {};
       if (downloadInfo['/42805/0/4']) {
-        Object.keys(downloadInfo['/42805/0/4']).forEach((id) => {
+        Object.keys(downloadInfo['/42805/0/4']).forEach(id => {
           const headerDef = downloadInfo['/42805/0/4'][id].value;
           if (headerDef) {
             const elements = headerDef.split(':');
@@ -1093,27 +1284,34 @@ export class LwM2MDeviceManagement {
       }
       return new Promise((resolve, reject) => {
         const url = downloadInfo['/42805/0/3'];
-        if ((process.env.DEVEL === 'true' && url.indexOf('http://') >= 0) || url.indexOf('https://') >= 0) {
-          request(url, {
-            headers: headers
-          }, (err, res, body) => {
-            if (err) {
-              return reject(err);
+        if (
+          (process.env.DEVEL === 'true' && url.indexOf('http://') >= 0) ||
+          url.indexOf('https://') >= 0
+        ) {
+          request(
+            url,
+            {
+              headers: headers
+            },
+            (err, res, body) => {
+              if (err) {
+                return reject(err);
+              }
+              const { statusCode } = res;
+              if (statusCode !== 200) {
+                return reject(`Invalid Status Code: ${statusCode}`);
+              }
+              if (!body) {
+                return reject(`Empty body`);
+              }
+              try {
+                pkg.flow = JSON.parse(body);
+                return resolve(pkg);
+              } catch (_) {
+                return reject(`Invalid JSON: ${body}`);
+              }
             }
-            const { statusCode } = res;
-            if (statusCode !== 200) {
-              return reject(`Invalid Status Code: ${statusCode}`);
-            }
-            if (!body) {
-              return reject(`Empty body`);
-            }
-            try {
-              pkg.flow = JSON.parse(body);
-              return resolve(pkg);
-            } catch(_) {
-              return reject(`Invalid JSON: ${body}`);
-            }
-          });
+          );
         } else if (url.indexOf('file://') >= 0) {
           fs.readFile(url.substring(7), (err, data) => {
             if (err) {
@@ -1122,35 +1320,50 @@ export class LwM2MDeviceManagement {
             try {
               pkg.flow = JSON.parse(data);
               return resolve(pkg);
-            } catch(_) {
+            } catch (_) {
               return reject(`Invalid JSON: ${data.toString()}`);
             }
           });
         } else {
-          return reject({ message: `Unsupported protocol scheme: ${url}`});
+          return reject({ message: `Unsupported protocol scheme: ${url}` });
         }
       });
     });
-
   }
 
   _downloadAndInstallApplicationFlow(args) {
-    RED.log.info(`[CANDY RED] <_downloadAndInstallApplicationFlow> Start; args => ${JSON.stringify(args)}`);
-    return this._downloadFlowOrParse(args).then((result) => {
-      return this.installFlow(result.flowTabName, result.flow); // process.exit() on success
-    }).then(() => {
-      return this.writeResource('/42805/0/23', 1);
-    }).catch((err) => {
-      RED.log.error(`[CANDY RED] <_downloadAndInstallApplicationFlow> err=>${err ? (err.message ? err.message : err) : '(uknown)'}`);
-      return this.writeResource('/42805/0/23', 2);
-    }).then(() => {
-      RED.log.info(`[CANDY RED] <_downloadAndInstallApplicationFlow> End`);
-      return this.saveObjects();
-    });
+    RED.log.info(
+      `[CANDY RED] <_downloadAndInstallApplicationFlow> Start; args => ${JSON.stringify(
+        args
+      )}`
+    );
+    return this._downloadFlowOrParse(args)
+      .then(result => {
+        return this.installFlow(result.flowTabName, result.flow); // process.exit() on success
+      })
+      .then(() => {
+        return this.writeResource('/42805/0/23', 1);
+      })
+      .catch(err => {
+        RED.log.error(
+          `[CANDY RED] <_downloadAndInstallApplicationFlow> err=>${
+            err ? (err.message ? err.message : err) : '(uknown)'
+          }`
+        );
+        return this.writeResource('/42805/0/23', 2);
+      })
+      .then(() => {
+        RED.log.info(`[CANDY RED] <_downloadAndInstallApplicationFlow> End`);
+        return this.saveObjects();
+      });
   }
 
   _uninstallApplicationFlow(args) {
-    RED.log.info(`[CANDY RED] <_uninstallApplicationFlow> Start; args => ${JSON.stringify(args)}`);
+    RED.log.info(
+      `[CANDY RED] <_uninstallApplicationFlow> Start; args => ${JSON.stringify(
+        args
+      )}`
+    );
     const flowTabName = this._argsToString(args);
     let p;
     if (flowTabName) {
@@ -1160,13 +1373,19 @@ export class LwM2MDeviceManagement {
     } else {
       p = this.writeResource('/42805/0/25', 2);
     }
-    return p.catch((err) => {
-      RED.log.error(`[CANDY RED] <_uninstallApplicationFlow> err=>${err ? (err.message ? err.message : err) : '(uknown)'}`);
-      return this.writeResource('/42805/0/25', 3);
-    }).then(() => {
-      RED.log.info(`[CANDY RED] <_uninstallApplicationFlow> End`);
-      return this.saveObjects();
-    });
+    return p
+      .catch(err => {
+        RED.log.error(
+          `[CANDY RED] <_uninstallApplicationFlow> err=>${
+            err ? (err.message ? err.message : err) : '(uknown)'
+          }`
+        );
+        return this.writeResource('/42805/0/25', 3);
+      })
+      .then(() => {
+        RED.log.info(`[CANDY RED] <_uninstallApplicationFlow> End`);
+        return this.saveObjects();
+      });
   }
 
   _updateApplicationFlowList() {
@@ -1178,22 +1397,34 @@ export class LwM2MDeviceManagement {
         }
         try {
           const flows = JSON.parse(data.toString());
-          return this.writeResource('/42805/0/5', flows.filter(f => f.type === 'tab').map((f) => {
-            return f.label;
-          }));
+          return this.writeResource(
+            '/42805/0/5',
+            flows
+              .filter(f => f.type === 'tab')
+              .map(f => {
+                return f.label;
+              })
+          );
         } catch (err) {
           return reject(err);
         }
       });
-    }).then(() => {
-      return this.writeResource('/42805/0/27', 1);
-    }).catch((err) => {
-      RED.log.error(`[CANDY RED] <_updateApplicationFlowList> err=>${err ? (err.message ? err.message : err) : '(uknown)'}`);
-      return this.writeResource('/42805/0/27', 3);
-    }).then(() => {
-      RED.log.info(`[CANDY RED] <_updateApplicationFlowList> End`);
-      return this.saveObjects();
-    });
+    })
+      .then(() => {
+        return this.writeResource('/42805/0/27', 1);
+      })
+      .catch(err => {
+        RED.log.error(
+          `[CANDY RED] <_updateApplicationFlowList> err=>${
+            err ? (err.message ? err.message : err) : '(uknown)'
+          }`
+        );
+        return this.writeResource('/42805/0/27', 3);
+      })
+      .then(() => {
+        RED.log.info(`[CANDY RED] <_updateApplicationFlowList> End`);
+        return this.saveObjects();
+      });
   }
 
   /*
@@ -1201,7 +1432,7 @@ export class LwM2MDeviceManagement {
    * CANRY RED process should exit after update (not restart in this function though)
    */
   async _updateMindConnectAgentConfiguration(flowFilePath) {
-    if (typeof(flowFilePath) !== 'string') {
+    if (typeof flowFilePath !== 'string') {
       // Ignore invalid values
       flowFilePath = null;
     }
@@ -1221,17 +1452,18 @@ export class LwM2MDeviceManagement {
             const flows = JSON.parse(data.toString());
             let agents = flows.filter(f => f.type === 'mindconnect');
             if (agents.length === 0) {
-              return reject({ message: 'Nothing to update'});
+              return reject({ message: 'Nothing to update' });
             }
-            this.readResources(`/43001/.*`).then((result) => {
+            this.readResources(`/43001/.*`).then(result => {
               const mindconnect = result.reduce((accumulator, currentValue) => {
                 accumulator[currentValue.uri] = currentValue.value.value;
                 return accumulator;
               }, {});
-              agents.forEach((agent) => {
+              agents.forEach(agent => {
                 const nodeName = mindconnect['/43001/0/10'];
                 agent.name = nodeName || '';
-                const clientCredentialProfile = CLIENT_CREDENTIAL_PROFILE[mindconnect['/43001/0/2']];
+                const clientCredentialProfile =
+                  CLIENT_CREDENTIAL_PROFILE[mindconnect['/43001/0/2']];
                 agent.configtype = clientCredentialProfile || 'SHARED_SECRET';
                 const uploadFileChunks = mindconnect['/43001/0/8'];
                 agent.chunk = !!uploadFileChunks;
@@ -1247,14 +1479,14 @@ export class LwM2MDeviceManagement {
                 const tenant = mindconnect['/43001/0/4'] || '';
                 const expiration = mindconnect['/43001/0/5'] || '';
                 const agentconfig = {
-                  'content': {
-                    'baseUrl': baseUrl,
-                    'iat': iat,
-                    'clientCredentialProfile': [ clientCredentialProfile ],
-                    'clientId': clientId,
-                    'tenant': tenant
+                  content: {
+                    baseUrl: baseUrl,
+                    iat: iat,
+                    clientCredentialProfile: [clientCredentialProfile],
+                    clientId: clientId,
+                    tenant: tenant
                   },
-                  'expiration': expiration
+                  expiration: expiration
                 };
                 agent.agentconfig = JSON.stringify(agentconfig);
               });
@@ -1268,9 +1500,15 @@ export class LwM2MDeviceManagement {
       await this.deviceState.updateFlow(flows);
       await this.writeResource('/43001/0/101', 0);
       await this.writeResource('/43001/0/103', new Date().toISOString());
-      RED.log.warn('[CANDY RED] <updateMindConnectAgentConfiguration> FLOW IS UPDATED! RELOAD THE PAGE AFTER RECONNECTING SERVER!!');
-    } catch(err) {
-      RED.log.error(`[CANDY RED] <updateMindConnectAgentConfiguration> err=>${err ? err.message : '(uknown)'}`);
+      RED.log.warn(
+        '[CANDY RED] <updateMindConnectAgentConfiguration> FLOW IS UPDATED! RELOAD THE PAGE AFTER RECONNECTING SERVER!!'
+      );
+    } catch (err) {
+      RED.log.error(
+        `[CANDY RED] <updateMindConnectAgentConfiguration> err=>${
+          err ? err.message : '(uknown)'
+        }`
+      );
       await this.writeResource('/43001/0/101', 1);
     }
     RED.log.info(`[CANDY RED] <updateMindConnectAgentConfiguration> End`);
@@ -1281,15 +1519,17 @@ export class LwM2MDeviceManagement {
 export class DeviceManagerStore {
   constructor() {
     this.store = {};
-    this.deviceState = new DeviceState(this._onFlowFileChangedFunc(), this._onFlowFileRemovedFunc());
+    this.deviceState = new DeviceState(
+      this._onFlowFileChangedFunc(),
+      this._onFlowFileRemovedFunc()
+    );
     this.lwm2m = new LwM2MDeviceManagement(this.deviceState);
   }
 
   _onFlowFileChangedFunc() {
     return (() => {
-      let wip = false;
       return () => {
-        return new Promise((resolve) => {
+        return new Promise(resolve => {
           // TODO
           return resolve();
         });
@@ -1300,7 +1540,7 @@ export class DeviceManagerStore {
   _onFlowFileRemovedFunc() {
     return (() => {
       return () => {
-        return new Promise((resolve) => {
+        return new Promise(resolve => {
           // TODO
           return resolve();
         });
