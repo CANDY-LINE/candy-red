@@ -203,32 +203,31 @@ export class DeviceState {
     });
   }
 
-  testIfCANDYBoardServiceInstalled(service) {
-    return this.init().then(() => {
-      return new Promise(resolve => {
-        let systemctl = cproc.spawn('systemctl', ['is-enabled', service], {
-          timeout: 1000
-        });
-        systemctl.on('close', code => {
-          let candyBoardServiceSupported = code === 0;
-          resolve(candyBoardServiceSupported);
-        });
-        systemctl.on('error', () => {
-          resolve(false);
-        });
-      }).then(candyBoardServiceSupported => {
-        // DEBUG USE ONLY
-        if (
-          process.env.DEVICE_MANAGEMENT_ENABLED === 'true' &&
-          process.env.DEVEL === 'true' &&
-          !candyBoardServiceSupported
-        ) {
-          candyBoardServiceSupported = true;
-        }
-        this.candyBoardServiceSupported = candyBoardServiceSupported;
-        return Promise.resolve([this.deviceId]);
+  async testIfCANDYBoardServiceInstalled(service) {
+    await this.init();
+    const candyBoardServiceSupported = await new Promise(resolve => {
+      let systemctl = cproc.spawn('systemctl', ['is-enabled', service], {
+        timeout: 1000
+      });
+      systemctl.on('close', code => {
+        let candyBoardServiceSupported = code === 0;
+        resolve(candyBoardServiceSupported);
+      });
+      systemctl.on('error', () => {
+        resolve(false);
       });
     });
+    // DEBUG USE ONLY
+    if (
+      process.env.DEVICE_MANAGEMENT_ENABLED === 'true' &&
+      process.env.DEVEL === 'true' &&
+      !candyBoardServiceSupported
+    ) {
+      this.candyBoardServiceSupported = true;
+    } else {
+      this.candyBoardServiceSupported = candyBoardServiceSupported;
+    }
+    return Promise.resolve([this.deviceId]);
   }
 
   loadAndSetFlowSignature() {
@@ -304,59 +303,53 @@ export class DeviceState {
     this.watcher.on('unlink', this.onFlowFileRemoved);
   }
 
-  initWithFlowFilePath(flowFilePath) {
-    return this.init()
-      .then(() => {
-        if (flowFilePath && this.flowFilePath !== flowFilePath) {
-          this.flowFilePath = flowFilePath;
-          if (this.watcher) {
-            this.watcher.close();
-          }
-          this.watcher = null;
-        } else {
-          flowFilePath = this.flowFilePath;
+  async initWithFlowFilePath(flowFilePath) {
+    await this.init();
+    if (flowFilePath && this.flowFilePath !== flowFilePath) {
+      this.flowFilePath = flowFilePath;
+      if (this.watcher) {
+        this.watcher.close();
+      }
+      this.watcher = null;
+    } else {
+      flowFilePath = this.flowFilePath;
+    }
+    await new Promise((resolve, reject) => {
+      fs.readFile(flowFilePath, (err, data) => {
+        if (err) {
+          return resolve(true);
         }
-        return new Promise((resolve, reject) => {
-          fs.readFile(flowFilePath, (err, data) => {
-            if (err) {
-              return resolve(true);
-            }
-            let flows;
-            data = String(data);
-            if (!data || !data.trim()) {
-              data = '[]';
-            }
-            try {
-              flows = JSON.parse(data);
-            } catch (e) {
-              RED.log.error(
-                `[CANDY RED] Wrong JSON format => ${flowFilePath}. Correct the error or remove it`
-              );
-              return reject(e);
-            }
-
-            this.setFlowSignature(data);
-            RED.log.info(
-              `[CANDY RED] flowFileSignature: ${this.flowFileSignature}`
-            );
-
-            if (!Array.isArray(flows)) {
-              return resolve(true);
-            }
-            resolve();
-          });
-        });
-      })
-      .then(() => {
-        return new Promise((resolve, reject) => {
-          try {
-            this._watchFlowFilePath();
-            return resolve();
-          } catch (err) {
-            return reject(err);
-          }
-        });
+        let flows;
+        data = String(data);
+        if (!data || !data.trim()) {
+          data = '[]';
+        }
+        try {
+          flows = JSON.parse(data);
+        } catch (e) {
+          RED.log.error(
+            `[CANDY RED] Wrong JSON format => ${flowFilePath}. Correct the error or remove it`
+          );
+          return reject(e);
+        }
+        this.setFlowSignature(data);
+        RED.log.info(
+          `[CANDY RED] flowFileSignature: ${this.flowFileSignature}`
+        );
+        if (!Array.isArray(flows)) {
+          return resolve(true);
+        }
+        resolve();
       });
+    });
+    return new Promise((resolve, reject) => {
+      try {
+        this._watchFlowFilePath();
+        return resolve();
+      } catch (err) {
+        return reject(err);
+      }
+    });
   }
 }
 
@@ -428,7 +421,7 @@ export class LwM2MDeviceManagement {
     this.objectsLastSavedAt = 0;
   }
 
-  init(settings) {
+  async init(settings) {
     this.settings = Object.assign(this.settings, settings);
     this.objectFilePath = `${settings.userDir}/${this.objectFile}`;
     this.credentialFilePath = `${settings.userDir}/lwm2m_dm_cred.json`;
@@ -448,225 +441,203 @@ export class LwM2MDeviceManagement {
     if (enableDM) {
       RED.log.info(`[CANDY RED] DM enabled. Setup started.`);
       // setup DM flow
-      return this.setupDMFlow()
-        .then(() => {
-          // prepare module based identifier
-          return new Promise(resolve => {
-            fs.readFile(MODEM_INFO_FILE_PATH, (err, data) => {
-              // Read a modem info file to retrieve IMEI when online
-              if (err) {
-                // Run candy modem show to retrieve IMEI when offline
-                let retry = 0;
-                const command = () => {
-                  this.deviceState
-                    ._candyRun('modem', 'show')
-                    .then(result => {
-                      this.modemInfo = result.output;
-                      resolve();
-                    })
-                    .catch(err => {
-                      if (retry < 120 && err.code === 1) {
-                        setTimeout(command, 5000);
-                        retry++;
-                      } else {
-                        resolve();
-                        RED.log.error(
-                          `[CANDY RED] Failed to run candy modem show command => ${err.message ||
-                            JSON.stringify(err)}`
-                        );
-                      }
-                    });
-                };
-                process.nextTick(command);
-              } else {
-                let dataString = data.toString().trim();
-                try {
-                  this.modemInfo = JSON.parse(dataString).result;
-                } catch (_) {
-                  RED.log.error(
-                    `[CANDY RED] Unexpected modem info => [${dataString}]`
-                  );
-                }
-                resolve();
-              }
-            });
-          });
-        })
-        .then(() => {
-          this.internalEventBus.on('configure', context => {
-            RED.log.info(`[CANDY RED] Starting DM configuration.`);
-            this.decryptObjects();
-            const config = {};
-            // EPN
-            config.clientName = context.clientName;
-            if (this.modemInfo && this.modemInfo.imei) {
-              config.clientName = `urn:imei:${this.modemInfo.imei}`;
-            } else if (settings.deviceId) {
-              if (settings.deviceId.indexOf('urn:') !== 0) {
-                config.clientName = `urn:${settings.deviceId}`;
-              } else {
-                config.clientName = settings.deviceId;
-              }
-            }
-
-            config.serverId = 97;
-            config.clientPort = parseInt(
-              process.env.DEVICE_MANAGEMENT_CL_PORT || 57830
-            );
-            config.reconnectSec = parseInt(
-              process.env.DEVICE_MANAGEMENT_RECONNECT_SEC || 60
-            );
-            config.serverHost = process.env.DEVICE_MANAGEMENT_BS_HOST;
-            config.serverPort = process.env.DEVICE_MANAGEMENT_BS_PORT;
-            config.enableDTLS = process.env.DEVICE_MANAGEMENT_BS_DTLS === 'PSK';
-            if (config.enableDTLS) {
-              config.pskIdentity =
-                process.env.DEVICE_MANAGEMENT_BS_DTLS_PSK_ID ||
-                config.clientName;
-              config.presharedKey =
-                process.env.DEVICE_MANAGEMENT_BS_DTLS_PSK || config.clientName;
-            }
-            config.requestBootstrap = true;
-            config.saveProvisionedConfig = true;
-            config.useIPv4 =
-              process.env.DEVICE_MANAGEMENT_BS_HOST_IPV6 !== 'true';
-            if (
-              this.settings.logging &&
-              this.settings.logging.console &&
-              this.settings.logging.console.level === 'debug'
-            ) {
-              config.redirectLwm2mClientLog = true;
-              config.dumpLwm2mMessages = true;
-            }
-            config.hideSensitiveInfo = false;
-            config.credentialFilePath = this.credentialFilePath;
-
-            // Wait until ppp0 goes online when DEVICE_MANAGEMENT_EXCLUSIVE_TO_MOBILE_NETWORK is true
-            let p;
-            if (
-              process.env.DEVICE_MANAGEMENT_EXCLUSIVE_TO_MOBILE_NETWORK ===
-              'true'
-            ) {
-              p = new Promise(resolve => {
-                let retry = 0;
-                const command = () => {
-                  this.deviceState
-                    ._candyRun('connection', 'status', 0, true)
-                    .then(result => {
-                      if (result === 'ONLINE') {
-                        resolve();
-                      } else {
-                        const err = {
-                          code: 1,
-                          message: 'Still OFFLINE'
-                        };
-                        throw err;
-                      }
-                    })
-                    .catch(err => {
-                      if (retry < 120 && err.code === 1) {
-                        setTimeout(command, 5000);
-                        retry++;
-                      } else {
-                        RED.log.error(
-                          `[CANDY RED] Connection Timeout => ${err.message ||
-                            JSON.stringify(err)}`
-                        );
-                        RED.log.error(
-                          `[CANDY RED] This service is terminated.`
-                        );
-                        return process.exit(10); // RestartPreventExitStatus=10
-                      }
-                    });
-                };
-                process.nextTick(command);
-              });
-            } else {
-              p = Promise.resolve();
-            }
-            p.then(() => {
-              this.internalEventBus.emit('configurationDone', config);
-            });
-          });
-
-          this.internalEventBus.on('object-event', ev => {
-            RED.log.debug(`[CANDY RED] object-event => ${JSON.stringify(ev)}`);
-            switch (ev.eventType) {
-              case 'updated':
-              case 'created': {
-                this.triggerSaveObjectsTask();
-                break;
-              }
-              case 'executed': {
-                const uri = ev.uri.split('/');
-                const obj = this.objects[uri[1]];
-                if (obj) {
-                  const ins = obj[uri[2]];
-                  if (ins) {
-                    const res = ins[uri[3]];
-                    if (res.value && typeof res.value === 'function') {
-                      return res.value(ev.value);
-                    }
-                  }
-                }
-                RED.log.debug(
-                  `[CANDY RED] Internal function associated with ${
-                    ev.uri
-                  } is missing.: ${JSON.stringify(ev)}`
-                );
-                break;
-              }
-              default:
-            }
-          });
-
-          return new Promise((resolve, reject) => {
-            // load MO files
-            fs.readdir(`${__dirname}/mo`, (err, dirs) => {
-              if (err) {
-                RED.log.error(`[CANDY RED] Failed to load MO files`);
-                return reject(err);
-              }
-              dirs
-                .filter(name => name.indexOf('.json') > 0)
-                .forEach(name => {
-                  try {
-                    const data = fs.readFileSync(`${__dirname}/mo/${name}`);
-                    const mo = JSON.parse(
-                      data.toString(),
-                      this.functionResolver
-                    );
-                    Object.keys(mo).forEach(objectId => {
-                      if (this.objects[objectId]) {
-                        RED.log.warn(
-                          `[CANDY RED] DUPLICATE ENTRY for the same ObjectID: ${objectId}. This will cause unexpected behaviors.`
-                        );
-                      }
-                    });
-                    Object.assign(this.objects, mo);
-                    RED.log.info(
-                      `[CANDY RED] Loaded ObjectIDs => ${Object.keys(
-                        mo
-                      )} from [${name}]`
-                    );
-                  } catch (err) {
+      await this.setupDMFlow();
+      await new Promise(resolve => {
+        fs.readFile(MODEM_INFO_FILE_PATH, (err, data) => {
+          // Read a modem info file to retrieve IMEI when online
+          if (err) {
+            // Run candy modem show to retrieve IMEI when offline
+            let retry = 0;
+            const command = () => {
+              this.deviceState
+                ._candyRun('modem', 'show')
+                .then(result => {
+                  this.modemInfo = result.output;
+                  resolve();
+                })
+                .catch(err => {
+                  if (retry < 120 && err.code === 1) {
+                    setTimeout(command, 5000);
+                    retry++;
+                  } else {
+                    resolve();
                     RED.log.error(
-                      `[CANDY RED] Failed to load a MO file: ${name} (${err.message ||
-                        err})`
+                      `[CANDY RED] Failed to run candy modem show command => ${err.message ||
+                        JSON.stringify(err)}`
                     );
                   }
                 });
-
-              return resolve();
-            });
-          });
-        })
-        .then(() => {
-          return this.loadObjects();
-        })
-        .then(() => {
-          return this.saveObjects();
+            };
+            process.nextTick(command);
+          } else {
+            let dataString = data.toString().trim();
+            try {
+              this.modemInfo = JSON.parse(dataString).result;
+            } catch (_) {
+              RED.log.error(
+                `[CANDY RED] Unexpected modem info => [${dataString}]`
+              );
+            }
+            resolve();
+          }
         });
+      });
+      this.internalEventBus.on('configure', context => {
+        RED.log.info(`[CANDY RED] Starting DM configuration.`);
+        this.decryptObjects();
+        const config = {};
+        // EPN
+        config.clientName = context.clientName;
+        if (this.modemInfo && this.modemInfo.imei) {
+          config.clientName = `urn:imei:${this.modemInfo.imei}`;
+        } else if (settings.deviceId) {
+          if (settings.deviceId.indexOf('urn:') !== 0) {
+            config.clientName = `urn:${settings.deviceId}`;
+          } else {
+            config.clientName = settings.deviceId;
+          }
+        }
+        config.serverId = 97;
+        config.clientPort = parseInt(
+          process.env.DEVICE_MANAGEMENT_CL_PORT || 57830
+        );
+        config.reconnectSec = parseInt(
+          process.env.DEVICE_MANAGEMENT_RECONNECT_SEC || 60
+        );
+        config.serverHost = process.env.DEVICE_MANAGEMENT_BS_HOST;
+        config.serverPort = process.env.DEVICE_MANAGEMENT_BS_PORT;
+        config.enableDTLS = process.env.DEVICE_MANAGEMENT_BS_DTLS === 'PSK';
+        if (config.enableDTLS) {
+          config.pskIdentity =
+            process.env.DEVICE_MANAGEMENT_BS_DTLS_PSK_ID || config.clientName;
+          config.presharedKey =
+            process.env.DEVICE_MANAGEMENT_BS_DTLS_PSK || config.clientName;
+        }
+        config.requestBootstrap = true;
+        config.saveProvisionedConfig = true;
+        config.useIPv4 = process.env.DEVICE_MANAGEMENT_BS_HOST_IPV6 !== 'true';
+        if (
+          this.settings.logging &&
+          this.settings.logging.console &&
+          this.settings.logging.console.level === 'debug'
+        ) {
+          config.redirectLwm2mClientLog = true;
+          config.dumpLwm2mMessages = true;
+        }
+        config.hideSensitiveInfo = false;
+        config.credentialFilePath = this.credentialFilePath;
+        // Wait until ppp0 goes online when DEVICE_MANAGEMENT_EXCLUSIVE_TO_MOBILE_NETWORK is true
+        let p;
+        if (
+          process.env.DEVICE_MANAGEMENT_EXCLUSIVE_TO_MOBILE_NETWORK === 'true'
+        ) {
+          p = new Promise(resolve => {
+            let retry = 0;
+            const command = () => {
+              this.deviceState
+                ._candyRun('connection', 'status', 0, true)
+                .then(result => {
+                  if (result === 'ONLINE') {
+                    resolve();
+                  } else {
+                    const err = {
+                      code: 1,
+                      message: 'Still OFFLINE'
+                    };
+                    throw err;
+                  }
+                })
+                .catch(err => {
+                  if (retry < 120 && err.code === 1) {
+                    setTimeout(command, 5000);
+                    retry++;
+                  } else {
+                    RED.log.error(
+                      `[CANDY RED] Connection Timeout => ${err.message ||
+                        JSON.stringify(err)}`
+                    );
+                    RED.log.error(`[CANDY RED] This service is terminated.`);
+                    return process.exit(10); // RestartPreventExitStatus=10
+                  }
+                });
+            };
+            process.nextTick(command);
+          });
+        } else {
+          p = Promise.resolve();
+        }
+        p.then(() => {
+          this.internalEventBus.emit('configurationDone', config);
+        });
+      });
+      this.internalEventBus.on('object-event', ev => {
+        RED.log.debug(`[CANDY RED] object-event => ${JSON.stringify(ev)}`);
+        switch (ev.eventType) {
+          case 'updated':
+          case 'created': {
+            this.triggerSaveObjectsTask();
+            break;
+          }
+          case 'executed': {
+            const uri = ev.uri.split('/');
+            const obj = this.objects[uri[1]];
+            if (obj) {
+              const ins = obj[uri[2]];
+              if (ins) {
+                const res = ins[uri[3]];
+                if (res.value && typeof res.value === 'function') {
+                  return res.value(ev.value);
+                }
+              }
+            }
+            RED.log.debug(
+              `[CANDY RED] Internal function associated with ${
+                ev.uri
+              } is missing.: ${JSON.stringify(ev)}`
+            );
+            break;
+          }
+          default:
+        }
+      });
+      await new Promise((resolve, reject) => {
+        // load MO files
+        fs.readdir(`${__dirname}/mo`, (err, dirs) => {
+          if (err) {
+            RED.log.error(`[CANDY RED] Failed to load MO files`);
+            return reject(err);
+          }
+          dirs
+            .filter(name => name.indexOf('.json') > 0)
+            .forEach(name => {
+              try {
+                const data = fs.readFileSync(`${__dirname}/mo/${name}`);
+                const mo = JSON.parse(data.toString(), this.functionResolver);
+                Object.keys(mo).forEach(objectId => {
+                  if (this.objects[objectId]) {
+                    RED.log.warn(
+                      `[CANDY RED] DUPLICATE ENTRY for the same ObjectID: ${objectId}. This will cause unexpected behaviors.`
+                    );
+                  }
+                });
+                Object.assign(this.objects, mo);
+                RED.log.info(
+                  `[CANDY RED] Loaded ObjectIDs => ${Object.keys(
+                    mo
+                  )} from [${name}]`
+                );
+              } catch (err) {
+                RED.log.error(
+                  `[CANDY RED] Failed to load a MO file: ${name} (${err.message ||
+                    err})`
+                );
+              }
+            });
+          return resolve();
+        });
+      });
+      await this.loadObjects();
+      return this.saveObjects();
     } else {
       // Reset DM flow if exists
       return this.stripDMFlow();
@@ -1098,8 +1069,8 @@ export class LwM2MDeviceManagement {
     });
   }
 
-  syncFlows(c) {
-    return new Promise((resolve, reject) => {
+  async syncFlows(c) {
+    const result = await new Promise((resolve, reject) => {
       try {
         if (c.args.flowUpdateRequired) {
           if (this.deviceState.flowFileSignature !== c.args.expectedSignature) {
@@ -1150,23 +1121,22 @@ export class LwM2MDeviceManagement {
       } catch (err) {
         return reject(err);
       }
-    }).then(result => {
-      return new Promise(resolve => {
-        let status = {
-          status: 202,
-          commands: {
-            cat: 'sys',
-            act: 'updateflows',
-            args: {
-              name: path.basename(this.deviceState.flowFilePath),
-              signature: this.deviceState.flowFileSignature,
-              content: result.data
-            },
-            done: result.done
-          }
-        };
-        return resolve(status);
-      });
+    });
+    return new Promise(resolve => {
+      let status = {
+        status: 202,
+        commands: {
+          cat: 'sys',
+          act: 'updateflows',
+          args: {
+            name: path.basename(this.deviceState.flowFilePath),
+            signature: this.deviceState.flowFileSignature,
+            content: result.data
+          },
+          done: result.done
+        }
+      };
+      return resolve(status);
     });
   }
 
@@ -1245,120 +1215,116 @@ export class LwM2MDeviceManagement {
     }
   }
 
-  _downloadFlowOrParse(args) {
+  async _downloadFlowOrParse(args) {
     let pkg = this._argsToObject(args);
     if (!pkg) {
       pkg = {};
     }
-    return this.readResources('^/42805/0/(2|3|4)$').then(resources => {
-      const downloadInfo = resources.reduce((accumulator, currentValue) => {
-        accumulator[currentValue.uri] = currentValue.value.value;
-        return accumulator;
-      }, {});
-      pkg.flowTabName = pkg.flowTabName || downloadInfo['/42805/0/2'];
-      if (!pkg.flowTabName) {
-        return Promise.reject({ message: `Flow tab name is missing` });
-      }
-      if (pkg.flow) {
-        if (typeof pkg.flow === 'string') {
-          try {
-            pkg.flow = JSON.parse(pkg.flow);
-            return Promise.resolve(pkg);
-          } catch (_) {
-            // Ignore parse error
-          }
+    const resources = await this.readResources('^/42805/0/(2|3|4)$');
+    const downloadInfo = resources.reduce((accumulator, currentValue) => {
+      accumulator[currentValue.uri] = currentValue.value.value;
+      return accumulator;
+    }, {});
+    // eslint-disable-next-line require-atomic-updates
+    pkg.flowTabName = pkg.flowTabName || downloadInfo['/42805/0/2'];
+    if (!pkg.flowTabName) {
+      return Promise.reject({ message: `Flow tab name is missing` });
+    }
+    if (pkg.flow) {
+      if (typeof pkg.flow === 'string') {
+        try {
+          // eslint-disable-next-line require-atomic-updates
+          pkg.flow = JSON.parse(pkg.flow);
+          return Promise.resolve(pkg);
+        } catch (_) {
+          // Ignore parse error
         }
       }
-      if (!downloadInfo['/42805/0/3']) {
-        return Promise.reject({ message: `Cannot download flow` });
-      }
-      const headers = {};
-      if (downloadInfo['/42805/0/4']) {
-        Object.keys(downloadInfo['/42805/0/4']).forEach(id => {
-          const headerDef = downloadInfo['/42805/0/4'][id].value;
-          if (headerDef) {
-            const elements = headerDef.split(':');
-            headers[elements[0].trim()] = elements[1].trim();
-          }
-        });
-      }
-      return new Promise((resolve, reject) => {
-        const url = downloadInfo['/42805/0/3'];
-        if (
-          (process.env.DEVEL === 'true' && url.indexOf('http://') >= 0) ||
-          url.indexOf('https://') >= 0
-        ) {
-          request(
-            url,
-            {
-              headers: headers
-            },
-            (err, res, body) => {
-              if (err) {
-                return reject(err);
-              }
-              const { statusCode } = res;
-              if (statusCode !== 200) {
-                return reject(`Invalid Status Code: ${statusCode}`);
-              }
-              if (!body) {
-                return reject(`Empty body`);
-              }
-              try {
-                pkg.flow = JSON.parse(body);
-                return resolve(pkg);
-              } catch (_) {
-                return reject(`Invalid JSON: ${body}`);
-              }
-            }
-          );
-        } else if (url.indexOf('file://') >= 0) {
-          fs.readFile(url.substring(7), (err, data) => {
-            if (err) {
-              return reject(`Invalid Path: ${url}`);
-            }
-            try {
-              pkg.flow = JSON.parse(data);
-              return resolve(pkg);
-            } catch (_) {
-              return reject(`Invalid JSON: ${data.toString()}`);
-            }
-          });
-        } else {
-          return reject({ message: `Unsupported protocol scheme: ${url}` });
+    }
+    if (!downloadInfo['/42805/0/3']) {
+      return Promise.reject({ message: `Cannot download flow` });
+    }
+    const headers = {};
+    if (downloadInfo['/42805/0/4']) {
+      Object.keys(downloadInfo['/42805/0/4']).forEach(id => {
+        const headerDef = downloadInfo['/42805/0/4'][id].value;
+        if (headerDef) {
+          const elements = headerDef.split(':');
+          headers[elements[0].trim()] = elements[1].trim();
         }
       });
+    }
+    return new Promise((resolve, reject) => {
+      const url = downloadInfo['/42805/0/3'];
+      if (
+        (process.env.DEVEL === 'true' && url.indexOf('http://') >= 0) ||
+        url.indexOf('https://') >= 0
+      ) {
+        request(
+          url,
+          {
+            headers: headers
+          },
+          (err, res, body) => {
+            if (err) {
+              return reject(err);
+            }
+            const { statusCode } = res;
+            if (statusCode !== 200) {
+              return reject(`Invalid Status Code: ${statusCode}`);
+            }
+            if (!body) {
+              return reject(`Empty body`);
+            }
+            try {
+              pkg.flow = JSON.parse(body);
+              return resolve(pkg);
+            } catch (_) {
+              return reject(`Invalid JSON: ${body}`);
+            }
+          }
+        );
+      } else if (url.indexOf('file://') >= 0) {
+        fs.readFile(url.substring(7), (err, data) => {
+          if (err) {
+            return reject(`Invalid Path: ${url}`);
+          }
+          try {
+            pkg.flow = JSON.parse(data);
+            return resolve(pkg);
+          } catch (_) {
+            return reject(`Invalid JSON: ${data.toString()}`);
+          }
+        });
+      } else {
+        return reject({ message: `Unsupported protocol scheme: ${url}` });
+      }
     });
   }
 
-  _downloadAndInstallApplicationFlow(args) {
+  async _downloadAndInstallApplicationFlow(args) {
     RED.log.info(
       `[CANDY RED] <_downloadAndInstallApplicationFlow> Start; args => ${JSON.stringify(
         args
       )}`
     );
-    return this._downloadFlowOrParse(args)
-      .then(result => {
-        return this.installFlow(result.flowTabName, result.flow); // process.exit() on success
-      })
-      .then(() => {
-        return this.writeResource('/42805/0/23', 1);
-      })
-      .catch(err => {
-        RED.log.error(
-          `[CANDY RED] <_downloadAndInstallApplicationFlow> err=>${
-            err ? (err.message ? err.message : err) : '(uknown)'
-          }`
-        );
-        return this.writeResource('/42805/0/23', 2);
-      })
-      .then(() => {
-        RED.log.info(`[CANDY RED] <_downloadAndInstallApplicationFlow> End`);
-        return this.saveObjects();
-      });
+    try {
+      const result = await this._downloadFlowOrParse(args);
+      await this.installFlow(result.flowTabName, result.flow);
+      await this.writeResource('/42805/0/23', 1);
+    } catch (err) {
+      RED.log.error(
+        `[CANDY RED] <_downloadAndInstallApplicationFlow> err=>${
+          err ? (err.message ? err.message : err) : '(uknown)'
+        }`
+      );
+      await this.writeResource('/42805/0/23', 2);
+    }
+    RED.log.info(`[CANDY RED] <_downloadAndInstallApplicationFlow> End`);
+    return this.saveObjects();
   }
 
-  _uninstallApplicationFlow(args) {
+  async _uninstallApplicationFlow(args) {
     RED.log.info(
       `[CANDY RED] <_uninstallApplicationFlow> Start; args => ${JSON.stringify(
         args
@@ -1373,58 +1339,54 @@ export class LwM2MDeviceManagement {
     } else {
       p = this.writeResource('/42805/0/25', 2);
     }
-    return p
-      .catch(err => {
-        RED.log.error(
-          `[CANDY RED] <_uninstallApplicationFlow> err=>${
-            err ? (err.message ? err.message : err) : '(uknown)'
-          }`
-        );
-        return this.writeResource('/42805/0/25', 3);
-      })
-      .then(() => {
-        RED.log.info(`[CANDY RED] <_uninstallApplicationFlow> End`);
-        return this.saveObjects();
-      });
+    try {
+      await p;
+    } catch (err) {
+      RED.log.error(
+        `[CANDY RED] <_uninstallApplicationFlow> err=>${
+          err ? (err.message ? err.message : err) : '(uknown)'
+        }`
+      );
+      await this.writeResource('/42805/0/25', 3);
+    }
+    RED.log.info(`[CANDY RED] <_uninstallApplicationFlow> End`);
+    return this.saveObjects();
   }
 
-  _updateApplicationFlowList() {
-    return new Promise((resolve, reject) => {
-      RED.log.info(`[CANDY RED] <_updateApplicationFlowList> Start`);
-      fs.readFile(this.deviceState.flowFilePath, (err, data) => {
-        if (err) {
-          return reject(err);
-        }
-        try {
-          const flows = JSON.parse(data.toString());
-          return this.writeResource(
-            '/42805/0/5',
-            flows
-              .filter(f => f.type === 'tab')
-              .map(f => {
-                return f.label;
-              })
-          );
-        } catch (err) {
-          return reject(err);
-        }
+  async _updateApplicationFlowList() {
+    try {
+      await new Promise((resolve, reject) => {
+        RED.log.info(`[CANDY RED] <_updateApplicationFlowList> Start`);
+        fs.readFile(this.deviceState.flowFilePath, (err, data) => {
+          if (err) {
+            return reject(err);
+          }
+          try {
+            const flows = JSON.parse(data.toString());
+            return this.writeResource(
+              '/42805/0/5',
+              flows
+                .filter(f => f.type === 'tab')
+                .map(f => {
+                  return f.label;
+                })
+            );
+          } catch (err) {
+            return reject(err);
+          }
+        });
       });
-    })
-      .then(() => {
-        return this.writeResource('/42805/0/27', 1);
-      })
-      .catch(err => {
-        RED.log.error(
-          `[CANDY RED] <_updateApplicationFlowList> err=>${
-            err ? (err.message ? err.message : err) : '(uknown)'
-          }`
-        );
-        return this.writeResource('/42805/0/27', 3);
-      })
-      .then(() => {
-        RED.log.info(`[CANDY RED] <_updateApplicationFlowList> End`);
-        return this.saveObjects();
-      });
+      await this.writeResource('/42805/0/27', 1);
+    } catch (err) {
+      RED.log.error(
+        `[CANDY RED] <_updateApplicationFlowList> err=>${
+          err ? (err.message ? err.message : err) : '(uknown)'
+        }`
+      );
+      await this.writeResource('/42805/0/27', 3);
+    }
+    RED.log.info(`[CANDY RED] <_updateApplicationFlowList> End`);
+    return this.saveObjects();
   }
 
   /*
