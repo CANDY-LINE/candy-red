@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-'use strict';
 
 import 'source-map-support/register';
 import http from 'http';
@@ -31,13 +30,21 @@ import { SingleUserAuthenticator, PAMAuthenticator } from './auth';
 const PORT = process.env.PORT || 8100;
 const DEFAULT_PACKAGE_JSON = __dirname + '/../package.json';
 const DEFAULT_WELCOME_FLOW = __dirname + '/welcome-flow.json';
-const NODE_PALETTE_ENABLED = process.env.NODE_PALETTE_ENABLED ? process.env.NODE_PALETTE_ENABLED === 'true' : false;
-const NODE_RED_PROJECTS_ENABLED = process.env.NODE_RED_PROJECTS_ENABLED ? process.env.NODE_RED_PROJECTS_ENABLED === 'true' : false;
-const CANDY_RED_SESSION_TIMEOUT = parseInt(process.env.CANDY_RED_SESSION_TIMEOUT || 86400);
+const NODE_PALETTE_ENABLED = process.env.NODE_PALETTE_ENABLED
+  ? process.env.NODE_PALETTE_ENABLED === 'true'
+  : false;
+const NODE_RED_PROJECTS_ENABLED = process.env.NODE_RED_PROJECTS_ENABLED
+  ? process.env.NODE_RED_PROJECTS_ENABLED === 'true'
+  : false;
+const CANDY_RED_SESSION_TIMEOUT = parseInt(
+  process.env.CANDY_RED_SESSION_TIMEOUT || 86400
+);
 const CANDY_RED_ADMIN_USER_ID = process.env.CANDY_RED_ADMIN_USER_ID;
 const CANDY_RED_ADMIN_PASSWORD_ENC = process.env.CANDY_RED_ADMIN_PASSWORD_ENC;
 const CANDY_RED_LOG_LEVEL = process.env.CANDY_RED_LOG_LEVEL || 'info';
-const CANDY_RED_BIND_IPV4_ADDR = process.env.CANDY_RED_BIND_IPV4_ADDR ? process.env.CANDY_RED_BIND_IPV4_ADDR === 'true' : false;
+const CANDY_RED_BIND_IPV4_ADDR = process.env.CANDY_RED_BIND_IPV4_ADDR
+  ? process.env.CANDY_RED_BIND_IPV4_ADDR === 'true'
+  : false;
 const NODE_ENV = process.env.NODE_ENV || '';
 
 export class CandyRed {
@@ -72,12 +79,12 @@ export class CandyRed {
           let oldPath = `${userDir}/flows_candy-box_${os.hostname()}.json`;
           fs.rename(oldPath, newPath, err => {
             if (!err) {
-              console.log(`[MIGRATED] ${oldPath} => ${newPath}`);
+              console.log(`[CANDY RED] {MIGRATED} ${oldPath} => ${newPath}`);
             }
             resolve();
           });
         } else {
-          console.log(`[MIGRATED] ${oldPath} => ${newPath}`);
+          console.log(`[CANDY RED] {MIGRATED} ${oldPath} => ${newPath}`);
           resolve();
         }
       });
@@ -89,7 +96,7 @@ export class CandyRed {
       let url = process.env.WELCOME_FLOW_URL;
       if (url && (url.indexOf('http://') || url.indexOf('https://'))) {
         let req = request.get(url);
-        req.on('error', err => {
+        req.on('error', () => {
           try {
             return resolve(fs.createReadStream(DEFAULT_WELCOME_FLOW));
           } catch (err) {
@@ -125,32 +132,38 @@ export class CandyRed {
         let flowFile = `${userDir}/${this.flowFile}`;
         fs.stat(flowFile, err => {
           if (err) {
-            this._prepareWelcomeFlowFileReadStream().then(reader => {
-              let writer = fs.createWriteStream(flowFile);
-              reader.pipe(writer);
-              writer.on('close', () => {
-                fs.readFile(flowFile, (err, data) => {
-                  if (err) {
-                    return reject(err);
-                  }
-                  try {
-                    JSON.parse(data);
-                    console.log('[INFO] Default welcome flow has been created');
-                    resolve();
-                  } catch (_) {
-                    fs.writeFile(flowFile, '[]', { flag : 'w' }, err => {
-                      if (err) {
-                        return reject(err);
-                      }
-                      console.log('[WARN] Wrong JSON format in thhe welcome flow');
+            this._prepareWelcomeFlowFileReadStream()
+              .then(reader => {
+                let writer = fs.createWriteStream(flowFile);
+                reader.pipe(writer);
+                writer.on('close', () => {
+                  fs.readFile(flowFile, (err, data) => {
+                    if (err) {
+                      return reject(err);
+                    }
+                    try {
+                      JSON.parse(data);
+                      console.log(
+                        '[CANDY RED] Default welcome flow has been created'
+                      );
                       resolve();
-                    });
-                  }
+                    } catch (_) {
+                      fs.writeFile(flowFile, '[]', { flag: 'w' }, err => {
+                        if (err) {
+                          return reject(err);
+                        }
+                        console.log(
+                          '[CANDY RED] {WARN} Wrong JSON format in thhe welcome flow'
+                        );
+                        resolve();
+                      });
+                    }
+                  });
                 });
+              })
+              .catch(err => {
+                reject(err);
               });
-            }).catch(err => {
-              reject(err);
-            });
           } else {
             return resolve();
           }
@@ -166,51 +179,68 @@ export class CandyRed {
       this.server.listen(PORT);
     }
     this._setupExitHandler();
-    return this._inspectBoardStatus(this.packageJsonPath).then(versions => {
-      return new Promise((resolve, reject) => {
-        // Create the settings object - see default settings.js file for other options
-        let settings = this._createREDSettigngs(versions);
-        // Flow File Name Spec. Change Migration
-        this._migrateFlowFile(settings.userDir).then(() => {
-          return this._prepareDefaultFlowFile(settings.userDir);
-        }).then(() => {
-          resolve([settings, versions]);
-        }).catch(err => {
-          reject(err);
-        });
-      });
-    }).then(args => {
-      let settings = args[0];
-      let versions = args[1];
-
-      // Initialise the runtime with a server and settings
-      RED.init(this.server, settings);
-      settings.version += ` [candy-red v${versions.candyRedv}]`;
-
-      // Serve the http nodes from /api
-      this.app.use(settings.httpNodeRoot, RED.httpNode);
-
-      let flowFilePath = settings.userDir + '/' + this.flowFile;
-      this.deviceManagerStore.deviceState.testIfUIisEnabled(flowFilePath).then(enabled => {
-        if (enabled) {
-          RED.log.info('[CANDY RED] Deploying Flow Editor UI...');
-          // Add a simple route for static content served from 'public'
-          this.app.use('/', express.static(__dirname + '/public'));
-          if (settings.httpAdminRoot) {
-            this.app.get('/', (_, res) => {
-              res.redirect(settings.httpAdminRoot);
+    return this._inspectBoardStatus(this.packageJsonPath)
+      .then(versions => {
+        return new Promise((resolve, reject) => {
+          // Create the settings object - see default settings.js file for other options
+          let settings = this._createREDSettigngs(versions);
+          // Flow File Name Spec. Change Migration
+          this._migrateFlowFile(settings.userDir)
+            .then(() => {
+              return this._prepareDefaultFlowFile(settings.userDir);
+            })
+            .then(() => {
+              resolve([settings, versions]);
+            })
+            .catch(err => {
+              reject(err);
             });
-          }
-          // Serve the editor UI from /red
-          this.app.use(settings.httpAdminRoot, RED.httpAdmin);
-        }
-
-        // Start the runtime
-        RED.start().then(() => {
-          RED.log.info(`Listen port=${PORT}`);
         });
+      })
+      .then(args => {
+        let settings = args[0];
+        let versions = args[1];
+
+        // Initialise the runtime with a server and settings
+        RED.init(this.server, settings);
+        settings.version += ` [candy-red v${versions.candyRedv}]`;
+
+        // Serve the http nodes from /api
+        this.app.use(settings.httpNodeRoot, RED.httpNode);
+
+        const flowFilePath = settings.userDir + '/' + this.flowFile;
+        return this.deviceManagerStore.deviceState
+          .initWithFlowFilePath(flowFilePath)
+          .then(() => {
+            return this.deviceManagerStore.lwm2m.init(settings);
+          })
+          .then(() => {
+            const headlessEnabled = this.deviceManagerStore.lwm2m.peekLocalValue(
+              42805,
+              0,
+              1
+            );
+            RED.log.info(`[CANDY RED] Headless Enabled? => ${headlessEnabled}`);
+            if (!headlessEnabled) {
+              RED.log.info(`[CANDY RED] Deploying Flow Editor UI...`);
+              // Add a simple route for static content served from 'public'
+              this.app.use('/', express.static(__dirname + '/public'));
+              if (settings.httpAdminRoot) {
+                this.app.get('/', (_, res) => {
+                  res.redirect(settings.httpAdminRoot);
+                });
+              }
+              // Serve the editor UI from /red
+              this.app.use(settings.httpAdminRoot, RED.httpAdmin);
+            }
+
+            // Start the runtime
+            return RED.start();
+          })
+          .then(() => {
+            RED.log.info(`[CANDY RED] Listen port=${PORT}`);
+          });
       });
-    });
   }
 
   _createCandyRedEditorTheme(deviceId) {
@@ -251,22 +281,16 @@ export class CandyRed {
 
   _inspectBoardStatus(inputPackageJsonPath) {
     return Promise.all([
-      this.deviceManagerStore.deviceState.testIfCANDYBoardServiceInstalled('candy-pi-lite'),
-      this.deviceManagerStore.deviceState.testIfCANDYBoardServiceInstalled('ltepi2')
+      this.deviceManagerStore.deviceState.testIfCANDYBoardServiceInstalled(
+        'candy-pi-lite'
+      )
     ]).then(results => {
-      let candyBsv;
       let deviceId;
       if (results[0][0]) {
         deviceId = results[0][0];
       }
-      if (results[0][1]) {
-        candyBsv = results[0][1];
-      } else if (results[1][1]) {
-        candyBsv = results[1][1];
-      }
       this.editorTheme = this._createCandyRedEditorTheme(deviceId);
       deviceId = deviceId || 'N/A';
-      candyBsv = candyBsv || 'N/A';
       return new Promise((resolve, reject) => {
         fs.stat(inputPackageJsonPath, err => {
           if (err) {
@@ -279,14 +303,12 @@ export class CandyRed {
           fs.readFile(packageJsonPath, (err, data) => {
             if (err) {
               return resolve({
-                candyBsv: candyBsv,
                 candyRedv: 'N/A'
               });
             }
             let packageJson = JSON.parse(data);
             return resolve({
               deviceId: deviceId,
-              candyBsv: candyBsv,
               candyRedv: packageJson.version || 'N/A'
             });
           });
@@ -301,12 +323,12 @@ export class CandyRed {
     function exitHandler(err) {
       console.log('[CANDY RED] Bye');
       if (RED.settings && RED.settings.exitHandlers) {
-        RED.settings.exitHandlers.forEach((handler) => {
+        RED.settings.exitHandlers.forEach(handler => {
           try {
             handler(RED);
           } catch (err) {
-            console.log(`The error [${err}] is ignored`);
-            console.log(err.stack);
+            console.log(`[CANDY RED] The error [${err}] is ignored`);
+            console.log(`[CANDY RED] ${err.stack}`);
           }
         });
       }
@@ -321,8 +343,8 @@ export class CandyRed {
     }
     process.on('SIGINT', exitHandler);
     process.on('uncaughtException', exitHandler);
-    process.on('unhandledRejection', (err) => {
-      console.log('unhandledRejection', err);
+    process.on('unhandledRejection', err => {
+      console.log('[CANDY RED] {FATAL} unhandledRejection', err);
     });
   }
 
@@ -333,16 +355,16 @@ export class CandyRed {
       disableEditor: false,
       httpAdminRoot: '/red/',
       httpNodeRoot: '/api/',
-      userDir: (process.env.CANDY_RED_HOME || process.env.HOME || process.env.USERPROFILE) + '/.node-red',
+      userDir:
+        (process.env.CANDY_RED_HOME ||
+          process.env.HOME ||
+          process.env.USERPROFILE) + '/.node-red',
       flowFile: this.flowFile,
-      functionGlobalContext: {
-      },
+      functionGlobalContext: {},
       exitHandlers: [],
-      nodesExcludes: [
-      ],
+      nodesExcludes: [],
       deviceManagerStore: this.deviceManagerStore,
       editorTheme: this.editorTheme,
-      candyBoardServiceVersion: versions.candyBsv,
       candyRedVersion: versions.candyRedv,
       deviceId: versions.deviceId,
       logging: {
@@ -351,26 +373,38 @@ export class CandyRed {
           metrics: false,
           audit: false
         }
-      }
+      },
+      lwm2m: this.deviceManagerStore.lwm2m
     };
+
     if (CANDY_RED_ADMIN_USER_ID && CANDY_RED_ADMIN_PASSWORD_ENC) {
       let userAuth = new SingleUserAuthenticator(
-        CANDY_RED_SESSION_TIMEOUT, CANDY_RED_ADMIN_USER_ID, CANDY_RED_ADMIN_PASSWORD_ENC);
+        CANDY_RED_SESSION_TIMEOUT,
+        CANDY_RED_ADMIN_USER_ID,
+        CANDY_RED_ADMIN_PASSWORD_ENC
+      );
       settings.adminAuth = userAuth.init();
-      this.app.use(settings.httpNodeRoot, userAuth.apiBasicAuthMiddleware.bind(userAuth));
-      console.log(`[INFO] Using the user:${CANDY_RED_ADMIN_USER_ID} credentials for authentication, session expires after ${CANDY_RED_SESSION_TIMEOUT} seconds`);
+      this.app.use(
+        settings.httpNodeRoot,
+        userAuth.apiBasicAuthMiddleware.bind(userAuth)
+      );
+      console.log(
+        `[CANDY RED] Using the user:${CANDY_RED_ADMIN_USER_ID} credentials for authentication, session expires after ${CANDY_RED_SESSION_TIMEOUT} seconds`
+      );
     } else if (NODE_ENV === 'production') {
       let pamAuth = new PAMAuthenticator(CANDY_RED_SESSION_TIMEOUT);
       settings.adminAuth = pamAuth.init();
-      this.app.use(settings.httpNodeRoot, pamAuth.apiBasicAuthMiddleware.bind(pamAuth));
-      console.log(`[INFO] Using PAM for authentication`);
+      this.app.use(
+        settings.httpNodeRoot,
+        pamAuth.apiBasicAuthMiddleware.bind(pamAuth)
+      );
+      console.log(`[CANDY RED] Using PAM for authentication`);
     } else {
-      console.log(`[WARN] Authentication is disabled`);
+      console.log(`[CANDY RED] Authentication is disabled`);
     }
 
     return settings;
   }
-
 }
 
 // main

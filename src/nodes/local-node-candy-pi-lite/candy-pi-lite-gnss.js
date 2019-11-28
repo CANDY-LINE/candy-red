@@ -24,12 +24,13 @@ import { EventEmitter } from 'events';
 import SerialPort from 'serialport';
 
 export default function(RED) {
-
   class GNSSClient extends EventEmitter {
-    constructor(opts={
-      log: () => {},
-      trace: () => {}
-    }) {
+    constructor(
+      opts = {
+        log: () => {},
+        trace: () => {}
+      }
+    ) {
       super();
       this.log = opts.log ? opts.log.bind(opts) : console.log;
       this.trace = opts.trace ? opts.trace.bind(opts) : console.log;
@@ -50,37 +51,43 @@ export default function(RED) {
       this.initialized = true;
       return this.loadGNSSConfig().then(() => {
         if (this.isEnabled()) {
-          RED.log.info('CANDY Pi Lite GNSS Client is enabled');
+          RED.log.info('[CANDY RED] CANDY Pi Lite GNSS Client is enabled');
           if (this.runOnStartup) {
             this.scheduleRunCommand(5000);
           }
-          return this.resolveNMEAPortName().then((port) => {
-            this.nmeaPortName = port;
-          }).finally(() => {
-            return this.setupNMEAPort();
-          });
+          return this.resolveNMEAPortName()
+            .then(port => {
+              this.nmeaPortName = port;
+            })
+            .finally(() => {
+              return this.setupNMEAPort();
+            });
         } else {
-          RED.log.info('CANDY Pi Lite GNSS Client is disabled');
+          RED.log.info('[CANDY RED] CANDY Pi Lite GNSS Client is disabled');
           return Promise.resolve();
         }
       });
     }
 
-    scheduleRunCommand(timeout=2000) {
+    scheduleRunCommand(timeout = 2000) {
       if (this.runCommandTask) {
         clearTimeout(this.runCommandTask);
       }
       this.runCommandTask = setTimeout(() => {
-        this.execute('start').then((ev) => {
-          if (ev.code !== 0) {
-            this.scheduleRunCommand();
-          }
-        }).catch((err) => {
-          RED.log.error(err.message || err);
-          if (err.code !== 'ENOENT') {
-            this.scheduleRunCommand(10000);
-          }
-        });
+        this.execute('start')
+          .then(ev => {
+            if (ev.code !== 0) {
+              this.scheduleRunCommand();
+            }
+          })
+          .catch(err => {
+            RED.log.error(
+              `[CANDY RED] <scheduleRunCommand> ${err.message || err}`
+            );
+            if (err.code !== 'ENOENT') {
+              this.scheduleRunCommand(10000);
+            }
+          });
       }, timeout);
     }
 
@@ -90,7 +97,7 @@ export default function(RED) {
           if (err) {
             return reject(err);
           }
-          let port = dirs.filter(f => f.match('QWS\.[A-Z0-9]*\.NMEA'));
+          let port = dirs.filter(f => f.match('QWS.[A-Z0-9]*.NMEA'));
           if (port.length < 1) {
             return resolve(null);
           }
@@ -109,29 +116,37 @@ export default function(RED) {
 
     setupNMEAPort() {
       if (this.isNMEASupported()) {
-        this.nmeaPort = new SerialPort(this.nmeaPortName, {
-          baudRate: 9600,
-          dataBits: 8,
-          parity: 'none',
-          stopBits: 1
-        }, (err) => {
-          if (err) {
-            this.emit('nmea-not-available');
-            setTimeout(() => {
-              this.setupNMEAPort();
-            }, 5000);
-          } else {
-            this.emit('nmea-available');
-          }
-        });
-        this.nmeaPort.on('data', (data) => {
-          Buffer.from(data).toString().split('\n').map((line) => line.trim()).forEach((line) => {
-            if (line) {
-              this.emit('nmea', line);
+        this.nmeaPort = new SerialPort(
+          this.nmeaPortName,
+          {
+            baudRate: 9600,
+            dataBits: 8,
+            parity: 'none',
+            stopBits: 1
+          },
+          err => {
+            if (err) {
+              this.emit('nmea-not-available');
+              setTimeout(() => {
+                this.setupNMEAPort();
+              }, 5000);
+            } else {
+              this.emit('nmea-available');
             }
-          });
+          }
+        );
+        this.nmeaPort.on('data', data => {
+          Buffer.from(data)
+            .toString()
+            .split('\n')
+            .map(line => line.trim())
+            .forEach(line => {
+              if (line) {
+                this.emit('nmea', line);
+              }
+            });
         });
-        this.nmeaPort.on('error', (err) => {
+        this.nmeaPort.on('error', err => {
           this.emit('nmea-error', err);
         });
       } else {
@@ -151,20 +166,26 @@ export default function(RED) {
 
     saveGNSSConfig() {
       return new Promise((resolve, reject) => {
-        fs.writeFile(this.createGNSSfilePath(), JSON.stringify({
-          name: this.name,
-          runOnStartup: this.runOnStartup
-        }), (err) => {
-          if (err) {
-            RED.log.error(err);
-            return reject('Failed to write GNSS config');
+        fs.writeFile(
+          this.createGNSSfilePath(),
+          JSON.stringify({
+            name: this.name,
+            runOnStartup: this.runOnStartup
+          }),
+          err => {
+            if (err) {
+              RED.log.error(`[CANDY RED] <saveGNSSConfig> ${err} ${err.stack}`);
+              return reject(
+                '[CANDY RED] <saveGNSSConfig> Failed to write GNSS config'
+              );
+            }
           }
-        });
+        );
       });
     }
 
     loadGNSSConfig() {
-      return new Promise((resolve) => {
+      return new Promise(resolve => {
         fs.readFile(this.createGNSSfilePath(), (err, data) => {
           if (err) {
             return resolve();
@@ -174,13 +195,14 @@ export default function(RED) {
             this.name = config.name;
             this.runOnStartup = config.runOnStartup;
           } catch (_) {
+            // Ignore parse error
           }
           return resolve();
         });
       });
     }
 
-    transform(input, opts={}) {
+    transform(input, opts = {}) {
       let output = input;
       output.name = this.name || 'CANDY Pi Lite/+ GNSS';
       switch (opts.outformat) {
@@ -209,13 +231,19 @@ export default function(RED) {
       return output;
     }
 
-    execute(cmd, opts={}) {
+    execute(cmd, opts = {}) {
       return new Promise((resolve, reject) => {
         if (this.isExecuting()) {
           return reject(RED._('candy-pi-lite-gnss.errors.alreadyExecuting'));
         }
-        if (!cmd || cmd.indexOf(' ') >= 0 || 'start stop status locate'.indexOf(cmd) < 0) {
-          return reject(RED._('candy-pi-lite-gnss.errors.unknownCommand', {cmd: cmd}));
+        if (
+          !cmd ||
+          cmd.indexOf(' ') >= 0 ||
+          'start stop status locate'.indexOf(cmd) < 0
+        ) {
+          return reject(
+            RED._('candy-pi-lite-gnss.errors.unknownCommand', { cmd: cmd })
+          );
         }
         let args = ['gnss', cmd, '--suspend', '--resume'];
         let status;
@@ -232,7 +260,7 @@ export default function(RED) {
           case 'locate':
             status = 'positioning';
             args.push('--format=2');
-          break;
+            break;
           default:
         }
         this.output = '';
@@ -242,7 +270,7 @@ export default function(RED) {
           stdio: ['pipe', 'pipe', 'ignore']
         });
         this.emit(status);
-        this.cproc.on('error', (err) => {
+        this.cproc.on('error', err => {
           this.cproc = null;
           this.emit('ended');
           this.emit('error');
@@ -251,7 +279,7 @@ export default function(RED) {
           }
           return reject(err);
         });
-        this.cproc.on('exit', (code) => {
+        this.cproc.on('exit', code => {
           this.log(`Command Done: pid => ${this.cproc.pid}, code => ${code}`);
           this.cproc = null;
           let result = this.output;
@@ -269,6 +297,7 @@ export default function(RED) {
               try {
                 result = JSON.parse(result).session;
               } catch (_) {
+                // Ignore parse error
               }
               break;
             case 'locate':
@@ -280,6 +309,7 @@ export default function(RED) {
                   result = this.transform(JSON.parse(result), opts);
                   status = 'idle';
                 } catch (_) {
+                  // Ignore parse error
                 }
               }
               break;
@@ -294,11 +324,14 @@ export default function(RED) {
           this.emit('ended', ev);
           return resolve(ev);
         });
-        this.cproc.stdout.on('data', (data) => {
-          let text =  data
+        this.cproc.stdout.on('data', data => {
+          let text = data
             .toString()
             .trim()
-            .replace(/[\u001b\u009b][[()#;?]*(?:[0-9]{1,4}(?:;[0-9]{0,4})*)?[0-9A-ORZcf-nqry=><]/g, '');
+            .replace(
+              /[\u001b\u009b][[()#;?]*(?:[0-9]{1,4}(?:;[0-9]{0,4})*)?[0-9A-ORZcf-nqry=><]/g, // eslint-disable-line no-control-regex
+              ''
+            );
           this.trace(`<stdout> cmd => [${cmd}], output => [${text}]`);
           this.output += text;
         });
@@ -340,17 +373,17 @@ export default function(RED) {
     shutdown() {
       this.initialized = false;
       let isExecuting = this.isExecuting();
-      return new Promise((resolve) => {
+      return new Promise(resolve => {
         if (isExecuting) {
           this.cproc.kill('SIGINT');
           this.once('ended', () => {
-              return resolve();
+            return resolve();
           });
         } else {
           return resolve();
         }
       }).then(() => {
-        return new Promise((resolve) => {
+        return new Promise(resolve => {
           if (this.nmeaPort && this.nmeaPort.isOpen) {
             this.nmeaPort.once('close', () => {
               return resolve();
@@ -383,45 +416,67 @@ export default function(RED) {
       this.layer = n.layer;
       this.deleted = !!n.deleted;
       this.outformat = n.outformat || 'worldmap';
-      ['starting', 'stopping', 'executing'].forEach((ev) => {
+      ['starting', 'stopping', 'executing'].forEach(ev => {
         gnssClient.on(ev, () => {
-          this.status({fill:'blue', shape:'dot', text: `candy-pi-lite-gnss.status.${ev}`});
+          this.status({
+            fill: 'blue',
+            shape: 'dot',
+            text: `candy-pi-lite-gnss.status.${ev}`
+          });
         });
       });
-      ['positioning'].forEach((ev) => {
+      ['positioning'].forEach(ev => {
         gnssClient.on(ev, () => {
-          this.status({fill:'green', shape:'dot', text: `candy-pi-lite-gnss.status.${ev}`});
+          this.status({
+            fill: 'green',
+            shape: 'dot',
+            text: `candy-pi-lite-gnss.status.${ev}`
+          });
         });
       });
-      ['idle', 'unfixed'].forEach((ev) => {
+      ['idle', 'unfixed'].forEach(ev => {
         gnssClient.on(ev, () => {
-          this.status({fill:'grey', shape:'ring', text: `candy-pi-lite-gnss.status.${ev}`});
+          this.status({
+            fill: 'grey',
+            shape: 'ring',
+            text: `candy-pi-lite-gnss.status.${ev}`
+          });
         });
       });
-      ['error'].forEach((ev) => {
+      ['error'].forEach(ev => {
         gnssClient.on(ev, () => {
-          this.status({fill:'red', shape:'ring', text: `candy-pi-lite-gnss.status.${ev}`});
+          this.status({
+            fill: 'red',
+            shape: 'ring',
+            text: `candy-pi-lite-gnss.status.${ev}`
+          });
         });
       });
       gnssClient.add(this);
-      this.on('close', (done) => {
-        gnssClient.remove(this).then(() => {
-          done();
-        }).catch((err) => {
-          done(err);
-        });
-      });
-      this.on('input', (msg) => {
-        gnssClient.execute(msg.topic, this).then((result) => {
-          this.send({
-            topic: msg.topic,
-            code: result.code,
-            payload: result.result
+      this.on('close', done => {
+        gnssClient
+          .remove(this)
+          .then(() => {
+            done();
+          })
+          .catch(err => {
+            done(err);
           });
-        }).catch((err) => {
-          let obj = err.payload ? err : { payload: err, topic: msg.topic };
-          this.error(`CANDY Pi Lite gnss in error`, obj);
-        });
+      });
+      this.on('input', msg => {
+        gnssClient
+          .execute(msg.topic, this)
+          .then(result => {
+            this.send({
+              topic: msg.topic,
+              code: result.code,
+              payload: result.result
+            });
+          })
+          .catch(err => {
+            let obj = err.payload ? err : { payload: err, topic: msg.topic };
+            this.error(`CANDY Pi Lite gnss in error`, obj);
+          });
       });
     }
   }
@@ -430,59 +485,81 @@ export default function(RED) {
   class CANDYPiLiteNMEAInNode {
     constructor(n) {
       RED.nodes.createNode(this, n);
-      ['nmea-available'].forEach((ev) => {
+      ['nmea-available'].forEach(ev => {
         gnssClient.on(ev, () => {
-          this.status({fill:'green', shape:'dot', text: `candy-pi-lite-gnss.status.${ev}`});
+          this.status({
+            fill: 'green',
+            shape: 'dot',
+            text: `candy-pi-lite-gnss.status.${ev}`
+          });
         });
       });
-      ['error', 'nmea-error', 'nmea-not-available'].forEach((ev) => {
+      ['error', 'nmea-error', 'nmea-not-available'].forEach(ev => {
         gnssClient.on(ev, () => {
-          this.status({fill:'red', shape:'ring', text: `candy-pi-lite-gnss.status.${ev}`});
+          this.status({
+            fill: 'red',
+            shape: 'ring',
+            text: `candy-pi-lite-gnss.status.${ev}`
+          });
         });
       });
-      gnssClient.on('nmea', (nmea) => {
+      gnssClient.on('nmea', nmea => {
         this.send({
           topic: gnssClient.name,
           payload: nmea
         });
       });
-      gnssClient.on('nmea-error', (err) => {
+      gnssClient.on('nmea-error', err => {
         let obj = err.payload ? err : { payload: err, topic: 'nmea' };
         this.error(`CANDY Pi Lite nmea in error`, obj);
       });
       gnssClient.add(this);
-      this.on('close', (done) => {
-        gnssClient.remove(this).then(() => {
-          done();
-        }).catch((err) => {
-          done(err);
-        });
+      this.on('close', done => {
+        gnssClient
+          .remove(this)
+          .then(() => {
+            done();
+          })
+          .catch(err => {
+            done(err);
+          });
       });
     }
   }
   RED.nodes.registerType('CANDY Pi Lite nmea in', CANDYPiLiteNMEAInNode);
 
-  RED.httpAdmin.get('/candy-pi-lite-gnss', RED.auth.needsPermission('candy-pi-lite-gnss.read'), (req, res) => {
-    gnssClient.resolveNMEAPortName().then((port) => {
-      res.json({
-        name: gnssClient.name,
-        runOnStartup: gnssClient.runOnStartup,
-        nmeaPort: port || RED._('candy-pi-lite-gnss.nmeaPort.na')
+  RED.httpAdmin.get(
+    '/candy-pi-lite-gnss',
+    RED.auth.needsPermission('candy-pi-lite-gnss.read'),
+    (req, res) => {
+      gnssClient.resolveNMEAPortName().then(port => {
+        res.json({
+          name: gnssClient.name,
+          runOnStartup: gnssClient.runOnStartup,
+          nmeaPort: port || RED._('candy-pi-lite-gnss.nmeaPort.na')
+        });
       });
-    });
-  });
+    }
+  );
 
-  RED.httpAdmin.post('/candy-pi-lite-gnss', RED.auth.needsPermission('candy-pi-lite-gnss.write'), (req, res) => {
-    gnssClient.name = req.body.name;
-    gnssClient.runOnStartup = req.body.runOnStartup;
-    gnssClient.saveGNSSConfig().then(() => {
-      res.sendStatus(200);
-    }).catch(() => {
-      res.sendStatus(500);
-    });
-  });
+  RED.httpAdmin.post(
+    '/candy-pi-lite-gnss',
+    RED.auth.needsPermission('candy-pi-lite-gnss.write'),
+    (req, res) => {
+      gnssClient.name = req.body.name;
+      gnssClient.runOnStartup = req.body.runOnStartup;
+      gnssClient
+        .saveGNSSConfig()
+        .then(() => {
+          res.sendStatus(200);
+        })
+        .catch(() => {
+          res.sendStatus(500);
+        });
+    }
+  );
 
-  RED.events.on('runtime-event', (ev) => {
+  RED.events.on('runtime-event', ev => {
     if (ev.id === 'runtime-state') {
       gnssClient.init().then(() => {
         gnssClient.emit('idle');

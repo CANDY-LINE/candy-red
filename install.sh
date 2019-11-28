@@ -13,6 +13,18 @@ CANDY_RED_LOG_LEVEL="info"
 CANDY_RED_SESSION_TIMEOUT=${CANDY_RED_SESSION_TIMEOUT:-86400}
 CANDY_RED_APT_GET_UPDATED=${CANDY_RED_APT_GET_UPDATED:-0}
 CANDY_RED_BIND_IPV4_ADDR=${CANDY_RED_BIND_IPV4_ADDR:-false}
+DEVICE_MANAGEMENT_ENABLED=${DEVICE_MANAGEMENT_ENABLED:-false}
+DEVICE_MANAGEMENT_BS_HOST=${DEVICE_MANAGEMENT_BS_HOST:-"localhost"}
+DEVICE_MANAGEMENT_BS_HOST_IPV6=${DEVICE_MANAGEMENT_BS_HOST_IPV6:-"false"}
+DEVICE_MANAGEMENT_BS_PORT=${DEVICE_MANAGEMENT_BS_PORT:-"5784"}
+DEVICE_MANAGEMENT_BS_DTLS=${DEVICE_MANAGEMENT_BS_DTLS:-"PSK"}
+DEVICE_MANAGEMENT_BS_DTLS_PSK_ID=${DEVICE_MANAGEMENT_BS_DTLS_PSK_ID:-""}
+DEVICE_MANAGEMENT_BS_DTLS_PSK=${DEVICE_MANAGEMENT_BS_DTLS_PSK:-""}
+DEVICE_MANAGEMENT_MANUFACTURER=${DEVICE_MANAGEMENT_MANUFACTURER:-""}
+DEVICE_MANAGEMENT_MODEL=${DEVICE_MANAGEMENT_MODEL:-""}
+DEVICE_MANAGEMENT_CL_PORT=${DEVICE_MANAGEMENT_CL_PORT:-"57830"}
+DEVICE_MANAGEMENT_RECONNECT_SEC=${DEVICE_MANAGEMENT_RECONNECT_SEC:="60"}
+DEVICE_MANAGEMENT_EXCLUSIVE_TO_MOBILE_NETWORK=${DEVICE_MANAGEMENT_EXCLUSIVE_TO_MOBILE_NETWORK:-"true"}
 
 function err {
   echo -e "\033[91m[ERROR] $1\033[0m"
@@ -170,6 +182,7 @@ function resolve_version {
 
 function npm_local_install {
   if [ -d "${PROJECT_ROOT}/dist" ]; then
+    info "Installing local nodes ..."
     cp -r ${PROJECT_ROOT}/dist/nodes/local-node-* ${PROJECT_ROOT}/node_modules/
   fi
 }
@@ -214,8 +227,8 @@ function install_preinstalled_nodes {
     exit 1
   fi
   if [ ! -d "${CANDY_RED_MODULE_ROOT}" ]; then
-    err "The path [${CANDY_RED_MODULE_ROOT}] is missing."
-    exit 1
+    mkdir -p "${CANDY_RED_MODULE_ROOT}"
+    info "The path [${CANDY_RED_MODULE_ROOT}] has been created."
   fi
   if [ -n "${NODES}" ]; then
     if [ "${DEVEL}" == "dep" ]; then
@@ -232,6 +245,7 @@ function install_preinstalled_nodes {
       fi
     fi
     info "Installing default nodes to ${CANDY_RED_MODULE_ROOT}..."
+    rm -f "${PROJECT_ROOT}/deps.txt"
     echo "${NODES}" | \
       while IFS=',' read p v; do
         p=`echo -e ${p} | tr -d ' '`
@@ -240,7 +254,11 @@ function install_preinstalled_nodes {
           continue
         fi
         npm install --production ${NPM_OPTS} ${p}@${v}
+        echo "\"${p}\":\"${v}\",${DEPS}" >> "${PROJECT_ROOT}/deps.txt"
       done
+    DEPS=`cat "${PROJECT_ROOT}/deps.txt"`
+    rm -f "${PROJECT_ROOT}/deps.txt"
+    DEPS=${DEPS:0:`echo ${DEPS} | wc -c`-2}
     # nodes are installed to {prefix}/lib directory
     # because -g flag is implicitly inherited on performing the above npm
     if [ -d "${CANDY_RED_MODULE_ROOT}/lib/node_modules" ]; then
@@ -251,8 +269,7 @@ function install_preinstalled_nodes {
     rm -f ${CANDY_RED_MODULE_ROOT}/.config.json
     rm -f ${CANDY_RED_MODULE_ROOT}/.config.json.backup
     cd ${CANDY_RED_MODULE_ROOT}
-    echo '{"name": "node-red-project","version": "0.0.1","description": "A Node-RED Project"}' > package.json
-    npm init --yes
+    echo "{\"name\":\"node-red-project\",\"version\":\"0.0.1\",\"description\":\"A Node-RED Project\",\"dependencies\":{${DEPS}}}" > package.json
     cd ${PROJECT_ROOT}
   else
     info "Skip to install nodes!!"
@@ -290,6 +307,18 @@ function system_service_install {
       CANDY_RED_BIND_IPV4_ADDR \
       CANDY_RED_ADMIN_USER_ID \
       CANDY_RED_ADMIN_PASSWORD_ENC \
+      DEVICE_MANAGEMENT_ENABLED \
+      DEVICE_MANAGEMENT_BS_HOST \
+      DEVICE_MANAGEMENT_BS_HOST_IPV6 \
+      DEVICE_MANAGEMENT_BS_PORT \
+      DEVICE_MANAGEMENT_BS_DTLS \
+      DEVICE_MANAGEMENT_BS_DTLS_PSK_ID \
+      DEVICE_MANAGEMENT_BS_DTLS_PSK \
+      DEVICE_MANAGEMENT_MANUFACTURER \
+      DEVICE_MANAGEMENT_MODEL \
+      DEVICE_MANAGEMENT_CL_PORT \
+      DEVICE_MANAGEMENT_RECONNECT_SEC \
+      DEVICE_MANAGEMENT_EXCLUSIVE_TO_MOBILE_NETWORK \
       CANDY_RED_LOG_LEVEL; do
     sed -i -e "s/%${e}%/${!e//\//\\/}/g" ${SERVICES}/environment
   done

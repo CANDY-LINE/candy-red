@@ -1,0 +1,175 @@
+---
+# This entry will be assigned to `lwm2m.objects` in RED.settings object.
+"3": # Device
+  "0":
+    "0": # Manufacturer
+      type: "STRING"
+      acl: "R"
+      sensitive: false
+      value: "[Function]resolveCANDYLINEManufacturer"
+    "1": # Model
+      type: "STRING"
+      acl: "R"
+      sensitive: false
+      value: "[Function]resolveCANDYLINEModel"
+
+"5": # Location
+  "0":
+    "0": # Latitude
+      type: "FLOAT"
+      acl: "R"
+      sensitive: false
+      value: 0.0        # degree
+    "1": # Longitude
+      type: "FLOAT"
+      acl: "R"
+      sensitive: false
+      value: 0.0        # degree
+    "2": # Altitude
+      type: "FLOAT"
+      acl: "R"
+      sensitive: false
+      value: 0.0        # degree
+    "5": # Timestamp
+      type: "INTEGER"   # Time type
+      acl: "R"
+      sensitive: false
+      value: 0          # Unix Time
+
+"7": # Connectivity Statistics
+  "0":
+    "2": # Tx Data
+      type: "INTEGER"
+      acl: "R"
+      sensitive: false
+      value: 0          # Kilo-Bytes
+    "3": # Rx Data
+      type: "INTEGER"
+      acl: "R"
+      sensitive: false
+      value: 0          # Kilo-Bytes
+    "7": # Start (Reset resources 0-5 to 0 and start to collect information)
+      type: "FUNCTION"
+      acl: "E"
+      sensitive: false
+      value: "[Function]connectivityStatisticsStart"
+
+"11": # APN connection profile
+  "0":
+    "0": # Profile name
+      type: "STRING"
+      acl: "RW"
+      sensitive: false
+      value: ""
+    "1": # APN
+      type: "STRING"
+      acl: "RW"
+      sensitive: false
+      value: ""
+    "2": # Auto select APN
+      type: "BOOLEAN"
+      acl: "RW"
+      sensitive: false
+      value: false
+    "3": # Enable status
+      type: "BOOLEAN"
+      acl: "RW"
+      sensitive: false
+      value: false
+    "4": # Authentication Type
+      type: "INTEGER"
+      acl: "RW"
+      sensitive: false
+      value: 2          # 0: PAP,1: CHAP,2: PAP or CHAP,3: None
+    "5": # User Name
+      type: "STRING"
+      acl: "RW"
+      sensitive: false
+      value: ""
+    "6": # Secret
+      type: "STRING"
+      acl: "RW"
+      sensitive: false
+      value: ""
+    "7": # Reconnect Schedule
+      type: "STRING"
+      acl: "RW"
+      sensitive: false
+      value: "" # Comma separated list of retry delay values in seconds to be used in case of unsuccessful connection establishment attempts. e.g. “10,60,600,3600,86400”
+    "8": # Validity (MCC, MNC)
+      type: "STRING"
+      acl: "RW"
+      sensitive: false
+      value: "" # Coma separated mobile country code, then mobile network code – for which this APN is valid.
+    "9": # Connection establishment time (1)
+      type: "INTEGER"
+      acl: "R"
+      sensitive: false
+      value: 0          # Time in seconds
+    "10": # Connection establishment result (1)
+      type: "INTEGER"
+      acl: "R"
+      sensitive: false
+      value: 0          # 0 = accepted, 1 = rejected
+    "11": # Connection establishment reject cause (1)
+      type: "INTEGER"
+      acl: "R"
+      sensitive: false
+      value: 0          # Reject cause
+    "12": # Connection end time (1)
+      type: "INTEGER"
+      acl: "R"
+      sensitive: false
+      value: 0          # UTC time of connection end
+    "13": # TotalBytesSent
+      type: "INTEGER"
+      acl: "R"
+      sensitive: false
+      value: "[Function]resolveTotalBytesSent" # Rolling counter for total number of bytes sent via this interface since last device reset
+    "14": # TotalBytesReceived
+      type: "INTEGER"
+      acl: "R"
+      sensitive: false
+      value: "[Function]resolveTotalBytesReceived" # Rolling counter for total number of bytes received via this interface since last device reset
+    "15": # IP address (2)
+      type: "STRING"
+      acl: "RW"
+      sensitive: false
+      value: ""         # May be IPv4 or IPv6 address
+    "16": # Prefix length(2)
+      type: "STRING"
+      acl: "RW"
+      sensitive: false
+      value: ""         # Associated with IPv6 address
+    "17": # Subnet mask (2)
+      type: "STRING"
+      acl: "RW"
+      sensitive: false
+      value: ""         # Subnet mask
+    "18": # Gateway (2)
+      type: "STRING"
+      acl: "RW"
+      sensitive: false
+      value: ""         # Gateway
+    "19": # Primary DNS address (2)
+      type: "STRING"
+      acl: "RW"
+      sensitive: false
+      value: ""         # Primary DNS address
+    "20": # Secondary DNS address (2)
+      type: "STRING"
+      acl: "RW"
+      sensitive: false
+      value: ""         # Secondary DNS address
+    "22": # Vendor specific extensions
+      type: "OBJECT_LINK"
+      acl: "R"
+      sensitive: false
+      value:
+        objectId: 428003
+        objectInstanceId: 0
+    "24": # PDN Type
+      type: "INTEGER"
+      acl: "R"
+      sensitive: false
+      value: 0          # 0=Non-IP 1=IPv4 2=IPv6 3=IPv4v6

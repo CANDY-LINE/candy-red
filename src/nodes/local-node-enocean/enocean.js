@@ -32,14 +32,16 @@ import serialport from 'serialport';
 import { SerialPool } from './lib/enocean';
 import { ERP2_TEACH_IN_HANDLERS, ERP2_HANDLERS } from './lib/eep_handlers';
 
-const ENOCEAN_LEARN_MODE_TIMEOUT = parseInt(process.env.ENOCEAN_LEARN_MODE_TIMEOUT) || (30 * 60 * 1000);
-const ENOCEAN_LEARN_MODE_THRESHOLD_MS = parseInt(process.env.ENOCEAN_LEARN_MODE_THRESHOLD_MS) || (2 * 1000);
-const ENOCEAN_LEARN_MODE_THRESHOLD_RSSI = parseInt(process.env.ENOCEAN_LEARN_MODE_THRESHOLD_RSSI) || (47);
+const ENOCEAN_LEARN_MODE_TIMEOUT =
+  parseInt(process.env.ENOCEAN_LEARN_MODE_TIMEOUT) || 30 * 60 * 1000;
+const ENOCEAN_LEARN_MODE_THRESHOLD_MS =
+  parseInt(process.env.ENOCEAN_LEARN_MODE_THRESHOLD_MS) || 2 * 1000;
+const ENOCEAN_LEARN_MODE_THRESHOLD_RSSI =
+  parseInt(process.env.ENOCEAN_LEARN_MODE_THRESHOLD_RSSI) || 47;
 
 let learnedIDs = null;
 
 export default function(RED) {
-
   class EnOceanPortNode {
     constructor(n) {
       RED.nodes.createNode(this, n);
@@ -64,7 +66,7 @@ export default function(RED) {
       learnedIDs = {};
     }
     learnedIDs[id] = node.originatorId;
-    fs.writeFile(createIDfilePath(), JSON.stringify(learnedIDs), (err) => {
+    fs.writeFile(createIDfilePath(), JSON.stringify(learnedIDs), err => {
       if (err) {
         node.error('Failed to write detected OriginatorID!', err);
       }
@@ -95,14 +97,19 @@ export default function(RED) {
       node.learningTimeout = setTimeout(() => {
         node.emit('timeout');
       }, ENOCEAN_LEARN_MODE_TIMEOUT);
-      enocean.port.on('learn', (ctx) => {
-        if (node.learning &&
-            ctx.container.dBm <= ENOCEAN_LEARN_MODE_THRESHOLD_RSSI &&
-            node.isValidLearnPacket(ctx, node.ignoreLRNBit)) {
+      enocean.port.on('learn', ctx => {
+        if (
+          node.learning &&
+          ctx.container.dBm <= ENOCEAN_LEARN_MODE_THRESHOLD_RSSI &&
+          node.isValidLearnPacket(ctx, node.ignoreLRNBit)
+        ) {
           if (node.learningCount === 0) {
             node.learnEventAt = Date.now();
           }
-          if (Date.now() - node.learnEventAt <= ENOCEAN_LEARN_MODE_THRESHOLD_MS) {
+          if (
+            Date.now() - node.learnEventAt <=
+            ENOCEAN_LEARN_MODE_THRESHOLD_MS
+          ) {
             ++node.learningCount;
             if (node.learningCount >= node.learningThresholdCount) {
               node.originatorId = ctx.originatorId;
@@ -117,7 +124,9 @@ export default function(RED) {
             node.learnEventAt = 0;
           }
         } else if (node.showEnOceanWarning) {
-          node.warn(RED._('enocean.warn.noNode', { originatorId: ctx.originatorId }));
+          node.warn(
+            RED._('enocean.warn.noNode', { originatorId: ctx.originatorId })
+          );
         }
       });
     } else {
@@ -126,7 +135,9 @@ export default function(RED) {
         let handleIt = ERP2_HANDLERS[node.eepType];
         if (!handleIt) {
           if (node.showEnOceanWarning) {
-            node.warn(RED._('enocean.warn.noHandler', { eepType: node.eepType }));
+            node.warn(
+              RED._('enocean.warn.noHandler', { eepType: node.eepType })
+            );
           }
           return;
         }
@@ -191,18 +202,33 @@ export default function(RED) {
       this.status({});
       this.on('learned', () => {
         this.learning = false;
-        this.status({ fill: 'green', shape: 'dot', text: 'node-red:common.status.connected'});
-        this.warn(RED._('enocean.warn.learned', { name: (this.name || this.id), originatorId: this.originatorId }));
+        this.status({
+          fill: 'green',
+          shape: 'dot',
+          text: 'node-red:common.status.connected'
+        });
+        this.warn(
+          RED._('enocean.warn.learned', {
+            name: this.name || this.id,
+            originatorId: this.originatorId
+          })
+        );
       });
       this.on('timeout', () => {
         this.learning = false;
-        this.status({ fill: 'red', shape: 'ring', text: 'enocean.status.timeout'});
+        this.status({
+          fill: 'red',
+          shape: 'ring',
+          text: 'enocean.status.timeout'
+        });
       });
-      this.on('close', (done) => {
+      this.on('close', done => {
         if (this.enoceanPortNode) {
-          EnOceanPortNode.pool.close(this.enoceanPortNode.serialPort).then(() => {
-            done();
-          });
+          EnOceanPortNode.pool
+            .close(this.enoceanPortNode.serialPort)
+            .then(() => {
+              done();
+            });
         } else {
           done();
         }
@@ -212,11 +238,19 @@ export default function(RED) {
         enocean.port.on('ready', () => {
           addEventListener(this);
           if (this.learning) {
-            this.status({ fill: 'blue', shape: 'dot', text: 'enocean.status.learning'});
+            this.status({
+              fill: 'blue',
+              shape: 'dot',
+              text: 'enocean.status.learning'
+            });
           }
         });
         enocean.port.on('closed', () => {
-          this.status({ fill: 'red', shape: 'ring', text: 'node-red:common.status.not-connected'});
+          this.status({
+            fill: 'red',
+            shape: 'ring',
+            text: 'node-red:common.status.not-connected'
+          });
         });
       } catch (e) {
         this.error(RED._('enocean.errors.serialPortError', { error: e }));
@@ -225,21 +259,27 @@ export default function(RED) {
   }
   RED.nodes.registerType('EnOcean in', EnOceanInNode);
 
-  RED.httpAdmin.get('/eeps', RED.auth.needsPermission('eep.read'), function(req,res) {
+  RED.httpAdmin.get('/eeps', RED.auth.needsPermission('eep.read'), function(
+    req,
+    res
+  ) {
     res.json(Object.keys(ERP2_HANDLERS));
   });
-  RED.httpAdmin.get('/enoceanports', RED.auth.needsPermission('serial.read'), function(req,res) {
-    let list = [];
-    fs.stat('/dev/enocean', (err) => {
-      if (!err) {
-        list.push({
-          comName: '/dev/enocean'
+  RED.httpAdmin.get(
+    '/enoceanports',
+    RED.auth.needsPermission('serial.read'),
+    function(req, res) {
+      let list = [];
+      fs.stat('/dev/enocean', err => {
+        if (!err) {
+          list.push({
+            comName: '/dev/enocean'
+          });
+        }
+        serialport.list(function(_, ports) {
+          res.json(list.concat(ports));
         });
-      }
-      serialport.list(function (_, ports) {
-        res.json(list.concat(ports));
       });
-    });
-  });
-
+    }
+  );
 }

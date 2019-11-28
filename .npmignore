@@ -20,3 +20,4 @@ Vagrantfile
 *.log
 .dockerignore
 .node-version
+.mc
