@@ -1176,6 +1176,44 @@ export class LwM2MDeviceManagement {
     return this.modemInfo.revision;
   }
 
+  _resolveBoardProductName() {
+    return 'TODO';
+  }
+
+  _resolveOSName() {
+    return 'TODO';
+  }
+
+  _resolveOSVersion() {
+    return 'TODO';
+  }
+
+  _resolveOSID() {
+    return 'TODO';
+  }
+
+  _resolveLinuxKernelRelease() {
+    return 'TODO';
+  }
+
+  _resolveProcessorArchitecture() {
+    return 'TODO';
+  }
+
+  _applyConfigChanges() {
+    throw new Error('Unsupported Operation: applyConfigChanges()');
+  }
+
+  _resolveTotalBytesSent() {
+    // TODO
+    return -1;
+  }
+
+  _resolveTotalBytesReceived() {
+    // TODO
+    return -1;
+  }
+
   _resolveCANDYREDVersion() {
     return this.settings.version;
   }
@@ -1215,11 +1253,26 @@ export class LwM2MDeviceManagement {
     }
   }
 
+  async _enableApplicationFlow(args) {
+    const pkg = this._argsToObject(args) || {};
+    RED.log.warn(
+      `[CANDY RED] TODO (_enableApplicationFlow) pkg => ${JSON.stringify(
+        pkg
+      )}, DO NOTHING!`
+    );
+  }
+
+  async _disableApplicationFlow(args) {
+    const pkg = this._argsToObject(args) || {};
+    RED.log.warn(
+      `[CANDY RED] TODO (_disableApplicationFlow) pkg => ${JSON.stringify(
+        pkg
+      )}, DO NOTHING!`
+    );
+  }
+
   async _downloadFlowOrParse(args) {
-    let pkg = this._argsToObject(args);
-    if (!pkg) {
-      pkg = {};
-    }
+    const pkg = this._argsToObject(args) || {};
     const resources = await this.readResources('^/42805/0/(2|3|4)$');
     const downloadInfo = resources.reduce((accumulator, currentValue) => {
       accumulator[currentValue.uri] = currentValue.value.value;
