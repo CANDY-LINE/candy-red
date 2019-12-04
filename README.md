@@ -278,11 +278,20 @@ $ npm test
 ## Package
 
 ```
+# Development Machine
 $ npm pack
-# RPi
+$ scp ./candy-red-8.3.2.tgz pi@raspberrypi.local:~
+
+# RPi (on ~)
 $ sudo npm uninstall -g --unsafe-perm candy-red
 $ time sudo npm install -g --unsafe-perm ./candy-red-8.3.2.tgz
 $ sudo journalctl -f -u candy-red -o cat # to show logs
+```
+
+### Upload dist
+
+```
+$ scp -rp ./dist/* pi@raspberrypi.local:/usr/lib/node_modules/candy-red/dist
 ```
 
 ### Local Installation Test
