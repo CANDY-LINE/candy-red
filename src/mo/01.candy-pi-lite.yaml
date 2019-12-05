@@ -170,6 +170,6 @@
         objectInstanceId: 0
     "24": # PDN Type
       type: "INTEGER"
-      acl: "R"
+      acl: "RW"
       sensitive: false
       value: 0          # 0=Non-IP 1=IPv4 2=IPv6 3=IPv4v6
