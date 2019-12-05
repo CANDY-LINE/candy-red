@@ -59,6 +59,7 @@ gulp.task('clean', () => {
   gulp
     .src([
       './dist/*',
+      './dist/*.*',
       './dist',
       './*.tgz',
       './services/environment',
