@@ -967,7 +967,7 @@
     {
         "id": "5edf712f.8c24a",
         "type": "lwm2m client",
-        "z": "5e8a6e7d.727fb",
+        "z": "",
         "disabled": false,
         "clientName": "CANDY-LINE-DM",
         "enableDTLS": false,
