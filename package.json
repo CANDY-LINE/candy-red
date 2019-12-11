@@ -96,6 +96,7 @@
     "request": "^2.83.0",
     "serialport-enocean-parser": "^0.2.0",
     "source-map-support": "^0.5.3",
+    "systeminformation": "^4.16.0",
     "ws": "^3.3.3"
   }
 }
