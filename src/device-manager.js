@@ -31,6 +31,7 @@ const REBOOT_DELAY_MS = 1000;
 
 const PROC_CPUINFO_PATH = '/proc/cpuinfo';
 const PROC_DT_MODEL_PATH = '/proc/device-tree/model';
+const OS_RELEASE_PATH = '/etc/os-release';
 const MODEM_INFO_FILE_PATH = '/opt/candy-line/candy-pi-lite/__modem_info';
 const DM_FLOW = `${__dirname}/device-management-flow.json`;
 const EXCLUDED_URI_LIST = [
@@ -388,6 +389,7 @@ export class LwM2MDeviceManagement {
     this.objects = {};
     this.objectFile = `objects_candy-red.json`;
     this.modemInfo = {};
+    this.osInfo = {};
     this.tasks = {};
     this.settings = {};
     this.functionResolver = (key, value) => {
@@ -442,6 +444,18 @@ export class LwM2MDeviceManagement {
       RED.log.info(`[CANDY RED] DM enabled. Setup started.`);
       // setup DM flow
       await this.setupDMFlow();
+      if (fs.existsSync(OS_RELEASE_PATH)) {
+        this.osInfo = fs
+          .readFileSync(OS_RELEASE_PATH)
+          .toString()
+          .split('\n')
+          .filter(line => line)
+          .map(line => line.split('=').map(s => s.replace('"', '')))
+          .reduce((acc, cur) => {
+            acc[cur[0]] = cur[1];
+            return acc;
+          }, {});
+      }
       await new Promise(resolve => {
         fs.readFile(MODEM_INFO_FILE_PATH, (err, data) => {
           // Read a modem info file to retrieve IMEI when online
@@ -1181,15 +1195,15 @@ export class LwM2MDeviceManagement {
   }
 
   _resolveOSName() {
-    return 'TODO';
+    return this.osInfo.NAME || 'N/A';
   }
 
   _resolveOSVersion() {
-    return 'TODO';
+    return this.osInfo.VERSION || 'N/A';
   }
 
   _resolveOSID() {
-    return 'TODO';
+    return this.osInfo.ID || 'N/A';
   }
 
   _resolveLinuxKernelRelease() {
