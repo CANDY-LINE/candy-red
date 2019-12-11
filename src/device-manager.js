@@ -1191,7 +1191,15 @@ export class LwM2MDeviceManagement {
   }
 
   _resolveBoardProductName() {
-    return 'TODO';
+    try {
+      return fs
+        .readFileSync(PROC_DT_MODEL_PATH)
+        .toString()
+        .replace(/\0/g, '')
+        .trim();
+    } catch (err) {
+      return 'DEVELOPMENT BOARD';
+    }
   }
 
   _resolveOSName() {
