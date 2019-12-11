@@ -1240,13 +1240,15 @@ export class LwM2MDeviceManagement {
     return this.settings.version;
   }
 
-  _restartCANDYRED() {
+  async _restartCANDYRED() {
     RED.log.warn(`[CANDY RED] ** ** Process exits for restarting ** **`);
+    await this.saveObjects();
     return LwM2MDeviceManagement.restart();
   }
 
-  _stopCANDYRED() {
+  async _stopCANDYRED() {
     RED.log.warn(`[CANDY RED] ** ** Process exits for stopping service ** **`);
+    await this.saveObjects();
     return LwM2MDeviceManagement.stop();
   }
 
