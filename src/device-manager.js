@@ -28,6 +28,7 @@ import request from 'request';
 import RED from 'node-red';
 
 const REBOOT_DELAY_MS = 1000;
+const MAX_MOBILE_NETWORK_CONN_RETRY = 2147483647;
 
 const PROC_CPUINFO_PATH = '/proc/cpuinfo';
 const PROC_DT_MODEL_PATH = '/proc/device-tree/model';
@@ -562,7 +563,7 @@ export class LwM2MDeviceManagement {
                   }
                 })
                 .catch(err => {
-                  if (retry < 120 && err.code === 1) {
+                  if (retry < MAX_MOBILE_NETWORK_CONN_RETRY && err.code === 1) {
                     setTimeout(command, 5000);
                     retry++;
                   } else {
