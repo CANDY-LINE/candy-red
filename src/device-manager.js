@@ -1022,6 +1022,9 @@ export class LwM2MDeviceManagement {
           data = JSON.stringify(objects, this.functionReplacer);
         }
         fs.writeFileSync(`${this.objectFilePath}`, data);
+        RED.log.info(
+          `[CANDY RED] <saveObjects> Objects have successfully saved to ${this.objectFilePath}`
+        );
       } catch (err) {
         RED.log.error(
           `[CANDY RED] <saveObjects> ${err.message || JSON.stringify(err)}`
