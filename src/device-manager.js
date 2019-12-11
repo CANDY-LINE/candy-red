@@ -26,13 +26,13 @@ import path from 'path';
 import * as chokidar from 'chokidar';
 import request from 'request';
 import RED from 'node-red';
+import si from 'systeminformation';
 
 const REBOOT_DELAY_MS = 1000;
 const MAX_MOBILE_NETWORK_CONN_RETRY = 2147483647;
 
 const PROC_CPUINFO_PATH = '/proc/cpuinfo';
 const PROC_DT_MODEL_PATH = '/proc/device-tree/model';
-const OS_RELEASE_PATH = '/etc/os-release';
 const MODEM_INFO_FILE_PATH = '/opt/candy-line/candy-pi-lite/__modem_info';
 const DM_FLOW = `${__dirname}/device-management-flow.json`;
 const EXCLUDED_URI_LIST = [
@@ -390,7 +390,7 @@ export class LwM2MDeviceManagement {
     this.objects = {};
     this.objectFile = `objects_candy-red.json`;
     this.modemInfo = {};
-    this.osInfo = {};
+    this.candyPiBoardInfo = {};
     this.tasks = {};
     this.settings = {};
     this.functionResolver = (key, value) => {
@@ -445,19 +445,26 @@ export class LwM2MDeviceManagement {
       RED.log.info(`[CANDY RED] DM enabled. Setup started.`);
       // setup DM flow
       await this.setupDMFlow();
-      if (fs.existsSync(OS_RELEASE_PATH)) {
-        this.osInfo = fs
-          .readFileSync(OS_RELEASE_PATH)
-          .toString()
-          .split('\n')
-          .filter(line => line)
-          .map(line => line.split('=').map(s => s.replace('"', '')))
-          .reduce((acc, cur) => {
-            acc[cur[0]] = cur[1];
-            return acc;
-          }, {});
-      }
+
+      RED.log.info(`[CANDY RED] Collecting system info.`);
+      const { model, version } = await si.system();
+      this.candyPiBoardInfo.boardProductName = `${model} ${version}`;
+      const {
+        distro,
+        release,
+        codename,
+        logofile,
+        kernel,
+        arch
+      } = await si.osInfo();
+      this.candyPiBoardInfo.osName = distro;
+      this.candyPiBoardInfo.osVersion = `${release} ${codename}`;
+      this.candyPiBoardInfo.osId = logofile;
+      this.candyPiBoardInfo.kernel = kernel;
+      this.candyPiBoardInfo.arch = arch;
+
       await new Promise(resolve => {
+        RED.log.info(`[CANDY RED] Collecting modem info.`);
         fs.readFile(MODEM_INFO_FILE_PATH, (err, data) => {
           // Read a modem info file to retrieve IMEI when online
           if (err) {
@@ -1192,35 +1199,27 @@ export class LwM2MDeviceManagement {
   }
 
   _resolveBoardProductName() {
-    try {
-      return fs
-        .readFileSync(PROC_DT_MODEL_PATH)
-        .toString()
-        .replace(/\0/g, '')
-        .trim();
-    } catch (err) {
-      return 'DEVELOPMENT BOARD';
-    }
+    return this.candyPiBoardInfo.boardProductName || 'N/A';
   }
 
   _resolveOSName() {
-    return this.osInfo.NAME || 'N/A';
+    return this.candyPiBoardInfo.osName || 'N/A';
   }
 
   _resolveOSVersion() {
-    return this.osInfo.VERSION || 'N/A';
+    return this.candyPiBoardInfo.osVersion || 'N/A';
   }
 
   _resolveOSID() {
-    return this.osInfo.ID || 'N/A';
+    return this.candyPiBoardInfo.osId || 'N/A';
   }
 
   _resolveLinuxKernelRelease() {
-    return 'TODO';
+    return this.candyPiBoardInfo.kernel || 'N/A';
   }
 
   _resolveProcessorArchitecture() {
-    return 'TODO';
+    return this.candyPiBoardInfo.arch || 'N/A';
   }
 
   _applyConfigChanges() {

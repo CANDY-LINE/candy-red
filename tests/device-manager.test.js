@@ -25,6 +25,7 @@ import fs from 'fs';
 import stream from 'stream';
 import cproc from 'child_process';
 import RED from 'node-red';
+import si from 'systeminformation';
 import {
   DefaultDeviceIdResolver,
   DeviceState,
@@ -352,6 +353,39 @@ describe('DeviceManagerStore', () => {
         });
 
         sandbox
+          .stub(si, 'system')
+          .onFirstCall()
+          .returns(
+            Promise.resolve({
+              manufacturer: 'Raspberry Pi Foundation',
+              model: 'BCM2835 - Pi 3 Model B',
+              version: 'a32082 - Rev. 1.2',
+              serial: '0000000000000000',
+              uuid: '',
+              sku: '-'
+            })
+          );
+        sandbox
+          .stub(si, 'osInfo')
+          .onFirstCall()
+          .returns(
+            Promise.resolve({
+              platform: 'linux',
+              distro: 'Raspbian GNU/Linux',
+              release: '10',
+              codename: 'buster',
+              kernel: '4.19.75-v7+',
+              arch: 'arm',
+              hostname: 'raspberrypi',
+              codepage: 'UTF-8',
+              logofile: 'raspbian',
+              serial: 'abcdefghijklmnopqrstuvwxyz',
+              build: '',
+              servicepack: ''
+            })
+          );
+
+        sandbox
           .stub(fs, 'readFile')
           .onFirstCall()
           .yields(null, '[{"type":"tab","label":"CANDY LINE DM"}]')
@@ -416,7 +450,7 @@ describe('DeviceManagerStore', () => {
           } catch (err) {
             done(err);
           }
-        }, 10);
+        }, 100);
       });
 
       it('should define an event handler which resolve a device id when a modem info file exists', done => {
