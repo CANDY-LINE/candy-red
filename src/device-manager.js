@@ -1491,7 +1491,7 @@ export class LwM2MDeviceManagement {
             const flows = JSON.parse(data.toString());
             let agents = flows.filter(f => f.type === 'mindconnect');
             if (agents.length === 0) {
-              return reject({ message: 'Nothing to update' });
+              return reject({ message: 'No mindconnect nodes to be modified' });
             }
             this.readResources(`/43001/.*`).then(result => {
               const mindconnect = result.reduce((accumulator, currentValue) => {
