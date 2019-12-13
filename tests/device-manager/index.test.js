@@ -30,7 +30,7 @@ import {
   DefaultDeviceIdResolver,
   DeviceState,
   LwM2MDeviceManagement
-} from '../dist/device-manager';
+} from '../../dist/device-manager';
 
 const PROC_CPUINFO = [
   'processor	: 0\n',
