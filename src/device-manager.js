@@ -359,7 +359,7 @@ const MODULE_MODEL_MAPPINGS = {
   EC21: 'CANDY Pi Lite LTE',
   UC20: 'CANDY Pi Lite 3G',
   EC25: 'CANDY Pi Lite+',
-  BG96: 'CANDY Pi Lite LPWA'
+  BG96: 'CANDY Pi Lite LTE-M'
 };
 
 const CLIENT_CREDENTIAL_PROFILE = {
