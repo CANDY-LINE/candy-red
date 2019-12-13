@@ -16,9 +16,7 @@
  */
 
 import 'source-map-support/register';
-import os from 'os';
 import fs from 'fs';
-import readline from 'readline';
 import { EventEmitter } from 'events';
 import cproc from 'child_process';
 import crypto from 'crypto';
@@ -27,101 +25,10 @@ import * as chokidar from 'chokidar';
 import request from 'request';
 import RED from 'node-red';
 import si from 'systeminformation';
+import { DefaultDeviceIdResolver } from './device-id-resolver';
+import consts from './consts';
 
-const REBOOT_DELAY_MS = 1000;
-const MAX_MOBILE_NETWORK_CONN_RETRY = 2147483647;
-
-const PROC_CPUINFO_PATH = '/proc/cpuinfo';
-const PROC_DT_MODEL_PATH = '/proc/device-tree/model';
-const MODEM_INFO_FILE_PATH = '/opt/candy-line/candy-pi-lite/__modem_info';
-const DM_FLOW = `${__dirname}/device-management-flow.json`;
-const EXCLUDED_URI_LIST = [
-  '/3/0/2',
-  '/3/0/3',
-  '/3/0/6',
-  '/3/0/9',
-  '/3/0/10',
-  '/3/0/13',
-  '/3/0/14',
-  '/3/0/15',
-  '/3/0/18',
-  '/3/0/20',
-  '/3/0/21'
-];
-
-export class DefaultDeviceIdResolver {
-  constructor() {
-    this.hearbeatIntervalMs = -1;
-    this.candyBoardServiceSupported = false;
-  }
-
-  resolve() {
-    return new Promise((resolve, reject) => {
-      return this._resolveLinux(resolve, reject);
-    });
-  }
-
-  _resolveLinux(resolve, reject) {
-    fs.stat(PROC_DT_MODEL_PATH, err => {
-      if (err) {
-        return this._resolveMAC(resolve, reject);
-      }
-      fs.stat(PROC_CPUINFO_PATH, err => {
-        if (err) {
-          return this._resolveMAC(resolve, reject);
-        }
-        let reader = readline.createInterface({
-          terminal: false,
-          input: fs.createReadStream(PROC_CPUINFO_PATH)
-        });
-        let id = '';
-        reader.on('line', line => {
-          if (line.indexOf('Serial') >= 0 && line.indexOf(':') >= 0) {
-            id = line.split(':')[1].trim();
-          }
-        });
-        reader.on('close', err => {
-          if (err || !id) {
-            return this._resolveMAC(resolve, reject);
-          }
-          let model = fs
-            .readFileSync(PROC_DT_MODEL_PATH)
-            .toString()
-            .replace(/\0/g, '')
-            .trim();
-          if (model.match('Raspberry Pi')) {
-            return resolve('RPi:' + id);
-          } else if (model === 'Tinker Board') {
-            return resolve('ATB:' + id);
-          } else {
-            RED.log.warn(`[CANDY RED] Unknown Linux Device Model: [${model}]`);
-            return resolve('DEV:' + id);
-          }
-        });
-      });
-    });
-  }
-
-  _resolveMAC(resolve, reject) {
-    const ifs = os.networkInterfaces();
-    for (const key in ifs) {
-      if (Object.prototype.hasOwnProperty.call(ifs, key)) {
-        for (const i in ifs[key]) {
-          const mac = ifs[key][i].mac;
-          if (mac && mac !== '00:00:00:00:00:00') {
-            return resolve(
-              'MAC:' +
-                key +
-                ':' +
-                mac.replace(new RegExp(':', 'g'), '-').toLowerCase()
-            );
-          }
-        }
-      }
-    }
-    reject(new Error('No identifier!'));
-  }
-}
+export { DefaultDeviceIdResolver };
 
 export class DeviceState {
   static flowsToString(flows, content = null) {
@@ -374,14 +281,14 @@ export class LwM2MDeviceManagement {
     // systemctl shuould restart the service
     setTimeout(() => {
       process.exit(219);
-    }, REBOOT_DELAY_MS);
+    }, consts.REBOOT_DELAY_MS);
   }
 
   static stop() {
     // systemctl shuould stop the service
     setTimeout(() => {
       process.exit(10);
-    }, REBOOT_DELAY_MS);
+    }, consts.REBOOT_DELAY_MS);
   }
 
   constructor(deviceState) {
@@ -465,7 +372,7 @@ export class LwM2MDeviceManagement {
 
       await new Promise(resolve => {
         RED.log.info(`[CANDY RED] Collecting modem info.`);
-        fs.readFile(MODEM_INFO_FILE_PATH, (err, data) => {
+        fs.readFile(consts.MODEM_INFO_FILE_PATH, (err, data) => {
           // Read a modem info file to retrieve IMEI when online
           if (err) {
             // Run candy modem show to retrieve IMEI when offline
@@ -570,7 +477,10 @@ export class LwM2MDeviceManagement {
                   }
                 })
                 .catch(err => {
-                  if (retry < MAX_MOBILE_NETWORK_CONN_RETRY && err.code === 1) {
+                  if (
+                    retry < consts.MAX_MOBILE_NETWORK_CONN_RETRY &&
+                    err.code === 1
+                  ) {
                     setTimeout(command, 5000);
                     retry++;
                   } else {
@@ -834,7 +744,7 @@ export class LwM2MDeviceManagement {
   }
 
   async setupDMFlow() {
-    const installed = await this.installFlow('CANDY LINE DM', DM_FLOW);
+    const installed = await this.installFlow('CANDY LINE DM', consts.DM_FLOW);
     if (installed) {
       LwM2MDeviceManagement.restart();
     }
@@ -860,7 +770,7 @@ export class LwM2MDeviceManagement {
       this.readResources(`^/(${Object.keys(this.objects).join('|')})/.*$`)
         .then(result => {
           result
-            .filter(r => EXCLUDED_URI_LIST.indexOf(r.uri) < 0)
+            .filter(r => consts.EXCLUDED_URI_LIST.indexOf(r.uri) < 0)
             .forEach(r => {
               const uri = r.uri.split('/');
               const objectId = uri[1];
