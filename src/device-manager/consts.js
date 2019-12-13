@@ -34,5 +34,16 @@ export default Object.freeze({
     '/3/0/18',
     '/3/0/20',
     '/3/0/21'
-  ]
+  ],
+  MODULE_MODEL_MAPPINGS: {
+    EC21: 'CANDY Pi Lite LTE',
+    UC20: 'CANDY Pi Lite 3G',
+    EC25: 'CANDY Pi Lite+',
+    BG96: 'CANDY Pi Lite LTE-M'
+  },
+  CLIENT_CREDENTIAL_PROFILE: {
+    '1': 'RSA_3072',
+    '2': 'SHARED_SECRET'
+  },
+  UPDATE_INTERVAL_MS: process.env.UPDATE_INTERVAL_MS || 60 * 1000
 });

@@ -29,20 +29,6 @@ import consts from './consts';
 
 export { DefaultDeviceIdResolver, DeviceState };
 
-const MODULE_MODEL_MAPPINGS = {
-  EC21: 'CANDY Pi Lite LTE',
-  UC20: 'CANDY Pi Lite 3G',
-  EC25: 'CANDY Pi Lite+',
-  BG96: 'CANDY Pi Lite LTE-M'
-};
-
-const CLIENT_CREDENTIAL_PROFILE = {
-  '1': 'RSA_3072',
-  '2': 'SHARED_SECRET'
-};
-
-const UPDATE_INTERVAL_MS = process.env.UPDATE_INTERVAL_MS || 60 * 1000;
-
 export class LwM2MDeviceManagement {
   static restart() {
     // systemctl shuould restart the service
@@ -528,8 +514,8 @@ export class LwM2MDeviceManagement {
     if (this.triggerSaveObjectsTaskHandle) {
       return;
     }
-    let timeout = UPDATE_INTERVAL_MS;
-    if (Date.now() - this.objectsLastSavedAt > UPDATE_INTERVAL_MS) {
+    let timeout = consts.UPDATE_INTERVAL_MS;
+    if (Date.now() - this.objectsLastSavedAt > consts.UPDATE_INTERVAL_MS) {
       timeout = 0;
     }
     this.triggerSaveObjectsTaskHandle = setTimeout(() => {
@@ -859,7 +845,7 @@ export class LwM2MDeviceManagement {
   }
 
   _resolveCANDYLINEProductName() {
-    let name = MODULE_MODEL_MAPPINGS[this.modemInfo.model];
+    let name = consts.MODULE_MODEL_MAPPINGS[this.modemInfo.model];
     if (!name) {
       name = `Unknown (${this.modemInfo.model})`;
     }
@@ -1182,7 +1168,7 @@ export class LwM2MDeviceManagement {
                 const nodeName = mindconnect['/43001/0/10'];
                 agent.name = nodeName || '';
                 const clientCredentialProfile =
-                  CLIENT_CREDENTIAL_PROFILE[mindconnect['/43001/0/2']];
+                  consts.CLIENT_CREDENTIAL_PROFILE[mindconnect['/43001/0/2']];
                 agent.configtype = clientCredentialProfile || 'SHARED_SECRET';
                 const uploadFileChunks = mindconnect['/43001/0/8'];
                 agent.chunk = !!uploadFileChunks;
