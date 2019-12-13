@@ -16,14 +16,39 @@
  */
 
 import 'source-map-support/register';
-import { DefaultDeviceIdResolver } from './device-id-resolver';
+
 import { DeviceState } from './device-state';
 import { LwM2MDeviceManagement } from './lwm2m-device-management';
-import { DeviceManagerStore } from './device-manager-store';
 
-export {
-  DefaultDeviceIdResolver,
-  DeviceState,
-  LwM2MDeviceManagement,
-  DeviceManagerStore
-};
+export class DeviceManagerStore {
+  constructor() {
+    this.store = {};
+    this.deviceState = new DeviceState(
+      this._onFlowFileChangedFunc(),
+      this._onFlowFileRemovedFunc()
+    );
+    this.lwm2m = new LwM2MDeviceManagement(this.deviceState);
+  }
+
+  _onFlowFileChangedFunc() {
+    return (() => {
+      return () => {
+        return new Promise(resolve => {
+          // TODO
+          return resolve();
+        });
+      };
+    })();
+  }
+
+  _onFlowFileRemovedFunc() {
+    return (() => {
+      return () => {
+        return new Promise(resolve => {
+          // TODO
+          return resolve();
+        });
+      };
+    })();
+  }
+}
