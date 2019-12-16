@@ -639,6 +639,7 @@ describe('DeviceManagerStore', () => {
             {
               uri: '/42802/0/2',
               value: {
+                acl: 'RWD',
                 value: true
               }
             }
@@ -682,6 +683,10 @@ describe('DeviceManagerStore', () => {
           })
           .then(numOfUpdates => {
             assert.equal(numOfUpdates, 4);
+            assert.equal(lwm2mdm.objects['42801']['0']['4'].value, 2);
+            assert.equal(lwm2mdm.objects['42802']['0']['1'].value, 'pass2');
+            assert.equal(lwm2mdm.objects['42802']['0']['2'].value, true);
+            assert.equal(lwm2mdm.objects['42802']['0']['2'].acl, 'RWD');
           })
           .then(() => {
             done();

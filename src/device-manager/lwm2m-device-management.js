@@ -582,6 +582,7 @@ export class LwM2MDeviceManagement {
         .forEach(r => {
           RED.log.trace(`[CANDY RED] <syncObjects> Reading: ${r.uri}`);
           const uri = r.uri.split('/');
+          const resultResource = r.value;
           const objectId = uri[1];
           const instanceId = uri[2];
           const resourceId = uri[3];
@@ -593,15 +594,10 @@ export class LwM2MDeviceManagement {
           }
           let resource = instance[resourceId];
           if (!resource) {
-            instance[resourceId] = {
-              acl: 'RW',
-              sensitive: false,
-              value: r.value
-            };
+            instance[resourceId] = resultResource;
             ++numOfUpdates;
           } else if (resource.type !== 'FUNCTION') {
-            resource.acl = r.acl;
-            resource.value = r.value;
+            Object.assign(resource, resultResource);
             ++numOfUpdates;
           }
         });
