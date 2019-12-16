@@ -608,6 +608,90 @@ describe('DeviceManagerStore', () => {
       });
     });
 
+    describe('#syncObjects', () => {
+      it('should sync local resources', done => {
+        state.candyBoardServiceSupported = true;
+        state.flowFilePath = `${__dirname}/test-flow.json`;
+        process.env.DEVICE_MANAGEMENT_ENABLED = 'true';
+        process.env.DEVICE_MANAGEMENT_BS_DTLS = 'PSK';
+
+        let stubEvent = sandbox.stub(lwm2mdm.internalEventBus);
+        stubEvent.once.onCall(0).yields({
+          payload: [
+            {
+              uri: '/42801/0/4',
+              value: {
+                value: 2
+              }
+            },
+            {
+              uri: '/42802/0/0',
+              value: {
+                value: 'user2'
+              }
+            },
+            {
+              uri: '/42802/0/1',
+              value: {
+                value: 'pass2'
+              }
+            },
+            {
+              uri: '/42802/0/2',
+              value: {
+                value: true
+              }
+            }
+          ]
+        });
+
+        lwm2mdm
+          .init({
+            deviceId: 'deviceId'
+          })
+          .then(() => {
+            lwm2mdm.objects = {
+              42801: {
+                0: {
+                  4: {
+                    type: 'INTEGER',
+                    value: 1
+                  }
+                }
+              },
+              42802: {
+                0: {
+                  0: {
+                    type: 'STRING',
+                    value: 'myuser'
+                  },
+                  1: {
+                    type: 'STRING',
+                    sensitive: true,
+                    value: 'mypass'
+                  },
+                  2: {
+                    type: 'BOOLEAN',
+                    acl: 'R',
+                    value: false
+                  }
+                }
+              }
+            };
+            return lwm2mdm.syncObjects();
+          })
+          .then(numOfUpdates => {
+            assert.equal(numOfUpdates, 4);
+          })
+          .then(() => {
+            done();
+          })
+          .catch(err => {
+            done(err);
+          });
+      });
+    });
+
     describe('#_updateMindConnectAgentConfiguration', () => {
       it('should modify the existing mindconnect configuration in the flow file', done => {
         state.candyBoardServiceSupported = true;

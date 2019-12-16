@@ -517,42 +517,10 @@ export class LwM2MDeviceManagement {
     if (Date.now() - this.objectsLastSavedAt > consts.UPDATE_INTERVAL_MS) {
       timeout = 0;
     }
-    this.triggerSaveObjectsTaskHandle = setTimeout(() => {
+    this.triggerSaveObjectsTaskHandle = setTimeout(async () => {
       this.triggerSaveObjectsTaskHandle = 0;
-      this.readResources(`^/(${Object.keys(this.objects).join('|')})/.*$`)
-        .then(result => {
-          result
-            .filter(r => consts.EXCLUDED_URI_LIST.indexOf(r.uri) < 0)
-            .forEach(r => {
-              const uri = r.uri.split('/');
-              const objectId = uri[1];
-              const instanceId = uri[2];
-              const resourceId = uri[3];
-              const object = this.objects[objectId];
-              let instance = object[instanceId];
-              if (!instance) {
-                object[instanceId] = {};
-                instance = object[instanceId];
-              }
-              let resource = instance[resourceId];
-              if (
-                !resource ||
-                (resource.acl &&
-                  resource.acl.indexOf('W') >= 0 &&
-                  resource.type !== 'FUNCTION')
-              ) {
-                instance[resourceId] = r.value;
-              }
-            });
-          this.saveObjects();
-        })
-        .catch(err => {
-          RED.log.warn(
-            `[CANDY RED] <triggerSaveObjectsTask> Error => ${JSON.stringify(
-              err
-            )}`
-          );
-        });
+      await this.syncObjects();
+      await this.saveObjects();
     }, timeout);
   }
 
@@ -598,6 +566,54 @@ export class LwM2MDeviceManagement {
         cipher.update(JSON.stringify(value), 'utf8', 'base64') +
         cipher.final('base64')
     };
+  }
+
+  async syncObjects() {
+    const objectIds = Object.keys(this.objects);
+    if (objectIds.length === 0) {
+      return 0;
+    }
+    let numOfUpdates = 0;
+    try {
+      const result = await this.readResources(`^/(${objectIds.join('|')})/.*$`);
+      RED.log.trace(`[CANDY RED] <syncObjects> object reading: ${objectIds}`);
+      result
+        .filter(r => consts.EXCLUDED_URI_LIST.indexOf(r.uri) < 0)
+        .forEach(r => {
+          RED.log.trace(`[CANDY RED] <syncObjects> Reading: ${r.uri}`);
+          const uri = r.uri.split('/');
+          const objectId = uri[1];
+          const instanceId = uri[2];
+          const resourceId = uri[3];
+          const object = this.objects[objectId];
+          let instance = object[instanceId];
+          if (!instance) {
+            object[instanceId] = {};
+            instance = object[instanceId];
+          }
+          let resource = instance[resourceId];
+          if (!resource) {
+            instance[resourceId] = {
+              acl: 'RW',
+              sensitive: false,
+              value: r.value
+            };
+            ++numOfUpdates;
+          } else if (resource.type !== 'FUNCTION') {
+            resource.acl = r.acl;
+            resource.value = r.value;
+            ++numOfUpdates;
+          }
+        });
+      RED.log.trace(
+        `[CANDY RED] <syncObjects> ${numOfUpdates} resources have been updated!`
+      );
+    } catch (err) {
+      RED.log.warn(
+        `[CANDY RED] <syncObjects> Error => ${err.message} ${err.stack}`
+      );
+    }
+    return numOfUpdates;
   }
 
   loadObjects() {
@@ -907,12 +923,14 @@ export class LwM2MDeviceManagement {
 
   async _restartCANDYRED() {
     RED.log.warn(`[CANDY RED] ** ** Process exits for restarting ** **`);
+    await this.syncObjects();
     await this.saveObjects();
     return LwM2MDeviceManagement.restart();
   }
 
   async _stopCANDYRED() {
     RED.log.warn(`[CANDY RED] ** ** Process exits for stopping service ** **`);
+    await this.syncObjects();
     await this.saveObjects();
     return LwM2MDeviceManagement.stop();
   }
