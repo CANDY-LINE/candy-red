@@ -257,6 +257,7 @@ export class LwM2MDeviceManagement {
         RED.log.debug(`[CANDY RED] object-event => ${JSON.stringify(ev)}`);
         switch (ev.eventType) {
           case 'updated':
+          case 'deleted':
           case 'created': {
             this.triggerSaveObjectsTask();
             break;
