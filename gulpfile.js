@@ -105,7 +105,7 @@ gulp.task('copyResources', () => {
   gulp
     .src([
       './src/**/*.{css,ico,png,html,json,yaml,yml}',
-      '!./src/mo/**/*.{yaml,yml}'
+      '!./src/device-manager/mo/**/*.{yaml,yml}'
     ])
     .pipe(gulp.dest('./dist'));
 });
@@ -118,9 +118,9 @@ gulp.task('favicons', () => {
 
 gulp.task('mo', () => {
   return gulp
-    .src(['./src/mo/**/*.{yaml,yml}'])
+    .src(['./src/device-manager/mo/**/*.{yaml,yml}'])
     .pipe(yaml({ safe: true }))
-    .pipe(gulp.dest('./dist/mo'));
+    .pipe(gulp.dest('./dist/device-manager/mo'));
 });
 
 gulp.task('buildSrcs', ['copyResources', 'mo', 'favicons'], () => {
