@@ -284,6 +284,7 @@ $ scp ./candy-red-8.3.2.tgz pi@raspberrypi.local:~
 
 # RPi (on ~)
 $ sudo npm uninstall -g --unsafe-perm candy-red
+$ sudo rm -fr /opt/candy-red # to prune user specific files if necessary
 $ time sudo npm install -g --unsafe-perm ./candy-red-8.3.2.tgz
 $ sudo journalctl -f -u candy-red -o cat # to show logs
 ```
