@@ -327,7 +327,9 @@ export class LwM2MDeviceManagement extends LwM2MDeviceManagementBase {
   _resolveCANDYLINEProductName() {
     let name = consts.MODULE_MODEL_MAPPINGS[this.modemInfo.model];
     if (!name) {
-      name = `Unknown${this.modemInfo.model ? ` (${this.modemInfo.model})` : '' }`;
+      name = `Unknown${
+        this.modemInfo.model ? ` (${this.modemInfo.model})` : ''
+      }`;
     }
     return name;
   }
