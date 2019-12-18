@@ -656,8 +656,8 @@ export class LwM2MDeviceManagement extends LwM2MDeviceManagementBase {
                 agent.configtype = clientCredentialProfile || 'SHARED_SECRET';
                 const uploadFileChunks = mindconnect['/43001/0/8'];
                 agent.chunk = !!uploadFileChunks;
-                const retries = mindconnect['/43001/0/9'];
-                agent.retries = retries || 0;
+                const retry = mindconnect['/43001/0/9'];
+                agent.retry = retry || 0;
                 const dataValidation = mindconnect['/43001/0/6'];
                 agent.validate = !!dataValidation;
                 const eventValidation = mindconnect['/43001/0/7'];
