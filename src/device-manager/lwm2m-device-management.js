@@ -455,7 +455,7 @@ export class LwM2MDeviceManagement extends LwM2MDeviceManagementBase {
     // eslint-disable-next-line require-atomic-updates
     pkg.flowTabName = pkg.flowTabName || downloadInfo['/42805/0/2'];
     if (!pkg.flowTabName) {
-      return Promise.reject({ message: `Flow tab name is missing` });
+      throw new Error(`Flow tab name is missing`);
     }
     if (pkg.flow) {
       if (typeof pkg.flow === 'string') {
@@ -469,7 +469,7 @@ export class LwM2MDeviceManagement extends LwM2MDeviceManagementBase {
       }
     }
     if (!downloadInfo['/42805/0/3']) {
-      return Promise.reject({ message: `Cannot download flow` });
+      throw new Error(`Cannot download flow`);
     }
     const headers = {};
     if (downloadInfo['/42805/0/4']) {
@@ -558,16 +558,13 @@ export class LwM2MDeviceManagement extends LwM2MDeviceManagementBase {
       )}`
     );
     const flowTabName = this._argsToString(args);
-    let p;
-    if (flowTabName) {
-      p = this.uninstallFlow(flowTabName).then(() => {
-        return this.writeResource('/42805/0/25', 1);
-      });
-    } else {
-      p = this.writeResource('/42805/0/25', 2);
-    }
     try {
-      await p;
+      if (flowTabName) {
+        await this.uninstallFlow(flowTabName);
+        await this.writeResource('/42805/0/25', 1);
+      } else {
+        await this.writeResource('/42805/0/25', 2);
+      }
     } catch (err) {
       RED.log.error(
         `[CANDY RED] <_uninstallApplicationFlow> err=>${
@@ -584,13 +581,13 @@ export class LwM2MDeviceManagement extends LwM2MDeviceManagementBase {
     try {
       await new Promise((resolve, reject) => {
         RED.log.info(`[CANDY RED] <_updateApplicationFlowList> Start`);
-        fs.readFile(this.deviceState.flowFilePath, (err, data) => {
+        fs.readFile(this.deviceState.flowFilePath, async (err, data) => {
           if (err) {
             return reject(err);
           }
           try {
             const flows = JSON.parse(data.toString());
-            return this.writeResource(
+            await this.writeResource(
               '/42805/0/5',
               flows
                 .filter(f => f.type === 'tab')
@@ -598,6 +595,7 @@ export class LwM2MDeviceManagement extends LwM2MDeviceManagementBase {
                   return f.label;
                 })
             );
+            return resolve();
           } catch (err) {
             return reject(err);
           }
