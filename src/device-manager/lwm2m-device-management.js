@@ -538,14 +538,14 @@ export class LwM2MDeviceManagement extends LwM2MDeviceManagementBase {
     try {
       const result = await this._downloadFlowOrParse(args);
       await this.installFlow(result.flowTabName, result.flow);
-      await this.writeResource('/42805/0/23', 1);
+      await this.writeResource('/42805/0/23', 0);
     } catch (err) {
       RED.log.error(
         `[CANDY RED] <_downloadAndInstallApplicationFlow> err=>${
           err ? (err.message ? err.message : err) : '(uknown)'
         }`
       );
-      await this.writeResource('/42805/0/23', 2);
+      await this.writeResource('/42805/0/23', 1);
     }
     RED.log.info(`[CANDY RED] <_downloadAndInstallApplicationFlow> End`);
     return this.saveObjects();
@@ -561,9 +561,9 @@ export class LwM2MDeviceManagement extends LwM2MDeviceManagementBase {
     try {
       if (flowTabName) {
         await this.uninstallFlow(flowTabName);
-        await this.writeResource('/42805/0/25', 1);
+        await this.writeResource('/42805/0/25', 0);
       } else {
-        await this.writeResource('/42805/0/25', 2);
+        await this.writeResource('/42805/0/25', 1);
       }
     } catch (err) {
       RED.log.error(
@@ -571,7 +571,7 @@ export class LwM2MDeviceManagement extends LwM2MDeviceManagementBase {
           err ? (err.message ? err.message : err) : '(uknown)'
         }`
       );
-      await this.writeResource('/42805/0/25', 3);
+      await this.writeResource('/42805/0/25', 2);
     }
     RED.log.info(`[CANDY RED] <_uninstallApplicationFlow> End`);
     return this.saveObjects();
@@ -601,14 +601,14 @@ export class LwM2MDeviceManagement extends LwM2MDeviceManagementBase {
           }
         });
       });
-      await this.writeResource('/42805/0/27', 1);
+      await this.writeResource('/42805/0/27', 0);
     } catch (err) {
       RED.log.error(
         `[CANDY RED] <_updateApplicationFlowList> err=>${
           err ? (err.message ? err.message : err) : '(uknown)'
         }`
       );
-      await this.writeResource('/42805/0/27', 3);
+      await this.writeResource('/42805/0/27', 1);
     }
     RED.log.info(`[CANDY RED] <_updateApplicationFlowList> End`);
     return this.saveObjects();
