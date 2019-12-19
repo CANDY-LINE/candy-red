@@ -389,17 +389,43 @@ export class LwM2MDeviceManagement extends LwM2MDeviceManagementBase {
   }
 
   async _restartCANDYRED() {
+    RED.log.debug(`[CANDY RED] <_restartCANDYRED> Start`);
+    try {
     RED.log.warn(`[CANDY RED] ** ** Process exits for restarting ** **`);
     await this.syncObjects();
     await this.saveObjects();
-    return LwM2MDeviceManagement.restart();
+      LwM2MDeviceManagement.restart();
+      await this.writeResource('/42805/0/21', 0);
+    } catch (err) {
+      RED.log.error(
+        `[CANDY RED] <_restartCANDYRED> err=>${
+          err ? (err.message ? err.message : err) : '(uknown)'
+        }`
+      );
+      await this.writeResource('/42805/0/21', 1);
+  }
+    RED.log.debug(`[CANDY RED] <_restartCANDYRED> End`);
   }
 
   async _stopCANDYRED() {
-    RED.log.warn(`[CANDY RED] ** ** Process exits for stopping service ** **`);
+    RED.log.debug(`[CANDY RED] <_stopCANDYRED> Start`);
+    try {
+      RED.log.warn(
+        `[CANDY RED] ** ** Process exits for stopping service ** **`
+      );
     await this.syncObjects();
     await this.saveObjects();
-    return LwM2MDeviceManagement.stop();
+      LwM2MDeviceManagement.stop();
+      await this.writeResource('/42805/0/31', 0);
+    } catch (err) {
+      RED.log.error(
+        `[CANDY RED] <_stopCANDYRED> err=>${
+          err ? (err.message ? err.message : err) : '(uknown)'
+        }`
+      );
+      await this.writeResource('/42805/0/31', 1);
+    }
+    RED.log.debug(`[CANDY RED] <_stopCANDYRED> End`);
   }
 
   _argsToString(src) {
