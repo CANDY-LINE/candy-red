@@ -309,9 +309,9 @@ export class LwM2MDeviceManagement extends LwM2MDeviceManagementBase {
   }
 
   _connectivityStatisticsStart() {
-    RED.log.info(`[CANDY RED] <connectivityStatisticsStart> Start`);
+    RED.log.debug(`[CANDY RED] <connectivityStatisticsStart> Start`);
     // TODO reset tx/rx counter
-    RED.log.info(`[CANDY RED] <connectivityStatisticsStart> End`);
+    RED.log.debug(`[CANDY RED] <connectivityStatisticsStart> End`);
   }
 
   _resolveCANDYLINEManufacturer() {
@@ -391,9 +391,9 @@ export class LwM2MDeviceManagement extends LwM2MDeviceManagementBase {
   async _restartCANDYRED() {
     RED.log.debug(`[CANDY RED] <_restartCANDYRED> Start`);
     try {
-    RED.log.warn(`[CANDY RED] ** ** Process exits for restarting ** **`);
-    await this.syncObjects();
-    await this.saveObjects();
+      RED.log.warn(`[CANDY RED] ** ** Process exits for restarting ** **`);
+      await this.syncObjects();
+      await this.saveObjects();
       LwM2MDeviceManagement.restart();
       await this.writeResource('/42805/0/21', 0);
     } catch (err) {
@@ -403,7 +403,7 @@ export class LwM2MDeviceManagement extends LwM2MDeviceManagementBase {
         }`
       );
       await this.writeResource('/42805/0/21', 1);
-  }
+    }
     RED.log.debug(`[CANDY RED] <_restartCANDYRED> End`);
   }
 
@@ -413,8 +413,8 @@ export class LwM2MDeviceManagement extends LwM2MDeviceManagementBase {
       RED.log.warn(
         `[CANDY RED] ** ** Process exits for stopping service ** **`
       );
-    await this.syncObjects();
-    await this.saveObjects();
+      await this.syncObjects();
+      await this.saveObjects();
       LwM2MDeviceManagement.stop();
       await this.writeResource('/42805/0/31', 0);
     } catch (err) {
@@ -501,7 +501,7 @@ export class LwM2MDeviceManagement extends LwM2MDeviceManagementBase {
         }`
       );
       await this.writeResource('/42805/0/29', 1);
-  }
+    }
     RED.log.debug(`[CANDY RED] <_disableApplicationFlow> End`);
   }
 
@@ -590,7 +590,7 @@ export class LwM2MDeviceManagement extends LwM2MDeviceManagementBase {
   }
 
   async _downloadAndInstallApplicationFlow(args) {
-    RED.log.info(
+    RED.log.debug(
       `[CANDY RED] <_downloadAndInstallApplicationFlow> Start; args => ${JSON.stringify(
         args
       )}`
@@ -607,12 +607,12 @@ export class LwM2MDeviceManagement extends LwM2MDeviceManagementBase {
       );
       await this.writeResource('/42805/0/23', 1);
     }
-    RED.log.info(`[CANDY RED] <_downloadAndInstallApplicationFlow> End`);
+    RED.log.debug(`[CANDY RED] <_downloadAndInstallApplicationFlow> End`);
     return this.saveObjects();
   }
 
   async _uninstallApplicationFlow(args) {
-    RED.log.info(
+    RED.log.debug(
       `[CANDY RED] <_uninstallApplicationFlow> Start; args => ${JSON.stringify(
         args
       )}`
@@ -633,14 +633,14 @@ export class LwM2MDeviceManagement extends LwM2MDeviceManagementBase {
       );
       await this.writeResource('/42805/0/25', 2);
     }
-    RED.log.info(`[CANDY RED] <_uninstallApplicationFlow> End`);
+    RED.log.debug(`[CANDY RED] <_uninstallApplicationFlow> End`);
     return this.saveObjects();
   }
 
   async _updateApplicationFlowList() {
+    RED.log.debug(`[CANDY RED] <_updateApplicationFlowList> Start`);
     try {
       await new Promise((resolve, reject) => {
-        RED.log.info(`[CANDY RED] <_updateApplicationFlowList> Start`);
         fs.readFile(this.deviceState.flowFilePath, async (err, data) => {
           if (err) {
             return reject(err);
@@ -670,7 +670,7 @@ export class LwM2MDeviceManagement extends LwM2MDeviceManagementBase {
       );
       await this.writeResource('/42805/0/27', 1);
     }
-    RED.log.info(`[CANDY RED] <_updateApplicationFlowList> End`);
+    RED.log.debug(`[CANDY RED] <_updateApplicationFlowList> End`);
     return this.saveObjects();
   }
 
@@ -679,6 +679,7 @@ export class LwM2MDeviceManagement extends LwM2MDeviceManagementBase {
    * CANRY RED process should exit after update (not restart in this function though)
    */
   async _updateMindConnectAgentConfiguration(flowFilePath) {
+    RED.log.debug(`[CANDY RED] <updateMindConnectAgentConfiguration> Start`);
     if (typeof flowFilePath !== 'string') {
       // Ignore invalid values
       flowFilePath = null;
@@ -686,7 +687,6 @@ export class LwM2MDeviceManagement extends LwM2MDeviceManagementBase {
     try {
       await this.writeResource('/43001/0/102', new Date().toISOString());
       const flows = await new Promise((resolve, reject) => {
-        RED.log.info(`[CANDY RED] <updateMindConnectAgentConfiguration> Start`);
         flowFilePath = flowFilePath || this.deviceState.flowFilePath;
         if (Array.isArray(flowFilePath)) {
           flowFilePath = flowFilePath[0];
@@ -758,7 +758,7 @@ export class LwM2MDeviceManagement extends LwM2MDeviceManagementBase {
       );
       await this.writeResource('/43001/0/101', 1);
     }
-    RED.log.info(`[CANDY RED] <updateMindConnectAgentConfiguration> End`);
+    RED.log.debug(`[CANDY RED] <updateMindConnectAgentConfiguration> End`);
     await this.saveObjects();
   }
 }
