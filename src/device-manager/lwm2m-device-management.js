@@ -454,21 +454,55 @@ export class LwM2MDeviceManagement extends LwM2MDeviceManagementBase {
   }
 
   async _enableApplicationFlow(args) {
+    RED.log.debug(
+      `[CANDY RED] <_enableApplicationFlow> Start; args => ${JSON.stringify(
+        args
+      )}`
+    );
     const pkg = this._argsToObject(args) || {};
     RED.log.warn(
       `[CANDY RED] TODO (_enableApplicationFlow) pkg => ${JSON.stringify(
         pkg
       )}, DO NOTHING!`
     );
+    try {
+      // TODO code goes here.
+      await this.writeResource('/42805/0/27', 0);
+    } catch (err) {
+      RED.log.error(
+        `[CANDY RED] <_enableApplicationFlow> err=>${
+          err ? (err.message ? err.message : err) : '(uknown)'
+        }`
+      );
+      await this.writeResource('/42805/0/27', 1);
+    }
+    RED.log.debug(`[CANDY RED] <_enableApplicationFlow> End`);
   }
 
   async _disableApplicationFlow(args) {
+    RED.log.debug(
+      `[CANDY RED] <_disableApplicationFlow> Start; args => ${JSON.stringify(
+        args
+      )}`
+    );
     const pkg = this._argsToObject(args) || {};
     RED.log.warn(
       `[CANDY RED] TODO (_disableApplicationFlow) pkg => ${JSON.stringify(
         pkg
       )}, DO NOTHING!`
     );
+    try {
+      // TODO code goes here.
+      await this.writeResource('/42805/0/29', 0);
+    } catch (err) {
+      RED.log.error(
+        `[CANDY RED] <_disableApplicationFlow> err=>${
+          err ? (err.message ? err.message : err) : '(uknown)'
+        }`
+      );
+      await this.writeResource('/42805/0/29', 1);
+  }
+    RED.log.debug(`[CANDY RED] <_disableApplicationFlow> End`);
   }
 
   async _downloadFlowOrParse(args) {
