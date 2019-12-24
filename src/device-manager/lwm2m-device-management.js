@@ -165,7 +165,8 @@ export class LwM2MDeviceManagement extends LwM2MDeviceManagementBase {
         if (
           this.settings.logging &&
           this.settings.logging.console &&
-          this.settings.logging.console.level === 'debug'
+          (this.settings.logging.console.level === 'debug' ||
+            this.settings.logging.console.level === 'trace')
         ) {
           config.redirectLwm2mClientLog = true;
           config.dumpLwm2mMessages = true;
