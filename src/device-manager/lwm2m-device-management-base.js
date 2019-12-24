@@ -268,7 +268,13 @@ export class LwM2MDeviceManagementBase {
         Object.keys(this.objects[objectId][instanceId]).forEach(resourceId => {
           const resource = this.objects[objectId][instanceId][resourceId];
           if (resource.sensitive && resource.value) {
-            resource.value = this.decrypt(resource.value);
+            try {
+              resource.value = this.decrypt(resource.value);
+            } catch (err) {
+              RED.log.warn(
+                `[CANDY RED] <decryptObjects> Failed to decrypt: /${objectId}/${instanceId}/${resourceId}`
+              );
+            }
           }
         });
       });
