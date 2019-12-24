@@ -508,34 +508,32 @@ export class LwM2MDeviceManagement extends LwM2MDeviceManagementBase {
 
   async _downloadFlowOrParse(args) {
     const pkg = this._argsToObject(args) || {};
-    const resources = await this.readResources('^/42805/0/(2|3|4)$');
-    const downloadInfo = resources.reduce((accumulator, currentValue) => {
+    const resources = await this.readResources('^/42805/0/(2|3|4|5|6)$');
+    const packageInfo = resources.reduce((accumulator, currentValue) => {
       accumulator[currentValue.uri] = currentValue.value.value;
       return accumulator;
     }, {});
     // eslint-disable-next-line require-atomic-updates
-    pkg.flowTabName = pkg.flowTabName || downloadInfo['/42805/0/2'];
+    pkg.flowTabName = pkg.flowTabName || packageInfo['/42805/0/2'];
     if (!pkg.flowTabName) {
       throw new Error(`Flow tab name is missing`);
     }
-    if (pkg.flow) {
-      if (typeof pkg.flow === 'string') {
-        try {
-          // eslint-disable-next-line require-atomic-updates
-          pkg.flow = JSON.parse(pkg.flow);
-          return Promise.resolve(pkg);
-        } catch (_) {
-          // Ignore parse error
-        }
+    if (packageInfo['/42805/0/5'] /* Application Flow Content */) {
+      try {
+        // eslint-disable-next-line require-atomic-updates
+        pkg.flow = JSON.parse(packageInfo['/42805/0/5'].toString());
+        return pkg;
+      } catch (_) {
+        // Ignore parse error
       }
     }
-    if (!downloadInfo['/42805/0/3']) {
-      throw new Error(`Cannot download flow`);
+    if (!packageInfo['/42805/0/3'] /* Application Flow Download URL */) {
+      throw new Error(`Cannot download flow as url is missing!`);
     }
     const headers = {};
-    if (downloadInfo['/42805/0/4']) {
-      Object.keys(downloadInfo['/42805/0/4']).forEach(id => {
-        const headerDef = downloadInfo['/42805/0/4'][id].value;
+    if (packageInfo['/42805/0/4'] /* Download/Upload Access HTTP Headers */) {
+      Object.keys(packageInfo['/42805/0/4']).forEach(id => {
+        const headerDef = packageInfo['/42805/0/4'][id].value;
         if (headerDef) {
           const elements = headerDef.split(':');
           headers[elements[0].trim()] = elements[1].trim();
@@ -543,7 +541,7 @@ export class LwM2MDeviceManagement extends LwM2MDeviceManagementBase {
       });
     }
     return new Promise((resolve, reject) => {
-      const url = downloadInfo['/42805/0/3'];
+      const url = packageInfo['/42805/0/3'];
       if (
         (process.env.DEVEL === 'true' && url.indexOf('http://') >= 0) ||
         url.indexOf('https://') >= 0
@@ -618,10 +616,17 @@ export class LwM2MDeviceManagement extends LwM2MDeviceManagementBase {
         args
       )}`
     );
-    const flowTabName = this._argsToString(args);
     try {
-      if (flowTabName) {
-        await this.uninstallFlow(flowTabName);
+      const pkg = this._argsToObject(args) || {};
+      const resources = await this.readResources('^/42805/0/(2|3|4|5|6)$');
+      const packageInfo = resources.reduce((accumulator, currentValue) => {
+        accumulator[currentValue.uri] = currentValue.value.value;
+        return accumulator;
+      }, {});
+      // eslint-disable-next-line require-atomic-updates
+      pkg.flowTabName = pkg.flowTabName || packageInfo['/42805/0/2'];
+      if (pkg.flowTabName) {
+        await this.uninstallFlow(pkg.flowTabName);
         await this.writeResource('/42805/0/25', 0);
       } else {
         await this.writeResource('/42805/0/25', 1);
@@ -649,7 +654,8 @@ export class LwM2MDeviceManagement extends LwM2MDeviceManagementBase {
           try {
             const flows = JSON.parse(data.toString());
             await this.writeResource(
-              '/42805/0/5',
+              '/42805/0/7',
+              // String array (MULTIPLE_RESOURCE)
               flows
                 .filter(f => f.type === 'tab')
                 .map(f => {
