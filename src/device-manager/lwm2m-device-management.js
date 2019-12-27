@@ -184,9 +184,9 @@ export class LwM2MDeviceManagement extends LwM2MDeviceManagementBase {
                 ._candyRun('connection', 'status', 0, true)
                 .then(result => {
                   RED.log.trace(
-                    `[CANDY RED] candy connection status => [${result}]`
+                    `[CANDY RED] candy connection status => [${result.output}]`
                   );
-                  if (result === 'ONLINE') {
+                  if (result.output === 'ONLINE') {
                     resolve();
                   } else {
                     const err = {
