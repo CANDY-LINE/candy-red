@@ -462,8 +462,35 @@ export class LwM2MDeviceManagementBase {
             );
             return resolve();
           }
+          let globalNodeIds = flows.filter(f => f.z === '').map(f => f.id);
+          let toBeRemoved = [];
+          RED.log.debug(
+            `[CANDY RED] <uninstallFlow> flowTab.id: ${flowTab.id}, globalNodeIds: ${globalNodeIds}`
+          );
+          flows
+            .filter(f => f.z === flowTab.id)
+            .some(f => {
+              const found = [];
+              globalNodeIds.some(id => {
+                if (Object.values(f).includes(id)) {
+                  found.push(id);
+                  return true; // break
+                }
+              });
+              globalNodeIds = globalNodeIds.filter(id => !found.includes(id));
+              toBeRemoved = toBeRemoved.concat(found);
+              if (globalNodeIds.length < 1) {
+                return true; // break
+              }
+            });
+          RED.log.debug(
+            `[CANDY RED] <uninstallFlow> toBeRemoved: ${toBeRemoved}`
+          );
           const newFlow = flows.filter(
-            f => f.z !== flowTab.id && f.id !== flowTab.id
+            f =>
+              f.z !== flowTab.id &&
+              f.id !== flowTab.id &&
+              !toBeRemoved.includes(f.id)
           );
           const packageInfo = this.toPackageInfo(flowTab);
           RED.log.info(
