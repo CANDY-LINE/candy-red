@@ -32,6 +32,8 @@ export class LwM2MDeviceManagementBase {
     this.objects = {};
     this.triggerSaveObjectsTaskHandle = 0;
     this.objectFile = `objects_candy-red.json`;
+    this.objectFilePath = '';
+    this.credentialFilePath = '';
     this.functionResolver = (key, value) => {
       if (
         key === 'value' &&
@@ -283,6 +285,9 @@ export class LwM2MDeviceManagementBase {
   }
 
   saveObjects() {
+    if (!this.objectFilePath) {
+      return Promise.reject(`objectFilePath is missing`);
+    }
     return new Promise(resolve => {
       // save current objects
       try {
@@ -510,7 +515,9 @@ export class LwM2MDeviceManagementBase {
       await this.deviceState.updateFlow(flows);
       try {
         // Remove Credentials file as well
-        fs.unlinkSync(this.credentialFilePath);
+        if (this.credentialFilePath) {
+          fs.unlinkSync(this.credentialFilePath);
+        }
       } catch (_) {
         // ignore
       }

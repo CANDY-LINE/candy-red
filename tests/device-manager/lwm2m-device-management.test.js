@@ -302,6 +302,7 @@ describe('LwM2MDeviceManagement', () => {
       stubEvent.once.onCall(call++).yields({}); // writeResource
       stubEvent.once.onCall(call++).yields({}); // writeResource
 
+      lwm2mdm.objectFilePath = `${__dirname}/objects-for-test-flow-mindconnect.json`;
       await lwm2mdm._updateMindConnectAgentConfiguration(
         `${__dirname}/test-flow-mindconnect.json`
       );
