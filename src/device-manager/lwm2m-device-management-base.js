@@ -26,7 +26,8 @@ import RED from 'node-red';
 import consts from './consts';
 
 export class LwM2MDeviceManagementBase {
-  constructor() {
+  constructor(deviceState) {
+    this.deviceState = deviceState;
     this.internalEventBus = new EventEmitter();
     this.objects = {};
     this.triggerSaveObjectsTaskHandle = 0;
