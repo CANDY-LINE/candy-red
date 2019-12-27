@@ -95,7 +95,7 @@ export class LwM2MDeviceManagement extends LwM2MDeviceManagementBase {
             let retry = 0;
             const command = () => {
               this.deviceState
-                ._candyRun('modem', 'show')
+                ._candyRun('modem', 'show', 0, false, '-s', '-r')
                 .then(result => {
                   this.modemInfo = result.output;
                   resolve();
