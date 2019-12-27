@@ -82,7 +82,7 @@ export class DeviceState {
           }
           let ret = '';
           if (notJson) {
-            ret = output;
+            ret = (output || '').trim();
           } else {
             try {
               ret = JSON.parse(output);
