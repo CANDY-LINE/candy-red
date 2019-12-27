@@ -40,8 +40,7 @@ export class LwM2MDeviceManagement extends LwM2MDeviceManagementBase {
   }
 
   constructor(deviceState) {
-    super();
-    this.deviceState = deviceState;
+    super(deviceState);
     this.modemInfo = {};
     this.candyPiBoardInfo = {};
     this.tasks = {};
