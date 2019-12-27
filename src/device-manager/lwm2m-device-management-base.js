@@ -488,6 +488,21 @@ export class LwM2MDeviceManagementBase {
                 return true; // break
               }
             });
+          flows
+            .filter(f => f.z !== '' && f.z !== flowTab.id)
+            .some(f => {
+              const found = [];
+              toBeRemoved.some(id => {
+                if (Object.values(f).includes(id)) {
+                  found.push(id);
+                  return true; // break
+                }
+              });
+              toBeRemoved = toBeRemoved.filter(id => !found.includes(id));
+              if (toBeRemoved.length < 1) {
+                return true; // break
+              }
+            });
           RED.log.debug(
             `[CANDY RED] <uninstallFlow> toBeRemoved: ${toBeRemoved}`
           );

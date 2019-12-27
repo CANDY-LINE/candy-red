@@ -5,6 +5,22 @@
     "label": "Sheet 1"
   },
   {
+    "id": "11223344.aabbcc",
+    "type": "Cache in",
+    "z": "73c43e30.8c3bc",
+    "name": "Global Scope Config Node Test",
+    "cache": "9c252633.0fe61",
+    "keyType": "msg",
+    "keyProperty": "topic",
+    "valueType": "msg",
+    "valueProperty": "payload",
+    "useString": false,
+    "outputs": 2,
+    "x": 453.5714416503906,
+    "y": 297.5,
+    "wires": []
+  },
+  {
     "id": "5e8a6e7d.727fb",
     "type": "websocket-listener",
     "z": "73c43e30.8c3bc",

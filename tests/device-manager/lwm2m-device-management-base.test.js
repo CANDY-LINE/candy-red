@@ -216,7 +216,7 @@ describe('LwM2MDeviceManagementBase', () => {
       );
       assert.equal(
         uninstalledFlow.filter(n => n.z === '').length,
-        0, // was 2 prior to uninstallation
+        1, // was 2 prior to uninstallation
         'global scope nodes used by the uninstalled flow should be stripped as well.'
       );
     });
