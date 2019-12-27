@@ -101,15 +101,15 @@ export class LwM2MDeviceManagement extends LwM2MDeviceManagementBase {
                   resolve();
                 })
                 .catch(err => {
-                  if (retry < 120 && err.code === 1) {
+                  if (retry < 120 && (err.code === 1 || err.code === 2)) {
                     setTimeout(command, 5000);
                     retry++;
                   } else {
-                    resolve();
                     RED.log.error(
                       `[CANDY RED] Failed to run candy modem show command => ${err.message ||
                         JSON.stringify(err)}`
                     );
+                    return LwM2MDeviceManagement.stop();
                   }
                 });
             };
@@ -183,6 +183,9 @@ export class LwM2MDeviceManagement extends LwM2MDeviceManagementBase {
               this.deviceState
                 ._candyRun('connection', 'status', 0, true)
                 .then(result => {
+                  RED.log.trace(
+                    `[CANDY RED] candy connection status => [${result}]`
+                  );
                   if (result === 'ONLINE') {
                     resolve();
                   } else {
@@ -196,7 +199,7 @@ export class LwM2MDeviceManagement extends LwM2MDeviceManagementBase {
                 .catch(err => {
                   if (
                     retry < consts.MAX_MOBILE_NETWORK_CONN_RETRY &&
-                    err.code === 1
+                    (err.code === 1 || err.code === 2)
                   ) {
                     setTimeout(command, 5000);
                     retry++;
@@ -206,7 +209,7 @@ export class LwM2MDeviceManagement extends LwM2MDeviceManagementBase {
                         JSON.stringify(err)}`
                     );
                     RED.log.error(`[CANDY RED] This service is terminated.`);
-                    return process.exit(10); // RestartPreventExitStatus=10
+                    return LwM2MDeviceManagement.stop();
                   }
                 });
             };
