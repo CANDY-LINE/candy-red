@@ -47,7 +47,8 @@ This is the default screen theme.
 
 ### Tested Node.js versions
 
-* v10.15.0 (Active LTS)
+* v10 (Active LTS)
+* v12 (Active LTS)
 
 ### Supported npm version
 
@@ -180,7 +181,8 @@ Either a single space` ` or `\n` can be a delimiter of `NODE_CSV` value.
 
 ### Supported Node.js versions
 
-* v10.15.0+ (Active LTS)
+* v10 (Active LTS)
+* v12 (Active LTS)
 
 ## Setup for Building
 

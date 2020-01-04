@@ -7,7 +7,6 @@ const gulpIf = require('gulp-if');
 const mocha = require('gulp-mocha');
 const sourcemaps = require('gulp-sourcemaps');
 const livereload = require('gulp-livereload');
-const sequence = require('run-sequence');
 const symlink = require('gulp-symlink');
 const fs = require('fs');
 const path = require('path');
@@ -51,12 +50,10 @@ gulp.task('lintTests', () => {
     .pipe(eslint.failAfterError());
 });
 
-gulp.task('lint', done => {
-  sequence('lintSrcs', 'lintTests', done);
-});
+gulp.task('lint', gulp.series('lintSrcs', 'lintTests'));
 
 gulp.task('clean', () => {
-  gulp
+  return gulp
     .src([
       './dist/*',
       './dist/*.*',
@@ -102,7 +99,7 @@ gulp.task('nodes', () => {
 });
 
 gulp.task('copyResources', () => {
-  gulp
+  return gulp
     .src([
       './src/**/*.{css,ico,png,html,json,yaml,yml}',
       '!./src/device-manager/mo/**/*.{yaml,yml}'
@@ -123,65 +120,72 @@ gulp.task('mo', () => {
     .pipe(gulp.dest('./dist/device-manager/mo'));
 });
 
-gulp.task('buildSrcs', ['copyResources', 'mo', 'favicons'], () => {
-  return gulp
-    .src('./src/**/*.js')
-    .pipe(sourcemaps.init())
-    .pipe(
-      babel({
-        minified: true,
-        compact: true,
-        configFile: './.babelrc'
-      })
-    )
-    .on('error', console.error.bind(console))
-    .pipe(
-      uglify({
-        mangle: {},
-        compress: {
-          dead_code: true,
-          drop_debugger: true,
-          properties: true,
-          unused: true,
-          toplevel: true,
-          if_return: true,
-          drop_console: false,
-          conditionals: true,
-          unsafe_math: true,
-          unsafe: true
-        }
-      })
-    )
-    .pipe(sourcemaps.write('.'))
-    .pipe(gulp.dest('./dist'))
-    .pipe(livereload());
-});
+gulp.task(
+  'buildSrcs',
+  gulp.series('copyResources', 'mo', 'favicons', () => {
+    return gulp
+      .src('./src/**/*.js')
+      .pipe(sourcemaps.init())
+      .pipe(
+        babel({
+          minified: true,
+          compact: true,
+          configFile: './.babelrc'
+        })
+      )
+      .on('error', console.error.bind(console))
+      .pipe(
+        uglify({
+          mangle: {},
+          compress: {
+            dead_code: true,
+            drop_debugger: true,
+            properties: true,
+            unused: true,
+            toplevel: true,
+            if_return: true,
+            drop_console: false,
+            conditionals: true,
+            unsafe_math: true,
+            unsafe: true
+          }
+        })
+      )
+      .pipe(sourcemaps.write('.'))
+      .pipe(gulp.dest('./dist'))
+      .pipe(livereload());
+  })
+);
 
-gulp.task('build', done => {
-  sequence('buildSrcs', 'nodes', done);
-});
+gulp.task('build', gulp.series('buildSrcs', 'nodes'));
 
 gulp.task('copyTestResources', () => {
-  gulp
+  return gulp
     .src('./tests/**/*.{css,ico,png,html,json,yaml,yml}')
     .pipe(gulp.dest('./dist'));
 });
 
-gulp.task('buildTests', ['buildSrcs', 'copyTestResources'], () => {
-  return gulp
-    .src('./tests/**/*.js')
-    .pipe(sourcemaps.init())
-    .pipe(babel({ configFile: './.babelrc' }))
-    .pipe(sourcemaps.write('.'))
-    .pipe(gulp.dest('./dist'));
-});
+gulp.task(
+  'buildTests',
+  gulp.series('buildSrcs', 'copyTestResources', () => {
+    return gulp
+      .src('./tests/**/*.js')
+      .pipe(sourcemaps.init())
+      .pipe(babel({ configFile: './.babelrc' }))
+      .pipe(sourcemaps.write('.'))
+      .pipe(gulp.dest('./dist'));
+  })
+);
 
-gulp.task('watch', ['build'], () => {
-  livereload.listen();
-  gulp.watch('./src/*.js', ['build']);
-});
+gulp.task(
+  'watch',
+  gulp.series('build', () => {
+    livereload.listen();
+    gulp.watch('./src/*.js', ['build']);
+  })
+);
 
-gulp.task('runTests', () => {
+gulp.task('runTests', done => {
   return gulp
     .src(['./dist/**/*.test.js'], { read: false })
     .pipe(
@@ -190,12 +194,16 @@ gulp.task('runTests', () => {
         reporter: 'spec'
       })
     )
-    .once('error', () => process.exit(1))
-    .once('end', () => process.exit());
+    .once('error', () => {
+      done();
+      process.exit(1);
+    })
+    .once('end', () => {
+      done();
+      process.exit();
+    });
 });
 
-gulp.task('test', done => {
-  sequence('lint', 'buildTests', 'runTests', done);
-});
+gulp.task('test', gulp.series('lint', 'buildTests', 'runTests'));
 
-gulp.task('default', ['build']);
+gulp.task('default', gulp.series('build'));
