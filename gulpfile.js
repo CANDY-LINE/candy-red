@@ -54,16 +54,19 @@ gulp.task('lint', gulp.series('lintSrcs', 'lintTests'));
 
 gulp.task('clean', () => {
   return gulp
-    .src([
-      './dist/*',
-      './dist/*.*',
-      './dist',
-      './*.tgz',
-      './services/environment',
-      './services/start_systemd.sh',
-      './services/systemd/candy-red.service',
-      './services/systemd/environment'
-    ])
+    .src(
+      [
+        './dist/*',
+        './dist/*.*',
+        './dist',
+        './*.tgz',
+        './services/environment',
+        './services/start_systemd.sh',
+        './services/systemd/candy-red.service',
+        './services/systemd/environment'
+      ],
+      { allowEmpty: true }
+    )
     .pipe(clean({ force: true }));
 });
 
