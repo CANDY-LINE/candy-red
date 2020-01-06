@@ -152,7 +152,10 @@ export class LwM2MDeviceManagement extends LwM2MDeviceManagementBase {
           process.env.DEVICE_MANAGEMENT_CL_PORT || 57830
         );
         config.reconnectSec = parseInt(
-          process.env.DEVICE_MANAGEMENT_RECONNECT_SEC || 60
+          process.env.DEVICE_MANAGEMENT_RECONNECT_SEC || 300
+        );
+        config.bootstrapIntervalSec = parseInt(
+          process.env.DEVICE_MANAGEMENT_BOOTSTRAP_INTERVAL_SEC || 3600
         );
         config.serverHost = process.env.DEVICE_MANAGEMENT_BS_HOST;
         config.serverPort = process.env.DEVICE_MANAGEMENT_BS_PORT;
