@@ -1,10 +1,10 @@
 node-red-contrib-cache,^2.0.2
 node-red-contrib-generic-ble,^3.1.0
-node-red-contrib-smartmesh,^2.0.1
+node-red-contrib-smartmesh,^2.1.0
 node-red-contrib-web-worldmap,^2.1.6
 node-red-node-pi-sense-hat,^0.0.18
 node-red-contrib-camerapi,^0.0.38
-node-red-contrib-adxl-vibration-fft,^1.0.1
+node-red-contrib-adxl-vibration-fft,^1.1.0
 @candy-line/node-red-contrib-eh-terminal-g2,^1.0.2
 @candy-line/node-red-contrib-omron-2jcie-bu,^1.0.1
 @mindconnect/mindconnect-nodejs,^3.6.1
