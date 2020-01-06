@@ -109,7 +109,12 @@ export class LwM2MDeviceManagement extends LwM2MDeviceManagementBase {
                       `[CANDY RED] Failed to run candy modem show command => ${err.message ||
                         JSON.stringify(err)}`
                     );
-                    return LwM2MDeviceManagement.stop();
+                    if (process.env.DEVEL === 'true') {
+                      this.modemInfo = {};
+                      resolve();
+                    } else {
+                      return LwM2MDeviceManagement.stop();
+                    }
                   }
                 });
             };
