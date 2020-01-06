@@ -422,7 +422,8 @@ export class LwM2MDeviceManagementBase {
           return resolve(flows.concat(newFlow));
         } catch (err) {
           RED.log.info(
-            `[CANDY RED] <installFlow> ERROR End while installing ${newFlowTabName}. err => ${err.message || err}`
+            `[CANDY RED] <installFlow> ERROR End while installing ${newFlowTabName}. err => ${err.message ||
+              err}`
           );
           return reject(err);
         }
