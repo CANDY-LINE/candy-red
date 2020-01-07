@@ -33,12 +33,6 @@ services/systemd/candy-red.service
 services/systemd/environment
 services/start_sysvinit.sh
 *.map
-*.js
-!dist/**/*.map
-!dist/**/*.js
-!*.es6.js
-!Gruntfile.js
-!gulpfile.js
 .vagrant
 .node-red
 dist

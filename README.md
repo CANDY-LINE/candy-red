@@ -43,11 +43,12 @@ This is the default screen theme.
 
 ### Raspbian version
 
- * 2019-07-10-raspbian-buster
+ * 2019-09-26-raspbian-buster
 
 ### Tested Node.js versions
 
-* v10.15.0 (Active LTS)
+* v10 (Active LTS)
+* v12 (Active LTS)
 
 ### Supported npm version
 
@@ -180,7 +181,8 @@ Either a single space` ` or `\n` can be a delimiter of `NODE_CSV` value.
 
 ### Supported Node.js versions
 
-* v10.15.0+ (Active LTS)
+* v10 (Active LTS)
+* v12 (Active LTS)
 
 ## Setup for Building
 
@@ -278,11 +280,21 @@ $ npm test
 ## Package
 
 ```
+# Development Machine
 $ npm pack
-# RPi
+$ scp ./candy-red-9.0.0.tgz pi@raspberrypi.local:~
+
+# RPi (on ~)
 $ sudo npm uninstall -g --unsafe-perm candy-red
-$ time sudo npm install -g --unsafe-perm ./candy-red-8.2.2.tgz
+$ sudo rm -fr /opt/candy-red # to prune user specific files if necessary
+$ time sudo npm install -g --unsafe-perm ./candy-red-9.0.0.tgz
 $ sudo journalctl -f -u candy-red -o cat # to show logs
+```
+
+### Upload dist
+
+```
+$ scp -rp ./dist/* pi@raspberrypi.local:/usr/lib/node_modules/candy-red/dist
 ```
 
 ### Local Installation Test

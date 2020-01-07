@@ -1,0 +1,333 @@
+---
+# This entry will be assigned to `lwm2m.objects` in RED.settings object.
+"42801": # CANDY Pi Board Object
+  "0":
+    "0": # Product Name
+      type: "STRING"
+      acl: "R"
+      sensitive: false
+      value: "[Function]resolveCANDYLINEProductName"
+    "1": # Module Name
+      type: "STRING"
+      acl: "R"
+      sensitive: false
+      value: "[Function]resolveModuleName"
+    "2": # Module Identifier
+      type: "STRING"
+      acl: "R"
+      sensitive: true
+      value: "[Function]resolveModuleIdentifier"
+    "3": # Module Firmware Version
+      type: "STRING"
+      acl: "R"
+      sensitive: false
+      value: "[Function]resolveModuleFirmwareVersion"
+    "4": # Serial Port Type
+      type: "INTEGER"
+      acl: "RW"
+      sensitive: false
+      value: 0          # 0 for auto, 1 for usb, 2 for uart
+    "5": # Board Product Name
+      type: "STRING"
+      acl: "R"
+      sensitive: false
+      value: "[Function]resolveBoardProductName"
+    "6": # OS Name
+      type: "STRING"
+      acl: "R"
+      sensitive: false
+      value: "[Function]resolveOSName"
+    "7": # OS Version
+      type: "STRING"
+      acl: "R"
+      sensitive: false
+      value: "[Function]resolveOSVersion"
+    "8": # OS ID
+      type: "STRING"
+      acl: "R"
+      sensitive: false
+      value: "[Function]resolveOSID"
+    "9": # Linux Kernel Release
+      type: "STRING"
+      acl: "R"
+      sensitive: false
+      value: "[Function]resolveLinuxKernelRelease"
+    "10": # Processor Architecture
+      type: "STRING"
+      acl: "R"
+      sensitive: false
+      value: "[Function]resolveProcessorArchitecture"
+    "20": # Restart CANDY Pi Board Service
+      type: "FUNCTION"
+      acl: "E"
+      sensitive: false
+    "21": # Restart CANDY Pi Board Service Result Code
+      type: "INTEGER"
+      acl: "R"
+      sensitive: false
+      value: 0          # 0 for Success
+    "22": # Apply CANDY Pi Board Service Configuration Changes
+      type: "FUNCTION"
+      acl: "E"
+      sensitive: false
+      value: "[Function]applyConfigChanges"
+    "23": # Apply CANDY Pi Board Service Configuration Changes Result Code
+      type: "INTEGER"
+      acl: "R"
+      sensitive: false
+      value: 0          # 0 for Success
+    "24": # Terminate Device
+      type: "FUNCTION"
+      acl: "E"
+    "25": # Terminate Device Result Code
+      type: "INTEGER"
+      acl: "R"
+      sensitive: false
+      value: 0          # 0 for Success
+
+"42802": # OS Configuration/Information
+  "0":
+    "0": # User Name
+      type: "STRING"
+      acl: "RW"
+      sensitive: false
+      value: ""
+    "1": # Password
+      type: "STRING"
+      acl: "RW"
+      sensitive: true
+      value: ""
+    "2": # SSH Enabled
+      type: "BOOLEAN"
+      acl: "RW"
+      sensitive: false
+      value: false
+    "3": # SSH Password Login Enabled
+      type: "BOOLEAN"
+      acl: "RW"
+      sensitive: false
+      value: true
+    "4": # SSH Public Key (hex string)
+      type: "STRING"
+      acl: "RW"
+      sensitive: false
+      value: ""
+    "5": # Log content (64KiB)
+      type: "STRING"
+      acl: "RW"
+      sensitive: false
+      value: ""
+    "20": # Apply OS Configuration
+      type: "FUNCTION"
+      acl: "E"
+      sensitive: false
+    "21": # OS Configuration Application Result Code
+      type: "INTEGER"
+      acl: "R"
+      sensitive: false
+      value: 0          # 0 for Success
+    "22": # Get the tail end of a text file. 2 parameters available, `path` for the path to the file, `lines` for fetching lines.
+      type: "FUNCTION"
+      acl: "E"
+      sensitive: false
+    "23": # Get the tail end of a text file Result Code
+      type: "INTEGER"
+      acl: "R"
+      sensitive: false
+      value: 0
+    "24": # OS Reboot Result Code
+      type: "INTEGER"
+      acl: "R"
+      sensitive: false
+      value: 0
+
+"42803": # APN vendor specific extensions
+  "0":
+    "0": # ops
+      type: "BOOLEAN"
+      acl: "RW"
+      sensitive: false
+      value: false
+    "1": # mcc
+      type: "STRING"
+      acl: "RW"
+      sensitive: false
+      value: ""
+    "2": # mnc
+      type: "STRING"
+      acl: "RW"
+      sensitive: false
+      value: ""
+    "3": # nw
+      type: "STRING"
+      acl: "RW"
+      sensitive: false
+      value: ""
+    "4": # ipv6dns1
+      type: "STRING"
+      acl: "RW"
+      sensitive: false
+      value: ""
+    "5": # ipv6dns2
+      type: "STRING"
+      acl: "RW"
+      sensitive: false
+      value: ""
+    "6": # cs
+      type: "BOOLEAN"
+      acl: "RW"
+      sensitive: false
+      value: false
+    "7": # pu
+      type: "BOOLEAN"
+      acl: "RW"
+      sensitive: false
+      value: false
+
+"42805": # CANDY RED
+  "0":
+    "0": # Client Version
+      type: "STRING"
+      acl: "R"
+      sensitive: false
+      value: "[Function]resolveCANDYREDVersion"
+    "1": # Headless Enabled
+      type: "BOOLEAN"
+      acl: "RW"
+      sensitive: false
+      value: false
+    "2": # Application Flow Tab Name
+      type: "STRING"
+      acl: "RW"
+      sensitive: false
+      value: ''
+    "3": # Application Flow Download URL
+      type: "STRING"
+      acl: "RW"
+      sensitive: false
+      value: ''
+    "4": # Download/Upload Access HTTP Headers
+      type: "MULTIPLE_RESOURCE"
+      acl: "RW"
+      sensitive: false
+      value:
+        "0":
+          type: "STRING"
+          acl: "RW"
+          sensitive: false
+          value: "Accept: */*"
+    "5": # Application Flow Content
+      type: "OPAQUE"
+      acl: "RW"
+      sensitive: false
+      value: null
+    "6": # Application Flow Content Type
+      type: "STRING"
+      acl: "RW"
+      sensitive: false
+      value: "application/json"
+    "7": # Installed Application Flow List
+      type: "MULTIPLE_RESOURCE"
+      acl: "R"
+      sensitive: false
+      value:
+    "8": # Bootstrap Server Host
+      type: "STRING"
+      acl: "RW"
+      sensitive: false
+      value: ""
+    "9": # Bootstrap Server Port
+      type: "INTEGER"
+      acl: "RW"
+      sensitive: false
+      value: 0
+    "10": # Bootstrap Security Mode
+      type: "INTEGER"
+      acl: "RW"
+      sensitive: false
+      value: 0
+    "11": # Bootstrap Public Key or ID
+      type: "OPAQUE"
+      acl: "RW"
+      sensitive: true
+      value: ""
+    "12": # Bootstrap Server Public Key or ID
+      type: "OPAQUE"
+      acl: "RW"
+      sensitive: true
+      value: ""
+    "13": # Bootstrap Secret Key
+      type: "OPAQUE"
+      acl: "RW"
+      sensitive: true
+      value: ""
+    "14": # Bootstrap Short Server ID
+      type: "INTEGER"
+      acl: "RW"
+      sensitive: false
+      value: 0
+    "15": # Exclusive to Mobile Network
+      type: "BOOLEAN"
+      acl: "RW"
+      sensitive: false
+      value: false
+    "20": # Restart CANDY RED (Process exit)
+      type: "FUNCTION"
+      acl: "E"
+      sensitive: false
+      value: "[Function]restartCANDYRED"
+    "21": # Restart CANDY RED Result Code
+      type: "INTEGER"
+      acl: "R"
+      sensitive: false
+      value: 0          # 0 for Success
+    "22": # Download And Install Application Flow
+      type: "FUNCTION"
+      acl: "E"
+      sensitive: false
+      value: "[Function]downloadAndInstallApplicationFlow"
+    "23": # Download And Install Application Flow Result Code
+      type: "INTEGER"
+      acl: "R"
+      sensitive: false
+      value: 0          # 0 for Idle, 1 for Success, 2+ for Errors
+    "24": # Uninstall Application Flow
+      type: "FUNCTION"
+      acl: "E"
+      sensitive: false
+      value: "[Function]uninstallApplicationFlow"
+    "25": # Uninstall Application Flow Result Code
+      type: "INTEGER"
+      acl: "R"
+      sensitive: false
+      value: 0          # 0 for Idle, 1 for Success, 2+ for Errors
+    "26": # Enable Application Flow
+      type: "FUNCTION"
+      acl: "E"
+      sensitive: false
+      value: "[Function]enableApplicationFlow"
+    "27": # Enable Application Flow Result Code
+      type: "INTEGER"
+      acl: "R"
+      sensitive: false
+      value: 0          # 0 for Idle, 1 for Success, 2+ for Errors
+    "28": # Disable Application Flow
+      type: "FUNCTION"
+      acl: "E"
+      sensitive: false
+      value: "[Function]disableApplicationFlow"
+    "29": # Disable Application Flow Result Code
+      type: "INTEGER"
+      acl: "R"
+      sensitive: false
+      value: 0          # 0 for Idle, 1 for Success, 2+ for Errors
+    "30": # Stop CANDY RED service (but not disable it)
+      type: "FUNCTION"
+      acl: "E"
+      sensitive: false
+      value: "[Function]stopCANDYRED"
+    "31": # Stop CANDY RED service Result Code
+      type: "INTEGER"
+      acl: "R"
+      sensitive: false
+      value: 0          # 0 for Idle, 1 for Success, 2+ for Errors

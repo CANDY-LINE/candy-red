@@ -1,39 +1,39 @@
-#header {
+#red-ui-header {
   background: #bb0820;
   color: #fff;
 }
-#header .button {
+#red-ui-header .button {
   color: #fff;
   border-left: 2px solid #8c0618;
   border-right: 2px solid #8c0618;
 }
-#header .button:hover {
+#red-ui-header .button:hover {
   background: #8c0618;
   border-color: #8c0618;
 }
-#header li .button {
+#red-ui-header li .button {
   border-color: #bb0820;
 }
-#header li.open .button {
+#red-ui-header li.open .button {
   background: #8c0618;
   border-color: #8c0618;
 }
-#header ul.dropdown-menu {
+#red-ui-header ul.red-ui-menu-dropdown {
   background: #8c0618;
 }
-#header ul.dropdown-menu li a {
+#red-ui-header ul.red-ui-menu-dropdown li a {
   color: #fff;
 }
-.deploy-button {
+.red-ui-deploy-button {
   background: #ee3b53;
 }
-.deploy-button:hover {
+.red-ui-deploy-button:hover {
   background: #8c0618;
 }
-.deploy-button-group.open #btn-deploy-options {
+.red-ui-deploy-button-group.open #btn-deploy-options {
   background: #8c0618 !important;
 }
-span.logo span {
+span.red-ui-header-logo span {
   font-family: "Lucida Console", Monaco, monospace;
   font-weight: bold;
   font-size: 14px !important;
