@@ -1,4 +1,10 @@
 ## Revision History
+* 9.0.0
+  - Upgrade Node-RED to v1.0.3
+  - Add support for Node.js v12
+  - Drop support for Node.js v8
+  - Add Devcie Management support (Opt-in, disabled by default)
+
 * 8.3.0-8.3.2
   - Add new preinstalled nodes
     - @candy-line/node-red-contrib-eh-terminal-g2

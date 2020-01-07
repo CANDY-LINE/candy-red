@@ -1,22 +1,21 @@
-FROM node:8.15
+FROM node:12
 
 ENV USER_DIR /candy-red-user
-ENV CR_HOME /candy-red
-ENV CR_DIST /candy-red-dist
+ENV CANDY_RED_HOME /candy-red
 
 RUN ( \
-  mkdir -p ${CR_HOME} \
-  mkdir -p ${CR_DIST} \
+  mkdir -p ${CANDY_RED_HOME} \
 )
 
-COPY ./package.json ${CR_HOME}
-COPY ./docker/start.sh ${CR_HOME}
-COPY ./dist ${CR_DIST}
+COPY ./install.sh ${CANDY_RED_HOME}
+COPY ./default-nodes.csv ${CANDY_RED_HOME}
+COPY ./package.json ${CANDY_RED_HOME}
+COPY ./dist ${CANDY_RED_HOME}/dist
 
 RUN ( \
-  cd ${CR_HOME} && \
-  npm install --production && \
-  npm cache clean --force \
+  cd ${CANDY_RED_HOME} && \
+  npm install --production --unsafe-perm \
 )
 
-CMD ${CR_HOME}/start.sh
+WORKDIR ${CANDY_RED_HOME}
+CMD npm run start
