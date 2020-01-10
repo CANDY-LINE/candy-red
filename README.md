@@ -282,12 +282,12 @@ $ npm test
 ```
 # Development Machine
 $ npm pack
-$ scp ./candy-red-9.0.0.tgz pi@raspberrypi.local:~
+$ scp ./candy-red-9.0.1.tgz pi@raspberrypi.local:~
 
 # RPi (on ~)
 $ sudo npm uninstall -g --unsafe-perm candy-red
 $ sudo rm -fr /opt/candy-red # to prune user specific files if necessary
-$ time sudo npm install -g --unsafe-perm ./candy-red-9.0.0.tgz
+$ time sudo npm install -g --unsafe-perm ./candy-red-9.0.1.tgz
 $ sudo journalctl -f -u candy-red -o cat # to show logs
 ```
 

@@ -1,4 +1,8 @@
 ## Revision History
+* 9.0.1
+  - Modify the method to install authenticate-pam package
+  - Restart process when failing to retrieve modem info
+
 * 9.0.0
   - Upgrade Node-RED to v1.0.3
   - Add support for Node.js v12
