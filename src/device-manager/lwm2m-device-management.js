@@ -113,7 +113,7 @@ export class LwM2MDeviceManagement extends LwM2MDeviceManagementBase {
                       this.modemInfo = {};
                       resolve();
                     } else {
-                      return LwM2MDeviceManagement.stop();
+                      return LwM2MDeviceManagement.restart();
                     }
                   }
                 });
