@@ -247,7 +247,12 @@ export class LwM2MDeviceManagement extends LwM2MDeviceManagementBase {
               if (ins) {
                 const res = ins[uri[3]];
                 if (res.value && typeof res.value === 'function') {
-                  return res.value(ev.value);
+                  return res.value(
+                    /* objectId */ uri[1],
+                    /* instanceId */ uri[2],
+                    /* resourceId */ uri[3],
+                    /* argument */ ev.value
+                  );
                 }
               }
             }
@@ -319,8 +324,10 @@ export class LwM2MDeviceManagement extends LwM2MDeviceManagementBase {
     }
   }
 
-  _connectivityStatisticsStart() {
-    RED.log.debug(`[CANDY RED] <connectivityStatisticsStart> Start`);
+  _connectivityStatisticsStart(objectId, instanceId, resourceId) {
+    RED.log.debug(
+      `[CANDY RED] <connectivityStatisticsStart> (/${objectId}/${instanceId}/${resourceId}) Start`
+    );
     // TODO reset tx/rx counter
     RED.log.debug(`[CANDY RED] <connectivityStatisticsStart> End`);
   }
@@ -381,7 +388,10 @@ export class LwM2MDeviceManagement extends LwM2MDeviceManagementBase {
     return this.candyPiBoardInfo.arch || 'N/A';
   }
 
-  _applyConfigChanges() {
+  _applyConfigChanges(objectId, instanceId, resourceId) {
+    RED.log.debug(
+      `[CANDY RED] <_applyConfigChanges> (/${objectId}/${instanceId}/${resourceId}) Start`
+    );
     throw new Error('Unsupported Operation: applyConfigChanges()');
   }
 
@@ -399,27 +409,31 @@ export class LwM2MDeviceManagement extends LwM2MDeviceManagementBase {
     return this.settings.version;
   }
 
-  async _restartCANDYRED() {
-    RED.log.debug(`[CANDY RED] <_restartCANDYRED> Start`);
+  async _restartCANDYRED(objectId, instanceId, resourceId) {
+    RED.log.debug(
+      `[CANDY RED] <_restartCANDYRED> (/${objectId}/${instanceId}/${resourceId}) Start`
+    );
     try {
       RED.log.warn(`[CANDY RED] ** ** Process exits for restarting ** **`);
       await this.syncObjects();
       await this.saveObjects();
       LwM2MDeviceManagement.restart();
-      await this.writeResource('/42805/0/21', 0);
+      await this.writeResource(`/${objectId}/${instanceId}/21`, 0);
     } catch (err) {
       RED.log.error(
         `[CANDY RED] <_restartCANDYRED> err=>${
           err ? (err.message ? err.message : err) : '(uknown)'
         }`
       );
-      await this.writeResource('/42805/0/21', 1);
+      await this.writeResource(`/${objectId}/${instanceId}/21`, 1);
     }
     RED.log.debug(`[CANDY RED] <_restartCANDYRED> End`);
   }
 
-  async _stopCANDYRED() {
-    RED.log.debug(`[CANDY RED] <_stopCANDYRED> Start`);
+  async _stopCANDYRED(objectId, instanceId, resourceId) {
+    RED.log.debug(
+      `[CANDY RED] <_stopCANDYRED> (/${objectId}/${instanceId}/${resourceId}) Start`
+    );
     try {
       RED.log.warn(
         `[CANDY RED] ** ** Process exits for stopping service ** **`
@@ -427,14 +441,14 @@ export class LwM2MDeviceManagement extends LwM2MDeviceManagementBase {
       await this.syncObjects();
       await this.saveObjects();
       LwM2MDeviceManagement.stop();
-      await this.writeResource('/42805/0/31', 0);
+      await this.writeResource(`/${objectId}/${instanceId}/31`, 0);
     } catch (err) {
       RED.log.error(
         `[CANDY RED] <_stopCANDYRED> err=>${
           err ? (err.message ? err.message : err) : '(uknown)'
         }`
       );
-      await this.writeResource('/42805/0/31', 1);
+      await this.writeResource(`/${objectId}/${instanceId}/31`, 1);
     }
     RED.log.debug(`[CANDY RED] <_stopCANDYRED> End`);
   }
@@ -464,9 +478,9 @@ export class LwM2MDeviceManagement extends LwM2MDeviceManagementBase {
     }
   }
 
-  async _enableApplicationFlow(args) {
+  async _enableApplicationFlow(objectId, instanceId, resourceId, args) {
     RED.log.debug(
-      `[CANDY RED] <_enableApplicationFlow> Start; args => ${JSON.stringify(
+      `[CANDY RED] <_enableApplicationFlow> (/${objectId}/${instanceId}/${resourceId}) Start; args => ${JSON.stringify(
         args
       )}`
     );
@@ -478,21 +492,21 @@ export class LwM2MDeviceManagement extends LwM2MDeviceManagementBase {
     );
     try {
       // TODO code goes here.
-      await this.writeResource('/42805/0/27', 0);
+      await this.writeResource(`/${objectId}/${instanceId}/27`, 0);
     } catch (err) {
       RED.log.error(
         `[CANDY RED] <_enableApplicationFlow> err=>${
           err ? (err.message ? err.message : err) : '(uknown)'
         }`
       );
-      await this.writeResource('/42805/0/27', 1);
+      await this.writeResource(`/${objectId}/${instanceId}/27`, 1);
     }
     RED.log.debug(`[CANDY RED] <_enableApplicationFlow> End`);
   }
 
-  async _disableApplicationFlow(args) {
+  async _disableApplicationFlow(objectId, instanceId, resourceId, args) {
     RED.log.debug(
-      `[CANDY RED] <_disableApplicationFlow> Start; args => ${JSON.stringify(
+      `[CANDY RED] <_disableApplicationFlow> (/${objectId}/${instanceId}/${resourceId}) Start; args => ${JSON.stringify(
         args
       )}`
     );
@@ -504,54 +518,74 @@ export class LwM2MDeviceManagement extends LwM2MDeviceManagementBase {
     );
     try {
       // TODO code goes here.
-      await this.writeResource('/42805/0/29', 0);
+      await this.writeResource(`/${objectId}/${instanceId}/29`, 0);
     } catch (err) {
       RED.log.error(
         `[CANDY RED] <_disableApplicationFlow> err=>${
           err ? (err.message ? err.message : err) : '(uknown)'
         }`
       );
-      await this.writeResource('/42805/0/29', 1);
+      await this.writeResource(`/${objectId}/${instanceId}/29`, 1);
     }
     RED.log.debug(`[CANDY RED] <_disableApplicationFlow> End`);
   }
 
-  async _downloadFlowOrParse(args) {
+  async _downloadFlowOrParse(objectId, instanceId, resourceId, args) {
+    RED.log.debug(
+      `[CANDY RED] <_downloadFlowOrParse> (/${objectId}/${instanceId}/${resourceId}) Start; args => ${JSON.stringify(
+        args
+      )}`
+    );
     const pkg = this._argsToObject(args) || {};
-    const resources = await this.readResources('^/42805/0/(2|3|4|5|6)$');
+    const resources = await this.readResources(
+      `^/${objectId}/${instanceId}/(2|3|4|5|6)$`
+    );
     const packageInfo = resources.reduce((accumulator, currentValue) => {
       accumulator[currentValue.uri] = currentValue.value.value;
       return accumulator;
     }, {});
     // eslint-disable-next-line require-atomic-updates
-    pkg.flowTabName = pkg.flowTabName || packageInfo['/42805/0/2'];
+    pkg.flowTabName =
+      pkg.flowTabName || packageInfo[`/${objectId}/${instanceId}/2`];
     if (!pkg.flowTabName) {
       throw new Error(`Flow tab name is missing`);
     }
-    if (packageInfo['/42805/0/5'] /* Application Flow Content */) {
+    if (
+      packageInfo[`/${objectId}/${instanceId}/5`] /* Application Flow Content */
+    ) {
       try {
         // eslint-disable-next-line require-atomic-updates
-        pkg.flow = JSON.parse(packageInfo['/42805/0/5'].toString());
+        pkg.flow = JSON.parse(
+          packageInfo[`/${objectId}/${instanceId}/5`].toString()
+        );
         return pkg;
       } catch (_) {
         // Ignore parse error
       }
     }
-    if (!packageInfo['/42805/0/3'] /* Application Flow Download URL */) {
+    if (
+      !packageInfo[
+        `/${objectId}/${instanceId}/3`
+      ] /* Application Flow Download URL */
+    ) {
       throw new Error(`Cannot download flow as url is missing!`);
     }
     const headers = {};
-    if (packageInfo['/42805/0/4'] /* Download/Upload Access HTTP Headers */) {
-      Object.keys(packageInfo['/42805/0/4']).forEach(id => {
-        const headerDef = packageInfo['/42805/0/4'][id].value;
+    if (
+      packageInfo[
+        `/${objectId}/${instanceId}/4`
+      ] /* Download/Upload Access HTTP Headers */
+    ) {
+      Object.keys(packageInfo[`/${objectId}/${instanceId}/4`]).forEach(id => {
+        const headerDef = packageInfo[`/${objectId}/${instanceId}/4`][id].value;
         if (headerDef) {
           const elements = headerDef.split(':');
           headers[elements[0].trim()] = elements[1].trim();
         }
       });
     }
-    return new Promise((resolve, reject) => {
-      const url = packageInfo['/42805/0/3'];
+    await new Promise((resolve, reject) => {
+      const url = packageInfo[`/${objectId}/${instanceId}/3`];
       if (
         (process.env.DEVEL === 'true' && url.indexOf('http://') >= 0) ||
         url.indexOf('https://') >= 0
@@ -596,50 +630,59 @@ export class LwM2MDeviceManagement extends LwM2MDeviceManagementBase {
         return reject({ message: `Unsupported protocol scheme: ${url}` });
       }
     });
+    RED.log.debug(`[CANDY RED] <_downloadFlowOrParse> End`);
   }
 
-  async _downloadAndInstallApplicationFlow(args) {
+  async _downloadAndInstallApplicationFlow(
+    objectId,
+    instanceId,
+    resourceId,
+    args
+  ) {
     RED.log.debug(
-      `[CANDY RED] <_downloadAndInstallApplicationFlow> Start; args => ${JSON.stringify(
+      `[CANDY RED] <_downloadAndInstallApplicationFlow> (/${objectId}/${instanceId}/${resourceId}) Start; args => ${JSON.stringify(
         args
       )}`
     );
     try {
       const result = await this._downloadFlowOrParse(args);
       await this.installFlow(result.flowTabName, result.flow);
-      await this.writeResource('/42805/0/23', 0);
+      await this.writeResource(`/${objectId}/${instanceId}/23`, 0);
     } catch (err) {
       RED.log.error(
         `[CANDY RED] <_downloadAndInstallApplicationFlow> err=>${
           err ? (err.message ? err.message : err) : '(uknown)'
         }`
       );
-      await this.writeResource('/42805/0/23', 1);
+      await this.writeResource(`/${objectId}/${instanceId}/23`, 1);
     }
     RED.log.debug(`[CANDY RED] <_downloadAndInstallApplicationFlow> End`);
     return this.saveObjects();
   }
 
-  async _uninstallApplicationFlow(args) {
+  async _uninstallApplicationFlow(objectId, instanceId, resourceId, args) {
     RED.log.debug(
-      `[CANDY RED] <_uninstallApplicationFlow> Start; args => ${JSON.stringify(
+      `[CANDY RED] <_uninstallApplicationFlow> Start; (/${objectId}/${instanceId}/${resourceId}) args => ${JSON.stringify(
         args
       )}`
     );
     try {
       const pkg = this._argsToObject(args) || {};
-      const resources = await this.readResources('^/42805/0/(2|3|4|5|6)$');
+      const resources = await this.readResources(
+        `^/${objectId}/${instanceId}/(2|3|4|5|6)$`
+      );
       const packageInfo = resources.reduce((accumulator, currentValue) => {
         accumulator[currentValue.uri] = currentValue.value.value;
         return accumulator;
       }, {});
       // eslint-disable-next-line require-atomic-updates
-      pkg.flowTabName = pkg.flowTabName || packageInfo['/42805/0/2'];
+      pkg.flowTabName =
+        pkg.flowTabName || packageInfo[`/${objectId}/${instanceId}/2`];
       if (pkg.flowTabName) {
         await this.uninstallFlow(pkg.flowTabName);
-        await this.writeResource('/42805/0/25', 0);
+        await this.writeResource(`/${objectId}/${instanceId}/25`, 0);
       } else {
-        await this.writeResource('/42805/0/25', 1);
+        await this.writeResource(`/${objectId}/${instanceId}/25`, 1);
       }
     } catch (err) {
       RED.log.error(
@@ -647,14 +690,16 @@ export class LwM2MDeviceManagement extends LwM2MDeviceManagementBase {
           err ? (err.message ? err.message : err) : '(uknown)'
         }`
       );
-      await this.writeResource('/42805/0/25', 2);
+      await this.writeResource(`/${objectId}/${instanceId}/25`, 2);
     }
     RED.log.debug(`[CANDY RED] <_uninstallApplicationFlow> End`);
     return this.saveObjects();
   }
 
-  async _updateApplicationFlowList() {
-    RED.log.debug(`[CANDY RED] <_updateApplicationFlowList> Start`);
+  async _updateApplicationFlowList(objectId, instanceId, resourceId) {
+    RED.log.debug(
+      `[CANDY RED] <_updateApplicationFlowList> (/${objectId}/${instanceId}/${resourceId}) Start`
+    );
     try {
       await new Promise((resolve, reject) => {
         fs.readFile(this.deviceState.flowFilePath, async (err, data) => {
@@ -664,7 +709,7 @@ export class LwM2MDeviceManagement extends LwM2MDeviceManagementBase {
           try {
             const flows = JSON.parse(data.toString());
             await this.writeResource(
-              '/42805/0/7',
+              `/${objectId}/${instanceId}/7`,
               // String array (MULTIPLE_RESOURCE)
               flows
                 .filter(f => f.type === 'tab')
@@ -678,14 +723,14 @@ export class LwM2MDeviceManagement extends LwM2MDeviceManagementBase {
           }
         });
       });
-      await this.writeResource('/42805/0/27', 0);
+      await this.writeResource(`/${objectId}/${instanceId}/27`, 0);
     } catch (err) {
       RED.log.error(
         `[CANDY RED] <_updateApplicationFlowList> err=>${
           err ? (err.message ? err.message : err) : '(uknown)'
         }`
       );
-      await this.writeResource('/42805/0/27', 1);
+      await this.writeResource(`/${objectId}/${instanceId}/27`, 1);
     }
     RED.log.debug(`[CANDY RED] <_updateApplicationFlowList> End`);
     return this.saveObjects();
@@ -695,14 +740,24 @@ export class LwM2MDeviceManagement extends LwM2MDeviceManagementBase {
    * Replace ALL mindconnect agent configurations embedded in the flow file.
    * CANRY RED process should exit after update (not restart in this function though)
    */
-  async _updateMindConnectAgentConfiguration(flowFilePath) {
-    RED.log.debug(`[CANDY RED] <_updateMindConnectAgentConfiguration> Start`);
+  async _updateMindConnectAgentConfiguration(
+    objectId,
+    instanceId,
+    resourceId,
+    flowFilePath
+  ) {
+    RED.log.debug(
+      `[CANDY RED] <_updateMindConnectAgentConfiguration> (/${objectId}/${instanceId}/${resourceId}) Start`
+    );
     if (typeof flowFilePath !== 'string') {
       // Ignore invalid values
       flowFilePath = null;
     }
     try {
-      await this.writeResource('/43001/0/102', new Date().toISOString());
+      await this.writeResource(
+        `/${objectId}/${instanceId}/102`,
+        new Date().toISOString()
+      );
       const flows = await new Promise((resolve, reject) => {
         flowFilePath = flowFilePath || this.deviceState.flowFilePath;
         if (Array.isArray(flowFilePath)) {
@@ -718,30 +773,39 @@ export class LwM2MDeviceManagement extends LwM2MDeviceManagementBase {
             if (agents.length === 0) {
               return reject({ message: 'No mindconnect nodes to be modified' });
             }
-            this.readResources(`/43001/.*`).then(result => {
+            this.readResources(`/${objectId}/.*`).then(result => {
               const mindconnect = result.reduce((accumulator, currentValue) => {
                 accumulator[currentValue.uri] = currentValue.value.value;
                 return accumulator;
               }, {});
               agents.forEach(agent => {
-                const nodeName = mindconnect['/43001/0/10'];
+                const nodeName = mindconnect[`/${objectId}/${instanceId}/10`];
                 agent.name = nodeName || '';
                 const clientCredentialProfile =
-                  consts.CLIENT_CREDENTIAL_PROFILE[mindconnect['/43001/0/2']];
+                  consts.CLIENT_CREDENTIAL_PROFILE[
+                    mindconnect[`/${objectId}/${instanceId}/2`]
+                  ];
                 agent.configtype = clientCredentialProfile || 'SHARED_SECRET';
-                const uploadFileChunks = mindconnect['/43001/0/8'];
+                const uploadFileChunks =
+                  mindconnect[`/${objectId}/${instanceId}/8`];
                 agent.chunk = !!uploadFileChunks;
-                const retry = mindconnect['/43001/0/9'];
+                const retry = mindconnect[`/${objectId}/${instanceId}/9`];
                 agent.retry = retry || 0;
-                const dataValidation = mindconnect['/43001/0/6'];
+                const dataValidation =
+                  mindconnect[`/${objectId}/${instanceId}/6`];
                 agent.validate = !!dataValidation;
-                const eventValidation = mindconnect['/43001/0/7'];
+                const eventValidation =
+                  mindconnect[`/${objectId}/${instanceId}/7`];
                 agent.validateevent = !!eventValidation;
-                const baseUrl = mindconnect['/43001/0/0'] || '';
-                const iat = mindconnect['/43001/0/1'] || '';
-                const clientId = mindconnect['/43001/0/3'] || '';
-                const tenant = mindconnect['/43001/0/4'] || '';
-                const expiration = mindconnect['/43001/0/5'] || '';
+                const baseUrl =
+                  mindconnect[`/${objectId}/${instanceId}/0`] || '';
+                const iat = mindconnect[`/${objectId}/${instanceId}/1`] || '';
+                const clientId =
+                  mindconnect[`/${objectId}/${instanceId}/3`] || '';
+                const tenant =
+                  mindconnect[`/${objectId}/${instanceId}/4`] || '';
+                const expiration =
+                  mindconnect[`/${objectId}/${instanceId}/5`] || '';
                 const agentconfig = {
                   content: {
                     baseUrl: baseUrl,
@@ -762,8 +826,11 @@ export class LwM2MDeviceManagement extends LwM2MDeviceManagementBase {
         });
       });
       await this.deviceState.updateFlow(flows);
-      await this.writeResource('/43001/0/101', 0);
-      await this.writeResource('/43001/0/103', new Date().toISOString());
+      await this.writeResource(`/${objectId}/${instanceId}/101`, 0);
+      await this.writeResource(
+        `/${objectId}/${instanceId}/103`,
+        new Date().toISOString()
+      );
       RED.log.warn(
         '[CANDY RED] <_updateMindConnectAgentConfiguration> FLOW IS UPDATED! RELOAD THE PAGE AFTER RECONNECTING SERVER!!'
       );
@@ -773,9 +840,43 @@ export class LwM2MDeviceManagement extends LwM2MDeviceManagementBase {
           err ? err.message : '(uknown)'
         }`
       );
-      await this.writeResource('/43001/0/101', 1);
+      await this.writeResource(`/${objectId}/${instanceId}/101`, 1);
     }
     RED.log.debug(`[CANDY RED] <_updateMindConnectAgentConfiguration> End`);
+    await this.saveObjects();
+  }
+
+  /*
+   * Replace ALL conect+ Studio API configurations embedded in the flow file.
+   * CANRY RED process should exit after update (not restart in this function though)
+   */
+  async _updateConectPlusConfiguration(objectId, instanceId, resourceId) {
+    RED.log.debug(
+      `[CANDY RED] <_updateConectPlusConfiguration> (/${objectId}/${instanceId}/${resourceId}) Start`
+    );
+    try {
+      await this.writeResource(
+        `/${objectId}/${instanceId}/102`,
+        new Date().toISOString()
+      );
+      // TODO
+      await this.writeResource(`/${objectId}/${instanceId}/101`, 0);
+      await this.writeResource(
+        `/${objectId}/${instanceId}/103`,
+        new Date().toISOString()
+      );
+      RED.log.warn(
+        '[CANDY RED] <_updateConectPlusConfiguration> FLOW IS UPDATED! RELOAD THE PAGE AFTER RECONNECTING SERVER!!'
+      );
+    } catch (err) {
+      RED.log.error(
+        `[CANDY RED] <_updateConectPlusConfiguration> err=>${
+          err ? err.message : '(uknown)'
+        }`
+      );
+      await this.writeResource(`/${objectId}/${instanceId}/101`, 1);
+    }
+    RED.log.debug(`[CANDY RED] <_updateConectPlusConfiguration> End`);
     await this.saveObjects();
   }
 }

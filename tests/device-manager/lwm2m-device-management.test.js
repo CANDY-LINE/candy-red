@@ -306,6 +306,9 @@ describe('LwM2MDeviceManagement', () => {
 
       lwm2mdm.objectFilePath = `${__dirname}/objects-for-test-flow-mindconnect.json`;
       await lwm2mdm._updateMindConnectAgentConfiguration(
+        43001,
+        0,
+        100,
         `${__dirname}/test-flow-mindconnect.json`
       );
       assert.equal(stubEvent.once.callCount, call);
