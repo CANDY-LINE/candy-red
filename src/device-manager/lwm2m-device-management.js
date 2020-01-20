@@ -696,7 +696,7 @@ export class LwM2MDeviceManagement extends LwM2MDeviceManagementBase {
    * CANRY RED process should exit after update (not restart in this function though)
    */
   async _updateMindConnectAgentConfiguration(flowFilePath) {
-    RED.log.debug(`[CANDY RED] <updateMindConnectAgentConfiguration> Start`);
+    RED.log.debug(`[CANDY RED] <_updateMindConnectAgentConfiguration> Start`);
     if (typeof flowFilePath !== 'string') {
       // Ignore invalid values
       flowFilePath = null;
@@ -765,17 +765,17 @@ export class LwM2MDeviceManagement extends LwM2MDeviceManagementBase {
       await this.writeResource('/43001/0/101', 0);
       await this.writeResource('/43001/0/103', new Date().toISOString());
       RED.log.warn(
-        '[CANDY RED] <updateMindConnectAgentConfiguration> FLOW IS UPDATED! RELOAD THE PAGE AFTER RECONNECTING SERVER!!'
+        '[CANDY RED] <_updateMindConnectAgentConfiguration> FLOW IS UPDATED! RELOAD THE PAGE AFTER RECONNECTING SERVER!!'
       );
     } catch (err) {
       RED.log.error(
-        `[CANDY RED] <updateMindConnectAgentConfiguration> err=>${
+        `[CANDY RED] <_updateMindConnectAgentConfiguration> err=>${
           err ? err.message : '(uknown)'
         }`
       );
       await this.writeResource('/43001/0/101', 1);
     }
-    RED.log.debug(`[CANDY RED] <updateMindConnectAgentConfiguration> End`);
+    RED.log.debug(`[CANDY RED] <_updateMindConnectAgentConfiguration> End`);
     await this.saveObjects();
   }
 }
