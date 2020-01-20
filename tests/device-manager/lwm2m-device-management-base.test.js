@@ -221,4 +221,28 @@ describe('LwM2MDeviceManagementBase', () => {
       );
     });
   });
+
+  describe('#enableDisableFlow', () => {
+    it('should enable a flow', async () => {
+      state.candyBoardServiceSupported = true;
+      state.flowFilePath = `${__dirname}/test-flow-disabled.json`;
+
+      const enabled = await lwm2mdm.enableDisableFlow(true, 'c+ 2JCIE-BU');
+      assert.isTrue(enabled);
+      const enabledFlow = JSON.parse(
+        fs.readFileSync(state.flowFilePath).toString()
+      );
+      assert.equal(
+        enabledFlow.filter(n => n.type === 'tab' && !n.disabled).length,
+        1
+      );
+      assert.equal(
+        enabledFlow
+          .filter(n => n.type === 'tab')
+          .filter(n => n.label === 'c+ 2JCIE-BU')
+          .filter(n => n.disabled).length,
+        0
+      );
+    });
+  });
 });

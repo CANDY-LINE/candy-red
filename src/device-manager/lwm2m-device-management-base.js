@@ -615,4 +615,72 @@ export class LwM2MDeviceManagementBase {
       return resolve(status);
     });
   }
+
+  async enableDisableFlow(enabled, flowTabNames = []) {
+    RED.log.debug(
+      `[CANDY RED] <enableDisableFlow> (enabled:${enabled}, flowTabNames:${flowTabNames}) Start`
+    );
+    if (!flowTabNames || flowTabNames.length === 0) {
+      RED.log.debug(
+        `[CANDY RED] <enableDisableFlow> End Nothing to ${
+          enabled ? 'enable' : 'disable'
+        }`
+      );
+      return;
+    }
+    let flowFilePath = this.deviceState.flowFilePath;
+    if (Array.isArray(flowFilePath)) {
+      flowFilePath = flowFilePath[0];
+    }
+    const flows = await new Promise((resolve, reject) => {
+      fs.readFile(flowFilePath, (err, data) => {
+        if (err) {
+          RED.log.info(
+            `[CANDY RED] <enableDisableFlow> flowFilePath: ${flowFilePath}, ERROR End. err => ${err.message ||
+              err}`
+          );
+          return reject(err);
+        }
+        try {
+          let flows = JSON.parse(data.toString());
+          if (!Array.isArray(flows)) {
+            flows = [flows];
+          }
+          const flowsFound = flows.filter(
+            f => f.type === 'tab' && flowTabNames.includes(f.label)
+          );
+          if (flowsFound.length === 0) {
+            RED.log.info(
+              `[CANDY RED] <enableDisableFlow> The given flow names (${flowTabNames}) is aleady installed`
+            );
+            return resolve();
+          }
+          flowsFound.forEach(flow => {
+            flow.disabled = !enabled;
+          });
+          RED.log.info(
+            `[CANDY RED] <enableDisableFlow> End; The flows (${flowTabNames}) have been enabled`
+          );
+          return resolve(flows);
+        } catch (err) {
+          RED.log.info(
+            `[CANDY RED] <enableDisableFlow> ERROR End while enabling the flows ${flowTabNames}. err => ${err.message ||
+              err}`
+          );
+          return reject(err);
+        }
+      });
+    });
+    if (flows) {
+      await this.deviceState.updateFlow(flows);
+      RED.log.warn(
+        '[CANDY RED] <enableDisableFlow> FLOW IS UPDATED! RELOAD THE PAGE AFTER RECONNECTING SERVER!!'
+      );
+      return true;
+    }
+    RED.log.warn(
+      '[CANDY RED] <enableDisableFlow> Valid flow is missing. Nothing done.'
+    );
+    return false;
+  }
 }
