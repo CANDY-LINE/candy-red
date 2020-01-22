@@ -530,9 +530,9 @@ export class LwM2MDeviceManagement extends LwM2MDeviceManagementBase {
     RED.log.debug(`[CANDY RED] <_disableApplicationFlow> End`);
   }
 
-  async _downloadFlowOrParse(objectId, instanceId, resourceId, args) {
+  async downloadFlowOrParse(objectId, instanceId, resourceId, args) {
     RED.log.debug(
-      `[CANDY RED] <_downloadFlowOrParse> (/${objectId}/${instanceId}/${resourceId}) Start; args => ${JSON.stringify(
+      `[CANDY RED] <downloadFlowOrParse> (/${objectId}/${instanceId}/${resourceId}) Start; args => ${JSON.stringify(
         args
       )}`
     );
@@ -630,7 +630,7 @@ export class LwM2MDeviceManagement extends LwM2MDeviceManagementBase {
         return reject({ message: `Unsupported protocol scheme: ${url}` });
       }
     });
-    RED.log.debug(`[CANDY RED] <_downloadFlowOrParse> End`);
+    RED.log.debug(`[CANDY RED] <downloadFlowOrParse> End`);
   }
 
   async _downloadAndInstallApplicationFlow(
@@ -645,7 +645,12 @@ export class LwM2MDeviceManagement extends LwM2MDeviceManagementBase {
       )}`
     );
     try {
-      const result = await this._downloadFlowOrParse(args);
+      const result = await this.downloadFlowOrParse(
+        objectId,
+        instanceId,
+        resourceId,
+        args
+      );
       await this.installFlow(result.flowTabName, result.flow);
       await this.writeResource(`/${objectId}/${instanceId}/23`, 0);
     } catch (err) {
