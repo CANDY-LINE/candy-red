@@ -661,6 +661,11 @@ export class LwM2MDeviceManagement extends LwM2MDeviceManagementBase {
       );
       await this.writeResource(`/${objectId}/${instanceId}/23`, 1);
     }
+    // Ensure flow content is empty
+    await this.writeResource(`/${objectId}/${instanceId}/5`, {
+      type: 'OPAQUE',
+      value: Buffer.from([])
+    });
     RED.log.debug(`[CANDY RED] <_downloadAndInstallApplicationFlow> End`);
     return this.saveObjects();
   }
@@ -697,6 +702,11 @@ export class LwM2MDeviceManagement extends LwM2MDeviceManagementBase {
       );
       await this.writeResource(`/${objectId}/${instanceId}/25`, 2);
     }
+    // Ensure flow content is empty
+    await this.writeResource(`/${objectId}/${instanceId}/5`, {
+      type: 'OPAQUE',
+      value: Buffer.from([])
+    });
     RED.log.debug(`[CANDY RED] <_uninstallApplicationFlow> End`);
     return this.saveObjects();
   }
