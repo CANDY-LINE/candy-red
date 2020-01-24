@@ -974,6 +974,7 @@
         "clientPort": "0",
         "lifetimeSec": "300",
         "reconnectSec": "300",
+        "bootstrapIntervalSec": "3600",
         "requestBootstrap": false,
         "saveProvisionedConfig": false,
         "useIPv4": false,
