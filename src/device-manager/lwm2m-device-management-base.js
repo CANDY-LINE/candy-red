@@ -628,6 +628,13 @@ export class LwM2MDeviceManagementBase {
       );
       return;
     }
+    if (!Array.isArray(flowTabNames)) {
+      flowTabNames = [flowTabNames];
+    }
+    let all = false;
+    if (flowTabNames.includes('*')) {
+      all = true;
+    }
     let flowFilePath = this.deviceState.flowFilePath;
     if (Array.isArray(flowFilePath)) {
       flowFilePath = flowFilePath[0];
@@ -647,11 +654,14 @@ export class LwM2MDeviceManagementBase {
             flows = [flows];
           }
           const flowsFound = flows.filter(
-            f => f.type === 'tab' && flowTabNames.includes(f.label)
+            f =>
+              f.label !== 'CANDY LINE DM' &&
+              f.type === 'tab' &&
+              (all || flowTabNames.includes(f.label))
           );
           if (flowsFound.length === 0) {
             RED.log.info(
-              `[CANDY RED] <enableDisableFlow> The given flow names (${flowTabNames}) is aleady installed`
+              `[CANDY RED] <enableDisableFlow> The given flow names (${flowTabNames}) are missing`
             );
             return resolve();
           }
@@ -659,7 +669,9 @@ export class LwM2MDeviceManagementBase {
             flow.disabled = !enabled;
           });
           RED.log.info(
-            `[CANDY RED] <enableDisableFlow> End; The flows (${flowTabNames}) have been enabled`
+            `[CANDY RED] <enableDisableFlow> End; The flows (${flowTabNames}) have been ${
+              enabled ? 'enabled' : 'disabled'
+            }`
           );
           return resolve(flows);
         } catch (err) {

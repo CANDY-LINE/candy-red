@@ -479,19 +479,14 @@ export class LwM2MDeviceManagement extends LwM2MDeviceManagementBase {
   }
 
   async _enableApplicationFlow(objectId, instanceId, resourceId, args) {
+    const flowTabNames = (this._argsToString(args) || '').split(',');
     RED.log.debug(
       `[CANDY RED] <_enableApplicationFlow> (/${objectId}/${instanceId}/${resourceId}) Start; args => ${JSON.stringify(
         args
-      )}`
-    );
-    const pkg = this._argsToObject(args) || {};
-    RED.log.warn(
-      `[CANDY RED] TODO (_enableApplicationFlow) pkg => ${JSON.stringify(
-        pkg
-      )}, DO NOTHING!`
+      )} ---> flowTabNames:${JSON.stringify(flowTabNames)}`
     );
     try {
-      // TODO code goes here.
+      this.enableDisableFlow(true, flowTabNames);
       await this.writeResource(`/${objectId}/${instanceId}/27`, 0);
     } catch (err) {
       RED.log.error(
@@ -505,19 +500,14 @@ export class LwM2MDeviceManagement extends LwM2MDeviceManagementBase {
   }
 
   async _disableApplicationFlow(objectId, instanceId, resourceId, args) {
+    const flowTabNames = (this._argsToString(args) || '').split(',');
     RED.log.debug(
       `[CANDY RED] <_disableApplicationFlow> (/${objectId}/${instanceId}/${resourceId}) Start; args => ${JSON.stringify(
         args
-      )}`
-    );
-    const pkg = this._argsToObject(args) || {};
-    RED.log.warn(
-      `[CANDY RED] TODO (_disableApplicationFlow) pkg => ${JSON.stringify(
-        pkg
-      )}, DO NOTHING!`
+      )} ---> flowTabNames:${JSON.stringify(flowTabNames)}`
     );
     try {
-      // TODO code goes here.
+      this.enableDisableFlow(false, flowTabNames);
       await this.writeResource(`/${objectId}/${instanceId}/29`, 0);
     } catch (err) {
       RED.log.error(
