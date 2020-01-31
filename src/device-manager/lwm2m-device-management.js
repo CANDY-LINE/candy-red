@@ -864,7 +864,7 @@ export class LwM2MDeviceManagement extends LwM2MDeviceManagementBase {
         `/${objectId}/${instanceId}/102`,
         new Date().toISOString()
       );
-      // TODO
+      // FUTURE USE
       await this.writeResource(`/${objectId}/${instanceId}/101`, 0);
       await this.writeResource(
         `/${objectId}/${instanceId}/103`,
