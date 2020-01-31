@@ -71,13 +71,13 @@
       type: "INTEGER"
       acl: "R"
       sensitive: false
-      value: 3          # 0 for Success
-    "102": # Agent Configuration Last Triggered At (ISO 8601 format)
+      value: 0  # 0 for Success
+    "102": # Agent Configuration Update Last Triggered At (ISO 8601 format)
       type: "STRING"
       acl: "R"
       sensitive: false
       value: ""
-    "103": # Agent Configuration Last Updated At (ISO 8601 format)
+    "103": # Agent Configuration Update Last Performed At (ISO 8601 format)
       type: "STRING"
       acl: "R"
       sensitive: false

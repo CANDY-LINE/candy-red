@@ -1,0 +1,54 @@
+---
+    # This entry will be assigned to `lwm2m.objects` in RED.settings object.
+    "43002": # conect+ Studio
+      "0":
+        "0": # API Base URL
+          type: "STRING"
+          acl: "RW"
+          sensitive: true
+          value: "https://api.studio.conect.plus/sensingData"
+        "1": # Workspace ID
+          type: "STRING"
+          acl: "RW"
+          sensitive: true
+          value: ""
+        "2": # WEB API Key
+          type: "STRING"
+          acl: "RW"
+          sensitive: true
+          value: ""
+        "3": # Node Name
+          type: "STRING"
+          acl: "RW"
+          sensitive: false
+          value: ""
+        "4": # Data Upload Interval in Seconds
+          type: "INTEGER"
+          acl: "RW"
+          sensitive: true
+          value: 300
+        "5": # Location Upload Enabled
+          type: "BOOLEAN"
+          acl: "RW"
+          sensitive: false
+          value: false
+        "100": # Update API Configuration Node
+          type: "FUNCTION"
+          acl: "E"
+          sensitive: false
+          value: "[Function]updateConectPlusConfiguration"
+        "101": # API Configuration Node Update Status
+          type: "INTEGER"
+          acl: "R"
+          sensitive: false
+          value: 0  # 0 for Success
+        "102": # API Configuration Node Update Last Triggered At (ISO 8601 format)
+          type: "STRING"
+          acl: "R"
+          sensitive: false
+          value: ""
+        "103": # API Configuration Node Update Last Performed At (ISO 8601 format)
+          type: "STRING"
+          acl: "R"
+          sensitive: false
+          value: ""
