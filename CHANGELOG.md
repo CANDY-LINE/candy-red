@@ -1,4 +1,10 @@
 ## Revision History
+* 9.0.2
+  - Bump lwm2m node
+  - Update the experimental feature (not affecting normal use)
+  - Add `node-red-node-ui-table`
+  - Update `node-red-node-twitter`
+
 * 9.0.1
   - Modify the method to install authenticate-pam package
   - Restart process when failing to retrieve modem info
