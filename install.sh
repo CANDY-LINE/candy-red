@@ -72,7 +72,7 @@ function setup {
     rm -f "${CP_DESTS}"
     touch "${CP_DESTS}"
   fi
-  if [ LOCAL_INSTALL != "0" ] && [ -d "${PROJECT_ROOT}/src" ]; then
+  if [ ${LOCAL_INSTALL} != "0" ] && [ -d "${PROJECT_ROOT}/src" ]; then
     LOCAL_INSTALL="1"
   fi
   if [ "$1" == "pre" ]; then
