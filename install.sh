@@ -72,10 +72,8 @@ function setup {
     rm -f "${CP_DESTS}"
     touch "${CP_DESTS}"
   fi
-  if [ -d "${PROJECT_ROOT}/src" ]; then
-    LOCAL_INSTALL=${LOCAL_INSTALL:-"1"}
-  else
-    LOCAL_INSTALL="0"
+  if [ LOCAL_INSTALL != "0" ] && [ -d "${PROJECT_ROOT}/src" ]; then
+    LOCAL_INSTALL="1"
   fi
   if [ "$1" == "pre" ]; then
     RET=`which apt-get`
@@ -128,7 +126,7 @@ function cpf {
 }
 
 function assert_root {
-  if [ ${LOCAL_INSTALL} != "1" ]; then
+  if [ ${LOCAL_INSTALL} = "0" ]; then
     if [[ $EUID -ne 0 ]]; then
        err "This script must be run as root"
        exit 1
@@ -144,7 +142,7 @@ function assert_node_npm {
 }
 
 function test_system_service {
-  if [ ${LOCAL_INSTALL} != "1" ]; then
+  if [ ${LOCAL_INSTALL} = "0" ]; then
     _try_systemd
   fi
 }
@@ -366,7 +364,7 @@ if [ -n "${SYSTEM_SERVICE_TYPE}" ]; then
   DISABLE_SERVICE_INSTALL=${DISABLE_SERVICE_INSTALL} ${PROJECT_ROOT}/uninstall.sh
   npm_local_install
   system_service_install
-elif [ ${LOCAL_INSTALL} = "1" ]; then
+elif [ ${LOCAL_INSTALL} != "0" ]; then
   info "Skip to setup a SystemD service"
 else
   info "Won't install a SystemD service as it isn't supported on the system"

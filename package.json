@@ -11,7 +11,7 @@
     "preinstall": "./install.sh pre",
     "postinstall": "./install.sh",
     "preuninstall": "./uninstall.sh",
-    "prepare": "if [ -d ./src ] ; then gulp test && gulp clean && gulp clean && gulp build; fi"
+    "prepare": "if [ \"${LOCAL_INSTALL}\" = \"0\" ]; then gulp build; elif [ -d ./src ] ; then gulp test && gulp clean && gulp build; fi"
   },
   "repository": {
     "type": "git",
