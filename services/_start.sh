@@ -14,7 +14,7 @@ if [ "${RET}" == "0" ]; then
   hciconfig ${HCIDEVICE} reset
 fi
 
-if [[ ${NODE_OPTS} != *--max-old-space-size=* ]]; then
+if [[ "${NODE_OPTS}" != *--max-old-space-size=* ]]; then
   if [ -n "`which free`" ]; then
     MEM=`free -m | grep "Mem:" | awk '{print $2}'`
     MAX_OLD_SPACE_SIZE=${MAX_OLD_SPACE_SIZE:-`expr ${MEM} / 3`}
