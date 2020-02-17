@@ -74,6 +74,8 @@ function setup {
   fi
   if [ "${LOCAL_INSTALL}" != "0" ] && [ -d "${PROJECT_ROOT}/src" ]; then
     LOCAL_INSTALL="1"
+  else
+    LOCAL_INSTALL="0"
   fi
   if [ "$1" == "pre" ]; then
     RET=`which apt-get`
