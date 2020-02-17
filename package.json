@@ -73,6 +73,7 @@
   },
   "dependencies": {
     "authenticate-pam": "https://github.com/Rush/node-authenticate-pam/tarball/d94724e",
+    "await-lock": "^2.0.1",
     "basic-auth": "^2.0.0",
     "bcryptjs": "^2.4.3",
     "chokidar": "^2.0.3",
