@@ -25,8 +25,11 @@ try {
   const candyRedLwm2m = require('candy-red-lwm2m');
   DeviceState = candyRedLwm2m.DeviceState;
   LwM2MDeviceManagement = candyRedLwm2m.LwM2MDeviceManagement;
-} catch (_) {
-  // ignore
+} catch (err) {
+  const level = process.env.CANDY_RED_LOG_LEVEL || '';
+  if ('all trace debug'.indexOf(level) >= 0) {
+    console.error(`[device-manager] error: ${err.message}, ${err.stack}`);
+  }
 }
 
 export default class DeviceManager {
