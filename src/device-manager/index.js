@@ -17,6 +17,8 @@
 
 import 'source-map-support/register';
 
+import { DefaultDeviceState } from './default-device-state';
+
 let DeviceState;
 let LwM2MDeviceManagement;
 try {
@@ -24,16 +26,18 @@ try {
   DeviceState = candyRedLwm2m.DeviceState;
   LwM2MDeviceManagement = candyRedLwm2m.LwM2MDeviceManagement;
 } catch (_) {
-  DeviceState = require('./default-device-state').DeviceState;
+  // ignore
 }
 
 export default class DeviceManager {
   constructor() {
     this.store = {};
-    this.deviceState = new DeviceState(
-      this._onFlowFileChangedFunc(),
-      this._onFlowFileRemovedFunc()
-    );
+    const defaultDeviceState = new DefaultDeviceState();
+    if (DeviceState) {
+      this.deviceState = new DeviceState(defaultDeviceState);
+    } else {
+      this.deviceState = defaultDeviceState;
+    }
     if (LwM2MDeviceManagement) {
       this.lwm2m = new LwM2MDeviceManagement(this.deviceState);
     }
@@ -62,27 +66,5 @@ export default class DeviceManager {
     return await this.deviceState.testIfCANDYBoardServiceInstalled(
       'candy-pi-lite'
     );
-  }
-
-  _onFlowFileChangedFunc() {
-    return (() => {
-      return () => {
-        return new Promise(resolve => {
-          // TODO
-          return resolve();
-        });
-      };
-    })();
-  }
-
-  _onFlowFileRemovedFunc() {
-    return (() => {
-      return () => {
-        return new Promise(resolve => {
-          // TODO
-          return resolve();
-        });
-      };
-    })();
   }
 }

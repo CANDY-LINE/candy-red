@@ -21,7 +21,7 @@ import cproc from 'child_process';
 import RED from 'node-red';
 import { DefaultDeviceIdResolver } from './device-id-resolver';
 
-export class DeviceState {
+export class DefaultDeviceState {
   static flowsToString(flows, content = null) {
     if (typeof flows === 'string') {
       return flows;
