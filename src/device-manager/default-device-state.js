@@ -113,7 +113,7 @@ export class DefaultDeviceState {
       });
     });
     this.candyBoardServiceSupported = candyBoardServiceSupported;
-    return Promise.resolve([this.deviceId]);
+    return this.deviceId;
   }
 
   async initWithFlowFilePath() {

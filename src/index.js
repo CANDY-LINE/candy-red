@@ -277,11 +277,7 @@ export class CandyRed {
   _inspectBoardStatus(inputPackageJsonPath) {
     return Promise.all([
       this.deviceManager.testIfCANDYBoardServiceInstalled()
-    ]).then(results => {
-      let deviceId;
-      if (results[0][0]) {
-        deviceId = results[0][0];
-      }
+    ]).then(deviceId => {
       this.editorTheme = this._createCandyRedEditorTheme(deviceId);
       deviceId = deviceId || 'N/A';
       return new Promise((resolve, reject) => {
@@ -301,7 +297,7 @@ export class CandyRed {
             }
             let packageJson = JSON.parse(data);
             return resolve({
-              deviceId: deviceId,
+              deviceId,
               candyRedv: packageJson.version || 'N/A'
             });
           });
