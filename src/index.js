@@ -275,35 +275,35 @@ export class CandyRed {
   }
 
   _inspectBoardStatus(inputPackageJsonPath) {
-    return Promise.all([
-      this.deviceManager.testIfCANDYBoardServiceInstalled()
-    ]).then(deviceId => {
-      this.editorTheme = this._createCandyRedEditorTheme(deviceId);
-      deviceId = deviceId || 'N/A';
-      return new Promise((resolve, reject) => {
-        fs.stat(inputPackageJsonPath, err => {
-          if (err) {
-            return reject(err);
-          }
-          return resolve(inputPackageJsonPath);
-        });
-      }).then(packageJsonPath => {
-        return new Promise(resolve => {
-          fs.readFile(packageJsonPath, (err, data) => {
+    return this.deviceManager
+      .testIfCANDYBoardServiceInstalled()
+      .then(deviceId => {
+        this.editorTheme = this._createCandyRedEditorTheme(deviceId);
+        deviceId = deviceId || 'N/A';
+        return new Promise((resolve, reject) => {
+          fs.stat(inputPackageJsonPath, err => {
             if (err) {
-              return resolve({
-                candyRedv: 'N/A'
-              });
+              return reject(err);
             }
-            let packageJson = JSON.parse(data);
-            return resolve({
-              deviceId,
-              candyRedv: packageJson.version || 'N/A'
+            return resolve(inputPackageJsonPath);
+          });
+        }).then(packageJsonPath => {
+          return new Promise(resolve => {
+            fs.readFile(packageJsonPath, (err, data) => {
+              if (err) {
+                return resolve({
+                  candyRedv: 'N/A'
+                });
+              }
+              let packageJson = JSON.parse(data);
+              return resolve({
+                deviceId,
+                candyRedv: packageJson.version || 'N/A'
+              });
             });
           });
         });
       });
-    });
   }
 
   _setupExitHandler() {
