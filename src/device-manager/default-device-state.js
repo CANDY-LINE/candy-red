@@ -64,12 +64,16 @@ export class DefaultDeviceState {
         candy.stdout.on('data', data => {
           output += data.toString();
         });
+        candy.stderr.on('data', data => {
+          output += data.toString();
+        });
         candy.on('close', code => {
           output = output.replace(
             /\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[mGK]/g, // eslint-disable-line no-control-regex
             ''
           );
           if (code) {
+            RED.log.debug(`[CANDY RED] code: ${code}, output: ${output}`);
             return reject({ code: code, output: output });
           }
           let ret = '';
