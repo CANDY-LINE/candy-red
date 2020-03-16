@@ -282,12 +282,12 @@ $ npm test
 ```
 # Development Machine
 $ npm pack
-$ scp ./candy-red-9.0.2.tgz pi@raspberrypi.local:~
+$ scp ./candy-red-9.1.0.tgz pi@raspberrypi.local:~
 
 # RPi (on ~)
 $ sudo npm uninstall -g --unsafe-perm candy-red
 $ sudo rm -fr /opt/candy-red # to prune user specific files if necessary
-$ time sudo npm install -g --unsafe-perm ./candy-red-9.0.2.tgz
+$ time sudo npm install -g --unsafe-perm ./candy-red-9.1.0.tgz
 $ sudo journalctl -f -u candy-red -o cat # to show logs
 ```
 
@@ -296,21 +296,6 @@ $ sudo journalctl -f -u candy-red -o cat # to show logs
 ```
 $ scp -rp ./dist/* pi@raspberrypi.local:/usr/lib/node_modules/candy-red/dist
 ```
-
-### Local Installation Test
-
-```
-(host)  $ vagrant up
-(host)  $ vagrant ssh
-(varant)$ cd /vagrant
-(varant)$ npm pack
-(varant)$ mv *.tgz /tmp
-(varant)$ cp ./install.sh /tmp
-(varant)$ cd /tmp
-(varant)$ sudo TARBALL=/tmp/candy-red-<version>.tgz ./install.sh
-```
-
-Then access to `http://localhost:8100/red/` with a browser on the host OS.
 
 ## Docker
 
@@ -351,20 +336,8 @@ $ npm run build
 $ docker run -tid -v ./dist:/candy-red-dist candy-red
 ```
 
-### Clean and update package-lock.json
-
-```
-$ rm -fr node_modules; \
-  rm -f npm-shrinkwrap.json; \
-  rm -f package-lock.json; \
-  nodenv local 8.12.0; \
-  DEVEL=true npm install
-```
-
 ### How to release
 
-1. Commit the shrinkwrap file without devDependencies
-1. Prepare the package publishment: `make`
 1. Publish NPM package: `npm publish`
 1. Tag Release and Push
 

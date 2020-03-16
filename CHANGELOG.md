@@ -1,4 +1,9 @@
 ## Revision History
+* 9.1.0
+  - Bump Node-RED version to v1.0.4
+  - Bump lwm2m node version to v2.10.0
+  - Strip the experimental feature
+
 * 9.0.2
   - Bump lwm2m node
   - Update the experimental feature (not affecting normal use)
