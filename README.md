@@ -351,16 +351,6 @@ $ npm run build
 $ docker run -tid -v ./dist:/candy-red-dist candy-red
 ```
 
-### Clean and update package-lock.json
-
-```
-$ rm -fr node_modules; \
-  rm -f npm-shrinkwrap.json; \
-  rm -f package-lock.json; \
-  nodenv local 8.12.0; \
-  DEVEL=true npm install
-```
-
 ### How to release
 
 1. Commit the shrinkwrap file without devDependencies
