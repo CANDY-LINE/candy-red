@@ -297,21 +297,6 @@ $ sudo journalctl -f -u candy-red -o cat # to show logs
 $ scp -rp ./dist/* pi@raspberrypi.local:/usr/lib/node_modules/candy-red/dist
 ```
 
-### Local Installation Test
-
-```
-(host)  $ vagrant up
-(host)  $ vagrant ssh
-(varant)$ cd /vagrant
-(varant)$ npm pack
-(varant)$ mv *.tgz /tmp
-(varant)$ cp ./install.sh /tmp
-(varant)$ cd /tmp
-(varant)$ sudo TARBALL=/tmp/candy-red-<version>.tgz ./install.sh
-```
-
-Then access to `http://localhost:8100/red/` with a browser on the host OS.
-
 ## Docker
 
 ### Image Building
