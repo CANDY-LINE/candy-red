@@ -1,6 +1,6 @@
 {
   "name": "candy-red",
-  "version": "9.0.2",
+  "version": "9.1.0",
   "description": "CANDY RED :: Visual Programming Editor and Runtime for CANDY Pi Lite powered by Node-RED",
   "main": "./dist/index.js",
   "scripts": {
@@ -11,7 +11,7 @@
     "preinstall": "./install.sh pre",
     "postinstall": "./install.sh",
     "preuninstall": "./uninstall.sh",
-    "prepare": "if [ -d ./src ] ; then gulp test && gulp clean && gulp clean && gulp build; fi"
+    "prepare": "if [ \"${LOCAL_INSTALL}\" = \"0\" ]; then gulp build; elif [ -d ./src ] ; then gulp test && gulp clean && gulp build; fi"
   },
   "repository": {
     "type": "git",
@@ -83,10 +83,11 @@
     "mqtt-packet": "^6.1.2",
     "mustache": "^2.3.0",
     "nan": "^2.4.0",
-    "node-red": "^1.0.3",
+    "node-red": "^1.0.4",
     "node-red-contrib-device-stats": ">=1.1.2",
-    "node-red-contrib-lwm2m": "^2.7.0",
+    "node-red-contrib-lwm2m": "^2.10.0",
     "node-red-contrib-moment": "^3.0.3",
+    "node-red-contrib-schedex": "^1.10.1",
     "node-red-dashboard": "^2.19.3",
     "node-red-node-base64": "^0.2.0",
     "node-red-node-data-generator": "^0.1.1",
@@ -99,7 +100,6 @@
     "request": "^2.83.0",
     "serialport-enocean-parser": "^0.2.0",
     "source-map-support": "^0.5.3",
-    "systeminformation": "^4.16.0",
     "ws": "^3.3.3"
   }
 }

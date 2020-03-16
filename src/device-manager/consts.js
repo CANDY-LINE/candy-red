@@ -16,34 +16,7 @@
  */
 
 export default Object.freeze({
-  REBOOT_DELAY_MS: 1000,
-  MAX_MOBILE_NETWORK_CONN_RETRY: 2147483647,
   PROC_CPUINFO_PATH: '/proc/cpuinfo',
   PROC_DT_MODEL_PATH: '/proc/device-tree/model',
-  MODEM_INFO_FILE_PATH: '/opt/candy-line/candy-pi-lite/__modem_info',
-  DM_FLOW: `${__dirname}/device-management-flow.json`,
-  EXCLUDED_URI_LIST: [
-    '/3/0/2',
-    '/3/0/3',
-    '/3/0/6',
-    '/3/0/9',
-    '/3/0/10',
-    '/3/0/13',
-    '/3/0/14',
-    '/3/0/15',
-    '/3/0/18',
-    '/3/0/20',
-    '/3/0/21'
-  ],
-  MODULE_MODEL_MAPPINGS: {
-    EC21: 'CANDY Pi Lite LTE',
-    UC20: 'CANDY Pi Lite 3G',
-    EC25: 'CANDY Pi Lite+',
-    BG96: 'CANDY Pi Lite LTE-M'
-  },
-  CLIENT_CREDENTIAL_PROFILE: {
-    '1': 'RSA_3072',
-    '2': 'SHARED_SECRET'
-  },
-  UPDATE_INTERVAL_MS: process.env.UPDATE_INTERVAL_MS || 60 * 1000
+  MODEM_INFO_FILE_PATH: '/opt/candy-line/candy-pi-lite/__modem_info'
 });

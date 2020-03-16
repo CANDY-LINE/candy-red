@@ -16,14 +16,58 @@
  */
 
 import 'source-map-support/register';
-import { DefaultDeviceIdResolver } from './device-id-resolver';
-import { DeviceState } from './device-state';
-import { LwM2MDeviceManagement } from './lwm2m-device-management';
-import { DeviceManagerStore } from './device-manager-store';
 
-export {
-  DefaultDeviceIdResolver,
-  DeviceState,
-  LwM2MDeviceManagement,
-  DeviceManagerStore
-};
+import { DefaultDeviceState } from './default-device-state';
+
+let DeviceState;
+let LwM2MDeviceManagement;
+try {
+  const candyRedLwm2m = require('candy-red-lwm2m');
+  DeviceState = candyRedLwm2m.DeviceState;
+  LwM2MDeviceManagement = candyRedLwm2m.LwM2MDeviceManagement;
+} catch (err) {
+  const level = process.env.CANDY_RED_LOG_LEVEL || '';
+  if ('all trace debug'.indexOf(level) >= 0) {
+    console.error(`[device-manager] error: ${err.message}, ${err.stack}`);
+  }
+}
+
+export default class DeviceManager {
+  constructor() {
+    this.store = {};
+    const defaultDeviceState = new DefaultDeviceState();
+    if (DeviceState) {
+      this.deviceState = new DeviceState(defaultDeviceState);
+    } else {
+      this.deviceState = defaultDeviceState;
+    }
+    if (LwM2MDeviceManagement) {
+      this.lwm2m = new LwM2MDeviceManagement(this.deviceState);
+    }
+  }
+
+  initSettings(settins) {
+    if (this.lwm2m) {
+      settins.lwm2m = this.lwm2m;
+    }
+  }
+
+  async initWithFlowFilePath(filePath) {
+    await this.deviceState.initWithFlowFilePath(filePath);
+  }
+
+  async initDeviceManagement(settings) {
+    let headlessEnabled = false;
+    if (this.lwm2m) {
+      await this.lwm2m.init(settings);
+      headlessEnabled = this.lwm2m.peekLocalValue(42805, 0, 1);
+    }
+    return headlessEnabled;
+  }
+
+  async testIfCANDYBoardServiceInstalled() {
+    return await this.deviceState.testIfCANDYBoardServiceInstalled(
+      'candy-pi-lite'
+    );
+  }
+}

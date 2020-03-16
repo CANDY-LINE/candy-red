@@ -23,7 +23,7 @@ import RED from 'node-red';
 import os from 'os';
 import fs from 'fs';
 import mkdirp from 'mkdirp';
-import { DeviceManagerStore } from './device-manager';
+import DeviceManager from './device-manager';
 import { SingleUserAuthenticator, PAMAuthenticator } from './auth';
 
 // Listen port
@@ -55,7 +55,7 @@ export class CandyRed {
     this.server = http.createServer(this.app);
 
     // Device Management
-    this.deviceManagerStore = new DeviceManagerStore();
+    this.deviceManager = new DeviceManager();
 
     // path to package.json
     this.packageJsonPath = packageJsonPath;
@@ -209,17 +209,12 @@ export class CandyRed {
         this.app.use(settings.httpNodeRoot, RED.httpNode);
 
         const flowFilePath = settings.userDir + '/' + this.flowFile;
-        return this.deviceManagerStore.deviceState
+        return this.deviceManager
           .initWithFlowFilePath(flowFilePath)
           .then(() => {
-            return this.deviceManagerStore.lwm2m.init(settings);
+            return this.deviceManager.initDeviceManagement(settings);
           })
-          .then(() => {
-            const headlessEnabled = this.deviceManagerStore.lwm2m.peekLocalValue(
-              42805,
-              0,
-              1
-            );
+          .then(headlessEnabled => {
             RED.log.info(`[CANDY RED] Headless Enabled? => ${headlessEnabled}`);
             if (!headlessEnabled) {
               RED.log.info(`[CANDY RED] Deploying Flow Editor UI...`);
@@ -280,41 +275,35 @@ export class CandyRed {
   }
 
   _inspectBoardStatus(inputPackageJsonPath) {
-    return Promise.all([
-      this.deviceManagerStore.deviceState.testIfCANDYBoardServiceInstalled(
-        'candy-pi-lite'
-      )
-    ]).then(results => {
-      let deviceId;
-      if (results[0][0]) {
-        deviceId = results[0][0];
-      }
-      this.editorTheme = this._createCandyRedEditorTheme(deviceId);
-      deviceId = deviceId || 'N/A';
-      return new Promise((resolve, reject) => {
-        fs.stat(inputPackageJsonPath, err => {
-          if (err) {
-            return reject(err);
-          }
-          return resolve(inputPackageJsonPath);
-        });
-      }).then(packageJsonPath => {
-        return new Promise(resolve => {
-          fs.readFile(packageJsonPath, (err, data) => {
+    return this.deviceManager
+      .testIfCANDYBoardServiceInstalled()
+      .then(deviceId => {
+        this.editorTheme = this._createCandyRedEditorTheme(deviceId);
+        deviceId = deviceId || 'N/A';
+        return new Promise((resolve, reject) => {
+          fs.stat(inputPackageJsonPath, err => {
             if (err) {
-              return resolve({
-                candyRedv: 'N/A'
-              });
+              return reject(err);
             }
-            let packageJson = JSON.parse(data);
-            return resolve({
-              deviceId: deviceId,
-              candyRedv: packageJson.version || 'N/A'
+            return resolve(inputPackageJsonPath);
+          });
+        }).then(packageJsonPath => {
+          return new Promise(resolve => {
+            fs.readFile(packageJsonPath, (err, data) => {
+              if (err) {
+                return resolve({
+                  candyRedv: 'N/A'
+                });
+              }
+              let packageJson = JSON.parse(data);
+              return resolve({
+                deviceId,
+                candyRedv: packageJson.version || 'N/A'
+              });
             });
           });
         });
       });
-    });
   }
 
   _setupExitHandler() {
@@ -363,7 +352,7 @@ export class CandyRed {
       functionGlobalContext: {},
       exitHandlers: [],
       nodesExcludes: [],
-      deviceManagerStore: this.deviceManagerStore,
+      deviceManager: this.deviceManager,
       editorTheme: this.editorTheme,
       candyRedVersion: versions.candyRedv,
       deviceId: versions.deviceId,
@@ -373,9 +362,9 @@ export class CandyRed {
           metrics: false,
           audit: false
         }
-      },
-      lwm2m: this.deviceManagerStore.lwm2m
+      }
     };
+    this.deviceManager.initSettings(settings);
 
     if (CANDY_RED_ADMIN_USER_ID && CANDY_RED_ADMIN_PASSWORD_ENC) {
       let userAuth = new SingleUserAuthenticator(

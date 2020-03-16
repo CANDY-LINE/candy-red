@@ -13,19 +13,6 @@ CANDY_RED_LOG_LEVEL="info"
 CANDY_RED_SESSION_TIMEOUT=${CANDY_RED_SESSION_TIMEOUT:-86400}
 CANDY_RED_APT_GET_UPDATED=${CANDY_RED_APT_GET_UPDATED:-0}
 CANDY_RED_BIND_IPV4_ADDR=${CANDY_RED_BIND_IPV4_ADDR:-false}
-DEVICE_MANAGEMENT_ENABLED=${DEVICE_MANAGEMENT_ENABLED:-false}
-DEVICE_MANAGEMENT_BS_HOST=${DEVICE_MANAGEMENT_BS_HOST:-"localhost"}
-DEVICE_MANAGEMENT_BS_HOST_IPV6=${DEVICE_MANAGEMENT_BS_HOST_IPV6:-"false"}
-DEVICE_MANAGEMENT_BS_PORT=${DEVICE_MANAGEMENT_BS_PORT:-"5784"}
-DEVICE_MANAGEMENT_BS_DTLS=${DEVICE_MANAGEMENT_BS_DTLS:-"PSK"}
-DEVICE_MANAGEMENT_BS_DTLS_PSK_ID=${DEVICE_MANAGEMENT_BS_DTLS_PSK_ID:-""}
-DEVICE_MANAGEMENT_BS_DTLS_PSK=${DEVICE_MANAGEMENT_BS_DTLS_PSK:-""}
-DEVICE_MANAGEMENT_MANUFACTURER=${DEVICE_MANAGEMENT_MANUFACTURER:-""}
-DEVICE_MANAGEMENT_MODEL=${DEVICE_MANAGEMENT_MODEL:-""}
-DEVICE_MANAGEMENT_CL_PORT=${DEVICE_MANAGEMENT_CL_PORT:-"57830"}
-DEVICE_MANAGEMENT_RECONNECT_SEC=${DEVICE_MANAGEMENT_RECONNECT_SEC:="300"}
-DEVICE_MANAGEMENT_BOOTSTRAP_INTERVAL_SEC=${DEVICE_MANAGEMENT_BOOTSTRAP_INTERVAL_SEC:="28800"}
-DEVICE_MANAGEMENT_EXCLUSIVE_TO_MOBILE_NETWORK=${DEVICE_MANAGEMENT_EXCLUSIVE_TO_MOBILE_NETWORK:-"true"}
 
 function err {
   echo -e "\033[91m[ERROR] $1\033[0m"
@@ -71,6 +58,11 @@ function setup {
   if [ "${CP_DESTS}" != "" ]; then
     rm -f "${CP_DESTS}"
     touch "${CP_DESTS}"
+  fi
+  if [ "${LOCAL_INSTALL}" != "0" ] && [ -d "${PROJECT_ROOT}/src" ]; then
+    LOCAL_INSTALL="1"
+  else
+    LOCAL_INSTALL="0"
   fi
   if [ "$1" == "pre" ]; then
     RET=`which apt-get`
@@ -123,7 +115,7 @@ function cpf {
 }
 
 function assert_root {
-  if [ ! -d "${PROJECT_ROOT}/src" ]; then
+  if [ "${LOCAL_INSTALL}" = "0" ]; then
     if [[ $EUID -ne 0 ]]; then
        err "This script must be run as root"
        exit 1
@@ -139,7 +131,7 @@ function assert_node_npm {
 }
 
 function test_system_service {
-  if [ ! -d "${PROJECT_ROOT}/src" ]; then
+  if [ "${LOCAL_INSTALL}" = "0" ]; then
     _try_systemd
   fi
 }
@@ -251,7 +243,7 @@ function install_preinstalled_nodes {
       while IFS=',' read p v; do
         p=`echo -e ${p} | tr -d ' '`
         v=`echo -e ${v} | tr -d ' '`
-        if [ -z "${p}" ] || [[ ${p} == "#"* ]]; then
+        if [ -z "${p}" ] || [[ "${p}" == "#"* ]]; then
           continue
         fi
         npm install --production ${NPM_OPTS} ${p}@${v}
@@ -308,19 +300,6 @@ function system_service_install {
       CANDY_RED_BIND_IPV4_ADDR \
       CANDY_RED_ADMIN_USER_ID \
       CANDY_RED_ADMIN_PASSWORD_ENC \
-      DEVICE_MANAGEMENT_ENABLED \
-      DEVICE_MANAGEMENT_BS_HOST \
-      DEVICE_MANAGEMENT_BS_HOST_IPV6 \
-      DEVICE_MANAGEMENT_BS_PORT \
-      DEVICE_MANAGEMENT_BS_DTLS \
-      DEVICE_MANAGEMENT_BS_DTLS_PSK_ID \
-      DEVICE_MANAGEMENT_BS_DTLS_PSK \
-      DEVICE_MANAGEMENT_MANUFACTURER \
-      DEVICE_MANAGEMENT_MODEL \
-      DEVICE_MANAGEMENT_CL_PORT \
-      DEVICE_MANAGEMENT_RECONNECT_SEC \
-      DEVICE_MANAGEMENT_BOOTSTRAP_INTERVAL_SEC \
-      DEVICE_MANAGEMENT_EXCLUSIVE_TO_MOBILE_NETWORK \
       CANDY_RED_LOG_LEVEL; do
     sed -i -e "s/%${e}%/${!e//\//\\/}/g" ${SERVICES}/environment
   done
@@ -361,7 +340,7 @@ if [ -n "${SYSTEM_SERVICE_TYPE}" ]; then
   DISABLE_SERVICE_INSTALL=${DISABLE_SERVICE_INSTALL} ${PROJECT_ROOT}/uninstall.sh
   npm_local_install
   system_service_install
-elif [ -d "${PROJECT_ROOT}/src" ]; then
+elif [ "${LOCAL_INSTALL}" != "0" ]; then
   info "Skip to setup a SystemD service"
 else
   info "Won't install a SystemD service as it isn't supported on the system"

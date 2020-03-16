@@ -20,12 +20,11 @@
 
 import * as sinon from 'sinon';
 import { assert } from 'chai';
+import RED from 'node-red';
 import os from 'os';
 import fs from 'fs';
 import stream from 'stream';
-import cproc from 'child_process';
-import RED from 'node-red';
-import { DefaultDeviceIdResolver, DeviceState } from './index';
+import { DefaultDeviceIdResolver } from './device-id-resolver';
 
 const PROC_CPUINFO = [
   'processor	: 0\n',
@@ -63,7 +62,7 @@ describe('DeviceIdResolver', () => {
       .then(id => {
         console.log(`id = [${id}]`);
         assert.isDefined(id);
-        assert.isNotNull(id);
+        assert.isNotNull();
         done();
       })
       .catch(err => {
@@ -95,7 +94,7 @@ describe('DeviceIdResolver', () => {
     resolver
       .resolve()
       .then(id => {
-        assert.equal('RPi:00000000ffff9999', id);
+        assert.equal(id, 'RPi:00000000ffff9999');
         done();
       })
       .catch(err => {
@@ -127,7 +126,7 @@ describe('DeviceIdResolver', () => {
     resolver
       .resolve()
       .then(id => {
-        assert.equal('ATB:00000000ffff9999', id);
+        assert.equal(id, 'ATB:00000000ffff9999');
         done();
       })
       .catch(err => {
@@ -159,7 +158,7 @@ describe('DeviceIdResolver', () => {
     resolver
       .resolve()
       .then(id => {
-        assert.equal('DEV:00000000ffff9999', id);
+        assert.equal(id, 'DEV:00000000ffff9999');
         done();
       })
       .catch(err => {
@@ -183,88 +182,11 @@ describe('DeviceIdResolver', () => {
     resolver
       .resolve()
       .then(id => {
-        assert.equal('MAC:en0:aa-bb-cc-dd-ee-ff', id);
+        assert.equal(id, 'MAC:en0:aa-bb-cc-dd-ee-ff');
         done();
       })
       .catch(err => {
         done(err);
       });
-  });
-});
-
-describe('DeviceState', () => {
-  let sandbox;
-  let state;
-  beforeEach(() => {
-    state = new DeviceState(
-      () => {},
-      () => {}
-    );
-    sandbox = sinon.createSandbox();
-  });
-  afterEach(() => {
-    sandbox.restore();
-  });
-
-  describe('#testIfCANDYBoardServiceInstalled("candy-pi-lite")', () => {
-    it('should return whether or not CANDY Pi Lite board is installed', done => {
-      state
-        .testIfCANDYBoardServiceInstalled('candy-pi-lite')
-        .then(version => {
-          console.log(`installed version? => [${version}]`);
-          done();
-        })
-        .catch(err => {
-          done(err);
-        });
-    });
-
-    it('should return the empty version', done => {
-      let stubCproc = sandbox.stub(cproc);
-      let systemctl = sandbox.stub({
-        on: () => {}
-      });
-      systemctl.on.onFirstCall().yields(0);
-      stubCproc.spawn.onFirstCall().returns(systemctl);
-
-      state.deviceId = 'my:deviceId';
-      state
-        .testIfCANDYBoardServiceInstalled('candy-pi-lite')
-        .then(result => {
-          assert.deepEqual(['my:deviceId'], result);
-          done();
-        })
-        .catch(err => {
-          done(err);
-        });
-    });
-
-    it('should return the empty version as systemctl is-enabled ltepi2 fails', done => {
-      let stubCproc = sandbox.stub(cproc);
-      let systemctl = sandbox.stub({
-        on: () => {}
-      });
-      systemctl.on.onFirstCall().yields(1);
-      stubCproc.spawn.onFirstCall().returns(systemctl);
-
-      state.deviceId = 'my:deviceId';
-      state
-        .testIfCANDYBoardServiceInstalled('candy-pi-lite')
-        .then(result => {
-          assert.deepEqual(['my:deviceId'], result);
-          assert.isTrue(systemctl.on.called);
-          done();
-        })
-        .catch(err => {
-          done(err);
-        });
-    });
-  });
-
-  describe('#initWithFlowFilePath()', () => {
-    it('should successfully init DeviceState object', async () => {
-      await state.initWithFlowFilePath(__dirname + '/test-flow.json');
-      state._unwatchFlowFilePath();
-    });
   });
 });
