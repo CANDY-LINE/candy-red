@@ -353,8 +353,6 @@ $ docker run -tid -v ./dist:/candy-red-dist candy-red
 
 ### How to release
 
-1. Commit the shrinkwrap file without devDependencies
-1. Prepare the package publishment: `make`
 1. Publish NPM package: `npm publish`
 1. Tag Release and Push
 
