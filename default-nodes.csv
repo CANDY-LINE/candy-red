@@ -9,3 +9,4 @@ node-red-contrib-adxl-vibration-fft,^1.1.0
 @candy-line/node-red-contrib-omron-2jcie-bu,^1.0.1
 @mindconnect/mindconnect-nodejs,^3.6.1
 @mindconnect/node-red-contrib-mindconnect,^3.6.2
+node-red-contrib-conect-plus,^1.0.6

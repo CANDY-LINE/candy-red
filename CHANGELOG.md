@@ -1,4 +1,8 @@
 ## Revision History
+* 9.2.0
+  - Add `node-red-contrib-conect-plus`
+  - Bump `node-red-dashboard` to v2.19.4
+
 * 9.1.0
   - Bump Node-RED version to v1.0.4
   - Bump lwm2m node version to v2.10.0
