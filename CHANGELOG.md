@@ -1,4 +1,7 @@
 ## Revision History
+* 9.3.0
+  - Bump `node-red-contrib-adxl-vibration-fft` to v2.0.0
+
 * 9.2.0
   - Add `node-red-contrib-conect-plus`
   - Bump `node-red-dashboard` to v2.19.4
