@@ -88,7 +88,7 @@
     "node-red-contrib-lwm2m": "^2.10.1",
     "node-red-contrib-moment": "^3.0.3",
     "node-red-contrib-schedex": "^1.10.1",
-    "node-red-dashboard": "^2.20.0",
+    "node-red-dashboard": "^2.21.0",
     "node-red-node-base64": "^0.2.0",
     "node-red-node-data-generator": "^0.1.1",
     "node-red-node-random": "^0.1.4",
