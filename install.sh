@@ -81,7 +81,7 @@ function setup {
             ;;
         esac
       else
-        python -c "import RPi.GPIO" > /dev/null 2>&1
+        grep "BCM2835" /proc/cpuinfo > /dev/null
         if [ "$?" == "0" ]; then
           BOARD="RPi"
           install_sensehat
