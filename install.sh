@@ -73,7 +73,7 @@ function setup {
       if [ -f "/proc/board_info" ]; then
         DT_MODEL=`cat /proc/board_info 2>&1`
         case ${DT_MODEL} in
-          "Tinker Board" | "Tinker Board S")
+          "Tinker Board" | "Tinker Board S" | "Rockchip RK3288 Tinker Board")
             BOARD="ATB"
             ;;
           *)
