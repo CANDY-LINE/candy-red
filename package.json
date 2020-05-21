@@ -56,7 +56,7 @@
     "gulp-cli": "^2.0.1",
     "gulp-eslint": "^6.0.0",
     "gulp-if": "^3.0.0",
-    "gulp-livereload": "^4.0.0",
+    "gulp-livereload": "^4.0.2",
     "gulp-mocha": "^5.0.0",
     "gulp-sourcemaps": "^2.6.5",
     "gulp-symlink": "^2.1.4",
