@@ -196,6 +196,7 @@ function install_sensehat {
     apt_get_update
     apt-get install -y sense-hat libjpeg8-dev
   fi
+  # Python 2.7
   if ! python -c "import PIL" > /dev/null 2>&1; then
     info "Installing Sense HAT node dependencies..."
     pip install pillow
@@ -203,6 +204,7 @@ function install_sensehat {
 }
 
 function install_pyserial {
+  # Python 2.7
   if ! python -c "import serial" > /dev/null 2>&1; then
     info "Installing SmartMesh node dependencies..."
     pip install pyserial
