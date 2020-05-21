@@ -1,4 +1,9 @@
 ## Revision History
+* 9.4.0
+  - Bump Node-RED version to v1.0.6
+  - Bump `node-red-dashboard` to v2.22.1
+  - Bump `node-red-contrib-generic-ble` to v4.0.1
+
 * 9.3.0
   - Bump `node-red-contrib-adxl-vibration-fft` to v2.0.0
 
