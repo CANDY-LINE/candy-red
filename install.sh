@@ -182,15 +182,6 @@ function install_libpam {
   fi
 }
 
-function pip2_install {
-  if ! python -c "import pip" > /dev/null 2>&1; then
-    curl -L https://bootstrap.pypa.io/get-pip.py | /usr/bin/env python
-    info "Installed `/usr/bin/env python -m pip -V`"
-  fi
-  info "pip2 is installing $1 ..."
-  python -m pip install $1
-}
-
 function install_sensehat {
   if [ "${BOARD}" != "RPi" ]; then
     return
@@ -202,16 +193,18 @@ function install_sensehat {
   fi
   # Python 2.7
   if ! python -c "import PIL" > /dev/null 2>&1; then
-    info "Installing Sense HAT node dependencies..."
-    pip2_install pillow
+    info "Installing Sense HAT node dependencies for Python 2.7 ..."
+    apt_get_update
+    apt-get install -y python-pil
   fi
 }
 
 function install_pyserial {
   # Python 2.7
   if ! python -c "import serial" > /dev/null 2>&1; then
-    info "Installing SmartMesh node dependencies..."
-    pip2_install pyserial
+    info "Installing SmartMesh node dependencies for Python 2.7 ..."
+    apt_get_update
+    apt-get install -y python-serial
   fi
 }
 
