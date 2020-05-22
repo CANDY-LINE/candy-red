@@ -199,7 +199,7 @@ function install_sensehat {
   # Python 2.7
   if ! python -c "import PIL" > /dev/null 2>&1; then
     info "Installing Sense HAT node dependencies..."
-    pip install pillow
+    python -m pip install pillow
   fi
 }
 
@@ -207,7 +207,7 @@ function install_pyserial {
   # Python 2.7
   if ! python -c "import serial" > /dev/null 2>&1; then
     info "Installing SmartMesh node dependencies..."
-    pip install pyserial
+    python -m pip install pyserial
   fi
 }
 
