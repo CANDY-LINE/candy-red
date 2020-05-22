@@ -84,6 +84,7 @@ function setup {
         if grep "BCM2835" /proc/cpuinfo > /dev/null; then
           BOARD="RPi"
           install_sensehat
+          install_rpi_gpio
         fi
       fi
       exit 0
@@ -217,6 +218,15 @@ function install_pyserial {
     info "Installing SmartMesh node dependencies for Python 2.7 ..."
     apt_get_update
     apt-get install -y python-serial
+  fi
+}
+
+function install_rpi_gpio {
+  # Python 2.7
+  if ! python -c "import RPi.GPIO" > /dev/null 2>&1; then
+    info "Installing Raspberry Pi node dependencies for Python 2.7 ..."
+    apt_get_update
+    apt-get install -y python-rpi.gpio
   fi
 }
 
