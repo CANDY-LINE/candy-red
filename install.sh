@@ -65,8 +65,7 @@ function setup {
     LOCAL_INSTALL="0"
   fi
   if [ "$1" == "pre" ]; then
-    RET=`which apt-get`
-    if [ "$?" == "0" ]; then
+    if which apt-get; then
       info "Ready for installation!"
       install_libpam
       install_pyserial
@@ -81,8 +80,7 @@ function setup {
             ;;
         esac
       else
-        grep "BCM2835" /proc/cpuinfo > /dev/null
-        if [ "$?" == "0" ]; then
+        if grep "BCM2835" /proc/cpuinfo > /dev/null; then
           BOARD="RPi"
           install_sensehat
         fi
@@ -124,7 +122,7 @@ function assert_root {
 }
 
 function assert_node_npm {
-  if [ `which node>/dev/null && which npm>/dev/null;echo $?` != "0" ]; then
+  if ! (which node>/dev/null && which npm>/dev/null); then
      err "Please install Node.js and npm"
      exit 1
   fi
@@ -140,17 +138,14 @@ function _try_systemd {
   if [ "${SYSTEM_SERVICE_TYPE}" != "" ]; then
     return
   fi
-  RET=`which systemctl`
-  if [ "$?" != 0 ]; then
+  if ! which systemctl; then
     return
   fi
   SYSTEM_SERVICE_TYPE="systemd"
 }
 
 function cd_module_root {
-  RET=`which realpath`
-  RET=$?
-  if [ "${RET}" == "0" ]; then
+  if which realpath; then
     REALPATH=`realpath "$0"`
   else
     REALPATH=`readlink -f -- "$0"`
