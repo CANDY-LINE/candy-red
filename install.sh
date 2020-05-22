@@ -68,6 +68,7 @@ function setup {
     if which apt-get; then
       info "Ready for installation!"
       install_libpam
+      install_generic_ble_deps
       install_pyserial
       if [ -f "/proc/board_info" ]; then
         DT_MODEL=`cat /proc/board_info 2>&1`
@@ -179,6 +180,17 @@ function install_libpam {
   if ! dpkg -l libpam0g-dev 2>&1 | grep "libpam0g-dev" | grep "^i.*"; then
     apt_get_update
     apt-get install -y libpam0g-dev
+  fi
+}
+
+function install_generic_ble_deps {
+  if ! dpkg -l bluez 2>&1 | grep "bluez" | grep "^i.*"; then
+    apt_get_update
+    apt-get install -y bluez
+  fi
+  if ! dpkg -l libudev-dev 2>&1 | grep "libudev-dev" | grep "^i.*"; then
+    apt_get_update
+    apt-get install -y libudev-dev
   fi
 }
 
