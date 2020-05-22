@@ -65,15 +65,15 @@ function setup {
     LOCAL_INSTALL="0"
   fi
   if [ "$1" == "pre" ]; then
-    RET=`which apt-get`
-    if [ "$?" == "0" ]; then
+    if which apt-get; then
       info "Ready for installation!"
       install_libpam
+      install_generic_ble_deps
       install_pyserial
       if [ -f "/proc/board_info" ]; then
         DT_MODEL=`cat /proc/board_info 2>&1`
         case ${DT_MODEL} in
-          "Tinker Board" | "Tinker Board S")
+          "Tinker Board" | "Tinker Board S" | "Rockchip RK3288 Tinker Board")
             BOARD="ATB"
             ;;
           *)
@@ -81,10 +81,10 @@ function setup {
             ;;
         esac
       else
-        python -c "import RPi.GPIO" > /dev/null 2>&1
-        if [ "$?" == "0" ]; then
+        if grep "BCM2835" /proc/cpuinfo > /dev/null; then
           BOARD="RPi"
           install_sensehat
+          install_rpi_gpio
         fi
       fi
       exit 0
@@ -124,7 +124,7 @@ function assert_root {
 }
 
 function assert_node_npm {
-  if [ `which node>/dev/null && which npm>/dev/null;echo $?` != "0" ]; then
+  if ! (which node>/dev/null && which npm>/dev/null); then
      err "Please install Node.js and npm"
      exit 1
   fi
@@ -140,17 +140,14 @@ function _try_systemd {
   if [ "${SYSTEM_SERVICE_TYPE}" != "" ]; then
     return
   fi
-  RET=`which systemctl`
-  if [ "$?" != 0 ]; then
+  if ! which systemctl; then
     return
   fi
   SYSTEM_SERVICE_TYPE="systemd"
 }
 
 function cd_module_root {
-  RET=`which realpath`
-  RET=$?
-  if [ "${RET}" == "0" ]; then
+  if which realpath; then
     REALPATH=`realpath "$0"`
   else
     REALPATH=`readlink -f -- "$0"`
@@ -187,6 +184,17 @@ function install_libpam {
   fi
 }
 
+function install_generic_ble_deps {
+  if ! dpkg -l bluez 2>&1 | grep "bluez" | grep "^i.*"; then
+    apt_get_update
+    apt-get install -y bluez
+  fi
+  if ! dpkg -l libudev-dev 2>&1 | grep "libudev-dev" | grep "^i.*"; then
+    apt_get_update
+    apt-get install -y libudev-dev
+  fi
+}
+
 function install_sensehat {
   if [ "${BOARD}" != "RPi" ]; then
     return
@@ -196,16 +204,29 @@ function install_sensehat {
     apt_get_update
     apt-get install -y sense-hat libjpeg8-dev
   fi
+  # Python 2.7
   if ! python -c "import PIL" > /dev/null 2>&1; then
-    info "Installing Sense HAT node dependencies..."
-    pip install pillow
+    info "Installing Sense HAT node dependencies for Python 2.7 ..."
+    apt_get_update
+    apt-get install -y python-pil
   fi
 }
 
 function install_pyserial {
+  # Python 2.7
   if ! python -c "import serial" > /dev/null 2>&1; then
-    info "Installing SmartMesh node dependencies..."
-    pip install pyserial
+    info "Installing SmartMesh node dependencies for Python 2.7 ..."
+    apt_get_update
+    apt-get install -y python-serial
+  fi
+}
+
+function install_rpi_gpio {
+  # Python 2.7
+  if ! python -c "import RPi.GPIO" > /dev/null 2>&1; then
+    info "Installing Raspberry Pi node dependencies for Python 2.7 ..."
+    apt_get_update
+    apt-get install -y python-rpi.gpio
   fi
 }
 

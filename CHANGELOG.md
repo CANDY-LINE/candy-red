@@ -1,4 +1,12 @@
 ## Revision History
+* 9.4.0
+  - Bump Node-RED version to v1.0.6
+  - Bump `node-red-dashboard` to v2.22.1
+  - Bump `node-red-contrib-generic-ble` to v4.0.1
+  - Fix an issue where some python libraries for Python 2.7 are installed on Python 3 when pip command is running on Python 3.
+    - Most existing Python dependent nodes such as Raspberry Pi's GPIO node still depend on Python 2.7.
+    - Not using pip to install the dependencies
+
 * 9.3.0
   - Bump `node-red-contrib-adxl-vibration-fft` to v2.0.0
 
