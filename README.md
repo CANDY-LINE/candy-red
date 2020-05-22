@@ -43,7 +43,7 @@ This is the default screen theme.
 
 ### Raspbian version
 
- * 2019-09-26-raspbian-buster
+ * 2020-02-13-raspbian-buster
 
 ### Tested Node.js versions
 
