@@ -1,4 +1,7 @@
 ## Revision History
+* 9.5.0
+  - Add `node-red-contrib-influxdb`
+
 * 9.4.0
   - Bump Node-RED version to v1.0.6
   - Bump `node-red-dashboard` to v2.22.1
