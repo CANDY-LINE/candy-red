@@ -17,6 +17,7 @@
 
 import 'source-map-support/register';
 
+import RED from 'node-red';
 import { DefaultDeviceState } from './default-device-state';
 
 let DeviceState;
@@ -37,12 +38,12 @@ export default class DeviceManager {
     this.store = {};
     const defaultDeviceState = new DefaultDeviceState();
     if (DeviceState) {
-      this.deviceState = new DeviceState(defaultDeviceState);
+      this.deviceState = new DeviceState(defaultDeviceState, RED);
     } else {
       this.deviceState = defaultDeviceState;
     }
     if (LwM2MDeviceManagement) {
-      this.lwm2m = new LwM2MDeviceManagement(this.deviceState);
+      this.lwm2m = new LwM2MDeviceManagement(this.deviceState, RED);
     }
   }
 

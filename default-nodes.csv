@@ -11,3 +11,5 @@ node-red-contrib-adxl-vibration-fft,^2.0.0
 @mindconnect/node-red-contrib-mindconnect,^3.7.0
 node-red-contrib-conect-plus,^1.0.6
 node-red-contrib-multipart-stream-encoder,^0.0.2
+node-red-contrib-influxdb,^0.4.0
+node-red-contrib-statistics,^2.2.2
