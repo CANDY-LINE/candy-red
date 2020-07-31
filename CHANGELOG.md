@@ -1,4 +1,9 @@
 ## Revision History
+* 9.6.0
+  - Bump Node-RED version to v1.1.2
+  - Bump `node-red-dashboard` to v2.23.0
+  - Bump other preinstalled nodes
+
 * 9.5.0
   - Add `node-red-contrib-influxdb`
   - Add `node-red-contrib-statistics`
