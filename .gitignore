@@ -38,3 +38,4 @@ services/start_sysvinit.sh
 dist
 .node-version
 .mc
+Vagrantfile
