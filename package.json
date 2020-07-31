@@ -1,6 +1,6 @@
 {
   "name": "candy-red",
-  "version": "9.5.0",
+  "version": "9.6.0",
   "description": "CANDY RED :: Visual Programming Editor and Runtime for CANDY Pi Lite powered by Node-RED",
   "main": "./dist/index.js",
   "scripts": {
@@ -85,9 +85,11 @@
     "nan": "^2.4.0",
     "node-red": "^1.1.2",
     "node-red-contrib-device-stats": ">=1.1.2",
+    "node-red-contrib-influxdb": "^0.4.1",
     "node-red-contrib-lwm2m": "^2.10.1",
     "node-red-contrib-moment": "^3.0.3",
     "node-red-contrib-schedex": "^1.10.2",
+    "node-red-contrib-statistics": "^2.2.2",
     "node-red-dashboard": "^2.23.0",
     "node-red-node-base64": "^0.2.0",
     "node-red-node-data-generator": "^0.1.1",
