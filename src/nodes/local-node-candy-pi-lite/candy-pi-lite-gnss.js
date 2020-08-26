@@ -23,7 +23,7 @@ import path from 'path';
 import { EventEmitter } from 'events';
 import SerialPort from 'serialport';
 
-export default function(RED) {
+module.exports = function(RED) {
   class GNSSClient extends EventEmitter {
     constructor(
       opts = {

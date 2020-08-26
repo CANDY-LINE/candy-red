@@ -36,7 +36,7 @@ import urllib from 'url';
 
 const TEST_SERVER_PING_TIMEOUT = false;
 
-export default function(RED) {
+module.exports = function(RED) {
   class WebSocketListener {
     constructor(accountConfig, account, path, webSocketListeners, options) {
       this.accountConfig = accountConfig;
