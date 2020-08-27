@@ -566,4 +566,4 @@ module.exports = function(RED) {
       });
     }
   });
-}
+};

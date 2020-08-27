@@ -282,4 +282,4 @@ module.exports = function(RED) {
       });
     }
   );
-}
+};

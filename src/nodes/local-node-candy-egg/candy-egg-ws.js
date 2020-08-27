@@ -534,4 +534,4 @@ module.exports = function(RED) {
     }
   }
   RED.nodes.registerType('CANDY EGG websocket out', WebSocketOutNode);
-}
+};
