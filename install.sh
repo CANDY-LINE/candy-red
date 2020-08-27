@@ -174,6 +174,8 @@ function npm_local_install {
   if [ -d "${PROJECT_ROOT}/dist" ]; then
     info "Installing local nodes ..."
     cp -r ${PROJECT_ROOT}/dist/nodes/local-node-* ${PROJECT_ROOT}/node_modules/
+  else
+    info "The path [${PROJECT_ROOT}/dist] is missing. Skip to local nodes installation."
   fi
 }
 
