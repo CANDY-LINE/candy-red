@@ -1,4 +1,10 @@
 ## Revision History
+* 9.7.0
+  - Fix an issue where locally preinstalled nodes caused runtime errors on deployment
+  - Bump Node-RED version to v1.1.3
+  - Bump `node-red-dashboard` to v2.23.2
+  - Bump other preinstalled nodes
+
 * 9.6.0
   - Bump Node-RED version to v1.1.2
   - Bump `node-red-dashboard` to v2.23.0
