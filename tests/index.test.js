@@ -33,8 +33,9 @@ describe('index.js executable script', () => {
   });
   it('should start Node-RED properly', function(done) {
     const env = Object.create(process.env);
+    env.NODE_PALETTE_ENABLED = 'true';
     env.HOME = __dirname;
-    candyred = spawn('node', [`${__dirname}/../dist/index.js`], { env: env });
+    candyred = spawn('node', [`${__dirname}/../dist/index.js`], { env });
     candyred.stdout.on('data', data => {
       const line = data.toString();
       if (line.indexOf('[info] Started flows') >= 0) {

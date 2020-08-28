@@ -81,7 +81,7 @@ function setup {
             ;;
         esac
       else
-        if grep "BCM2835" /proc/cpuinfo > /dev/null; then
+        if grep "Raspberry Pi " /proc/device-tree/model > /dev/null 2>&1; then
           BOARD="RPi"
           install_sensehat
           install_rpi_gpio
@@ -174,6 +174,8 @@ function npm_local_install {
   if [ -d "${PROJECT_ROOT}/dist" ]; then
     info "Installing local nodes ..."
     cp -r ${PROJECT_ROOT}/dist/nodes/local-node-* ${PROJECT_ROOT}/node_modules/
+ else
+    info "The path [${PROJECT_ROOT}/dist] is missing. Skip to local nodes installation."
   fi
 }
 

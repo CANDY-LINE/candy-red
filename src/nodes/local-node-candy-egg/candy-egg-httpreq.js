@@ -36,7 +36,7 @@ import urllib from 'url';
 import mustache from 'mustache';
 import querystring from 'querystring';
 
-export default function(RED) {
+module.exports = function(RED) {
   function HTTPRequest(n) {
     RED.nodes.createNode(this, n);
     this.path = n.path;
@@ -220,4 +220,4 @@ export default function(RED) {
   }
 
   RED.nodes.registerType('CANDY EGG http request', HTTPRequest);
-}
+};

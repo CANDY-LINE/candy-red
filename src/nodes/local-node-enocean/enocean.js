@@ -41,7 +41,7 @@ const ENOCEAN_LEARN_MODE_THRESHOLD_RSSI =
 
 let learnedIDs = null;
 
-export default function(RED) {
+module.exports = function(RED) {
   class EnOceanPortNode {
     constructor(n) {
       RED.nodes.createNode(this, n);
@@ -282,4 +282,4 @@ export default function(RED) {
       });
     }
   );
-}
+};
