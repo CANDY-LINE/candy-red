@@ -81,7 +81,7 @@ function setup {
             ;;
         esac
       else
-        if grep "BCM2835" /proc/cpuinfo > /dev/null; then
+        if grep "Raspberry Pi " /proc/device-tree/model > /dev/null 2>&1; then
           BOARD="RPi"
           install_sensehat
           install_rpi_gpio
