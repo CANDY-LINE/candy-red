@@ -173,11 +173,8 @@ function resolve_version {
 function npm_local_install {
   if [ -d "${PROJECT_ROOT}/dist" ]; then
     info "Installing local nodes ..."
-    for n in `ls ${PROJECT_ROOT}/dist/nodes/`;
-    do
-      npm install --unsafe-perm ${PROJECT_ROOT}/dist/nodes/${n}
-    done
-  else
+    cp -r ${PROJECT_ROOT}/dist/nodes/local-node-* ${PROJECT_ROOT}/node_modules/
+ else
     info "The path [${PROJECT_ROOT}/dist] is missing. Skip to local nodes installation."
   fi
 }
