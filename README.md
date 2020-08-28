@@ -304,6 +304,7 @@ $ scp -rp ./dist/* pi@raspberrypi.local:/usr/lib/node_modules/candy-red/dist
 ```
 $ cd candy-red
 $ docker build -t candy-red .
+$ docker build --build-arg CANDY_RED_VERSION=9.7.0  -t candy-red .
 ```
 
 ### Run CANDY RED container
