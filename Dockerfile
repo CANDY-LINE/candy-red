@@ -1,21 +1,16 @@
 FROM node:12
 
-ENV USER_DIR /candy-red-user
-ENV CANDY_RED_HOME /candy-red
+ARG CANDY_RED_VERSION
+ENV CANDY_RED_VERSION ${CANDY_RED_VERSION:-"latest"}
+ENV CANDY_RED_HOME /candy-red-user
 
 RUN ( \
   mkdir -p ${CANDY_RED_HOME} \
 )
 
-COPY ./install.sh ${CANDY_RED_HOME}
-COPY ./default-nodes.csv ${CANDY_RED_HOME}
-COPY ./package.json ${CANDY_RED_HOME}
-COPY ./dist ${CANDY_RED_HOME}/dist
-
 RUN ( \
-  cd ${CANDY_RED_HOME} && \
-  npm install --production --unsafe-perm \
+  npm install -g --production --unsafe-perm candy-red@${CANDY_RED_VERSION} \
 )
 
 WORKDIR ${CANDY_RED_HOME}
-CMD npm run start
+CMD npm run --prefix $(npm -g root)/candy-red start
