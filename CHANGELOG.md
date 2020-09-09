@@ -1,4 +1,11 @@
 ## Revision History
+* 9.8.0
+  - Bump preinstalled nodes
+    - `node-red-dashboard`
+    - `node-red-contrib-schedex`
+    - `node-red-contrib-adxl-vibration-fft`
+    - `node-red-node-ui-table`
+
 * 9.7.0
   - Fix an issue where locally preinstalled nodes caused runtime errors on deployment
   - Bump Node-RED version to v1.1.3
