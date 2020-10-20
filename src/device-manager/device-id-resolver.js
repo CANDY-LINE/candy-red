@@ -16,8 +16,8 @@
  */
 
 import 'source-map-support/register';
-import os from 'os';
 import fs from 'fs';
+import si from 'systeminformation';
 import readline from 'readline';
 import consts from './consts';
 import RED from 'node-red';
@@ -35,13 +35,13 @@ export class DefaultDeviceIdResolver {
   }
 
   _resolveLinux(resolve, reject) {
-    fs.stat(consts.PROC_DT_MODEL_PATH, err => {
+    fs.stat(consts.PROC_DT_MODEL_PATH, async err => {
       if (err) {
-        return this._resolveMAC(resolve, reject);
+        return await this._resolveGnenericSerialNumber(resolve, reject);
       }
-      fs.stat(consts.PROC_CPUINFO_PATH, err => {
+      fs.stat(consts.PROC_CPUINFO_PATH, async err => {
         if (err) {
-          return this._resolveMAC(resolve, reject);
+          return await this._resolveGnenericSerialNumber(resolve, reject);
         }
         let reader = readline.createInterface({
           terminal: false,
@@ -53,9 +53,9 @@ export class DefaultDeviceIdResolver {
             id = line.split(':')[1].trim();
           }
         });
-        reader.on('close', err => {
+        reader.on('close', async err => {
           if (err || !id) {
-            return this._resolveMAC(resolve, reject);
+            return await this._resolveGnenericSerialNumber(resolve, reject);
           }
           let model = fs
             .readFileSync(consts.PROC_DT_MODEL_PATH)
@@ -75,23 +75,14 @@ export class DefaultDeviceIdResolver {
     });
   }
 
-  _resolveMAC(resolve, reject) {
-    const ifs = os.networkInterfaces();
-    for (const key in ifs) {
-      if (Object.prototype.hasOwnProperty.call(ifs, key)) {
-        for (const i in ifs[key]) {
-          const mac = ifs[key][i].mac;
-          if (mac && mac !== '00:00:00:00:00:00') {
-            return resolve(
-              'MAC:' +
-                key +
-                ':' +
-                mac.replace(new RegExp(':', 'g'), '-').toLowerCase()
-            );
-          }
-        }
-      }
+  async _resolveGnenericSerialNumber(resolve, reject) {
+    const { serial, uuid } = await si.system();
+    if (serial) {
+      return resolve(`serial:${serial}`);
+    } else if (uuid) {
+      return resolve(`uuid:${uuid}`);
+    } else {
+      return reject(new Error('No valid identifier!'));
     }
-    reject(new Error('No identifier!'));
   }
 }
