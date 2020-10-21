@@ -233,7 +233,6 @@ $ WELCOME_FLOW_URL=https://git.io/vKx5r npm run start
 And you'll see the sensor info like this:
 
     [INFO] Default welcome flow has been created
-    29 Jul 21:52:35 - [info] [CANDY RED] flowFileSignature: 6cbf44cb244f38acf29d2ef061aabc4ac70e991a
     29 Jul 21:52:35 - [info] [CANDY RED] Deploying Flow Editor UI...
 
 
