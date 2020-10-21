@@ -1,4 +1,9 @@
 ## Revision History
+* 9.9.0
+  - Use systeminformation to resolve a serial number for generic computers
+  - Bump preinstalled nodes
+    - `node-red-contrib-lwm2m`
+    - `@mindconnect/node-red-contrib-mindconnect`
 * 9.8.1
   - Bump preinstalled nodes
     - `node-red-contrib-generic-ble`
