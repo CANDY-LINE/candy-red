@@ -8,7 +8,7 @@ node-red-contrib-adxl-vibration-fft,^3.0.1
 @candy-line/node-red-contrib-eh-terminal-g2,^1.0.2
 @candy-line/node-red-contrib-omron-2jcie-bu,^1.0.1
 @mindconnect/mindconnect-nodejs,^3.9.0
-@mindconnect/node-red-contrib-mindconnect,^3.8.3
+@mindconnect/node-red-contrib-mindconnect,^3.9.1
 node-red-contrib-conect-plus,^1.0.6
 node-red-contrib-multipart-stream-encoder,^0.0.2
 node-red-contrib-influxdb,^0.4.1
