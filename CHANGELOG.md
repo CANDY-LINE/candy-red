@@ -1,6 +1,7 @@
 ## Revision History
 * 9.9.0
   - Use systeminformation to resolve a serial number for generic computers
+  - Enable GZIP compression for HTTP transfer
   - Bump Node-RED version to v1.2.2
   - Bump preinstalled nodes
     - `node-red-contrib-lwm2m`

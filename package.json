@@ -76,6 +76,7 @@
     "basic-auth": "^2.0.0",
     "bcryptjs": "^2.4.3",
     "chokidar": "^2.1.8",
+    "compression": "^1.7.4",
     "express": "^4.17.1",
     "follow-redirects": "^1.13.0",
     "lru-cache": "^4.0.2",
