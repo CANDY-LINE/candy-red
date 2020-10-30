@@ -44,6 +44,10 @@ describe('index.js executable script', () => {
         console.log(line.trim());
       }
     });
+    candyred.stderr.on('data', data => {
+      const line = data.toString();
+      console.log(`[stderr] ${line.trim()}`);
+    });
     candyred.on('exit', code => {
       console.log(`Exit Code => ${code}`);
       assert.isNull(code);
