@@ -281,12 +281,12 @@ $ npm test
 ```
 # Development Machine
 $ npm pack
-$ scp ./candy-red-9.6.0.tgz pi@raspberrypi.local:~
+$ scp ./candy-red-9.9.0.tgz pi@raspberrypi.local:~
 
 # RPi (on ~)
 $ sudo npm uninstall -g --unsafe-perm candy-red
 $ sudo rm -fr /opt/candy-red # to prune user specific files if necessary
-$ time sudo npm install -g --unsafe-perm ./candy-red-9.6.0.tgz
+$ time sudo npm install -g --unsafe-perm ./candy-red-9.9.0.tgz
 $ sudo journalctl -f -u candy-red -o cat # to show logs
 ```
 
@@ -303,7 +303,7 @@ $ scp -rp ./dist/* pi@raspberrypi.local:/usr/lib/node_modules/candy-red/dist
 ```
 $ cd candy-red
 $ docker build -t candy-red .
-$ docker build --build-arg CANDY_RED_VERSION=9.7.0  -t candy-red .
+$ docker build --build-arg CANDY_RED_VERSION=9.9.0  -t candy-red .
 ```
 
 ### Run CANDY RED container
