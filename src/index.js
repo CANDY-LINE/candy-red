@@ -23,6 +23,7 @@ import RED from 'node-red';
 import os from 'os';
 import fs from 'fs';
 import mkdirp from 'mkdirp';
+import compression from 'compression';
 import DeviceManager from './device-manager';
 import { SingleUserAuthenticator, PAMAuthenticator } from './auth';
 
@@ -204,6 +205,9 @@ export class CandyRed {
         // Initialise the runtime with a server and settings
         RED.init(this.server, settings);
         settings.version += ` [candy-red v${versions.candyRedv}]`;
+
+        // enable compression
+        this.app.use(compression());
 
         // Serve the http nodes from /api
         this.app.use(settings.httpNodeRoot, RED.httpNode);

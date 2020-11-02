@@ -21,7 +21,7 @@
 import * as sinon from 'sinon';
 import { assert } from 'chai';
 import RED from 'node-red';
-import os from 'os';
+import si from 'systeminformation';
 import fs from 'fs';
 import stream from 'stream';
 import { DefaultDeviceIdResolver } from './device-id-resolver';
@@ -166,7 +166,7 @@ describe('DeviceIdResolver', () => {
       });
   });
 
-  it('should return the MAC address', done => {
+  it('should return a serial number', done => {
     let resolver = new DefaultDeviceIdResolver();
     sandbox
       .stub(fs, 'stat')
@@ -176,13 +176,42 @@ describe('DeviceIdResolver', () => {
       .yields()
       .onCall(4)
       .yields();
-    sandbox.stub(os, 'networkInterfaces').returns({
-      en0: [{ mac: '00:00:00:00:00:00' }, { mac: 'AA:bb:cc:dd:ee:FF' }]
-    });
+    sandbox.stub(si, 'system').returns(
+      Promise.resolve({
+        serial: 'my-serial',
+        uuid: 'my-uuid'
+      })
+    );
     resolver
       .resolve()
       .then(id => {
-        assert.equal(id, 'MAC:en0:aa-bb-cc-dd-ee-ff');
+        assert.equal(id, 'serial:my-serial');
+        done();
+      })
+      .catch(err => {
+        done(err);
+      });
+  });
+
+  it('should return a UUID number', done => {
+    let resolver = new DefaultDeviceIdResolver();
+    sandbox
+      .stub(fs, 'stat')
+      .onFirstCall()
+      .yields(new Error())
+      .onSecondCall()
+      .yields()
+      .onCall(4)
+      .yields();
+    sandbox.stub(si, 'system').returns(
+      Promise.resolve({
+        uuid: 'my-uuid'
+      })
+    );
+    resolver
+      .resolve()
+      .then(id => {
+        assert.equal(id, 'uuid:my-uuid');
         done();
       })
       .catch(err => {
