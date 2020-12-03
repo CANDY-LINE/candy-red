@@ -8,6 +8,7 @@
     - `@mindconnect/node-red-contrib-mindconnect`
     - `node-red-dashboard`
     - `node-red-node-ui-table`
+
 * 9.8.1
   - Bump preinstalled nodes
     - `node-red-contrib-generic-ble`
@@ -16,6 +17,7 @@
     - `@mindconnect/mindconnect-nodejs`
     - `@mindconnect/node-red-contrib-mindconnect`
     - `node-red-contrib-influxdb`
+
 * 9.8.0
   - Bump preinstalled nodes
     - `node-red-dashboard`
