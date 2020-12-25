@@ -1,6 +1,6 @@
 {
   "name": "candy-red",
-  "version": "9.9.1",
+  "version": "9.9.2",
   "description": "CANDY RED :: Visual Programming Editor and Runtime for CANDY Pi Lite powered by Node-RED",
   "main": "./dist/index.js",
   "scripts": {
@@ -42,14 +42,14 @@
     "!win32"
   ],
   "devDependencies": {
-    "@babel/cli": "^7.12.8",
-    "@babel/core": "^7.12.9",
+    "@babel/cli": "^7.12.10",
+    "@babel/core": "^7.12.10",
     "@babel/plugin-transform-modules-commonjs": "^7.12.1",
-    "@babel/preset-env": "^7.12.7",
+    "@babel/preset-env": "^7.12.11",
     "chai": "^4.2.0",
     "eslint": "^6.8.0",
     "eslint-config-prettier": "^6.15.0",
-    "eslint-plugin-prettier": "^3.1.4",
+    "eslint-plugin-prettier": "^3.3.0",
     "gulp": "^4.0.2",
     "gulp-babel": "^8.0.0",
     "gulp-clean": "^0.4.0",
@@ -78,10 +78,10 @@
     "chokidar": "^2.1.8",
     "compression": "^1.7.4",
     "express": "^4.17.1",
-    "follow-redirects": "^1.13.0",
+    "follow-redirects": "^1.13.1",
     "lru-cache": "^4.0.2",
     "mkdirp": "^0.5.5",
-    "mqtt-packet": "^6.6.0",
+    "mqtt-packet": "^6.7.0",
     "mustache": "^2.3.0",
     "nan": "^2.14.2",
     "node-red": "^1.2.6",
@@ -91,7 +91,7 @@
     "node-red-contrib-moment": "^3.0.3",
     "node-red-contrib-schedex": "^1.10.3",
     "node-red-contrib-statistics": "^2.2.2",
-    "node-red-dashboard": "^2.24.1",
+    "node-red-dashboard": "^2.26.0",
     "node-red-node-base64": "^0.2.1",
     "node-red-node-data-generator": "^0.1.1",
     "node-red-node-random": "^0.2.0",
@@ -99,11 +99,11 @@
     "node-red-node-smooth": "^0.1.2",
     "node-red-node-suncalc": "^1.0.1",
     "node-red-node-twitter": "^1.1.7",
-    "node-red-node-ui-table": "^0.3.8",
+    "node-red-node-ui-table": "^0.3.10",
     "request": "^2.88.2",
     "serialport-enocean-parser": "^0.2.0",
     "source-map-support": "^0.5.19",
-    "systeminformation": "^4.30.4",
+    "systeminformation": "^4.33.1",
     "ws": "^3.3.3"
   }
 }

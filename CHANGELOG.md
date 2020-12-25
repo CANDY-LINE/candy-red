@@ -1,4 +1,12 @@
 ## Revision History
+* 9.9.2
+  - Bump preinstalled nodes
+    - `node-red-dashboard`
+    - `node-red-node-ui-table`
+    - `node-red-contrib-web-worldmap`
+    - `@mindconnect/node-red-contrib-mindconnect`
+    - `node-red-contrib-influxdb`
+    - `node-red-contrib-statistics`
 * 9.9.1
   - Bump Node-RED version to v1.2.6
   - Bump preinstalled nodes
