@@ -1,4 +1,9 @@
 ## Revision History
+* 9.9.3
+  - Bump Node-RED version to v1.2.9
+  - Add `node-red-contrib-ble-scan`
+  - Bump preinstalled nodes
+    - `node-red-dashboard`
 * 9.9.2
   - Bump preinstalled nodes
     - `node-red-dashboard`

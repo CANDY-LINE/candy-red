@@ -13,3 +13,4 @@ node-red-contrib-conect-plus,^1.0.6
 node-red-contrib-multipart-stream-encoder,^0.0.2
 node-red-contrib-influxdb,^0.5.3
 node-red-contrib-statistics,^2.2.2
+node-red-contrib-ble-scan,^1.0.0
