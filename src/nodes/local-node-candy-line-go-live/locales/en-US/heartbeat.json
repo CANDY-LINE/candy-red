@@ -1,0 +1,14 @@
+{
+  "heartbeat": {
+    "label": {
+      "node": "CANDY LINE Go Live Peripheral Heartbeat",
+      "filterErrorMessages": "Filter Error Messages",
+      "success": "Success",
+      "error": "Error",
+      "output": "All"
+    },
+    "status": {
+      "received": "Received"
+    }
+  }
+}

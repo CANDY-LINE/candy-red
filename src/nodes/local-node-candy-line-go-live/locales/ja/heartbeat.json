@@ -1,0 +1,14 @@
+{
+  "heartbeat": {
+    "label": {
+      "node": "CANDY LINE Go Live 周辺機器監視報告",
+      "filterErrorMessages": "報告エラーを選別する",
+      "success": "成功",
+      "error": "エラー",
+      "output": "全て"
+    },
+    "status": {
+      "received": "受信"
+    }
+  }
+}

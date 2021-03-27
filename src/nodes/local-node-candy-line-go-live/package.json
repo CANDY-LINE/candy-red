@@ -1,0 +1,14 @@
+{
+  "name": "local-node-candy-line-go-live",
+  "version": "1.0.0",
+  "description": "Node-RED nodes for CANDY LINE Go Live",
+  "license": "Apache-2.0",
+  "private": "true",
+  "dependencies": {
+  },
+  "node-red": {
+    "nodes": {
+      "heartbeat": "heartbeat.js"
+    }
+  }
+}
