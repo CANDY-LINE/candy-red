@@ -9,6 +9,9 @@
     },
     "status": {
       "received": "受信"
+    },
+    "errors": {
+      "unsupported": "CANDY LINE Go Liveモジュールが存在しないため、このノードは何も処理を行いません。"
     }
   }
 }

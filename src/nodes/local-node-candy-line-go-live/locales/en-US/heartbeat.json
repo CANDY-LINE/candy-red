@@ -9,6 +9,9 @@
     },
     "status": {
       "received": "Received"
+    },
+    "errors": {
+      "unsupported": "This node does nothinig as CANDY LINE Go Live module is missing."
     }
   }
 }

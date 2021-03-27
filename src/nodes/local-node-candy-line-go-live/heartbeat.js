@@ -25,21 +25,22 @@ module.exports = function(RED) {
   class CANDYLINEGoLivePeripheralHeartbetNode {
     constructor(n) {
       RED.nodes.createNode(this, n);
+      this.filterIgnoredMessages = n.filterIgnoredMessages;
       if (
         RED.settings.lwm2m &&
         typeof RED.settings.lwm2m.reportPeripheralStatus === 'function'
       ) {
-        this.filterIgnoredMessages = n.filterIgnoredMessages;
         this.init();
       } else {
-        this.warn(
-          `ANDY LINE Go Live Client Module is missing. Ignore all reporting messages.`
-        );
-        this.on('input', async (msg, send, done) => {
-          msg.error = `CANDY LINE Go Live Client Module is missing.`;
+        this.on('input', (msg, send, done) => {
+          this.warn(RED._('heartbeat.errors.unsupported'));
+          msg.error = RED._('heartbeat.errors.unsupported');
           send(this.filterIgnoredMessages ? [null, msg] : msg);
           done();
         });
+        setTimeout(() => {
+          this.warn(RED._('heartbeat.errors.unsupported'));
+        }, 1000);
       }
     }
 
