@@ -1,5 +1,5 @@
-<script type="text/x-red" data-help-name="heartbeat">
-  <p>周辺機器の監視情報を報告するためのノードです。</p>
+<script type="text/x-red" data-help-name="Go-Live-heartbeat">
+  <p>周辺機器の監視情報をCANDY LINE Go Liveに報告するためのノードです。</p>
   <h3>入力</h3>
   <p><code>msg.payload</code> には以下のプロパティをセットします。</p>
   <dl class="message-properties">
@@ -7,6 +7,7 @@
     <dd>
     周辺機器のネットワークアドレスを指定します。
     例えば、BLE機器であればBluetooth Device アドレスを、LANや無線LANであればIPアドレスを指定します。
+    アルファベット小文字（大文字を指定した場合、小文字に変換されます）、数字、コロン（:）、ドット（.）、ハイフン（-）のみ利用可能です。
     </dd>
     <dt>batteryPower<span class="property-type">int</span></dt>
     <dd>

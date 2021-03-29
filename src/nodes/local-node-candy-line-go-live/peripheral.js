@@ -85,5 +85,8 @@ module.exports = function(RED) {
       debug(`peripheracCounter has been scheduled.`);
     }
   }
-  RED.nodes.registerType('peripheral', CANDYLINEGoLivePeripheralInquryNode);
+  RED.nodes.registerType(
+    'Go-Live-peripheral',
+    CANDYLINEGoLivePeripheralInquryNode
+  );
 };

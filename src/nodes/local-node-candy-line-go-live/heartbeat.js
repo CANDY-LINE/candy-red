@@ -79,5 +79,8 @@ module.exports = function(RED) {
       debug(`CANDYLINEGoLivePeripheralHeartbetNode has been initialized`);
     }
   }
-  RED.nodes.registerType('heartbeat', CANDYLINEGoLivePeripheralHeartbetNode);
+  RED.nodes.registerType(
+    'Go-Live-heartbeat',
+    CANDYLINEGoLivePeripheralHeartbetNode
+  );
 };

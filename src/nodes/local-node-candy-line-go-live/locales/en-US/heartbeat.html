@@ -1,5 +1,5 @@
-<script type="text/x-red" data-help-name="heartbeat">
-  <p>A node for writing peripheral status info.</p>
+<script type="text/x-red" data-help-name="Go-Live-heartbeat">
+  <p>A node for reporing peripheral status info to CANDY LINE Go Live.</p>
   <h3>Inputs</h3>
   <p><code>msg.payload</code> has the following properties.</p>
   <dl class="message-properties">
@@ -7,6 +7,7 @@
     <dd>
     A peripheral network address associated with its connectivity type.
     A Bluetooth Device Address for BLE, an IP Address for LAN/WLAN, for instance.
+    Lower case alphabets (Upper case alphabets are automatically converted into lower cases), numeric, colon(:), dot(.), and hypen(-) are available,
     </dd>
     <dt>batteryPower<span class="property-type">int</span></dt>
     <dd>
