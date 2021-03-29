@@ -1,0 +1,13 @@
+{
+  "peripheral": {
+    "label": {
+      "node": "CANDY LINE Go Live Peripheral Information Inquiry"
+    },
+    "status": {
+      "info": "__count__ Peripherals"
+    },
+    "errors": {
+      "unsupported": "This node does nothinig as CANDY LINE Go Live module is missing."
+    }
+  }
+}

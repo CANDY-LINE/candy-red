@@ -1,0 +1,13 @@
+{
+  "peripheral": {
+    "label": {
+      "node": "CANDY LINE Go Live 周辺機器情報取得"
+    },
+    "status": {
+      "info": "__count__個の周辺機器"
+    },
+    "errors": {
+      "unsupported": "CANDY LINE Go Liveモジュールが存在しないため、このノードは何も処理を行いません。"
+    }
+  }
+}

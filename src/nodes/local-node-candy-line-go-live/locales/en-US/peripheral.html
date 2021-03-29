@@ -1,0 +1,74 @@
+<script type="text/x-red" data-help-name="peripheral">
+  <p>A node for inqurying peripheral info.</p>
+  <h3>Inputs</h3>
+  <p><code>msg.payload</code> has the following properties.</p>
+  <dl class="message-properties">
+    <dt>networkAddress<span class="property-type">string</span></dt>
+    <dd>
+    A peripheral network address associated with its connectivity type.
+    A Bluetooth Device Address for BLE, an IP Address for LAN/WLAN, for instance.
+    </dd>
+    <dt>batteryPower<span class="property-type">int</span></dt>
+    <dd>
+    The peripheral battery power in percent. 0-100 for the left battery power in %.
+    101 for AC or other external power supplies, 102 for host powered.
+    This property is optional when the message reports an error.
+    </dd>
+    <dt>signalStrength<span class="property-type">int</span></dt>
+    <dd>
+    The peripheral signal strength in dBm. Integer value is accepted.
+    32767 for Wired peripherals.
+    This property is optional when the message reports an error.
+    </dd>
+    <dt>errorInfo<span class="property-type">string</span></dt>
+    <dd>
+    The detected error info text. The property is optional unless the message reports an error.
+    </dd>
+  </dl>
+
+  <h3>Inputs <code>msg.payload</code> object example</h3>
+  <pre>
+    {
+      "networkAddress": "aa:bb:cc:dd:ee",
+      "batteryPower": 95,
+      "signalStrength": -23,
+      "errorInfo": "Decoded Data Integrity Error"
+    }
+  </pre>
+  Or the array style of the above objects like this:
+  <pre>
+    [
+      {
+        "networkAddress": "aa:bb:cc:dd:ee",
+        "batteryPower": 95,
+        "signalStrength": -23,
+        "errorInfo": "Decoded Data Integrity Error"
+      },
+      {
+        "networkAddress": "bb:bb:cc:dd:ee",
+        "batteryPower": 45,
+        "signalStrength": -34
+      },
+    ]
+  </pre>
+
+  <h3>Outputs</h3>
+  <p><code>msg</code> has the following properties.</p>
+  <dl class="message-properties">
+    <dt>error<span class="property-type">string</span></dt>
+    <dd>
+      Error message text if any.
+    </dd>
+    <dt>payload<span class="property-type">object</span></dt>
+    <dd>
+      Same as Inputs <code>msg.payload</code>
+    </dd>
+  </dl>
+  <p>When the output message contains <code>error</code> property, the message will be routed to the error output port if <code>Filter Error Messages</code> is checked.</p>
+
+  <h3>Notice</h3>
+  <p>
+    This node should work only when CANDY LINE Go Live client (candy-red-lwm2m module) is operating.
+    Otherwise, this node does nothing but shows a warning information text.
+  </p>
+</script>
