@@ -77,7 +77,7 @@ module.exports = function(RED) {
         const count = await RED.settings.lwm2m.countPeripheralInfo();
         this.status({
           fill: 'green',
-          shape: 'ring',
+          shape: 'dot',
           text: RED._(`peripheral.status.info`, { count })
         });
         this.schedulePeripheralCount(PERIPHERAL_COUNTER_INTERVAL_MS);
