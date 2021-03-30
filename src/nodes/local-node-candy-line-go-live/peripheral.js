@@ -56,7 +56,25 @@ module.exports = function(RED) {
       this.on('input', async (msg, send, done) => {
         try {
           debug(`[input] msg => ${JSON.stringify(msg)}`);
-          const result = await RED.settings.lwm2m.findPeripheralInfo(msg.topic);
+          let networkAddressQuery = msg.topic;
+          if (networkAddressQuery) {
+            networkAddressQuery = networkAddressQuery.trim();
+            if (networkAddressQuery.indexOf(',') >= 0) {
+              networkAddressQuery = networkAddressQuery
+                .split(',')
+                .map(a => a.trim())
+                .filter(a => a);
+            }
+            if (networkAddressQuery.length === 0) {
+              networkAddressQuery = null;
+            }
+          }
+          debug(
+            `networkAddressQuery => ${JSON.stringify(networkAddressQuery)}`
+          );
+          const result = await RED.settings.lwm2m.findPeripheralInfo(
+            networkAddressQuery
+          );
           Object.assign(msg, result);
           send(msg);
           done();
