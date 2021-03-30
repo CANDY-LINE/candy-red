@@ -1,55 +1,24 @@
 <script type="text/x-red" data-help-name="Go-Live-peripheral">
-  <p>A node for inqurying peripheral info managed by CANDY LINE Go Live.</p>
+  <p>A node for getting peripheral information managed by CANDY LINE Go Live.</p>
   <h3>Inputs</h3>
-  <p><code>msg.payload</code> has the following properties.</p>
-  <dl class="message-properties">
-    <dt>networkAddress<span class="property-type">string</span></dt>
-    <dd>
-    A peripheral network address associated with its connectivity type.
-    A Bluetooth Device Address for BLE, an IP Address for LAN/WLAN, for instance.
-    </dd>
-    <dt>batteryPower<span class="property-type">int</span></dt>
-    <dd>
-    The peripheral battery power in percent. 0-100 for the left battery power in %.
-    101 for AC or other external power supplies, 102 for host powered.
-    This property is optional when the message reports an error.
-    </dd>
-    <dt>signalStrength<span class="property-type">int</span></dt>
-    <dd>
-    The peripheral signal strength in dBm. Integer value is accepted.
-    32767 for Wired peripherals.
-    This property is optional when the message reports an error.
-    </dd>
-    <dt>errorInfo<span class="property-type">string</span></dt>
-    <dd>
-    The detected error info text. The property is optional unless the message reports an error.
-    </dd>
-  </dl>
+  <p>
+    Provide the peripheral network address in a simple text, the Comma Separated Value format, or in RegExp to  <code>msg.topic</code>
+    This node ignores the content of <code>msg.paylaod</code>.
+    You can get all stored peripheral information when you leave <code>msg.topic</code> empty.
+  </p>
 
-  <h3>Inputs <code>msg.payload</code> object example</h3>
+  <h3>Inputs <code>msg.topic</code> text example</h3>
+  <p>Inqurying a single peripheral with the network address: <code>00:00:00:00:00</code></p>
   <pre>
-    {
-      "networkAddress": "aa:bb:cc:dd:ee",
-      "batteryPower": 95,
-      "signalStrength": -23,
-      "errorInfo": "Decoded Data Integrity Error"
-    }
+    00:00:00:00:00
   </pre>
-  Or the array style of the above objects like this:
+  <p>Inqurying 2 peripherals with the network address: <code>00:00:00:00:00</code> and <code>11:11:11:11:11</code> in Comma Separated Value format</p>
   <pre>
-    [
-      {
-        "networkAddress": "aa:bb:cc:dd:ee",
-        "batteryPower": 95,
-        "signalStrength": -23,
-        "errorInfo": "Decoded Data Integrity Error"
-      },
-      {
-        "networkAddress": "bb:bb:cc:dd:ee",
-        "batteryPower": 45,
-        "signalStrength": -34
-      },
-    ]
+    00:00:00:00:00,11:11:11:11:11
+  </pre>
+  <p>Inqurying 2 peripherals with the network address: <code>00:00:00:00:00</code> and <code>11:11:11:11:11</code> in RegExp format</p>
+  <pre>
+    (00:00:00:00:00|11:11:11:11:11)
   </pre>
 
   <h3>Outputs</h3>
@@ -61,10 +30,37 @@
     </dd>
     <dt>payload<span class="property-type">object</span></dt>
     <dd>
-      Same as Inputs <code>msg.payload</code>
+      A JSON array object containing the following structure objects.
+      <dl class="message-properties">
+        <dt>networkAddress<span class="property-type">string</span></dt>
+        <dd>A peripheral network address.</dd>
+        <dt>alias<span class="property-type">string</span></dt>
+        <dd>Alias for this peripheral.</dd>
+        <dt>reportCount<span class="property-type">int</span></dt>
+        <dd>
+        The number of reports. This count will be reset when a given period passes.
+        </dd>
+        <dt>errorCount<span class="property-type">int</span></dt>
+        <dd>
+        The number of error reports. This count will be reset when a given period passes.
+        </dd>
+        <dt>lastErrorInfo<span class="property-type">string</span></dt>
+        <dd>
+        Last reported error information. The property can be null, the emtpy text, or missing when there's no error ever.
+        </dd>
+        <dt>batteryPower<span class="property-type">int</span></dt>
+        <dd>
+        The peripheral battery power in percent.
+        101 for AC or other external power supplies, 102 for host powered.
+        </dd>
+        <dt>signalStrength<span class="property-type">int</span></dt>
+        <dd>
+        The peripheral signal strength in dBm.
+        32767 for Wired peripherals.
+        </dd>
+      </dl>
     </dd>
-  </dl>
-  <p>When the output message contains <code>error</code> property, the message will be routed to the error output port if <code>Filter Error Messages</code> is checked.</p>
+  </dl>  
 
   <h3>Notice</h3>
   <p>
