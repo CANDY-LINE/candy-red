@@ -36,6 +36,8 @@
         <dd>A peripheral network address.</dd>
         <dt>alias<span class="property-type">string</span></dt>
         <dd>Alias for this peripheral.</dd>
+        <dt>lastReportedAt<span class="property-type">date</span></dt>
+        <dd>Last reported date/time.</dd>
         <dt>reportCount<span class="property-type">int</span></dt>
         <dd>
         The number of reports. This count will be reset when a given period passes.
@@ -48,6 +50,8 @@
         <dd>
         Last reported error information. The property can be null, the emtpy text, or missing when there's no error ever.
         </dd>
+        <dt>lastErrorReportedAt<span class="property-type">date</span></dt>
+        <dd>Last error reported date/time.</dd>
         <dt>batteryPower<span class="property-type">int</span></dt>
         <dd>
         The peripheral battery power in percent.
@@ -58,6 +62,8 @@
         The peripheral signal strength in dBm.
         32767 for Wired peripherals.
         </dd>
+        <dt>statsStartedAt<span class="property-type">date</span></dt>
+        <dd>Date/time when the stats processing started.</dd>
       </dl>
     </dd>
   </dl>  

@@ -37,6 +37,8 @@
         <dd>ネットワークアドレス</dd>
         <dt>alias<span class="property-type">string</span></dt>
         <dd>この周辺機器の別名</dd>
+        <dt>lastReportedAt<span class="property-type">date</span></dt>
+        <dd>最新の監視情報報告日時</dd>
         <dt>reportCount<span class="property-type">int</span></dt>
         <dd>
         報告回数です。この値は、一定時間ごとにリセットされ0に戻ります。
@@ -49,6 +51,8 @@
         <dd>
         最後に報告されたエラー情報のテキストを表します。エラー情報がない場合は、空文字、nullの値が入っているか、あるいはこの属性が存在しません。
         </dd>
+        <dt>lastErrorReportedAt<span class="property-type">date</span></dt>
+        <dd>最後に報告されたエラーの報告日時。</dd>
         <dt>batteryPower<span class="property-type">int</span></dt>
         <dd>
         バッテリー残量を表します。 0-100の整数ではバッテリー残量をパーセントで表します。
@@ -58,6 +62,8 @@
         <dd>
         信号強度をdBmで表した整数です。有線接続の場合は、32767です。
         </dd>
+        <dt>statsStartedAt<span class="property-type">date</span></dt>
+        <dd>集計開始日時。</dd>
       </dl>
     </dd>
   </dl>  
