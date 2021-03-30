@@ -19,10 +19,13 @@ CANDY RED is IoT gateway software designed for [CANDY Pi Lite board](https://tra
     * [GATT BLE nodes](https://www.npmjs.com/package/node-red-contrib-generic-ble)
     * [Serialport node](https://www.npmjs.com/package/node-red-node-serialport)
     * [Device Statistics node](https://www.npmjs.com/package/node-red-contrib-device-stats)
-    * [CANDY Pi Lite/CANDY Pi Lite+ 3G/4G LTE board nodes](src/nodes/local-node-candy-pi-lite)
-    * [CANDY EGG cloud service nodes](src/nodes/local-node-candy-egg) \*
+    * [CANDY Pi Lite/CANDY Pi Lite+ 3G/4G LTE board nodes](src/nodes/local-node-candy-pi-lite) <sup>*1</sup>
+    * [CANDY EGG cloud service nodes](src/nodes/local-node-candy-egg) <sup>*2</sup>
 
-_\* [CANDY EGG cloud service](https://www.candy-line.io/%E8%A3%BD%E5%93%81%E4%B8%80%E8%A6%A7/candy-red-egg/) account is required_
+<dl>
+<dd><i>*1 CANDY Pi Lite Board is required.</i></dd>
+<dd><i>*2 CANDY EGG cloud service account is required.</i></dd>
+</dl>
 
 ## OS and Hardwares
 
