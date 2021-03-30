@@ -8,8 +8,8 @@
   },
   "node-red": {
     "nodes": {
-      "heartbeat": "heartbeat.js",
-      "peripheral": "peripheral.js"
+      "Go-Live-heartbeat": "heartbeat.js",
+      "Go-Live-peripheral": "peripheral.js"
     }
   }
 }
