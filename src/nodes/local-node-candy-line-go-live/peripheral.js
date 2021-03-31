@@ -26,6 +26,29 @@ module.exports = function(RED) {
   class CANDYLINEGoLivePeripheralInquryNode {
     constructor(n) {
       RED.nodes.createNode(this, n);
+      this.finderMethod = n.finderMethod;
+      this.copyProps = {};
+      if (this.finderMethod === 'payload') {
+        this.finderProp = n.finderProp || 'networkAddress';
+        for (const p of [
+          'copyAlias',
+          'copyLastReportedAt',
+          'copyReportCount',
+          'copyErrorCount',
+          'copyLastErrorInfo',
+          'copyBatteryPower',
+          'copySignalStrength',
+          'copyStatsStartedAt'
+        ]) {
+          if (n[p]) {
+            const first = p.substring(4, 5).toLowerCase();
+            const sourceProp = `${first}${p.substring(5)}`;
+            const destProp = n[`${p}Prop`];
+            debug(`sourceProp: ${sourceProp}, destProp: ${destProp}`);
+            this.copyProps[sourceProp] = destProp || sourceProp;
+          }
+        }
+      }
       if (
         RED.settings.lwm2m &&
         typeof RED.settings.lwm2m.findPeripheralInfo === 'function' &&
@@ -55,27 +78,22 @@ module.exports = function(RED) {
       });
       this.on('input', async (msg, send, done) => {
         try {
-          debug(`[input] msg => ${JSON.stringify(msg)}`);
-          let networkAddressQuery = msg.topic;
-          if (networkAddressQuery) {
-            networkAddressQuery = networkAddressQuery.trim();
-            if (networkAddressQuery.indexOf(',') >= 0) {
-              networkAddressQuery = networkAddressQuery
-                .split(',')
-                .map(a => a.trim())
-                .filter(a => a);
+          debug(
+            `[input] method => ${this.finderMethod}, msg => ${JSON.stringify(
+              msg
+            )}`
+          );
+          switch (this.finderMethod) {
+            default:
+            case 'topic': {
+              msg = await this.findByTopic(msg);
+              break;
             }
-            if (networkAddressQuery.length === 0) {
-              networkAddressQuery = null;
+            case 'payload': {
+              msg = await this.findByPayload(msg);
+              break;
             }
           }
-          debug(
-            `networkAddressQuery => ${JSON.stringify(networkAddressQuery)}`
-          );
-          const result = await RED.settings.lwm2m.findPeripheralInfo(
-            networkAddressQuery
-          );
-          Object.assign(msg, result);
           send(msg);
           done();
         } catch (err) {
@@ -84,6 +102,58 @@ module.exports = function(RED) {
       });
       this.schedulePeripheralCount();
       debug(`CANDYLINEGoLivePeripheralInquryNode has been initialized`);
+    }
+
+    async findByTopic(msg) {
+      let networkAddressQuery = msg.topic;
+      if (networkAddressQuery) {
+        networkAddressQuery = networkAddressQuery.trim();
+        if (networkAddressQuery.indexOf(',') >= 0) {
+          networkAddressQuery = networkAddressQuery
+            .split(',')
+            .map(a => a.trim())
+            .filter(a => a);
+        }
+        if (networkAddressQuery.length === 0) {
+          networkAddressQuery = null;
+        }
+      }
+      debug(`networkAddressQuery => ${JSON.stringify(networkAddressQuery)}`);
+      const result = await RED.settings.lwm2m.findPeripheralInfo(
+        networkAddressQuery
+      );
+      Object.assign(msg, result);
+      return msg;
+    }
+
+    async findByPayload(msg) {
+      const { payload } = msg;
+      if (!payload) {
+        throw new Error(RED._(`peripheral.errors.payloadMissing`));
+      }
+      if (typeof payload !== 'object') {
+        throw new Error(RED._(`peripheral.errors.payloadIsNotObject`));
+      }
+      const networkAddress = payload[this.finderProp];
+      if (!networkAddress) {
+        throw new Error(RED._(`peripheral.errors.unknown`, { networkAddress }));
+      }
+      const result = await RED.settings.lwm2m.findPeripheralInfo([
+        networkAddress
+      ]);
+      if (result.length !== 1) {
+        throw new Error(RED._(`peripheral.errors.unknown`, { networkAddress }));
+      }
+      const resultPeripheral = result[0];
+      const sourceProps = Object.keys(this.copyProps);
+      if (sourceProps.length < 1) {
+        throw new Error(RED._(`peripheral.errors.nothingToCopy`));
+      }
+      sourceProps.forEach(sourceProp => {
+        const destProp = this.copyProps[sourceProp];
+        payload[destProp] = resultPeripheral[sourceProp];
+      });
+      return msg;
     }
 
     schedulePeripheralCount(intervalMs = 1000) {

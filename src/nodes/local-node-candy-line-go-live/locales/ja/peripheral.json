@@ -32,6 +32,10 @@
       "copyStatsStartedAt": "コピー先集計開始日時プロパティ名"
     },
     "errors": {
+      "nothingToCopy": "msg.payloadにコピーするプロパティが選択されていません。",
+      "unknown": "ネットワークアドレス[__networkAddress__]の周辺機器情報は保存されていません。",
+      "payloadIsNotObject": "msg.payloadがオブジェクトでないため処理できません。",
+      "payloadMissing": "msg.payloadが見つかりません。",
       "unsupported": "CANDY LINE Go Liveモジュールが存在しないため、このノードは何も処理を行いません。"
     }
   }

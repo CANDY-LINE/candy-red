@@ -32,6 +32,10 @@
       "copyStatsStartedAt": "Destination 'statsStartedAt' property name"
     },
     "errors": {
+      "nothingToCopy": "There's nothing to copy from the peripheral info to msg.payload.",
+      "unknown": "The peripheral info associated with the network address[__networkAddress__] is missing.",
+      "payloadIsNotObject": "msg.payload must be object.",
+      "payloadMissing": "msg.payload is missing.",
       "unsupported": "This node does nothinig as CANDY LINE Go Live module is missing."
     }
   }
