@@ -3,6 +3,91 @@
     <label for='node-input-name'><i class='fa fa-tag'></i> <span data-i18n='node-red:common.label.name'></span></label>
     <input type='text' id='node-input-name' data-i18n='[placeholder]node-red:common.label.name'>
   </div>
+  <div class='form-row'>
+    <label for='node-input-finderMethod'><span data-i18n='peripheral.label.finderMethod'></span></label>
+    <select type='text' id='node-input-finderMethod' style='width: 70%;'>
+      <option value='topic' data-i18n='peripheral.finderMethod.topic'></option>
+      <option value='payload' data-i18n='peripheral.finderMethod.payload'></option>
+    </select>
+  </div>
+  <div id='payload-prop-rows'>
+    <div class='form-row'>
+      <label for='node-input-finderProp'><span data-i18n='peripheral.label.finderProp'></span></label>
+      <input type='text' id='node-input-finderProp' data-i18n='[placeholder]peripheral.placeholder.finderProp'>
+    </div>
+    <div class='form-row'>
+      <label>&nbsp;</label>
+      <input type='checkbox' id='node-input-copyAlias' style='display: inline-block; width: auto; vertical-align: top;'>
+      <label for='node-input-copyAlias' style='width: 70%;' data-i18n='peripheral.label.copyAlias'></label>
+      <div id='peripheral-copyAlias'>
+        <label>&nbsp;</label>
+        <input type='text' id='node-input-copyAliasProp' data-i18n='[placeholder]peripheral.placeholder.copyAlias'>
+      </div>
+    </div>
+    <div class='form-row'>
+      <label>&nbsp;</label>
+      <input type='checkbox' id='node-input-copyLastReportedAt' style='display: inline-block; width: auto; vertical-align: top;'>
+      <label for='node-input-copyLastReportedAt' style='width: 70%;' data-i18n='peripheral.label.copyLastReportedAt'></label>
+      <div id='peripheral-copyLastReportedAt'>
+        <label>&nbsp;</label>
+        <input type='text' id='node-input-copyLastReportedAtProp' data-i18n='[placeholder]peripheral.placeholder.copyLastReportedAt'>
+      </div>
+    </div>
+    <div class='form-row'>
+      <label>&nbsp;</label>
+      <input type='checkbox' id='node-input-copyReportCount' style='display: inline-block; width: auto; vertical-align: top;'>
+      <label for='node-input-copyReportCount' style='width: 70%;' data-i18n='peripheral.label.copyReportCount'></label>
+      <div id='peripheral-copyReportCount'>
+        <label>&nbsp;</label>
+        <input type='text' id='node-input-copyReportCountProp' data-i18n='[placeholder]peripheral.placeholder.copyReportCount'>
+      </div>
+    </div>
+    <div class='form-row'>
+      <label>&nbsp;</label>
+      <input type='checkbox' id='node-input-copyErrorCount' style='display: inline-block; width: auto; vertical-align: top;'>
+      <label for='node-input-copyErrorCount' style='width: 70%;' data-i18n='peripheral.label.copyErrorCount'></label>
+      <div id='peripheral-copyErrorCount'>
+        <label>&nbsp;</label>
+        <input type='text' id='node-input-copyErrorCountProp' data-i18n='[placeholder]peripheral.placeholder.copyErrorCount'>
+      </div>
+    </div>
+    <div class='form-row'>
+      <label>&nbsp;</label>
+      <input type='checkbox' id='node-input-copyLastErrorInfo' style='display: inline-block; width: auto; vertical-align: top;'>
+      <label for='node-input-copyLastErrorInfo' style='width: 70%;' data-i18n='peripheral.label.copyLastErrorInfo'></label>
+      <div id='peripheral-copyLastErrorInfo'>
+        <label>&nbsp;</label>
+        <input type='text' id='node-input-copyLastErrorInfoProp' data-i18n='[placeholder]peripheral.placeholder.copyLastErrorInfo'>
+      </div>
+    </div>
+    <div class='form-row'>
+      <label>&nbsp;</label>
+      <input type='checkbox' id='node-input-copyBatteryPower' style='display: inline-block; width: auto; vertical-align: top;'>
+      <label for='node-input-copyBatteryPower' style='width: 70%;' data-i18n='peripheral.label.copyBatteryPower'></label>
+      <div id='peripheral-copyBatteryPower'>
+        <label>&nbsp;</label>
+        <input type='text' id='node-input-copyBatteryPowerProp' data-i18n='[placeholder]peripheral.placeholder.copyBatteryPower'>
+      </div>
+    </div>
+    <div class='form-row'>
+      <label>&nbsp;</label>
+      <input type='checkbox' id='node-input-copySignalStrength' style='display: inline-block; width: auto; vertical-align: top;'>
+      <label for='node-input-copySignalStrength' style='width: 70%;' data-i18n='peripheral.label.copySignalStrength'></label>
+      <div id='peripheral-copySignalStrength'>
+        <label>&nbsp;</label>
+        <input type='text' id='node-input-copySignalStrengthProp' data-i18n='[placeholder]peripheral.placeholder.copySignalStrength'>
+      </div>
+    </div>
+    <div class='form-row'>
+      <label>&nbsp;</label>
+      <input type='checkbox' id='node-input-copyStatsStartedAt' style='display: inline-block; width: auto; vertical-align: top;'>
+      <label for='node-input-copyStatsStartedAt' style='width: 70%;' data-i18n='peripheral.label.copyStatsStartedAt'></label>
+      <div id='peripheral-copyStatsStartedAt'>
+        <label>&nbsp;</label>
+        <input type='text' id='node-input-copyStatsStartedAtProp' data-i18n='[placeholder]peripheral.placeholder.copyStatsStartedAt'>
+      </div>
+    </div>
+  </div>
 </script>
 
 <script>
@@ -10,17 +95,66 @@
     RED.nodes.registerType('Go-Live-peripheral', {
       category: 'CANDY LINE',
       defaults: {
-        name: { value: '' }
+        name: { value: '' },
+        finderMethod: { value: 'topic' } /* or payload */,
+        finderProp: { value: 'networkAddress' },
+        copyAlias: { value: true },
+        copyAliasProp: { value: 'alias' },
+        copyLastReportedAt: { value: false },
+        copyLastReportedAtProp: { value: 'lastReportedAt' },
+        copyReportCount: { value: false },
+        copyReportCountProp: { value: 'reportCount' },
+        copyErrorCount: { value: false },
+        copyErrorCountProp: { value: 'errorCount' },
+        copyLastErrorInfo: { value: false },
+        copyLastErrorInfoProp: { value: 'lastErrorInfo' },
+        copyBatteryPower: { value: false },
+        copyBatteryPowerProp: { value: 'batteryPower' },
+        copySignalStrength: { value: false },
+        copySignalStrengthProp: { value: 'signalStrength' },
+        copyStatsStartedAt: { value: false },
+        copyStatsStartedAtProp: { value: 'statsStartedAt' }
       },
       color: '#64c77c',
       inputs: 1,
       outputs: 1,
       icon: 'font-awesome/fa-microchip',
       label: function() {
-        return this.name || this._('peripheral.label.node');
+        return this.name || this._('peripheral.label.node', { method: this.finderMethod });
       },
       labelStyle: function() {
         return this.name ? 'node_label_italic' : '';
+      },
+      oneditprepare: function() {
+        [
+          'copyAlias',
+          'copyLastReportedAt',
+          'copyReportCount',
+          'copyErrorCount',
+          'copyLastErrorInfo',
+          'copyBatteryPower',
+          'copySignalStrength',
+          'copyStatsStartedAt'
+        ].forEach(function(p) {
+          function onchanged() {
+            if ($('#node-input-' + p).prop('checked')) {
+              $('#peripheral-' + p).show();
+            } else {
+              $('#peripheral-' + p).hide();
+            }
+          };
+          $('#node-input-' + p).change(onchanged);
+          onchanged();
+        });
+        function refreshLayout() {
+          if ($('#node-input-finderMethod').val() === 'payload') {
+            $('#payload-prop-rows').show();
+          } else {
+            $('#payload-prop-rows').hide();
+          }
+        }
+        $('#node-input-finderMethod').change(refreshLayout);
+        refreshLayout();
       }
     });
   })();

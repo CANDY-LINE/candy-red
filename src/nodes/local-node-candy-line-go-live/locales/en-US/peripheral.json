@@ -1,10 +1,35 @@
 {
   "peripheral": {
     "label": {
-      "node": "CANDY LINE Go Live Peripheral Information Inquiry"
+      "node": "CANDY LINE Go Live Peripheral Information Inquiry(__method__)",
+      "finderMethod": "Find by",
+      "finderProp": "Network Address Property Name",
+      "copyAlias": "Copy 'alias'",
+      "copyLastReportedAt": "Copy 'lastReportedAt'",
+      "copyReportCount": "Copy 'reportCount'",
+      "copyErrorCount": "Copy 'errorCount'",
+      "copyLastErrorInfo": "Copy 'lastErrorInfo'",
+      "copyBatteryPower": "Copy 'batteryPower'",
+      "copySignalStrength": "Copy 'signalStrength'",
+      "copyStatsStartedAt": "Copy 'statsStartedAt'"
+    },
+    "finderMethod": {
+      "topic": "msg.topic text",
+      "payload": "A property value in msg.payload"
     },
     "status": {
-      "info": "__count__ Peripherals"
+      "info": "__count__ Peripheral(s)"
+    },
+    "placeholder": {
+      "finderProp": "Property Name",
+      "copyAlias": "Destination 'alias' property name",
+      "copyLastReportedAt": "Destination 'lastReportedAt' property name",
+      "copyReportCount": "Destination 'reportCount' property name",
+      "copyErrorCount": "Destination 'errorCount' property name",
+      "copyLastErrorInfo": "Destination 'lastErrorInfo' property name",
+      "copyBatteryPower": "Destination 'batteryPower' property name",
+      "copySignalStrength": "Destination 'signalStrength' property name",
+      "copyStatsStartedAt": "Destination 'statsStartedAt' property name"
     },
     "errors": {
       "unsupported": "This node does nothinig as CANDY LINE Go Live module is missing."
