@@ -72,8 +72,8 @@ module.exports = function(RED) {
       this.status({});
       this.on('close', done => {
         this.status({});
-        clearTimeout(this.peripheracCounter);
-        this.peripheracCounter = null;
+        clearTimeout(this.peripheralCounter);
+        this.peripheralCounter = null;
         done();
       });
       this.on('input', async (msg, send, done) => {
@@ -157,9 +157,9 @@ module.exports = function(RED) {
     }
 
     schedulePeripheralCount(intervalMs = 1000) {
-      this.peripheracCounter = setTimeout(async () => {
-        if (this.peripheracCounter === null) {
-          debug(`peripheracCounter has been stopped.`);
+      this.peripheralCounter = setTimeout(async () => {
+        if (this.peripheralCounter === null) {
+          debug(`peripheralCounter has been stopped.`);
           return;
         }
         const count = await RED.settings.lwm2m.countPeripheralInfo();
@@ -170,7 +170,7 @@ module.exports = function(RED) {
         });
         this.schedulePeripheralCount(PERIPHERAL_COUNTER_INTERVAL_MS);
       }, intervalMs);
-      debug(`peripheracCounter has been scheduled.`);
+      debug(`peripheralCounter has been scheduled.`);
     }
   }
   RED.nodes.registerType(
