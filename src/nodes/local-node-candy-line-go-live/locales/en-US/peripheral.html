@@ -11,7 +11,7 @@
   <h3>Inputs</h3>
   <p>
     Provide the peripheral network address in a simple text, the Comma Separated Value format, or in RegExp to  <code>msg.topic</code>
-    This node ignores the content of <code>msg.paylaod</code>.
+    This node ignores the content of <code>msg.payload</code>.
     You can get all stored peripheral information when you leave <code>msg.topic</code> empty.
   </p>
   <h4>Inputs <code>msg.topic</code> text example</h4>
@@ -78,14 +78,14 @@
   </p>
   <h3>Inputs</h3>
   <p>
-    Leave <code>msg.topic</code> <b>empty</b> and pass an <code>object</code> containing a property for the network address in <code>msg.paylaod</code>.
-    And the output will be added to the <code>msg.paylaod</code>.
-    This node will emit an error when <code>msg.paylaod</code> is undefined or non-object value.
+    Leave <code>msg.topic</code> <b>empty</b> and pass an <code>object</code> containing a property for the network address in <code>msg.payload</code>.
+    And the output will be added to the <code>msg.payload</code>.
+    This node will emit an error when <code>msg.payload</code> is undefined or non-object value.
   </p>
   <p></p>
   <h3>Outputs</h3>
   <p>
-    Copy the peripheral info to the given input <code>msg.paylaod</code>. You can choose one or more properties to copy in the node settings.
+    Copy the peripheral info to the given input <code>msg.payload</code>. You can choose one or more properties to copy in the node settings.
   </p>
 
   <h3>Notice</h3>
