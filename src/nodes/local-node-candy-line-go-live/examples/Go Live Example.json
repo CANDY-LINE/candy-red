@@ -1,107 +1,181 @@
 [
-  {
-      "id": "79aea94e.302d38",
-      "type": "tab",
-      "label": "Go Live",
-      "disabled": false,
-      "info": ""
-  },
-  {
-      "id": "6e0a1a8b.b5f3bc",
-      "type": "inject",
-      "z": "79aea94e.302d38",
-      "name": "00:00:00:00:00",
-      "props": [
-          {
-              "p": "payload"
-          },
-          {
-              "p": "topic",
-              "vt": "str"
-          }
-      ],
-      "repeat": "300",
-      "crontab": "",
-      "once": false,
-      "onceDelay": 0.1,
-      "topic": "",
-      "payload": "{\"networkAddress\":\"00:00:00:00:00\",\"batteryPower\":102,\"signalStrength\":-23}",
-      "payloadType": "json",
-      "x": 230,
-      "y": 80,
-      "wires": [
-          [
-              "4df69051.2c9b98"
-          ]
-      ]
-  },
-  {
-      "id": "d3d5775c.f4a7c8",
-      "type": "debug",
-      "z": "79aea94e.302d38",
-      "name": "Print whole msg object",
-      "active": true,
-      "tosidebar": true,
-      "console": false,
-      "tostatus": false,
-      "complete": "true",
-      "targetType": "full",
-      "statusVal": "",
-      "statusType": "auto",
-      "x": 560,
-      "y": 300,
-      "wires": []
-  },
-  {
-      "id": "4df69051.2c9b98",
-      "type": "Go-Live-heartbeat",
-      "z": "79aea94e.302d38",
-      "name": "",
-      "filterErrorMessages": false,
-      "outputs": 1,
-      "x": 370,
-      "y": 200,
-      "wires": [
-          [
-              "d3d5775c.f4a7c8"
-          ]
-      ]
-  },
-  {
-      "id": "2031646d.8ba14c",
-      "type": "Go-Live-peripheral",
-      "z": "79aea94e.302d38",
-      "name": "",
-      "x": 490,
-      "y": 420,
-      "wires": [
-          [
-              "d3d5775c.f4a7c8"
-          ]
-      ]
-  },
-  {
-      "id": "1c3d7958.012b27",
-      "type": "inject",
-      "z": "79aea94e.302d38",
-      "name": "Get All Peripheral Info",
-      "props": [
-          {
-              "p": "topic",
-              "vt": "str"
-          }
-      ],
-      "repeat": "",
-      "crontab": "",
-      "once": false,
-      "onceDelay": 0.1,
-      "topic": "",
-      "x": 230,
-      "y": 340,
-      "wires": [
-          [
-              "2031646d.8ba14c"
-          ]
-      ]
-  }
+    {
+        "id": "79aea94e.302d38",
+        "type": "tab",
+        "label": "Go Live",
+        "disabled": false,
+        "info": ""
+    },
+    {
+        "id": "6e0a1a8b.b5f3bc",
+        "type": "inject",
+        "z": "79aea94e.302d38",
+        "name": "Simulate Monitoring Report (00:00:00:00:00)",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "300",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"networkAddress\":\"00:00:00:00:00\",\"batteryPower\":102,\"signalStrength\":-23}",
+        "payloadType": "json",
+        "x": 210,
+        "y": 180,
+        "wires": [
+            [
+                "4df69051.2c9b98"
+            ]
+        ]
+    },
+    {
+        "id": "d3d5775c.f4a7c8",
+        "type": "debug",
+        "z": "79aea94e.302d38",
+        "name": "Print whole msg object",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "full",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 1010,
+        "y": 300,
+        "wires": []
+    },
+    {
+        "id": "4df69051.2c9b98",
+        "type": "Go-Live-heartbeat",
+        "z": "79aea94e.302d38",
+        "name": "",
+        "filterErrorMessages": false,
+        "outputs": 1,
+        "x": 680,
+        "y": 220,
+        "wires": [
+            [
+                "d3d5775c.f4a7c8"
+            ]
+        ]
+    },
+    {
+        "id": "2031646d.8ba14c",
+        "type": "Go-Live-peripheral",
+        "z": "79aea94e.302d38",
+        "name": "",
+        "finderMethod": "topic",
+        "finderProp": "",
+        "copyAlias": false,
+        "copyAliasProp": "",
+        "copyLastReportedAt": false,
+        "copyLastReportedAtProp": "",
+        "copyReportCount": false,
+        "copyReportCountProp": "",
+        "copyErrorCount": false,
+        "copyErrorCountProp": "",
+        "copyLastErrorInfo": false,
+        "copyLastErrorInfoProp": "",
+        "copyBatteryPower": false,
+        "copyBatteryPowerProp": "",
+        "copySignalStrength": false,
+        "copySignalStrengthProp": "",
+        "copyStatsStartedAt": false,
+        "copyStatsStartedAtProp": "",
+        "x": 670,
+        "y": 340,
+        "wires": [
+            [
+                "d3d5775c.f4a7c8"
+            ]
+        ]
+    },
+    {
+        "id": "1c3d7958.012b27",
+        "type": "inject",
+        "z": "79aea94e.302d38",
+        "name": "Get All Peripheral Info (Payload Ignored)",
+        "props": [
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "x": 190,
+        "y": 340,
+        "wires": [
+            [
+                "2031646d.8ba14c"
+            ]
+        ]
+    },
+    {
+        "id": "5cacd36b.b29174",
+        "type": "inject",
+        "z": "79aea94e.302d38",
+        "name": "Add Peripheral Info (Find by a property in the payload)",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"localAddress\":\"00:00:00:00:00\",\"temperature\":24.5}",
+        "payloadType": "json",
+        "x": 240,
+        "y": 460,
+        "wires": [
+            [
+                "10166184.6a925e"
+            ]
+        ]
+    },
+    {
+        "id": "10166184.6a925e",
+        "type": "Go-Live-peripheral",
+        "z": "79aea94e.302d38",
+        "name": "",
+        "finderMethod": "payload",
+        "finderProp": "localAddress",
+        "copyAlias": true,
+        "copyAliasProp": "sensorDeviceName",
+        "copyLastReportedAt": false,
+        "copyLastReportedAtProp": "",
+        "copyReportCount": false,
+        "copyReportCountProp": "",
+        "copyErrorCount": false,
+        "copyErrorCountProp": "",
+        "copyLastErrorInfo": false,
+        "copyLastErrorInfoProp": "",
+        "copyBatteryPower": false,
+        "copyBatteryPowerProp": "",
+        "copySignalStrength": false,
+        "copySignalStrengthProp": "",
+        "copyStatsStartedAt": false,
+        "copyStatsStartedAtProp": "",
+        "x": 680,
+        "y": 460,
+        "wires": [
+            [
+                "d3d5775c.f4a7c8"
+            ]
+        ]
+    }
 ]
