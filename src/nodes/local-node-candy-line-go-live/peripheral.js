@@ -121,7 +121,7 @@ module.exports = function(RED) {
       const result = await RED.settings.lwm2m.findPeripheralInfo(
         networkAddressQuery
       );
-      Object.assign(msg, result);
+      msg.payload = result;
       return msg;
     }
 
