@@ -25,51 +25,43 @@
   <pre>
 (00:00:00:00:00|11:11:11:11:11)</pre>
   <h3>Outputs</h3>
-  <p><code>msg</code> has the following properties.</p>
+  <p>
+    <code>msg.payload</code> is an array containing the following structure objects.
+  </p>
   <dl class="message-properties">
-    <dt>error<span class="property-type">string</span></dt>
+    <dt>networkAddress<span class="property-type">string</span></dt>
+    <dd>A peripheral network address.</dd>
+    <dt>alias<span class="property-type">string</span></dt>
+    <dd>Alias for this peripheral.</dd>
+    <dt>lastReportedAt<span class="property-type">date</span></dt>
+    <dd>Last reported date/time.</dd>
+    <dt>reportCount<span class="property-type">int</span></dt>
     <dd>
-      Error message text if any.
+    The number of reports. This count will be reset when a given period passes.
     </dd>
-    <dt>payload<span class="property-type">object</span></dt>
+    <dt>errorCount<span class="property-type">int</span></dt>
     <dd>
-      An array containing the following structure objects.
-      <dl class="message-properties">
-        <dt>networkAddress<span class="property-type">string</span></dt>
-        <dd>A peripheral network address.</dd>
-        <dt>alias<span class="property-type">string</span></dt>
-        <dd>Alias for this peripheral.</dd>
-        <dt>lastReportedAt<span class="property-type">date</span></dt>
-        <dd>Last reported date/time.</dd>
-        <dt>reportCount<span class="property-type">int</span></dt>
-        <dd>
-        The number of reports. This count will be reset when a given period passes.
-        </dd>
-        <dt>errorCount<span class="property-type">int</span></dt>
-        <dd>
-        The number of error reports. This count will be reset when a given period passes.
-        </dd>
-        <dt>lastErrorInfo<span class="property-type">string</span></dt>
-        <dd>
-        Last reported error information. The property can be null, the emtpy text, or missing when there's no error ever.
-        </dd>
-        <dt>lastErrorReportedAt<span class="property-type">date</span></dt>
-        <dd>Last error reported date/time.</dd>
-        <dt>batteryPower<span class="property-type">int</span></dt>
-        <dd>
-        The peripheral battery power in percent.
-        101 for AC or other external power supplies, 102 for host powered.
-        </dd>
-        <dt>signalStrength<span class="property-type">int</span></dt>
-        <dd>
-        The peripheral signal strength in dBm.
-        32767 for Wired peripherals.
-        </dd>
-        <dt>statsStartedAt<span class="property-type">date</span></dt>
-        <dd>Date/time when the stats processing started.</dd>
-      </dl>
+    The number of error reports. This count will be reset when a given period passes.
     </dd>
-  </dl>  
+    <dt>lastErrorInfo<span class="property-type">string</span></dt>
+    <dd>
+    Last reported error information. The property can be null, the emtpy text, or missing when there's no error ever.
+    </dd>
+    <dt>lastErrorReportedAt<span class="property-type">date</span></dt>
+    <dd>Last error reported date/time.</dd>
+    <dt>batteryPower<span class="property-type">int</span></dt>
+    <dd>
+    The peripheral battery power in percent.
+    101 for AC or other external power supplies, 102 for host powered.
+    </dd>
+    <dt>signalStrength<span class="property-type">int</span></dt>
+    <dd>
+    The peripheral signal strength in dBm.
+    32767 for Wired peripherals.
+    </dd>
+    <dt>statsStartedAt<span class="property-type">date</span></dt>
+    <dd>Date/time when the stats processing started.</dd>
+  </dl>
 
   <h2>Find by: A property value in msg.payload</h2>
   <p>
