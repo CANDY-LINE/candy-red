@@ -57,7 +57,7 @@
         "type": "Go-Live-heartbeat",
         "z": "79aea94e.302d38",
         "name": "",
-        "filterErrorMessages": false,
+        "filterPeripheralMissingErrorMessages": false,
         "outputs": 1,
         "x": 680,
         "y": 220,

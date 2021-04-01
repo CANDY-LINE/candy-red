@@ -2,9 +2,9 @@
   "heartbeat": {
     "label": {
       "node": "CANDY LINE Go Live Peripheral Heartbeat",
-      "filterErrorMessages": "Filter Error Messages",
+      "filterPeripheralMissingErrorMessages": "Filter A Peripheral Missing Error Messages",
       "success": "Success",
-      "error": "Error",
+      "error": "Missing Error",
       "output": "All"
     },
     "status": {
