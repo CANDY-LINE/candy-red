@@ -34,9 +34,7 @@ module.exports = function(RED) {
       } else {
         this.on('input', (msg, send, done) => {
           this.warn(RED._('heartbeat.errors.unsupported'));
-          msg.error = RED._('heartbeat.errors.unsupported');
-          send(this.filterIgnoredMessages ? [null, msg] : msg);
-          done();
+          done(new Error(RED._('heartbeat.errors.unsupported')));
         });
         setTimeout(() => {
           this.warn(RED._('heartbeat.errors.unsupported'));

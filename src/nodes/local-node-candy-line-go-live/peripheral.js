@@ -58,8 +58,7 @@ module.exports = function(RED) {
       } else {
         this.on('input', (msg, send, done) => {
           this.warn(RED._('peripheral.errors.unsupported'));
-          msg.error = RED._('peripheral.errors.unsupported');
-          send(msg);
+          done(new Error(RED._('peripheral.errors.unsupported')));
           done();
         });
         setTimeout(() => {
