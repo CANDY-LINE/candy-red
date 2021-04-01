@@ -61,15 +61,16 @@ module.exports = function(RED) {
           const result = await RED.settings.lwm2m.reportPeripheralStatus(
             msg.payload
           );
-          Object.assign(msg, result);
-          if (!msg.error) {
-            send(this.filterIgnoredMessages ? [msg, null] : msg);
-          } else {
-            send(this.filterIgnoredMessages ? [null, msg] : msg);
-          }
+          Object.assign(msg.payload, result);
+          send(this.filterIgnoredMessages ? [msg, null] : msg);
           done();
         } catch (err) {
-          done(err);
+          if (this.filterIgnoredMessages) {
+            send([null, msg]);
+            done();
+          } else {
+            done(err);
+          }
         } finally {
           setTimeout(() => {
             this.status({});
