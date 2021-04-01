@@ -25,7 +25,8 @@ module.exports = function(RED) {
   class CANDYLINEGoLivePeripheralHeartbetNode {
     constructor(n) {
       RED.nodes.createNode(this, n);
-      this.filterIgnoredMessages = n.filterIgnoredMessages;
+      this.filterPeripheralMissingErrorMessages =
+        n.filterPeripheralMissingErrorMessages;
       if (
         RED.settings.lwm2m &&
         typeof RED.settings.lwm2m.reportPeripheralStatus === 'function'
@@ -60,10 +61,10 @@ module.exports = function(RED) {
             msg.payload
           );
           Object.assign(msg.payload, result);
-          send(this.filterIgnoredMessages ? [msg, null] : msg);
+          send(this.filterPeripheralMissingErrorMessages ? [msg, null] : msg);
           done();
         } catch (err) {
-          if (this.filterIgnoredMessages) {
+          if (err.status === 404 && this.filterPeripheralMissingErrorMessages) {
             send([null, msg]);
             done();
           } else {
