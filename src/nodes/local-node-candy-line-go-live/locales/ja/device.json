@@ -1,0 +1,32 @@
+{
+  "device": {
+    "label": {
+      "node": "CANDY LINE Go Live デバイス情報取得",
+      "copyClientAlias": "クライアント別名をコピーする",
+      "copyClientName": "クライアント名をコピーする",
+      "copyModuleIdentifier": "通信モジュールシリアル番号をコピーする",
+      "copyMsisdn": "SIMカードのMSISDNをコピーする",
+      "copyImsi": "SIMカードのIMSIをコピーする",
+      "copyClientVersion": "Go Live Clientモジュールのバージョンをコピーする",
+      "copyMaxNumberOfPeripherals": "周辺機器の最大台数をコピーする",
+      "copyPeripheralRegistrationMethod": "周辺機器登録方法をコピーする",
+      "copyPeripheralCount": "周辺機器登録台数をコピーする"
+    },
+    "placeholder": {
+      "copyClientAlias": "コピー先クライアント別名プロパティ名",
+      "copyClientName": "コピー先クライアント名プロパティ名",
+      "copyModuleIdentifier": "コピー先通信モジュールシリアル番号プロパティ名",
+      "copyMsisdn": "コピー先SIMカードのMSISDNプロパティ名",
+      "copyImsi": "コピー先SIMカードのIMSIプロパティ名",
+      "copyClientVersion": "コピー先Go Live Clientモジュールのバージョンプロパティ名",
+      "copyMaxNumberOfPeripherals": "コピー先周辺機器の最大台数プロパティ名",
+      "copyPeripheralRegistrationMethod": "コピー先周辺機器登録方法プロパティ名",
+      "copyPeripheralCount": "コピー先周辺機器登録台数プロパティ名"
+    },
+    "errors": {
+      "nothingToCopy": "msg.payloadにコピーするプロパティが選択されていません。",
+      "payloadIsNotObject": "msg.payloadがオブジェクトでないため処理できません。",
+      "unsupported": "CANDY LINE Go Liveモジュールが存在しないため、このノードは何も処理を行いません。"
+    }
+  }
+}

@@ -150,7 +150,9 @@ module.exports = function(RED) {
       }
       sourceProps.forEach(sourceProp => {
         const destProp = this.copyProps[sourceProp];
-        payload[destProp] = resultPeripheral[sourceProp];
+        if (typeof resultPeripheral[sourceProp] !== 'undefined') {
+          payload[destProp] = resultPeripheral[sourceProp];
+        }
       });
       return msg;
     }

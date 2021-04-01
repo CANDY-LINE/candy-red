@@ -28,7 +28,7 @@
         "payload": "{\"networkAddress\":\"00:00:00:00:00\",\"batteryPower\":102,\"signalStrength\":-23}",
         "payloadType": "json",
         "x": 210,
-        "y": 180,
+        "y": 120,
         "wires": [
             [
                 "4df69051.2c9b98"
@@ -39,17 +39,17 @@
         "id": "d3d5775c.f4a7c8",
         "type": "debug",
         "z": "79aea94e.302d38",
-        "name": "Print whole msg object",
+        "name": "Print payload object",
         "active": true,
         "tosidebar": true,
         "console": false,
         "tostatus": false,
-        "complete": "true",
-        "targetType": "full",
+        "complete": "payload",
+        "targetType": "msg",
         "statusVal": "",
         "statusType": "auto",
-        "x": 1010,
-        "y": 300,
+        "x": 1000,
+        "y": 200,
         "wires": []
     },
     {
@@ -57,10 +57,9 @@
         "type": "Go-Live-heartbeat",
         "z": "79aea94e.302d38",
         "name": "",
-        "filterPeripheralMissingErrorMessages": false,
         "outputs": 1,
-        "x": 680,
-        "y": 220,
+        "x": 640,
+        "y": 120,
         "wires": [
             [
                 "d3d5775c.f4a7c8"
@@ -90,8 +89,8 @@
         "copySignalStrengthProp": "",
         "copyStatsStartedAt": false,
         "copyStatsStartedAtProp": "",
-        "x": 670,
-        "y": 340,
+        "x": 660,
+        "y": 240,
         "wires": [
             [
                 "d3d5775c.f4a7c8"
@@ -114,8 +113,9 @@
         "once": false,
         "onceDelay": 0.1,
         "topic": "",
+        "payloadType": "str",
         "x": 190,
-        "y": 340,
+        "y": 240,
         "wires": [
             [
                 "2031646d.8ba14c"
@@ -140,7 +140,7 @@
         "payload": "{\"localAddress\":\"00:00:00:00:00\",\"temperature\":24.5}",
         "payloadType": "json",
         "x": 240,
-        "y": 460,
+        "y": 360,
         "wires": [
             [
                 "10166184.6a925e"
@@ -170,8 +170,84 @@
         "copySignalStrengthProp": "",
         "copyStatsStartedAt": false,
         "copyStatsStartedAtProp": "",
-        "x": 680,
-        "y": 460,
+        "x": 670,
+        "y": 360,
+        "wires": [
+            [
+                "d3d5775c.f4a7c8"
+            ]
+        ]
+    },
+    {
+        "id": "7a3d64ad.93c3e4",
+        "type": "inject",
+        "z": "79aea94e.302d38",
+        "name": "Add Device Alias to the payload",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"temperature\":24.5}",
+        "payloadType": "json",
+        "x": 170,
+        "y": 480,
+        "wires": [
+            [
+                "d4c59e71.0ead1"
+            ]
+        ]
+    },
+    {
+        "id": "d4c59e71.0ead1",
+        "type": "Go-Live-device",
+        "z": "79aea94e.302d38",
+        "name": "",
+        "copyClientAlias": true,
+        "copyClientAliasProp": "clientAlias",
+        "copyClientName": true,
+        "copyClientNameProp": "clientName",
+        "copyModuleIdentifier": false,
+        "copyModuleIdentifierProp": "moduleIdentifier",
+        "copyMsisdn": false,
+        "copyMsisdnProp": "msisdn",
+        "copyImsi": false,
+        "copyImsiProp": "imsi",
+        "copyClientVersion": false,
+        "copyClientVersionProp": "clientVersion",
+        "copyMaxNumberOfPeripherals": false,
+        "copyMaxNumberOfPeripheralsProp": "maxNumberOfPeripherals",
+        "copyPeripheralRegistrationMethod": false,
+        "copyPeripheralRegistrationMethodProp": "peripheralRegistrationMethod",
+        "copyPeripheralCount": true,
+        "copyPeripheralCountProp": "peripheralCount",
+        "x": 640,
+        "y": 480,
+        "wires": [
+            [
+                "d3d5775c.f4a7c8"
+            ]
+        ]
+    },
+    {
+        "id": "c27fb3eb.30577",
+        "type": "catch",
+        "z": "79aea94e.302d38",
+        "name": "",
+        "scope": [
+            "4df69051.2c9b98",
+            "2031646d.8ba14c",
+            "10166184.6a925e",
+            "d4c59e71.0ead1"
+        ],
+        "uncaught": false,
+        "x": 530,
+        "y": 580,
         "wires": [
             [
                 "d3d5775c.f4a7c8"

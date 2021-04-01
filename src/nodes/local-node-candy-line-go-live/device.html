@@ -1,0 +1,151 @@
+<script type="text/x-red" data-template-name="Go-Live-device">
+  <div class='form-row'>
+    <label for='node-input-name'><i class='fa fa-tag'></i> <span data-i18n='node-red:common.label.name'></span></label>
+    <input type='text' id='node-input-name' data-i18n='[placeholder]node-red:common.label.name'>
+  </div>
+  <div id='payload-prop-rows'>
+    <div class='form-row'>
+      <label>&nbsp;</label>
+      <input type='checkbox' id='node-input-copyClientAlias' style='display: inline-block; width: auto; vertical-align: top;'>
+      <label for='node-input-copyClientAlias' style='width: 70%;' data-i18n='device.label.copyClientAlias'></label>
+      <div id='device-copyClientAlias'>
+        <label>&nbsp;</label>
+        <input type='text' id='node-input-copyClientAliasProp' data-i18n='[placeholder]device.placeholder.copyClientAlias'>
+      </div>
+    </div>
+    <div class='form-row'>
+      <label>&nbsp;</label>
+      <input type='checkbox' id='node-input-copyClientName' style='display: inline-block; width: auto; vertical-align: top;'>
+      <label for='node-input-copyClientName' style='width: 70%;' data-i18n='device.label.copyClientName'></label>
+      <div id='device-copyClientName'>
+        <label>&nbsp;</label>
+        <input type='text' id='node-input-copyClientNameProp' data-i18n='[placeholder]device.placeholder.copyClientName'>
+      </div>
+    </div>
+    <div class='form-row'>
+      <label>&nbsp;</label>
+      <input type='checkbox' id='node-input-copyModuleIdentifier' style='display: inline-block; width: auto; vertical-align: top;'>
+      <label for='node-input-copyModuleIdentifier' style='width: 70%;' data-i18n='device.label.copyModuleIdentifier'></label>
+      <div id='device-copyModuleIdentifier'>
+        <label>&nbsp;</label>
+        <input type='text' id='node-input-copyModuleIdentifierProp' data-i18n='[placeholder]device.placeholder.copyModuleIdentifier'>
+      </div>
+    </div>
+    <div class='form-row'>
+      <label>&nbsp;</label>
+      <input type='checkbox' id='node-input-copyMsisdn' style='display: inline-block; width: auto; vertical-align: top;'>
+      <label for='node-input-copyMsisdn' style='width: 70%;' data-i18n='device.label.copyMsisdn'></label>
+      <div id='device-copyMsisdn'>
+        <label>&nbsp;</label>
+        <input type='text' id='node-input-copyMsisdnProp' data-i18n='[placeholder]device.placeholder.copyMsisdn'>
+      </div>
+    </div>
+    <div class='form-row'>
+      <label>&nbsp;</label>
+      <input type='checkbox' id='node-input-copyImsi' style='display: inline-block; width: auto; vertical-align: top;'>
+      <label for='node-input-copyImsi' style='width: 70%;' data-i18n='device.label.copyImsi'></label>
+      <div id='device-copyImsi'>
+        <label>&nbsp;</label>
+        <input type='text' id='node-input-copyImsiProp' data-i18n='[placeholder]device.placeholder.copyImsi'>
+      </div>
+    </div>
+    <div class='form-row'>
+      <label>&nbsp;</label>
+      <input type='checkbox' id='node-input-copyClientVersion' style='display: inline-block; width: auto; vertical-align: top;'>
+      <label for='node-input-copyClientVersion' style='width: 70%;' data-i18n='device.label.copyClientVersion'></label>
+      <div id='device-copyClientVersion'>
+        <label>&nbsp;</label>
+        <input type='text' id='node-input-copyClientVersionProp' data-i18n='[placeholder]device.placeholder.copyClientVersion'>
+      </div>
+    </div>
+    <div class='form-row'>
+      <label>&nbsp;</label>
+      <input type='checkbox' id='node-input-copyMaxNumberOfPeripherals' style='display: inline-block; width: auto; vertical-align: top;'>
+      <label for='node-input-copyMaxNumberOfPeripherals' style='width: 70%;' data-i18n='device.label.copyMaxNumberOfPeripherals'></label>
+      <div id='device-copyMaxNumberOfPeripherals'>
+        <label>&nbsp;</label>
+        <input type='text' id='node-input-copyMaxNumberOfPeripheralsProp' data-i18n='[placeholder]device.placeholder.copyMaxNumberOfPeripherals'>
+      </div>
+    </div>
+    <div class='form-row'>
+      <label>&nbsp;</label>
+      <input type='checkbox' id='node-input-copyPeripheralRegistrationMethod' style='display: inline-block; width: auto; vertical-align: top;'>
+      <label for='node-input-copyPeripheralRegistrationMethod' style='width: 70%;' data-i18n='device.label.copyPeripheralRegistrationMethod'></label>
+      <div id='device-copyPeripheralRegistrationMethod'>
+        <label>&nbsp;</label>
+        <input type='text' id='node-input-copyPeripheralRegistrationMethodProp' data-i18n='[placeholder]device.placeholder.copyPeripheralRegistrationMethod'>
+      </div>
+    </div>
+    <div class='form-row'>
+      <label>&nbsp;</label>
+      <input type='checkbox' id='node-input-copyPeripheralCount' style='display: inline-block; width: auto; vertical-align: top;'>
+      <label for='node-input-copyPeripheralCount' style='width: 70%;' data-i18n='device.label.copyPeripheralCount'></label>
+      <div id='device-copyPeripheralCount'>
+        <label>&nbsp;</label>
+        <input type='text' id='node-input-copyPeripheralCountProp' data-i18n='[placeholder]device.placeholder.copyPeripheralCount'>
+      </div>
+    </div>
+  </div>
+</script>
+
+<script>
+  (function() {
+    RED.nodes.registerType('Go-Live-device', {
+      category: 'CANDY LINE',
+      defaults: {
+        name: { value: '' },
+        copyClientAlias: { value: true },
+        copyClientAliasProp: { value: 'clientAlias' },
+        copyClientName: { value: false },
+        copyClientNameProp: { value: 'clientName' },
+        copyModuleIdentifier: { value: false },
+        copyModuleIdentifierProp: { value: 'moduleIdentifier' },
+        copyMsisdn: { value: false },
+        copyMsisdnProp: { value: 'msisdn' },
+        copyImsi: { value: false },
+        copyImsiProp: { value: 'imsi' },
+        copyClientVersion: { value: false },
+        copyClientVersionProp: { value: 'clientVersion' },
+        copyMaxNumberOfPeripherals: { value: false },
+        copyMaxNumberOfPeripheralsProp: { value: 'maxNumberOfPeripherals' },
+        copyPeripheralRegistrationMethod: { value: false },
+        copyPeripheralRegistrationMethodProp: { value: 'peripheralRegistrationMethod' },
+        copyPeripheralCount: { value: false },
+        copyPeripheralCountProp: { value: 'peripheralCount' }
+      },
+      color: '#64c77c',
+      inputs: 1,
+      outputs: 1,
+      icon: 'font-awesome/fa-hdd-o',
+      label: function() {
+        return this.name || this._('device.label.node');
+      },
+      labelStyle: function() {
+        return this.name ? 'node_label_italic' : '';
+      },
+      oneditprepare: function() {
+        [
+          'copyClientAlias',
+          'copyClientName',
+          'copyModuleIdentifier',
+          'copyMsisdn',
+          'copyImsi',
+          'copyClientVersion',
+          'copyMaxNumberOfPeripherals',
+          'copyPeripheralRegistrationMethod',
+          'copyPeripheralCount'
+        ].forEach(function(p) {
+          function onchanged() {
+            if ($('#node-input-' + p).prop('checked')) {
+              $('#device-' + p).show();
+            } else {
+              $('#device-' + p).hide();
+            }
+          };
+          $('#node-input-' + p).change(onchanged);
+          onchanged();
+        });
+      }
+    });
+  })();
+</script>
