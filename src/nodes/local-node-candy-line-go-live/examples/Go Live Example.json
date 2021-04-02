@@ -250,8 +250,25 @@
         "y": 580,
         "wires": [
             [
-                "d3d5775c.f4a7c8"
+                "5a874fa.5a41b3"
             ]
         ]
+    },
+    {
+        "id": "5a874fa.5a41b3",
+        "type": "debug",
+        "z": "79aea94e.302d38",
+        "name": "Show Error as well as payload",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "full",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 970,
+        "y": 580,
+        "wires": []
     }
 ]
