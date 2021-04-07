@@ -87,7 +87,7 @@
     "node-red": "^1.2.9",
     "node-red-contrib-device-stats": ">=1.1.2",
     "node-red-contrib-influxdb": "^0.4.1",
-    "node-red-contrib-lwm2m": "^2.12.1",
+    "node-red-contrib-lwm2m": "^2.12.2",
     "node-red-contrib-moment": "^3.0.3",
     "node-red-contrib-schedex": "^1.10.4",
     "node-red-contrib-statistics": "^2.2.2",
