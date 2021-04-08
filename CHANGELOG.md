@@ -1,9 +1,21 @@
 ## Revision History
+* 9.10.0
+  - Bump preinstalled nodes
+    - `node-red-dashboard`
+    - `node-red-twitter`
+    - `node-red-contrib-schedex`
+    - `node-red-contrib-lwm2m`
+    - `@mindconnect/node-red-contrib-mindconnect`
+    - `node-red-contrib-web-worldmap`
+    - `node-red-node-pi-sense-hat`
+    - `node-red-contrib-influxdb`
+
 * 9.9.3
   - Bump Node-RED version to v1.2.9
   - Add `node-red-contrib-ble-scan`
   - Bump preinstalled nodes
     - `node-red-dashboard`
+
 * 9.9.2
   - Bump preinstalled nodes
     - `node-red-dashboard`
@@ -12,6 +24,7 @@
     - `@mindconnect/node-red-contrib-mindconnect`
     - `node-red-contrib-influxdb`
     - `node-red-contrib-statistics`
+
 * 9.9.1
   - Bump Node-RED version to v1.2.6
   - Bump preinstalled nodes
