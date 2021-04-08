@@ -1,0 +1,40 @@
+<script type="text/x-red" data-help-name="Go-Live-device">
+  <p>
+    A node for getting device information managed by CANDY LINE Go Live.
+    You can get the stored device information or copy the information to the message.
+  </p>
+  <h3>Inputs</h3>
+  <p>
+    This node sets the device infromation to <code>msg.payload</code> or copies the device information to the given <code>msg.payload</code> if its type is object.
+  </p>
+  <h3>Outputs</h3>
+  <p><code>msg.payload</code> has the following properties.</p>
+  <dl class="message-properties">
+    <dt>clientAlias<span class="property-type">string</span></dt>
+    <dd>Client Alias for this device.</dd>
+    <dt>clientName<span class="property-type">string</span></dt>
+    <dd>Client Name assigned to this device.</dd>
+    <dt>moduleIdentifier<span class="property-type">string</span></dt>
+    <dd>Module Serial Number.</dd>
+    <dt>msisdn<span class="property-type">int</span></dt>
+    <dd>MSISDN of the SIM card if any.</dd>
+    <dt>imsi<span class="property-type">int</span></dt>
+    <dd>IMSI of the SIM card if any.</dd>
+    <dt>clientVersion<span class="property-type">string</span></dt>
+    <dd>Go Live Client Module Version.</dd>
+    <dt>maxNumberOfPeripherals<span class="property-type">int</span></dt>
+    <dd>Max number of peripherals this device can manage.</dd>
+    <dt>peripheralRegistrationMethod<span class="property-type">int</span></dt>
+    <dd>Peripheral Registration Method.</dd>
+    <dt>peripheralCount<span class="property-type">int</span></dt>
+    <dd>The number of valid peripherals.</dd>
+    <dt>statsStartedAt<span class="property-type">date</span></dt>
+    <dd>Date/time when the stats processing started.</dd>
+  </dl>
+
+  <h3>Notice</h3>
+  <p>
+    This node should work only when CANDY LINE Go Live client (candy-red-lwm2m module) is operating.
+    Otherwise, this node does nothing but shows a warning information text.
+  </p>
+</script>

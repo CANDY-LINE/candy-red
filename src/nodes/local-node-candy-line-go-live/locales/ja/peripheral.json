@@ -1,0 +1,42 @@
+{
+  "peripheral": {
+    "label": {
+      "node": "CANDY LINE Go Live 周辺機器情報取得(__method__)",
+      "finderMethod": "取得方法",
+      "finderProp": "ネットワークアドレスのプロパティ名",
+      "copyAlias": "別名をコピーする",
+      "copyLastReportedAt": "最新監視情報報告日時をコピーする",
+      "copyReportCount": "報告回数をコピーする",
+      "copyErrorCount": "エラー報告回数をコピーする",
+      "copyLastErrorInfo": "最後に報告されたエラー情報をコピーする",
+      "copyBatteryPower": "バッテリー残量をコピーする",
+      "copySignalStrength": "信号強度をコピーする",
+      "copyStatsStartedAt": "集計開始日時をコピーする"
+    },
+    "finderMethod": {
+      "topic": "msg.topicの文字列",
+      "payload": "msg.payloadのプロパティ値"
+    },
+    "status": {
+      "info": "__count__個の周辺機器"
+    },
+    "placeholder": {
+      "finderProp": "プロパティ名",
+      "copyAlias": "コピー先別名プロパティ名",
+      "copyLastReportedAt": "コピー先最新監視情報報告日時プロパティ名",
+      "copyReportCount": "コピー先報告回数プロパティ名",
+      "copyErrorCount": "コピー先エラー報告回数プロパティ名",
+      "copyLastErrorInfo": "コピー先エラー情報プロパティ名",
+      "copyBatteryPower": "コピー先バッテリー残量プロパティ名",
+      "copySignalStrength": "コピー先信号強度プロパティ名",
+      "copyStatsStartedAt": "コピー先集計開始日時プロパティ名"
+    },
+    "errors": {
+      "nothingToCopy": "msg.payloadにコピーするプロパティが選択されていません。",
+      "unknown": "ネットワークアドレス[__networkAddress__]の周辺機器情報は保存されていません。",
+      "payloadIsNotObject": "msg.payloadがオブジェクトでないため処理できません。",
+      "payloadMissing": "msg.payloadが見つかりません。",
+      "unsupported": "CANDY LINE Go Liveモジュールが存在しないため、このノードは何も処理を行いません。"
+    }
+  }
+}

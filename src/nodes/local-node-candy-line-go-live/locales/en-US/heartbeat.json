@@ -1,0 +1,17 @@
+{
+  "heartbeat": {
+    "label": {
+      "node": "CANDY LINE Go Live Peripheral Heartbeat",
+      "filterPeripheralMissingErrorMessages": "Filter A Peripheral Missing Error Messages",
+      "success": "Success",
+      "error": "Missing Error",
+      "output": "All"
+    },
+    "status": {
+      "received": "Received"
+    },
+    "errors": {
+      "unsupported": "This node does nothinig as CANDY LINE Go Live module is missing."
+    }
+  }
+}

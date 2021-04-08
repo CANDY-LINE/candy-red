@@ -1,0 +1,274 @@
+[
+    {
+        "id": "79aea94e.302d38",
+        "type": "tab",
+        "label": "Go Live",
+        "disabled": false,
+        "info": ""
+    },
+    {
+        "id": "6e0a1a8b.b5f3bc",
+        "type": "inject",
+        "z": "79aea94e.302d38",
+        "name": "Simulate Monitoring Report (00:00:00:00:00)",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "300",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"networkAddress\":\"00:00:00:00:00\",\"batteryPower\":102,\"signalStrength\":-23}",
+        "payloadType": "json",
+        "x": 210,
+        "y": 120,
+        "wires": [
+            [
+                "4df69051.2c9b98"
+            ]
+        ]
+    },
+    {
+        "id": "d3d5775c.f4a7c8",
+        "type": "debug",
+        "z": "79aea94e.302d38",
+        "name": "Print payload object",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 1000,
+        "y": 200,
+        "wires": []
+    },
+    {
+        "id": "4df69051.2c9b98",
+        "type": "Go-Live-heartbeat",
+        "z": "79aea94e.302d38",
+        "name": "",
+        "outputs": 1,
+        "x": 640,
+        "y": 120,
+        "wires": [
+            [
+                "d3d5775c.f4a7c8"
+            ]
+        ]
+    },
+    {
+        "id": "2031646d.8ba14c",
+        "type": "Go-Live-peripheral",
+        "z": "79aea94e.302d38",
+        "name": "",
+        "finderMethod": "topic",
+        "finderProp": "",
+        "copyAlias": false,
+        "copyAliasProp": "",
+        "copyLastReportedAt": false,
+        "copyLastReportedAtProp": "",
+        "copyReportCount": false,
+        "copyReportCountProp": "",
+        "copyErrorCount": false,
+        "copyErrorCountProp": "",
+        "copyLastErrorInfo": false,
+        "copyLastErrorInfoProp": "",
+        "copyBatteryPower": false,
+        "copyBatteryPowerProp": "",
+        "copySignalStrength": false,
+        "copySignalStrengthProp": "",
+        "copyStatsStartedAt": false,
+        "copyStatsStartedAtProp": "",
+        "x": 660,
+        "y": 240,
+        "wires": [
+            [
+                "d3d5775c.f4a7c8"
+            ]
+        ]
+    },
+    {
+        "id": "1c3d7958.012b27",
+        "type": "inject",
+        "z": "79aea94e.302d38",
+        "name": "Get All Peripheral Info (Payload Ignored)",
+        "props": [
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payloadType": "str",
+        "x": 190,
+        "y": 240,
+        "wires": [
+            [
+                "2031646d.8ba14c"
+            ]
+        ]
+    },
+    {
+        "id": "5cacd36b.b29174",
+        "type": "inject",
+        "z": "79aea94e.302d38",
+        "name": "Add Peripheral Info (Find by a property in the payload)",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"localAddress\":\"00:00:00:00:00\",\"temperature\":24.5}",
+        "payloadType": "json",
+        "x": 240,
+        "y": 360,
+        "wires": [
+            [
+                "10166184.6a925e"
+            ]
+        ]
+    },
+    {
+        "id": "10166184.6a925e",
+        "type": "Go-Live-peripheral",
+        "z": "79aea94e.302d38",
+        "name": "",
+        "finderMethod": "payload",
+        "finderProp": "localAddress",
+        "copyAlias": true,
+        "copyAliasProp": "sensorDeviceName",
+        "copyLastReportedAt": false,
+        "copyLastReportedAtProp": "",
+        "copyReportCount": false,
+        "copyReportCountProp": "",
+        "copyErrorCount": false,
+        "copyErrorCountProp": "",
+        "copyLastErrorInfo": false,
+        "copyLastErrorInfoProp": "",
+        "copyBatteryPower": false,
+        "copyBatteryPowerProp": "",
+        "copySignalStrength": false,
+        "copySignalStrengthProp": "",
+        "copyStatsStartedAt": false,
+        "copyStatsStartedAtProp": "",
+        "x": 670,
+        "y": 360,
+        "wires": [
+            [
+                "d3d5775c.f4a7c8"
+            ]
+        ]
+    },
+    {
+        "id": "7a3d64ad.93c3e4",
+        "type": "inject",
+        "z": "79aea94e.302d38",
+        "name": "Add Device Alias to the payload",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"temperature\":24.5}",
+        "payloadType": "json",
+        "x": 170,
+        "y": 480,
+        "wires": [
+            [
+                "d4c59e71.0ead1"
+            ]
+        ]
+    },
+    {
+        "id": "d4c59e71.0ead1",
+        "type": "Go-Live-device",
+        "z": "79aea94e.302d38",
+        "name": "",
+        "copyClientAlias": true,
+        "copyClientAliasProp": "clientAlias",
+        "copyClientName": true,
+        "copyClientNameProp": "clientName",
+        "copyModuleIdentifier": false,
+        "copyModuleIdentifierProp": "moduleIdentifier",
+        "copyMsisdn": false,
+        "copyMsisdnProp": "msisdn",
+        "copyImsi": false,
+        "copyImsiProp": "imsi",
+        "copyClientVersion": false,
+        "copyClientVersionProp": "clientVersion",
+        "copyMaxNumberOfPeripherals": false,
+        "copyMaxNumberOfPeripheralsProp": "maxNumberOfPeripherals",
+        "copyPeripheralRegistrationMethod": false,
+        "copyPeripheralRegistrationMethodProp": "peripheralRegistrationMethod",
+        "copyPeripheralCount": true,
+        "copyPeripheralCountProp": "peripheralCount",
+        "x": 640,
+        "y": 480,
+        "wires": [
+            [
+                "d3d5775c.f4a7c8"
+            ]
+        ]
+    },
+    {
+        "id": "c27fb3eb.30577",
+        "type": "catch",
+        "z": "79aea94e.302d38",
+        "name": "",
+        "scope": [
+            "4df69051.2c9b98",
+            "2031646d.8ba14c",
+            "10166184.6a925e",
+            "d4c59e71.0ead1"
+        ],
+        "uncaught": false,
+        "x": 530,
+        "y": 580,
+        "wires": [
+            [
+                "5a874fa.5a41b3"
+            ]
+        ]
+    },
+    {
+        "id": "5a874fa.5a41b3",
+        "type": "debug",
+        "z": "79aea94e.302d38",
+        "name": "Show Error as well as payload",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "full",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 970,
+        "y": 580,
+        "wires": []
+    }
+]

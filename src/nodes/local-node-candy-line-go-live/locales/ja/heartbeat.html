@@ -1,0 +1,98 @@
+<script type="text/x-red" data-help-name="Go-Live-heartbeat">
+  <p>周辺機器の監視情報をCANDY LINE Go Liveに報告するためのノードです。</p>
+  <h3>入力</h3>
+  <p><code>msg.payload</code> には以下のプロパティをセットします。</p>
+  <dl class="message-properties">
+    <dt>networkAddress<span class="property-type">string</span></dt>
+    <dd>
+    周辺機器のネットワークアドレスを指定します。
+    例えば、BLE機器であればBluetooth Device アドレスを、LANや無線LANであればIPアドレスを指定します。
+    アルファベット小文字（大文字を指定した場合、小文字に変換されます）、数字、コロン（:）、ドット（.）、ハイフン（-）のみ利用可能です。
+    </dd>
+    <dt>batteryPower<span class="property-type">int</span></dt>
+    <dd>
+    バッテリー残量を表します。 0-100の整数ではバッテリー残量をパーセントで表します。
+    ACなどの外部電源から供給している場合は101を、このデバイスから電力を供給している場合は102を指定します。
+    エラー情報を通知するメッセージであれば、この属性は省略可能です。
+    </dd>
+    <dt>signalStrength<span class="property-type">int</span></dt>
+    <dd>
+    信号強度をdBmで表した整数を指定します。有線接続の場合は、32767を指定します。
+    エラー情報を通知するメッセージであれば、この属性は省略可能です。
+    </dd>
+    <dt>errorInfo<span class="property-type">string</span></dt>
+    <dd>
+    エラー情報のテキストを表します。エラー情報がない場合は、空文字、null、あるいは属性全体を省略することができます。
+    </dd>
+  </dl>
+
+  <h3>入力 <code>msg.payload</code> オブジェクトの例</h3>
+  <pre>
+{
+  "networkAddress": "aa:bb:cc:dd:ee",
+  "batteryPower": 95,
+  "signalStrength": -23,
+  "errorInfo": "Decoded Data Integrity Error"
+}
+  </pre>
+  あるいは以下のような配列形式を利用可能です。
+  <pre>
+[
+  {
+    "networkAddress": "aa:bb:cc:dd:ee",
+    "batteryPower": 95,
+    "signalStrength": -23,
+    "errorInfo": "Decoded Data Integrity Error"
+  },
+  {
+    "networkAddress": "bb:bb:cc:dd:ee",
+    "batteryPower": 45,
+    "signalStrength": -34
+  },
+]
+  </pre>
+
+  <h3>出力</h3>
+  <p><code>msg.payload</code> には以下のプロパティをセットします。</p>
+  <dl class="message-properties">
+    <dt>networkAddress<span class="property-type">string</span></dt>
+    <dd>
+    周辺機器のネットワークアドレスを指定します。
+    例えば、BLE機器であればBluetooth Device アドレスを、LANや無線LANであればIPアドレスを指定します。
+    アルファベット小文字（大文字を指定した場合、小文字に変換されます）、数字、コロン（:）、ドット（.）、ハイフン（-）のみ利用可能です。
+    </dd>
+    <dt>batteryPower<span class="property-type">int</span></dt>
+    <dd>
+    バッテリー残量を表します。 0-100の整数ではバッテリー残量をパーセントで表します。
+    ACなどの外部電源から供給している場合は101を、このデバイスから電力を供給している場合は102を指定します。
+    エラー情報を通知するメッセージであれば、この属性は省略可能です。
+    </dd>
+    <dt>signalStrength<span class="property-type">int</span></dt>
+    <dd>
+    信号強度をdBmで表した整数を指定します。有線接続の場合は、32767を指定します。
+    エラー情報を通知するメッセージであれば、この属性は省略可能です。
+    </dd>
+    <dt>errorInfo<span class="property-type">string</span></dt>
+    <dd>
+    エラー情報のテキストを表します。エラー情報がない場合は、空文字、null、あるいは属性全体を省略することができます。
+    </dd>
+    <dt>reportCount<span class="property-type">int</span></dt>
+    <dd>
+    現在までの監視情報レポート回数を返します。
+    </dd>
+    <dt>errorCount<span class="property-type">int</span></dt>
+    <dd>
+    現在までの監視情報レポートにエラー報告された回数を返します。
+    </dd>
+  </dl>
+  <p>
+    <code>周辺機器不明エラーを選別する</code>にチェックを入れている場合、指定された周辺機器の情報が見つからないというエラーが発生すると不明エラー専用の出力ポートからメッセージが送出されます。
+    それ以外の場合は、<code>Catch</code>ノードでエラー処理が可能です。
+  </p>
+
+  <h3>ご注意</h3>
+  <p>
+    このノードは CANDY LINE Go Live クライアント (candy-red-lwm2m module)が動作している場合にのみ利用可能です。
+    それ以外の場合ではデプロイ時にエラーメッセージが表示され動作しません（全てのメッセージは無視されます）。
+  </p>
+</script>

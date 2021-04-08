@@ -1,0 +1,88 @@
+<script type="text/x-red" data-help-name="Go-Live-peripheral">
+  <p>
+    A node for getting peripheral information managed by CANDY LINE Go Live.
+    You can get the stored peripheral information or copy the information to the message.
+  </p>
+  <h2>Find by: msg.topic text</h2>
+  <p>
+    When you choose <code>msg.topic text</code> for <code>Find by</code> setting,
+    this node looks for the peripheral information by a network address search condition provided in the message topic and outputs the search result.
+  </p>
+  <h3>Inputs</h3>
+  <p>
+    Provide the peripheral network address in a simple text, the Comma Separated Value format, or in RegExp to  <code>msg.topic</code>
+    This node ignores the content of <code>msg.payload</code>.
+    You can get all stored peripheral information when you leave <code>msg.topic</code> empty.
+  </p>
+  <h4>Inputs <code>msg.topic</code> text example</h4>
+  <p>Inqurying a single peripheral with the network address: <code>00:00:00:00:00</code></p>
+  <pre>
+00:00:00:00:00</pre>
+  <p>Inqurying 2 peripherals with the network address: <code>00:00:00:00:00</code> and <code>11:11:11:11:11</code> in Comma Separated Value format</p>
+  <pre>
+00:00:00:00:00,11:11:11:11:11</pre>
+  <p>Inqurying 2 peripherals with the network address: <code>00:00:00:00:00</code> and <code>11:11:11:11:11</code> in RegExp format</p>
+  <pre>
+(00:00:00:00:00|11:11:11:11:11)</pre>
+  <h3>Outputs</h3>
+  <p>
+    <code>msg.payload</code> is an array containing the following structure objects.
+  </p>
+  <dl class="message-properties">
+    <dt>networkAddress<span class="property-type">string</span></dt>
+    <dd>A peripheral network address.</dd>
+    <dt>alias<span class="property-type">string</span></dt>
+    <dd>Alias for this peripheral.</dd>
+    <dt>lastReportedAt<span class="property-type">date</span></dt>
+    <dd>Last reported date/time.</dd>
+    <dt>reportCount<span class="property-type">int</span></dt>
+    <dd>
+    The number of reports. This count will be reset when a given period passes.
+    </dd>
+    <dt>errorCount<span class="property-type">int</span></dt>
+    <dd>
+    The number of error reports. This count will be reset when a given period passes.
+    </dd>
+    <dt>lastErrorInfo<span class="property-type">string</span></dt>
+    <dd>
+    Last reported error information. The property can be null, the emtpy text, or missing when there's no error ever.
+    </dd>
+    <dt>lastErrorReportedAt<span class="property-type">date</span></dt>
+    <dd>Last error reported date/time.</dd>
+    <dt>batteryPower<span class="property-type">int</span></dt>
+    <dd>
+    The peripheral battery power in percent.
+    101 for AC or other external power supplies, 102 for host powered.
+    </dd>
+    <dt>signalStrength<span class="property-type">int</span></dt>
+    <dd>
+    The peripheral signal strength in dBm.
+    32767 for Wired peripherals.
+    </dd>
+    <dt>statsStartedAt<span class="property-type">date</span></dt>
+    <dd>Date/time when the stats processing started.</dd>
+  </dl>
+
+  <h2>Find by: A property value in msg.payload</h2>
+  <p>
+    When you choose <code>A property value in msg.payload</code> for <code>Find by</code> setting,
+    this node looks for the single periphral information by an exact network address provided in the incoming message and copies the search result to it as output.
+  </p>
+  <h3>Inputs</h3>
+  <p>
+    Leave <code>msg.topic</code> <b>empty</b> and pass an <code>object</code> containing a property for the network address in <code>msg.payload</code>.
+    And the output will be added to the <code>msg.payload</code>.
+    This node will emit an error when <code>msg.payload</code> is undefined or non-object value.
+  </p>
+  <p></p>
+  <h3>Outputs</h3>
+  <p>
+    Copy the peripheral info to the given input <code>msg.payload</code>. You can choose one or more properties to copy in the node settings.
+  </p>
+
+  <h3>Notice</h3>
+  <p>
+    This node should work only when CANDY LINE Go Live client (candy-red-lwm2m module) is operating.
+    Otherwise, this node does nothing but shows a warning information text.
+  </p>
+</script>

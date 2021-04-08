@@ -1,0 +1,57 @@
+<script type="text/x-red" data-template-name="Go-Live-heartbeat">
+  <div class='form-row'>
+    <label for='node-input-name'><i class='fa fa-tag'></i> <span data-i18n='node-red:common.label.name'></span></label>
+    <input type='text' id='node-input-name' data-i18n='[placeholder]node-red:common.label.name'>
+  </div>
+  <div class='form-row'>
+    <label>&nbsp;</label>
+    <input type='checkbox' id='node-input-filterPeripheralMissingErrorMessages' style='display: inline-block; width: auto; vertical-align: top;'>
+    <label for='node-input-filterPeripheralMissingErrorMessages' style='width: 70%;' data-i18n='heartbeat.label.filterPeripheralMissingErrorMessages'></label>
+    <input type="hidden" id="node-input-outputs" />
+  </div>
+</script>
+
+<script>
+  (function() {
+    RED.nodes.registerType('Go-Live-heartbeat', {
+      category: 'CANDY LINE',
+      defaults: {
+        name: { value: '' },
+        filterPeripheralMissingErrorMessages: { value: false },
+        outputs: { value: 1 }
+      },
+      color: '#64c77c',
+      inputs: 1,
+      outputs: 1,
+      outputLabels: function(index) {
+        if (this.filterPeripheralMissingErrorMessages) {
+          switch (index) {
+            case 0: {
+              return this._('heartbeat.label.success');
+            }
+            case 1: {
+              return this._('heartbeat.label.error');
+            }
+          }
+        }
+        return this._('heartbeat.label.output');
+      },
+      icon: 'font-awesome/fa-heartbeat',
+      label: function() {
+        return this.name || this._('heartbeat.label.node');
+      },
+      labelStyle: function() {
+        return this.name ? 'node_label_italic' : '';
+      },
+      oneditsave: function() {
+        // See https://github.com/node-red/node-red/blob/master/packages/node_modules/%40node-red/nodes/core/function/10-switch.html#L373
+        // for outputports trick
+        $('#node-input-outputs').val(
+          $('#node-input-filterPeripheralMissingErrorMessages').prop('checked')
+            ? JSON.stringify({ 0: 0, 1: 1 })
+            : 1
+        );
+      }
+    });
+  })();
+</script>

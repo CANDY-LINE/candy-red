@@ -1,0 +1,31 @@
+{
+  "device": {
+    "label": {
+      "node": "CANDY LINE Go Live Device Information Inquiry",
+      "copyClientAlias": "Copy 'clientAlias'",
+      "copyClientName": "Copy 'clientName'",
+      "copyModuleIdentifier": "Copy 'moduleIdentifier'",
+      "copyMsisdn": "Copy 'msisdn'",
+      "copyImsi": "Copy 'imsi'",
+      "copyClientVersion": "Copy 'clientVersion'",
+      "copyMaxNumberOfPeripherals": "Copy 'maxNumberOfPeripherals'",
+      "copyPeripheralRegistrationMethod": "Copy 'peripheralRegistrationMethod'",
+      "copyPeripheralCount": "Copy 'peripheralCount'"
+    },
+    "placeholder": {
+      "copyClientAlias": "Destination 'clientAlias' property name",
+      "copyClientName": "Destination 'clientName' property name",
+      "copyModuleIdentifier": "Destination 'moduleIdentifier' property name",
+      "copyMsisdn": "Destination 'msisdn' property name",
+      "copyImsi": "Destination 'imsi' property name",
+      "copyClientVersion": "Destination 'clientVersion' property name",
+      "copyMaxNumberOfPeripherals": "Destination 'maxNumberOfPeripherals' property name",
+      "copyPeripheralRegistrationMethod": "Destination 'peripheralRegistrationMethod' property name"
+    },
+    "errors": {
+      "nothingToCopy": "There's nothing to copy from the device info to msg.payload.",
+      "payloadIsNotObject": "msg.payload must be object.",
+      "unsupported": "This node does nothinig as CANDY LINE Go Live module is missing."
+    }
+  }
+}
