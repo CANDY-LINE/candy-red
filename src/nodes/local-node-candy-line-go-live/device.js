@@ -36,7 +36,7 @@ module.exports = function(RED) {
         'copyMaxNumberOfPeripherals',
         'copyPeripheralRegistrationMethod',
         'copyPeripheralCount'
-    ]) {
+      ]) {
         if (n[p]) {
           const first = p.substring(4, 5).toLowerCase();
           const sourceProp = `${first}${p.substring(5)}`;
