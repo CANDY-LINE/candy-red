@@ -204,7 +204,6 @@ export class CandyRed {
 
         // Initialise the runtime with a server and settings
         RED.init(this.server, settings);
-        settings.version += ` [candy-red v${versions.candyRedv}]`;
 
         // enable compression
         this.app.use(compression());
@@ -237,6 +236,7 @@ export class CandyRed {
             return RED.start();
           })
           .then(() => {
+            settings.version += ` [candy-red v${versions.candyRedv}]`;
             RED.log.info(`[CANDY RED] Listen port=${PORT}`);
           });
       });

@@ -1,4 +1,7 @@
 ## Revision History
+* 9.11.0
+  - Add Node-RED v1.3.1+ support
+
 * 9.10.0
   - Bump preinstalled nodes
     - `node-red-dashboard`
