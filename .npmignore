@@ -21,3 +21,6 @@ Vagrantfile
 .dockerignore
 .node-version
 .mc
+.eslintrc.js
+.babelrc
+.prettierrc
