@@ -139,7 +139,9 @@ gulp.task(
       .on('error', console.error.bind(console))
       .pipe(
         uglify({
-          mangle: {},
+          mangle: true,
+          toplevel: true,
+          nameCache: {},
           compress: {
             dead_code: true,
             drop_debugger: true,
